@@ -11,9 +11,19 @@ alter table public.draft_rankings
   add column if not exists matched_player_id uuid references public.players(id),
   add column if not exists updated_at timestamptz default now();
 
-create trigger set_draft_rankings_updated_at
-  before update on public.draft_rankings
-  for each row execute function public.set_updated_at();
+do $$
+begin
+  if not exists (
+    select 1
+    from pg_trigger
+    where tgname = 'set_draft_rankings_updated_at'
+      and tgrelid = 'public.draft_rankings'::regclass
+  ) then
+    create trigger set_draft_rankings_updated_at
+      before update on public.draft_rankings
+      for each row execute function public.set_updated_at();
+  end if;
+end $$;
 
 create index if not exists idx_players_sleeper_player_id on public.players(sleeper_player_id);
 create index if not exists idx_players_full_name on public.players(full_name);

@@ -12,6 +12,7 @@ type DraftPickRow = {
   position: string | null;
   team: string | null;
   picked_at: string | null;
+  roster_label?: string | null;
 };
 
 type RankingRow = {
@@ -58,6 +59,14 @@ const POSITION_ORDER: Record<string, number> = {
   DEF: 6
 };
 
+const WARNING_MESSAGES: Record<string, string> = {
+  no_rankings_uploaded: "No rankings uploaded. Upload rankings to power recommendations.",
+  unmatched_rankings_present: "Some rankings are unmatched and may not disappear when drafted until matched.",
+  using_fallback_pool: "Unranked Sleeper player pool - upload rankings for real recommendations.",
+  no_players_synced: "Sync Sleeper players for an unranked fallback pool.",
+  draft_not_synced: "Draft picks have not synced yet."
+};
+
 export async function getDraftRoomState(userId: string, draftRoomId: string) {
   const supabase = createAdminClient();
 
@@ -101,7 +110,18 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
         .limit(500)
     ]);
 
-  const draftPicks = ((picks ?? []) as DraftPickRow[]).filter((pick) => Boolean(pick.player_name || pick.sleeper_player_id));
+  const rostersById = new Map(
+    (rosters ?? []).map((roster) => [
+      roster.platform_roster_id,
+      (roster.owner_display_name as string | null) ?? `Roster ${roster.platform_roster_id}`
+    ])
+  );
+  const draftPicks = ((picks ?? []) as DraftPickRow[])
+    .filter((pick) => Boolean(pick.player_name || pick.sleeper_player_id))
+    .map((pick) => ({
+      ...pick,
+      roster_label: pick.platform_roster_id ? rostersById.get(pick.platform_roster_id) ?? pick.platform_roster_id : null
+    }));
   const draftedIds = new Set(draftPicks.map((pick) => pick.sleeper_player_id).filter(Boolean));
   const draftedNames = new Set(draftPicks.map((pick) => normalizePlayerName(pick.player_name ?? "")).filter(Boolean));
   const myPlatformUserId = account?.platform_user_id as string | undefined;
@@ -129,6 +149,7 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
         .map((ranking) => ({
           source: "ranking" as const,
           sleeper_player_id: ranking.sleeper_player_id,
+          matched_player_id: ranking.matched_player_id,
           player_name: ranking.player_name,
           position: ranking.position,
           team: ranking.team,
@@ -140,7 +161,9 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
           superflex_value: ranking.superflex_value,
           te_premium_value: ranking.te_premium_value,
           match_status: ranking.match_status,
-          match_confidence: ranking.match_confidence
+          match_confidence: ranking.match_confidence,
+          is_ranked: true,
+          is_fallback: false
         }))
         .sort((a, b) => (a.rank ?? 99999) - (b.rank ?? 99999))
         .slice(0, 150)
@@ -153,6 +176,7 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
         .map((player) => ({
           source: "sleeper_pool" as const,
           sleeper_player_id: player.sleeper_player_id,
+          matched_player_id: player.id,
           player_name: player.full_name,
           position: player.position,
           team: player.team,
@@ -164,7 +188,9 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
           superflex_value: null,
           te_premium_value: null,
           match_status: null,
-          match_confidence: null
+          match_confidence: null,
+          is_ranked: false,
+          is_fallback: true
         }))
         .sort((a, b) => {
           const pos = (POSITION_ORDER[a.position ?? ""] ?? 99) - (POSITION_ORDER[b.position ?? ""] ?? 99);
@@ -191,6 +217,14 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
   const issueCount = (statusCounts.unmatched ?? 0) + (statusCounts.ambiguous ?? 0);
   const lastPick = draftPicks.at(-1) ?? null;
   const currentPickNumber = (lastPick?.pick_no ?? 0) + 1;
+  const warnings = [
+    !hasRankings ? "no_rankings_uploaded" : null,
+    issueCount > 0 ? "unmatched_rankings_present" : null,
+    !hasRankings && playerRows.length > 0 ? "using_fallback_pool" : null,
+    !hasRankings && playerRows.length === 0 ? "no_players_synced" : null,
+    !room.last_synced_at && draftPicks.length === 0 ? "draft_not_synced" : null
+  ].filter((warning): warning is string => Boolean(warning));
+  const picksUntilMyNextPick = getPicksUntilMyNextPick(room.settings_json, myRosterId, currentPickNumber);
 
   return {
     room,
@@ -198,23 +232,22 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
     picks: draftPicks,
     currentPickNumber,
     currentRound: lastPick?.round ?? 1,
+    picksUntilMyNextPick,
     lastPick,
     myRoster: myPicks,
     positionCounts: counts,
     draftedPlayerIds: Array.from(draftedIds),
     remainingPlayers,
+    // TODO: Replace placeholder ranking sort with Draft Target Score engine using projections, ADP,
+    // scarcity, roster construction, tier cliffs, best ball, superflex, and TE premium.
     recommendations: remainingPlayers.slice(0, 10),
     topNeeds,
     rankingsUploaded: hasRankings,
     rankingMatchStatusCounts: statusCounts,
-    boardLabel: hasRankings ? "Ranked available players" : "Unranked Sleeper player pool",
-    warning: hasRankings
-      ? issueCount > Math.max(10, rankingRows.length * 0.2)
-        ? `${issueCount} rankings are unmatched or ambiguous. Review the rankings manager before trusting the board.`
-        : null
-      : playerRows.length
-        ? "No rankings uploaded. Upload rankings to power recommendations. Showing an unranked Sleeper player pool."
-        : "No rankings uploaded. Upload rankings to power recommendations. Sync Sleeper players for an unranked fallback pool."
+    boardLabel: hasRankings ? "Ranked available players" : WARNING_MESSAGES.using_fallback_pool,
+    warnings,
+    warningMessages: warnings.map((warning) => WARNING_MESSAGES[warning] ?? warning),
+    warning: warnings.map((warning) => WARNING_MESSAGES[warning] ?? warning).join(" ") || null
   };
 }
 
@@ -224,4 +257,25 @@ function countPositions(picks: DraftPickRow[]) {
     acc[position] = (acc[position] ?? 0) + 1;
     return acc;
   }, {});
+}
+
+function getPicksUntilMyNextPick(settings: unknown, myRosterId: string | undefined, currentPickNumber: number) {
+  if (!myRosterId || !settings || typeof settings !== "object") return null;
+  const draftSettings = settings as Record<string, unknown>;
+  const teams = Number(draftSettings.teams);
+  const rounds = Number(draftSettings.rounds);
+  const slot = Number(myRosterId);
+
+  if (!Number.isFinite(teams) || !Number.isFinite(rounds) || !Number.isFinite(slot) || teams <= 0 || rounds <= 0) {
+    return null;
+  }
+
+  for (let pick = currentPickNumber; pick <= teams * rounds; pick += 1) {
+    const round = Math.ceil(pick / teams);
+    const pickInRound = ((pick - 1) % teams) + 1;
+    const rosterSlot = round % 2 === 0 ? teams - pickInRound + 1 : pickInRound;
+    if (rosterSlot === slot) return pick - currentPickNumber;
+  }
+
+  return null;
 }

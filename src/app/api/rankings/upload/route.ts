@@ -98,6 +98,9 @@ export async function POST(request: Request) {
     else summary.matchedExact += 1;
 
     const normalizedName = normalizePlayerName(row.player_name);
+    const normalizedPosition = row.position || null;
+    const normalizedTeam = row.team || null;
+    // TODO: Add licensed/imported ADP and projection provider integrations. Do not scrape paid data.
     const payload = {
       user_id: user.id,
       league_id: leagueId,
@@ -108,8 +111,8 @@ export async function POST(request: Request) {
       matched_player_id: match.matched_player_id,
       player_name: row.player_name,
       normalized_player_name: normalizedName,
-      position: row.position,
-      team: row.team,
+      position: normalizedPosition,
+      team: normalizedTeam,
       rank: row.rank,
       adp: row.adp,
       projected_points: row.projected_points,
@@ -143,9 +146,13 @@ export async function POST(request: Request) {
       else {
         existingQuery
           .is("sleeper_player_id", null)
-          .eq("normalized_player_name", normalizedName)
-          .eq("position", row.position ?? "")
-          .eq("team", row.team ?? "");
+          .eq("normalized_player_name", normalizedName);
+
+        if (normalizedPosition) existingQuery.eq("position", normalizedPosition);
+        else existingQuery.is("position", null);
+
+        if (normalizedTeam) existingQuery.eq("team", normalizedTeam);
+        else existingQuery.is("team", null);
       }
 
       const { data: existing } = await existingQuery.maybeSingle();
