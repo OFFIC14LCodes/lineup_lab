@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import { createDraftRoomForDraft } from "@/lib/rosterforge/sync";
 import { getSessionUser } from "@/lib/supabase/auth";
+import { createClient } from "@/lib/supabase/server";
 
 export async function POST(request: Request) {
   const user = await getSessionUser();
@@ -13,6 +14,22 @@ export async function POST(request: Request) {
   }
 
   try {
+    const supabase = await createClient();
+    const { data: league, error: leagueError } = await supabase
+      .from("leagues")
+      .select("id")
+      .eq("id", body.leagueId)
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    if (leagueError) {
+      return NextResponse.json({ error: "Unable to verify league access." }, { status: 500 });
+    }
+
+    if (!league) {
+      return NextResponse.json({ error: "League not found." }, { status: 404 });
+    }
+
     const draftRoom = await createDraftRoomForDraft(user.id, body.leagueId, body.platformDraftId);
     return NextResponse.json({ draftRoom });
   } catch (error) {

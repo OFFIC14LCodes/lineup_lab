@@ -4,6 +4,7 @@ import { matchRankingRowToPlayer, type MatchablePlayer } from "@/lib/players/mat
 import { normalizePlayerName, normalizePosition, normalizeTeam } from "@/lib/players/normalize";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getSessionUser } from "@/lib/supabase/auth";
+import { createClient } from "@/lib/supabase/server";
 import { toNumber } from "@/lib/utils";
 
 type RawRankingInput = Record<string, unknown>;
@@ -63,6 +64,24 @@ export async function POST(request: Request) {
   const season = body.season?.trim() || String(new Date().getFullYear());
   const format = body.format?.trim() || "dynasty_superflex";
   const leagueId = body.leagueId || null;
+
+  if (leagueId) {
+    const supabase = await createClient();
+    const { data: league, error: leagueError } = await supabase
+      .from("leagues")
+      .select("id")
+      .eq("id", leagueId)
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    if (leagueError) {
+      return NextResponse.json({ error: "Unable to verify league access." }, { status: 500 });
+    }
+
+    if (!league) {
+      return NextResponse.json({ error: "League not found." }, { status: 404 });
+    }
+  }
 
   const rows = rawRows.map(normalizeRankingRow).filter((row): row is RankingInput => Boolean(row));
   if (rows.length === 0) {

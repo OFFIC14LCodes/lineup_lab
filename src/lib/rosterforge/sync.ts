@@ -223,6 +223,21 @@ export async function createDraftRoomForDraft(
   platformDraftId: string
 ) {
   const supabase = createAdminClient();
+  const { data: league, error: leagueError } = await supabase
+    .from("leagues")
+    .select("id")
+    .eq("id", leagueId)
+    .eq("user_id", userId)
+    .maybeSingle();
+
+  if (leagueError) {
+    throw leagueError;
+  }
+
+  if (!league) {
+    throw new Error("League not found.");
+  }
+
   const draft = await getDraft(platformDraftId);
 
   const { data, error } = await supabase

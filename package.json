@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "clean:typecheck": "powershell -NoProfile -Command \"Remove-Item -LiteralPath 'tsconfig.tsbuildinfo' -Force -ErrorAction SilentlyContinue; Remove-Item -LiteralPath '.next\\cache\\.tsbuildinfo' -Force -ErrorAction SilentlyContinue; Remove-Item -LiteralPath '.next\\cache\\typescript\\tsconfig.typecheck.tsbuildinfo' -Force -ErrorAction SilentlyContinue\""
   },
   "dependencies": {
     "@supabase/ssr": "^0.6.1",
