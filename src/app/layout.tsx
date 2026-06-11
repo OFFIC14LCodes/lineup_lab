@@ -1,27 +1,42 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { BrandLockup } from "@/components/brand";
+
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "RosterForge",
-  description: "Sleeper-first live fantasy football draft assistant."
+  title: "Blackbird GM",
+  description: "Stealth intelligence for fantasy football draft rooms."
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body className="min-h-screen bg-background text-slate-100 antialiased">
-        <header className="border-b border-line/80 bg-background/90">
-          <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4">
-            <Link href="/" className="text-lg font-black tracking-wide">
-              RosterForge
+        <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
+          <div className="absolute inset-x-0 top-[-14rem] h-[28rem] bg-[radial-gradient(circle_at_top,_rgba(201,164,92,0.22),_transparent_62%)]" />
+          <div className="absolute right-[-12rem] top-24 h-[28rem] w-[28rem] rounded-full bg-[radial-gradient(circle,_rgba(185,25,25,0.16),_transparent_68%)] blur-3xl" />
+          <div className="absolute bottom-[-12rem] left-[-10rem] h-[30rem] w-[30rem] rounded-full bg-[radial-gradient(circle,_rgba(255,230,162,0.1),_transparent_72%)] blur-3xl" />
+        </div>
+        <header className="sticky top-0 z-30 border-b border-line/70 bg-background/86 backdrop-blur-xl">
+          <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-4 py-4">
+            <Link href="/" aria-label="Blackbird GM home">
+              <BrandLockup />
             </Link>
-            <nav className="flex items-center gap-4 text-sm text-slate-300">
-              <Link href="/dashboard">Dashboard</Link>
-              <Link href="/leagues">Leagues</Link>
-              <Link href="/rankings">Rankings</Link>
-              <Link href="/settings">Settings</Link>
+            <nav className="flex items-center gap-1 text-sm text-slate-300">
+              <Link href="/dashboard" className="rf-nav-link">
+                Dashboard
+              </Link>
+              <Link href="/leagues" className="rf-nav-link">
+                Leagues
+              </Link>
+              <Link href="/rankings" className="rf-nav-link">
+                Rankings
+              </Link>
+              <Link href="/settings" className="rf-nav-link">
+                Settings
+              </Link>
             </nav>
           </div>
         </header>

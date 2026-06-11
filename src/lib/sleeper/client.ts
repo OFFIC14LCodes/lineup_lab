@@ -19,7 +19,7 @@ async function sleeperFetch<T>(path: string, options: FetchOptions = {}): Promis
   const response = await fetch(`${BASE_URL}${path}`, {
     ...options,
     headers: {
-      "User-Agent": "RosterForge/0.1"
+      "User-Agent": "BlackbirdGM/0.1"
     }
   });
 

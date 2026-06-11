@@ -5,15 +5,15 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "#090d12",
-        panel: "#101820",
-        panel2: "#14212b",
-        line: "#243341",
-        forge: "#18c08f",
-        gold: "#f5b642"
+        background: "#060708",
+        panel: "#14181d",
+        panel2: "#1b2026",
+        line: "#4f4433",
+        forge: "#d3aa59",
+        gold: "#c9a45c"
       },
       boxShadow: {
-        glow: "0 20px 80px rgba(24, 192, 143, 0.12)"
+        glow: "0 24px 80px rgba(201, 164, 92, 0.18)"
       }
     }
   },

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { LogIn } from "lucide-react";
 
+import { BrandLockup } from "@/components/brand";
 import { PageShell, Panel } from "@/components/ui";
 import { createClient } from "@/lib/supabase/client";
 
@@ -28,8 +29,11 @@ export default function LoginPage() {
   return (
     <PageShell className="max-w-xl">
       <Panel>
+        <BrandLockup showTagline />
         <h1 className="text-3xl font-black">Sign in</h1>
-        <p className="mt-2 text-sm text-slate-400">Use Supabase magic-link auth for this foundation.</p>
+        <p className="mt-2 text-sm text-slate-400">
+          Use your email to access the Blackbird GM draft room via secure magic link.
+        </p>
         <div className="mt-6 space-y-3">
           <input
             className="rf-input"
