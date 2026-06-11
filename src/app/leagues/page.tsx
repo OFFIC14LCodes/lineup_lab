@@ -32,7 +32,7 @@ export default async function LeaguesPage() {
           leagues.map((league) => (
             <Panel key={league.id} className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
               <div>
-                <Link className="text-xl font-bold hover:text-forge" href={`/leagues/${league.id}`}>
+                <Link className="text-xl font-bold hover:text-brand" href={`/leagues/${league.id}`}>
                   {league.name}
                 </Link>
                 <p className="mt-1 text-sm text-slate-400">

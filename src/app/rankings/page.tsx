@@ -49,7 +49,7 @@ export default async function RankingsPage({
                 <Link
                   key={item}
                   className={`rounded border px-3 py-2 ${
-                    filter === item ? "border-forge bg-forge text-background" : "border-line bg-panel2"
+                    filter === item ? "border-brand bg-brand text-background" : "border-line bg-panel2"
                   }`}
                   href={`/rankings?filter=${item}`}
                 >

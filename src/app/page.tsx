@@ -39,7 +39,7 @@ export default function Home() {
       </section>
       <Panel className="shadow-glow">
         <div className="flex items-center gap-3">
-          <ShieldCheck className="h-8 w-8 text-forge" />
+          <ShieldCheck className="h-8 w-8 text-brand" />
           <div>
             <h2 className="text-xl font-bold">Stealth stack</h2>
             <p className="text-sm text-slate-400">Core systems for auth, sync, polling, and draft state.</p>

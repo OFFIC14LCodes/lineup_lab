@@ -17,7 +17,7 @@ export default async function ConnectSleeperPage() {
         <div className="mt-6">
           <SleeperConnectForm />
         </div>
-        <Link className="mt-6 inline-block text-sm text-forge" href="/leagues">
+        <Link className="mt-6 inline-block text-sm text-brand" href="/leagues">
           View imported leagues
         </Link>
       </Panel>

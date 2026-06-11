@@ -10,7 +10,7 @@ export default async function DraftRoomPage({ params }: { params: Promise<{ draf
 
   return (
     <PageShell>
-      <Link className="mb-4 inline-block text-sm text-forge" href="/leagues">
+      <Link className="mb-4 inline-block text-sm text-brand" href="/leagues">
         Back to leagues
       </Link>
       <DraftWarRoom draftRoomId={draftRoomId} />

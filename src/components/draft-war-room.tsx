@@ -3,6 +3,8 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { RefreshCw, Search } from "lucide-react";
 
+type RecommendationTier = "elite_target" | "strong_target" | "good_value" | "depth_option" | "avoid_for_now";
+
 type AvailablePlayer = {
   sleeper_player_id: string | null;
   matched_player_id: string | null;
@@ -20,6 +22,20 @@ type AvailablePlayer = {
   match_confidence: number | null;
   is_ranked: boolean;
   is_fallback: boolean;
+  draftTargetScore: number | null;
+  recommendationTier: RecommendationTier;
+  scoreComponents: {
+    rankingScore: number;
+    projectionScore: number;
+    valueScore: number;
+    rosterNeedScore: number;
+    scarcityScore: number;
+    formatFitScore: number;
+    adpValueScore: number;
+    matchConfidencePenalty: number;
+  } | null;
+  reasons: string[];
+  warnings: string[];
 };
 
 type PickLine = {
@@ -47,6 +63,12 @@ type DraftState = {
   topNeeds: Array<{ position: string; current: number; target: number; need: number }>;
   rankingsUploaded: boolean;
   boardLabel: string;
+  scoringMetadata: {
+    formulaVersion: string;
+    generatedAt: string;
+    inputsUsed: string[];
+    limitations: string[];
+  };
   warnings: string[];
   warningMessages: string[];
   warning: string | null;
@@ -236,14 +258,18 @@ export function DraftWarRoom({ draftRoomId }: { draftRoomId: string }) {
             <NeedsList needs={state.topNeeds} />
           </SidePanel>
 
-          <SidePanel title="Recommendation Placeholder">
-            <PlayerList players={state.recommendations.slice(0, 10)} showRank />
+          <SidePanel title="Recommended Targets">
+            <RecommendationList players={state.recommendations.slice(0, 10)} />
             <NeedsList needs={state.topNeeds} compact />
             <p className="mt-3 text-xs text-slate-500">
-              Advanced draft target scoring is not implemented yet. This panel currently uses rankings and simple roster
-              counts only.
+              Draft Target Score v1 uses uploaded rankings, roster construction, league format flags, ADP, and
+              available value fields. It does not yet include external projection providers, news, injuries, or AI
+              explanations.
             </p>
-            {/* TODO: Add server-side AI explanation layer using the deterministic Draft Target Score output as grounded context. */}
+            <p className="mt-2 text-xs text-slate-600">
+              {state.scoringMetadata.formulaVersion} generated at{" "}
+              {new Date(state.scoringMetadata.generatedAt).toLocaleTimeString()}.
+            </p>
           </SidePanel>
         </aside>
       </div>
@@ -254,11 +280,13 @@ export function DraftWarRoom({ draftRoomId }: { draftRoomId: string }) {
 function AvailablePlayersTable({ players }: { players: AvailablePlayer[] }) {
   return (
     <div className="overflow-x-auto">
-      <table className="w-full min-w-[1120px] text-left text-sm">
+      <table className="w-full min-w-[1240px] text-left text-sm">
         <thead className="bg-panel2 text-xs uppercase text-slate-400">
           <tr>
             <th className="px-3 py-3">Rank</th>
             <th className="px-3 py-3">Player</th>
+            <th className="px-3 py-3">Score</th>
+            <th className="px-3 py-3">Tier</th>
             <th className="px-3 py-3">Pos</th>
             <th className="px-3 py-3">Team</th>
             <th className="px-3 py-3">Proj</th>
@@ -275,6 +303,10 @@ function AvailablePlayersTable({ players }: { players: AvailablePlayer[] }) {
             <tr key={`${player.sleeper_player_id ?? player.player_name}-${index}`} className="border-t border-line/70">
               <td className="px-3 py-3 font-bold">{player.rank ?? (player.is_fallback ? "-" : index + 1)}</td>
               <td className="px-3 py-3">{player.player_name ?? "Unknown"}</td>
+              <td className="px-3 py-3">{player.draftTargetScore === null ? "-" : player.draftTargetScore.toFixed(1)}</td>
+              <td className="px-3 py-3">
+                <TierBadge tier={player.recommendationTier} />
+              </td>
               <td className="px-3 py-3">{player.position || "-"}</td>
               <td className="px-3 py-3">{player.team || "-"}</td>
               <td className="px-3 py-3">{formatNumber(player.projected_points)}</td>
@@ -286,7 +318,7 @@ function AvailablePlayersTable({ players }: { players: AvailablePlayer[] }) {
               <td className="px-3 py-3">{player.match_status ?? (player.is_fallback ? "fallback" : "-")}</td>
             </tr>
           ))}
-          {players.length === 0 ? <EmptyTable colSpan={11} text="No available players match these filters." /> : null}
+          {players.length === 0 ? <EmptyTable colSpan={13} text="No available players match these filters." /> : null}
         </tbody>
       </table>
     </div>
@@ -336,9 +368,9 @@ function NeedsList({
   );
 }
 
-function PlayerList({ players, showRank = false }: { players: AvailablePlayer[]; showRank?: boolean }) {
+function RecommendationList({ players }: { players: AvailablePlayer[] }) {
   if (!players.length) {
-    return <p className="text-sm text-slate-400">No players to show.</p>;
+    return <p className="text-sm text-slate-400">Upload matched rankings to generate Draft Target Score recommendations.</p>;
   }
 
   return (
@@ -346,19 +378,70 @@ function PlayerList({ players, showRank = false }: { players: AvailablePlayer[];
       {players.map((player, index) => (
         <div
           key={`${player.sleeper_player_id ?? player.player_name}-${index}`}
-          className="flex items-center justify-between gap-3 rounded-md border border-line bg-panel2 px-3 py-2 text-sm"
+          className="rounded-md border border-line bg-panel2 px-3 py-3 text-sm"
         >
-          <div className="min-w-0">
-            <div className="truncate font-bold">{player.player_name ?? "Unknown"}</div>
-            <div className="text-xs text-slate-400">
-              {player.position ?? "-"} · {player.team ?? "-"}
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <div className="truncate font-bold">{player.player_name ?? "Unknown"}</div>
+              <div className="mt-1 text-xs text-slate-400">
+                {player.position ?? "-"} · {player.team ?? "-"} · Rank {player.rank ?? "-"} · ADP{" "}
+                {formatNumber(player.adp)}
+              </div>
+            </div>
+            <div className="text-right">
+              <div className="text-base font-black">{player.draftTargetScore?.toFixed(1) ?? "-"}</div>
+              <div className="mt-1">
+                <TierBadge tier={player.recommendationTier} />
+              </div>
             </div>
           </div>
-          {showRank ? <div className="text-xs text-slate-400">#{player.rank ?? index + 1}</div> : null}
+          {player.reasons.length ? (
+            <div className="mt-3 flex flex-wrap gap-2">
+              {player.reasons.slice(0, 4).map((reason) => (
+                <span key={reason} className="rounded-full border border-line px-2 py-1 text-xs text-slate-300">
+                  {reason}
+                </span>
+              ))}
+            </div>
+          ) : null}
+          {player.warnings.length ? (
+            <div className="mt-3 space-y-1">
+              {player.warnings.map((warning) => (
+                <p key={warning} className="text-xs text-gold">
+                  {warning}
+                </p>
+              ))}
+            </div>
+          ) : null}
         </div>
       ))}
     </div>
   );
+}
+
+function TierBadge({ tier }: { tier: RecommendationTier }) {
+  const label =
+    tier === "elite_target"
+      ? "Elite"
+      : tier === "strong_target"
+        ? "Strong"
+        : tier === "good_value"
+          ? "Value"
+          : tier === "depth_option"
+            ? "Depth"
+            : "Avoid";
+  const className =
+    tier === "elite_target"
+      ? "border-gold/40 bg-gold/15 text-gold"
+      : tier === "strong_target"
+        ? "border-brand/40 bg-brand/15 text-brand"
+        : tier === "good_value"
+          ? "border-slate-400/30 bg-slate-400/10 text-slate-200"
+          : tier === "depth_option"
+            ? "border-line bg-background text-slate-300"
+            : "border-red-400/30 bg-red-500/10 text-red-200";
+
+  return <span className={`rounded-full border px-2 py-1 text-[11px] uppercase tracking-wide ${className}`}>{label}</span>;
 }
 
 function EmptyTable({ colSpan, text }: { colSpan: number; text: string }) {

@@ -1,4 +1,5 @@
 import { normalizePlayerName } from "@/lib/players/normalize";
+import { buildDraftTargetScore, type DraftTargetScorePlayer } from "@/lib/draft/scoring";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 type DraftPickRow = {
@@ -41,13 +42,6 @@ type PlayerRow = {
   team: string | null;
   fantasy_positions_json: string[] | null;
   normalized_name: string | null;
-};
-
-const STARTER_TARGETS: Record<string, number> = {
-  QB: 1,
-  RB: 2,
-  WR: 2,
-  TE: 1
 };
 
 const POSITION_ORDER: Record<string, number> = {
@@ -199,15 +193,6 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
         .slice(0, 150);
 
   const counts = countPositions(myPicks);
-  const topNeeds = Object.entries(STARTER_TARGETS)
-    .map(([position, target]) => ({
-      position,
-      current: counts[position] ?? 0,
-      target,
-      need: Math.max(0, target - (counts[position] ?? 0))
-    }))
-    .sort((a, b) => b.need - a.need)
-    .filter((need) => need.need > 0);
 
   const statusCounts = rankingRows.reduce<Record<string, number>>((acc, ranking) => {
     const status = ranking.match_status ?? "unmatched";
@@ -225,6 +210,19 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
     !room.last_synced_at && draftPicks.length === 0 ? "draft_not_synced" : null
   ].filter((warning): warning is string => Boolean(warning));
   const picksUntilMyNextPick = getPicksUntilMyNextPick(room.settings_json, myRosterId, currentPickNumber);
+  const scoring = buildDraftTargetScore({
+    players: remainingPlayers as DraftTargetScorePlayer[],
+    league: {
+      currentPickNumber,
+      rosterPositions: Array.isArray(room.leagues?.roster_positions_json) ? room.leagues.roster_positions_json : [],
+      positionCounts: counts,
+      is_dynasty: Boolean(room.leagues?.is_dynasty),
+      is_best_ball: Boolean(room.leagues?.is_best_ball),
+      is_superflex: Boolean(room.leagues?.is_superflex),
+      is_two_qb: Boolean(room.leagues?.is_two_qb),
+      te_premium: Number(room.leagues?.te_premium ?? 0)
+    }
+  });
 
   return {
     room,
@@ -237,14 +235,13 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
     myRoster: myPicks,
     positionCounts: counts,
     draftedPlayerIds: Array.from(draftedIds),
-    remainingPlayers,
-    // TODO: Replace placeholder ranking sort with Draft Target Score engine using projections, ADP,
-    // scarcity, roster construction, tier cliffs, best ball, superflex, and TE premium.
-    recommendations: remainingPlayers.slice(0, 10),
-    topNeeds,
+    remainingPlayers: scoring.scoredPlayers,
+    recommendations: hasRankings ? scoring.recommendations : [],
+    topNeeds: scoring.topNeeds,
     rankingsUploaded: hasRankings,
     rankingMatchStatusCounts: statusCounts,
     boardLabel: hasRankings ? "Ranked available players" : WARNING_MESSAGES.using_fallback_pool,
+    scoringMetadata: scoring.scoringMetadata,
     warnings,
     warningMessages: warnings.map((warning) => WARNING_MESSAGES[warning] ?? warning),
     warning: warnings.map((warning) => WARNING_MESSAGES[warning] ?? warning).join(" ") || null

@@ -27,7 +27,7 @@ export default async function LeaguePage({ params }: { params: Promise<{ leagueI
 
   return (
     <PageShell>
-      <Link className="text-sm text-forge" href="/leagues">
+      <Link className="text-sm text-brand" href="/leagues">
         Back to leagues
       </Link>
       <div className="mt-4 flex flex-col justify-between gap-4 md:flex-row md:items-end">
