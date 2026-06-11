@@ -41,6 +41,7 @@ export default async function RankingsPage({
           <RankingsUpload leagues={leagues ?? []} />
         </Panel>
         <Panel>
+          {/* TODO: Build UI to manually resolve unmatched/ambiguous ranking rows to Sleeper players. */}
           <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
             <h2 className="text-xl font-bold">Latest rankings</h2>
             <div className="flex flex-wrap gap-2 text-sm">

@@ -100,6 +100,7 @@ export async function POST(request: Request) {
     const normalizedName = normalizePlayerName(row.player_name);
     const normalizedPosition = row.position || null;
     const normalizedTeam = row.team || null;
+    // TODO: Add provider-backed projections and format-specific value models.
     // TODO: Add licensed/imported ADP and projection provider integrations. Do not scrape paid data.
     const payload = {
       user_id: user.id,
