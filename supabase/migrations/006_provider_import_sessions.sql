@@ -57,8 +57,14 @@ end $$;
 create index if not exists idx_provider_import_sessions_user_created_at
   on public.provider_import_sessions(user_id, created_at desc);
 
+create index if not exists idx_provider_import_sessions_user_status_created_at
+  on public.provider_import_sessions(user_id, status, created_at desc);
+
 create index if not exists idx_provider_import_sessions_status_expires_at
   on public.provider_import_sessions(status, expires_at);
+
+create index if not exists idx_provider_import_sessions_expires_at
+  on public.provider_import_sessions(expires_at);
 
 do $$
 begin
@@ -83,12 +89,12 @@ begin
     from pg_policies
     where schemaname = 'public'
       and tablename = 'provider_import_sessions'
-      and policyname = 'Provider import sessions are owned by users'
+      and policyname = 'Provider import sessions are readable to owners'
   ) then
-    create policy "Provider import sessions are owned by users"
+    create policy "Provider import sessions are readable to owners"
       on public.provider_import_sessions
-      for all
-      using (user_id = auth.uid())
-      with check (user_id = auth.uid());
+      for select
+      to authenticated
+      using (user_id = auth.uid());
   end if;
 end $$;

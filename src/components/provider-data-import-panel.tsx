@@ -10,6 +10,13 @@ import type {
   InjuryImportMode
 } from "@/lib/providers/import/types";
 
+type ApiErrorPayload = {
+  error?: {
+    code?: string;
+    message?: string;
+  };
+};
+
 const DATASET_OPTIONS: Array<{ value: ImportDatasetKind; label: string }> = [
   { value: "weekly_stats", label: "Weekly stats" },
   { value: "season_stats", label: "Season stats" },
@@ -60,9 +67,9 @@ export function ProviderDataImportPanel() {
           })
         });
 
-        const payload = (await response.json()) as ImportPreviewResponse | { error?: string };
+        const payload = (await response.json()) as ImportPreviewResponse | ApiErrorPayload;
         if (!response.ok) {
-          throw new Error("error" in payload && payload.error ? payload.error : "Unable to preview import.");
+          throw new Error(getApiErrorMessage(payload, "Unable to preview import."));
         }
 
         setPreview(payload as ImportPreviewResponse);
@@ -90,9 +97,9 @@ export function ProviderDataImportPanel() {
           })
         });
 
-        const payload = (await response.json()) as ImportPreviewResponse | { error?: string };
+        const payload = (await response.json()) as ImportPreviewResponse | ApiErrorPayload;
         if (!response.ok) {
-          throw new Error("error" in payload && payload.error ? payload.error : "Unable to update review row.");
+          throw new Error(getApiErrorMessage(payload, "Unable to update review row."));
         }
 
         setPreview(payload as ImportPreviewResponse);
@@ -108,6 +115,9 @@ export function ProviderDataImportPanel() {
     startTransition(async () => {
       try {
         setError(null);
+        if (!window.confirm("Execute the ready rows now? This write step is non-transactional.")) {
+          return;
+        }
         const response = await fetch("/api/provider-import/execute", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -118,9 +128,9 @@ export function ProviderDataImportPanel() {
           })
         });
 
-        const payload = (await response.json()) as ExecuteImportResponse | { error?: string };
+        const payload = (await response.json()) as ExecuteImportResponse | ApiErrorPayload;
         if (!response.ok) {
-          throw new Error("error" in payload && payload.error ? payload.error : "Unable to execute import.");
+          throw new Error(getApiErrorMessage(payload, "Unable to execute import."));
         }
 
         setExecution(payload as ExecuteImportResponse);
@@ -304,6 +314,9 @@ export function ProviderDataImportPanel() {
                 <p className="mt-1 text-sm text-slate-400">
                   These rows are eligible for write execution using the existing provider repository pipeline.
                 </p>
+                <p className="mt-2 text-xs text-amber-200">
+                  Execution is non-transactional. Successfully written rows are not rolled back if a later row fails.
+                </p>
               </div>
               <button type="button" onClick={handleExecute} className="rf-button" disabled={isPending || preview.readyRows.length === 0}>
                 {isPending ? "Working..." : `Execute ${preview.readyRows.length} ready row${preview.readyRows.length === 1 ? "" : "s"}`}
@@ -373,4 +386,8 @@ function StatCard({ label, value, accent = false }: { label: string; value: stri
       <div className={accent ? "mt-2 text-2xl font-black text-brand" : "mt-2 text-2xl font-black text-slate-100"}>{value}</div>
     </div>
   );
+}
+
+function getApiErrorMessage(payload: ImportPreviewResponse | ExecuteImportResponse | ApiErrorPayload, fallback: string) {
+  return "error" in payload && payload.error?.message ? payload.error.message : fallback;
 }

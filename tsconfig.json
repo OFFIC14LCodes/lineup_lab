@@ -24,6 +24,9 @@
     "paths": {
       "@/*": [
         "./src/*"
+      ],
+      "server-only": [
+        "./src/test/server-only.ts"
       ]
     },
     "incremental": false

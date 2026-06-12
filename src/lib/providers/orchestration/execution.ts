@@ -44,10 +44,7 @@ export async function executeReadyRecords(
         provider: entry.prepared.input.provider,
         status: "failed",
         rowId: null,
-        error: {
-          code: repositoryError.code,
-          message: repositoryError.message
-        }
+        error: serializeExecutionError(repositoryError)
       });
 
       if (repositoryError.code === "mapping_conflict" || failureMode === "stop_on_first_error") {
@@ -120,4 +117,24 @@ function normalizeExecutionError(error: unknown) {
   }
 
   return new ProviderRepositoryError("REPOSITORY_WRITE_FAILED", error instanceof Error ? error.message : "Repository write failed.");
+}
+
+function serializeExecutionError(error: ProviderRepositoryError) {
+  return {
+    code: error.code,
+    message: safeExecutionErrorMessage(error.code)
+  };
+}
+
+function safeExecutionErrorMessage(code: string) {
+  switch (code) {
+    case "mapping_conflict":
+      return "External mapping conflict prevented this row from being written.";
+    case "mapping_required":
+      return "External mapping is required before this row can be written.";
+    case "validation_error":
+      return "Prepared canonical input failed validation before write.";
+    default:
+      return "Repository write failed.";
+  }
 }

@@ -2,12 +2,14 @@ import { PageShell, Panel } from "@/components/ui";
 import { LogoutButton } from "@/components/logout-button";
 import { SyncPlayersButton } from "@/components/sync-players-button";
 import { isProviderDataImportEnabled } from "@/lib/providers/import/access";
+import { isScoringInspectorEnabled } from "@/lib/scoring/server";
 import { requireUser } from "@/lib/supabase/auth";
 import Link from "next/link";
 
 export default async function SettingsPage() {
   await requireUser();
   const providerImportEnabled = isProviderDataImportEnabled();
+  const scoringInspectorEnabled = isScoringInspectorEnabled();
 
   return (
     <PageShell className="grid gap-6 lg:grid-cols-[1fr_320px]">
@@ -24,6 +26,11 @@ export default async function SettingsPage() {
           {providerImportEnabled ? (
             <Link href="/settings/data-import" className="rf-button">
               Open provider data import
+            </Link>
+          ) : null}
+          {scoringInspectorEnabled ? (
+            <Link href="/settings/scoring-inspector" className="rf-button secondary">
+              Open scoring inspector
             </Link>
           ) : null}
         </div>

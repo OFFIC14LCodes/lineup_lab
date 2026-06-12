@@ -1,10 +1,11 @@
 import Papa from "papaparse";
+import path from "node:path";
 
 import { mockAdapter } from "@/lib/providers/adapters/mock-adapter";
 import type { AdapterNormalizationResult, AdapterSourceRecord } from "@/lib/providers/adapters/types";
-import type { ImportPreviewRequest, ParsedImportPayload, ParsedImportRecord } from "@/lib/providers/import/types";
+import { IMPORT_DATASET_KINDS, IMPORT_PROVIDERS, INJURY_IMPORT_MODES, type ImportPreviewRequest, type ParsedImportPayload, type ParsedImportRecord } from "@/lib/providers/import/types";
 import { MAX_IMPORT_FILE_BYTES, MAX_IMPORT_ROWS } from "@/lib/providers/import/constants";
-import { ProviderRepositoryValidationError } from "@/lib/providers/repositories/shared";
+import { IMPORT_ERROR_CODES, ImportWorkflowError } from "@/lib/providers/import/errors";
 
 const SUPPORTED_JSON_MIME_TYPES = new Set(["application/json", "text/json"]);
 const SUPPORTED_CSV_MIME_TYPES = new Set(["text/csv", "application/csv", "application/vnd.ms-excel"]);
@@ -16,7 +17,11 @@ export function parseImportPayload(request: ImportPreviewRequest): ParsedImportP
   const parsedRecords = parser === "json" ? parseJsonRecords(request.fileContent) : parseCsvRecords(request.fileContent);
 
   if (parsedRecords.length > MAX_IMPORT_ROWS) {
-    throw new ProviderRepositoryValidationError(`Parsed row count exceeds maximum of ${MAX_IMPORT_ROWS}.`);
+    throw new ImportWorkflowError(
+      IMPORT_ERROR_CODES.tooManyRows,
+      `Parsed row count exceeds maximum of ${MAX_IMPORT_ROWS}.`,
+      400
+    );
   }
 
   return {
@@ -42,14 +47,27 @@ export function normalizeImportRecords(parsed: ParsedImportPayload): AdapterNorm
 
 function validateImportRequest(request: ImportPreviewRequest) {
   const bytes = Buffer.byteLength(request.fileContent ?? "", "utf8");
-  if (!request.filename.trim()) {
-    throw new ProviderRepositoryValidationError("filename is required.");
+  if (!IMPORT_DATASET_KINDS.includes(request.datasetKind)) {
+    throw new ImportWorkflowError(IMPORT_ERROR_CODES.invalidDatasetKind, "Unsupported dataset kind.", 400);
+  }
+  if (!(IMPORT_PROVIDERS as readonly string[]).includes(request.provider)) {
+    throw new ImportWorkflowError(IMPORT_ERROR_CODES.invalidProvider, "Unsupported provider.", 400);
+  }
+  if (request.injuryImportMode && !INJURY_IMPORT_MODES.includes(request.injuryImportMode)) {
+    throw new ImportWorkflowError(IMPORT_ERROR_CODES.invalidInjuryMode, "Unsupported injury import mode.", 400);
+  }
+  if (!sanitizeFilename(request.filename)) {
+    throw new ImportWorkflowError(IMPORT_ERROR_CODES.missingFilename, "filename is required.", 400);
   }
   if (!request.fileContent.trim()) {
-    throw new ProviderRepositoryValidationError("Uploaded file is empty.");
+    throw new ImportWorkflowError(IMPORT_ERROR_CODES.emptyFile, "Uploaded file is empty.", 400);
   }
   if (bytes > MAX_IMPORT_FILE_BYTES) {
-    throw new ProviderRepositoryValidationError(`Uploaded file exceeds ${MAX_IMPORT_FILE_BYTES / (1024 * 1024)} MB.`);
+    throw new ImportWorkflowError(
+      IMPORT_ERROR_CODES.fileTooLarge,
+      `Uploaded file exceeds ${MAX_IMPORT_FILE_BYTES / (1024 * 1024)} MB.`,
+      400
+    );
   }
 }
 
@@ -71,7 +89,7 @@ function parseJsonRecords(fileContent: string) {
   try {
     parsed = JSON.parse(fileContent);
   } catch {
-    throw new ProviderRepositoryValidationError("Invalid JSON file.");
+    throw new ImportWorkflowError(IMPORT_ERROR_CODES.malformedJson, "Invalid JSON file.", 400);
   }
 
   const rawRecords = Array.isArray(parsed)
@@ -94,7 +112,7 @@ function parseCsvRecords(fileContent: string) {
   });
 
   if (result.errors.length > 0) {
-    throw new ProviderRepositoryValidationError(`Invalid CSV file: ${result.errors[0]?.message ?? "parse error"}.`);
+    throw new ImportWorkflowError(IMPORT_ERROR_CODES.malformedCsv, "Invalid CSV file.", 400);
   }
 
   return (result.data ?? []).map((record, index) => normalizeParsedRecord(transformCsvRecord(record), index + 2));
@@ -102,7 +120,7 @@ function parseCsvRecords(fileContent: string) {
 
 function normalizeParsedRecord(record: unknown, sourceRowNumber: number): ParsedImportRecord {
   if (!record || typeof record !== "object" || Array.isArray(record)) {
-    throw new ProviderRepositoryValidationError(`Row ${sourceRowNumber} must be an object.`);
+    throw new ImportWorkflowError(IMPORT_ERROR_CODES.invalidRequest, `Row ${sourceRowNumber} must be an object.`, 400);
   }
 
   const baseRecord = { ...(record as Record<string, unknown>) };
@@ -167,7 +185,7 @@ function parseEmbeddedJson(value: string, fieldName: string) {
     }
     return parsed as Record<string, unknown>;
   } catch {
-    throw new ProviderRepositoryValidationError(`${fieldName} must contain a JSON object.`);
+    throw new ImportWorkflowError(IMPORT_ERROR_CODES.invalidRequest, `${fieldName} must contain a JSON object.`, 400);
   }
 }
 
@@ -186,13 +204,19 @@ function runNormalization(datasetKind: ImportPreviewRequest["datasetKind"], reco
           : mockAdapter.normalizeInjuries;
 
   if (!normalizer) {
-    throw new ProviderRepositoryValidationError(`Manual adapter does not support ${datasetKind}.`);
+    throw new ImportWorkflowError(IMPORT_ERROR_CODES.invalidProvider, `Manual adapter does not support ${datasetKind}.`, 400);
   }
 
   const result = normalizer(records);
   if ("supported" in result && result.supported === false) {
-    throw new ProviderRepositoryValidationError(result.message);
+    throw new ImportWorkflowError(IMPORT_ERROR_CODES.invalidProvider, result.message, 400);
   }
 
   return result as AdapterNormalizationResult<AdapterSourceRecord[]>;
+}
+
+export function sanitizeFilename(filename: string) {
+  const trimmed = path.basename(filename).trim();
+  const normalized = trimmed.replace(/[^\w.\-]+/g, "_").slice(0, 120);
+  return normalized || "";
 }

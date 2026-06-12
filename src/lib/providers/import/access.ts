@@ -3,7 +3,9 @@ import "server-only";
 import { notFound } from "next/navigation";
 
 import { getBooleanEnv } from "@/lib/env";
+import { IMPORT_ERROR_CODES, ImportWorkflowError } from "@/lib/providers/import/errors";
 import { requireUser } from "@/lib/supabase/auth";
+import { getSessionUser } from "@/lib/supabase/auth";
 
 export const PROVIDER_IMPORT_FEATURE_FLAG = "ENABLE_PROVIDER_DATA_IMPORT";
 
@@ -19,11 +21,23 @@ export async function requireProviderImportAccess() {
   return requireUser();
 }
 
-export async function getProviderImportAccess() {
+export async function requireProviderImportApiAccess() {
   if (!isProviderDataImportEnabled()) {
-    return { enabled: false as const, user: null };
+    throw new ImportWorkflowError(
+      IMPORT_ERROR_CODES.importDisabled,
+      "Provider data import is disabled.",
+      403
+    );
   }
 
-  const user = await requireUser();
-  return { enabled: true as const, user };
+  const user = await getSessionUser();
+  if (!user) {
+    throw new ImportWorkflowError(
+      IMPORT_ERROR_CODES.authRequired,
+      "Authentication is required.",
+      401
+    );
+  }
+
+  return user;
 }

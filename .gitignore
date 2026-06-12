@@ -5,3 +5,4 @@ node_modules
 npm-debug.log*
 dev-server.*.log
 *.tsbuildinfo
+data/raw/

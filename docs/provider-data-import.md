@@ -29,11 +29,15 @@ Internal-only manual import flow for football data review in Blackbird GM.
 - Preview data is stored in `public.provider_import_sessions`.
 - Sessions are scoped to the authenticated `user_id`.
 - Sessions expire after 30 minutes.
+- Authenticated users can `SELECT` only their own sessions through RLS.
+- Ordinary authenticated users do not receive direct insert/update/delete session policies.
 - The stored payload includes:
-  - source hash
   - normalized records
   - preview plan
   - execution result metadata
+  - review history
+- The source hash is stored in the table column, not duplicated in the JSON payload.
+- Session payloads intentionally omit raw upload bytes and scrub arbitrary imported metadata before persistence.
 
 ## Migration Requirement
 
@@ -51,3 +55,11 @@ Public sample files live under:
 - `public/examples/provider-import/*.json`
 
 These are intentionally small synthetic examples for validating the flow, not production datasets.
+
+## Verification Notes
+
+- `npm run smoke:provider-pipeline` runs only `scripts/provider-pipeline-smoke.smoke.ts`.
+- `npm run smoke:provider-import` runs only `scripts/provider-import-smoke.smoke.ts`.
+- Import execution is non-transactional; successful writes are not rolled back if a later row fails.
+- Partially failed sessions retain their execution outcomes, stored plan, and review history for inspection.
+- Automatic retry is not currently supported for `failed` or `partially_failed` sessions; create a fresh preview instead.

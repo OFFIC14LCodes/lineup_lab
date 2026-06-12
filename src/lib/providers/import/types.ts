@@ -35,7 +35,6 @@ export type ParsedImportPayload = {
 
 export type ImportSessionPayload = {
   filename: string;
-  sourceHash: string;
   datasetKind: ImportDatasetKind;
   provider: ImportProvider;
   injuryImportMode: InjuryImportMode;
@@ -44,6 +43,7 @@ export type ImportSessionPayload = {
   plan: DatasetIngestionPlan;
   totalRows: number;
   sourceWarnings: string[];
+  reviewHistory: ImportReviewHistoryEntry[];
   executedAt?: string | null;
   executionResult?: IngestionExecutionResult | null;
 };
@@ -89,6 +89,7 @@ export type ImportPreviewResponse = {
   sourceHash: string;
   injuryImportMode: InjuryImportMode;
   sourceWarnings: string[];
+  reviewHistory: ImportReviewHistoryEntry[];
 };
 
 export type ImportPreviewRequest = {
@@ -122,6 +123,14 @@ export type ExecuteImportResponse = {
   readyCount: number;
   execution: IngestionExecutionResult | null;
   warnings: string[];
+};
+
+export type ImportReviewHistoryEntry = {
+  sourceRecordId: string | null;
+  action: "approve" | "skip";
+  at: string;
+  previousOutcome: "mappingRequired" | "manualReview" | "unresolved";
+  selectedPlayerId?: string | null;
 };
 
 export type ImportTemplateField = {
