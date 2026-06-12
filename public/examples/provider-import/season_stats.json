@@ -1,0 +1,16 @@
+[
+  {
+    "fullName": "Bijan Robinson",
+    "team": "ATL",
+    "position": "RB",
+    "season": 2025,
+    "providerExternalId": "manual-bijan-season",
+    "gamesPlayed": 17,
+    "gamesStarted": 17,
+    "providerFantasyPoints": 284.1,
+    "stats": {
+      "rush_yd": 1530,
+      "rush_td": 12
+    }
+  }
+]

@@ -4,6 +4,13 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { ChevronDown, RefreshCw, Search } from "lucide-react";
 
 type RecommendationTier = "elite_target" | "strong_target" | "good_value" | "depth_option" | "avoid_for_now";
+type InputCompleteness = "full" | "partial" | "rankings_only" | "fallback_only";
+type PositionScoringMode =
+  | "offense_v1_1"
+  | "idp_rankings_v1"
+  | "kicker_rankings_v1"
+  | "defense_rankings_v1"
+  | "unsupported";
 
 type AvailablePlayer = {
   sleeper_player_id: string | null;
@@ -36,6 +43,8 @@ type AvailablePlayer = {
   } | null;
   reasons: string[];
   warnings: string[];
+  inputCompleteness?: InputCompleteness;
+  positionScoringMode?: PositionScoringMode;
 };
 
 type PickLine = {
@@ -60,7 +69,46 @@ type DraftState = {
   positionCounts: Record<string, number>;
   remainingPlayers: AvailablePlayer[];
   recommendations: AvailablePlayer[];
-  topNeeds: Array<{ position: string; current: number; target: number; need: number }>;
+  topNeeds: Array<{
+    position: string;
+    current: number;
+    target: number;
+    need: number;
+    sharedFlexDemand?: number;
+    needLevel?: "urgent" | "high" | "moderate" | "low" | "filled" | "not_used";
+    kind?: "direct" | "shared" | "depth";
+    label?: string;
+    note?: string;
+  }>;
+  rosterRequirements: {
+    directStarters: Record<string, number>;
+    offensiveFlexCount: number;
+    superflexCount: number;
+    idpFlexCount: number;
+    benchCount: number;
+    irCount: number;
+    taxiCount: number;
+    hasIDP: boolean;
+    hasKicker: boolean;
+    hasTeamDefense: boolean;
+    unknownSlots: string[];
+  };
+  positionNeeds: Array<{
+    position: string;
+    label: string;
+    draftedCount: number;
+    directStarterRequirement: number;
+    sharedFlexDemand: number;
+    minimumNeed: number;
+    deficit: number;
+    needLevel: "urgent" | "high" | "moderate" | "low" | "filled" | "not_used";
+    kind: "direct" | "shared" | "depth";
+    note?: string;
+  }>;
+  hasIDP: boolean;
+  hasKicker: boolean;
+  hasTeamDefense: boolean;
+  unknownRosterSlots: string[];
   rankingsUploaded: boolean;
   boardLabel: string;
   scoringMetadata: {
@@ -78,13 +126,17 @@ type DraftState = {
       formatFit: number;
       adpValue: number;
     };
+    supportedScoredPositions: string[];
+    positionScoringModes: PositionScoringMode[];
+    idpScoringDetected: boolean;
+    rankingsOnlyPositions: string[];
   };
   warnings: string[];
   warningMessages: string[];
   warning: string | null;
 };
 
-const POSITIONS = ["All", "QB", "RB", "WR", "TE"];
+const POSITIONS = ["All", "QB", "RB", "WR", "TE", "K", "DEF", "DL", "LB", "DB"];
 const MATCH_FILTERS = ["All", "Matched", "Issues"];
 
 export function DraftWarRoom({ draftRoomId }: { draftRoomId: string }) {
@@ -257,11 +309,7 @@ export function DraftWarRoom({ draftRoomId }: { draftRoomId: string }) {
 
         <aside className="space-y-6">
           <SidePanel title="My Roster Construction">
-            <div className="grid grid-cols-2 gap-2">
-              {["QB", "RB", "WR", "TE"].map((position) => (
-                <Metric key={position} label={position} value={state.positionCounts[position] ?? 0} />
-              ))}
-            </div>
+            <RosterConstructionSummary state={state} />
             <div className="mt-3 rounded-md border border-line bg-panel2 px-3 py-2 text-sm">
               Total drafted: <span className="font-bold">{totalDraftedByMe}</span>
             </div>
@@ -273,6 +321,7 @@ export function DraftWarRoom({ draftRoomId }: { draftRoomId: string }) {
               players={state.recommendations.slice(0, 10)}
               rankingsUploaded={state.rankingsUploaded}
               warningMessages={state.warningMessages}
+              usesLimitedDataPositions={state.hasIDP || state.hasKicker || state.hasTeamDefense}
             />
             <NeedsList needs={state.topNeeds} compact />
             <ScoringMetadata metadata={state.scoringMetadata} />
@@ -310,11 +359,16 @@ function AvailablePlayersTable({ players }: { players: AvailablePlayer[] }) {
               <td className="px-3 py-3 font-bold">{player.rank ?? (player.is_fallback ? "-" : index + 1)}</td>
               <td className="px-3 py-3">
                 <div className="font-medium text-slate-100">{player.player_name ?? "Unknown"}</div>
-                <div className="mt-1 text-xs text-slate-500">{player.team ?? player.position ?? "Player pool item"}</div>
+                <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-slate-500">
+                  <span>{player.team ?? player.position ?? "Player pool item"}</span>
+                  {player.positionScoringMode && player.positionScoringMode !== "offense_v1_1" ? (
+                    <LimitedDataBadge player={player} compact />
+                  ) : null}
+                </div>
               </td>
               <td className="px-3 py-3">
                 {player.draftTargetScore === null ? (
-                  "-"
+                  <span className="text-slate-500">{player.position && NON_OFFENSIVE_POSITIONS.has(player.position) ? "Not scored" : "-"}</span>
                 ) : (
                   <span className="inline-flex min-w-[3.75rem] justify-center rounded-md border border-brand/20 bg-brand/10 px-2 py-1 font-black text-brand">
                     {player.draftTargetScore.toFixed(1)}
@@ -332,7 +386,10 @@ function AvailablePlayersTable({ players }: { players: AvailablePlayer[] }) {
               <td className="px-3 py-3">{formatNumber(player.best_ball_value)}</td>
               <td className="px-3 py-3">{formatNumber(player.superflex_value)}</td>
               <td className="px-3 py-3">{formatNumber(player.te_premium_value)}</td>
-              <td className="px-3 py-3">{player.match_status ?? (player.is_fallback ? "fallback" : "-")}</td>
+              <td className="px-3 py-3">
+                <div>{player.match_status ?? (player.is_fallback ? "fallback" : "-")}</div>
+                {player.warnings[0] ? <div className="mt-1 text-[11px] text-slate-500">{player.warnings[0]}</div> : null}
+              </td>
             </tr>
           ))}
           {players.length === 0 ? <EmptyTable colSpan={13} text="No available players match these filters." /> : null}
@@ -364,21 +421,43 @@ function NeedsList({
   needs,
   compact = false
 }: {
-  needs: Array<{ position: string; current: number; target: number; need: number }>;
+  needs: Array<{
+    position: string;
+    current: number;
+    target: number;
+    need: number;
+    sharedFlexDemand?: number;
+    needLevel?: "urgent" | "high" | "moderate" | "low" | "filled" | "not_used";
+    kind?: "direct" | "shared" | "depth";
+    label?: string;
+    note?: string;
+  }>;
   compact?: boolean;
 }) {
   if (!needs.length) {
-    return <p className="mt-3 text-sm text-slate-400">Starter targets covered by placeholder counts.</p>;
+    return <p className="mt-3 text-sm text-slate-400">Starter requirements are currently covered.</p>;
   }
 
   return (
     <div className={compact ? "mt-3" : "mt-4"}>
       {needs.map((need) => (
-        <div key={need.position} className="flex justify-between border-b border-line/70 py-2 text-sm">
-          <span>{need.position}</span>
-          <span className="text-slate-400">
-            {need.current}/{need.target}
-          </span>
+        <div key={`${need.position}-${need.kind ?? "direct"}`} className="border-b border-line/70 py-2 text-sm">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex min-w-0 items-center gap-2">
+              <span className="truncate">{need.label ?? need.position}</span>
+              {need.needLevel ? <NeedLevelBadge level={need.needLevel} /> : null}
+            </div>
+            <span className="shrink-0 text-slate-400">
+              {need.current}/{need.target}
+            </span>
+          </div>
+          {need.sharedFlexDemand ? (
+            <p className="mt-1 text-xs text-slate-500">
+              Shared demand {need.sharedFlexDemand} · {need.kind === "shared" ? "flex pressure" : "depth signal"}
+            </p>
+          ) : need.note ? (
+            <p className="mt-1 text-xs text-slate-500">{need.note}</p>
+          ) : null}
         </div>
       ))}
     </div>
@@ -388,11 +467,13 @@ function NeedsList({
 function RecommendationList({
   players,
   rankingsUploaded,
-  warningMessages
+  warningMessages,
+  usesLimitedDataPositions
 }: {
   players: AvailablePlayer[];
   rankingsUploaded: boolean;
   warningMessages: string[];
+  usesLimitedDataPositions: boolean;
 }) {
   if (!players.length) {
     return (
@@ -405,6 +486,11 @@ function RecommendationList({
             ? "Review unmatched rows, sync draft picks, or broaden available ranked players to restore recommendations."
             : "Upload matched rankings to unlock Draft Target Score recommendations. If rankings are absent, the War Room falls back to the Sleeper player pool only."}
         </p>
+        {usesLimitedDataPositions && rankingsUploaded ? (
+          <p className="mt-2 text-xs text-slate-500">
+            IDP, kicker, and team-defense recommendations need matched rankings before limited-data scoring can surface them.
+          </p>
+        ) : null}
         {warningMessages.length ? (
           <p className="mt-3 text-xs text-gold">{warningMessages[0]}</p>
         ) : null}
@@ -430,6 +516,7 @@ function RecommendationList({
               <div className="flex flex-wrap items-center gap-2">
                 <PriorityBadge index={index} />
                 <PositionBadge position={player.position} />
+                <LimitedDataBadge player={player} />
               </div>
               <div className="mt-3 truncate text-base font-black text-slate-50">{player.player_name ?? "Unknown"}</div>
               <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-400">
@@ -517,6 +604,37 @@ function PositionBadge({ position }: { position: string | null }) {
   );
 }
 
+const NON_OFFENSIVE_POSITIONS = new Set(["K", "DEF", "DL", "LB", "DB"]);
+
+function LimitedDataBadge({
+  player,
+  compact = false
+}: {
+  player: AvailablePlayer;
+  compact?: boolean;
+}) {
+  const label =
+    player.positionScoringMode === "idp_rankings_v1"
+      ? "Rankings-only IDP"
+      : player.positionScoringMode === "kicker_rankings_v1"
+        ? "Rankings-only K"
+        : player.positionScoringMode === "defense_rankings_v1"
+          ? "Rankings-only DEF"
+          : null;
+
+  if (!label) return null;
+
+  return (
+    <span
+      className={`rounded-full border border-brand/20 bg-brand/10 px-2 py-1 text-[11px] uppercase tracking-wide text-brand ${
+        compact ? "" : ""
+      }`}
+    >
+      {label}
+    </span>
+  );
+}
+
 function ReasonList({ reasons }: { reasons: string[] }) {
   if (!reasons.length) return null;
 
@@ -589,14 +707,105 @@ function ScoringMetadata({
         <span>{metadata.formulaVersion}</span>
         <span className="text-slate-600">•</span>
         <span>{metadata.draftStage} stage</span>
+        {metadata.idpScoringDetected ? (
+          <>
+            <span className="text-slate-600">•</span>
+            <span>IDP scoring detected</span>
+          </>
+        ) : null}
         <span className="text-slate-600">•</span>
         <span>{new Date(metadata.generatedAt).toLocaleTimeString()}</span>
       </div>
       <p className="mt-2 text-xs text-slate-500">
-        Limits: {metadata.limitations.slice(0, 2).join(" ")}
+        Limits: {metadata.limitations.slice(0, 3).join(" ")}
       </p>
     </div>
   );
+}
+
+function RosterConstructionSummary({ state }: { state: DraftState }) {
+  const visibleNeeds = state.positionNeeds.filter((need) => {
+    if (need.position === "K") return state.hasKicker;
+    if (need.position === "DEF") return state.hasTeamDefense;
+    if (["DL", "LB", "DB"].includes(need.position)) return state.hasIDP;
+    return ["QB", "RB", "WR", "TE"].includes(need.position);
+  });
+
+  return (
+    <div className="space-y-3">
+      <div className="grid gap-2">
+        {visibleNeeds.map((need) => (
+          <div key={need.position} className="rounded-md border border-line bg-panel2 px-3 py-2">
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-semibold uppercase tracking-wide text-slate-300">{need.label}</span>
+                <NeedLevelBadge level={need.needLevel} />
+              </div>
+              <span className="text-sm text-slate-400">
+                {need.draftedCount} / {need.directStarterRequirement}
+              </span>
+            </div>
+            <p className="mt-1 text-xs text-slate-500">
+              {need.directStarterRequirement > 0
+                ? `${need.directStarterRequirement} direct starter${need.directStarterRequirement === 1 ? "" : "s"}`
+                : "No direct starter slots"}
+              {need.sharedFlexDemand > 0 ? ` · ${need.sharedFlexDemand} shared flex demand` : ""}
+            </p>
+          </div>
+        ))}
+      </div>
+      <div className="grid gap-2 sm:grid-cols-3">
+        {state.rosterRequirements.offensiveFlexCount > 0 ? (
+          <SharedDemandCard label="Offensive Flex" value={state.rosterRequirements.offensiveFlexCount} />
+        ) : null}
+        {state.rosterRequirements.superflexCount > 0 ? (
+          <SharedDemandCard label="Superflex" value={state.rosterRequirements.superflexCount} />
+        ) : null}
+        {state.rosterRequirements.idpFlexCount > 0 ? (
+          <SharedDemandCard label="IDP Flex" value={state.rosterRequirements.idpFlexCount} />
+        ) : null}
+      </div>
+      {state.hasIDP || state.hasKicker || state.hasTeamDefense ? (
+        <p className="rounded-md border border-brand/20 bg-brand/10 px-3 py-2 text-xs text-brand">
+          IDP, kicker, and team-defense recommendations currently use imported rankings, roster need, and scarcity.
+          Player-stat and league-specific scoring inputs are coming in a later phase.
+        </p>
+      ) : null}
+      {state.unknownRosterSlots.length ? (
+        <p className="text-xs text-gold">Unknown slots: {state.unknownRosterSlots.join(", ")}</p>
+      ) : null}
+    </div>
+  );
+}
+
+function SharedDemandCard({ label, value }: { label: string; value: number }) {
+  return (
+    <div className="rounded-md border border-line bg-background/60 px-3 py-2 text-xs">
+      <div className="uppercase tracking-wide text-slate-500">{label}</div>
+      <div className="mt-1 font-bold text-slate-100">{value} shared slot{value === 1 ? "" : "s"}</div>
+    </div>
+  );
+}
+
+function NeedLevelBadge({
+  level
+}: {
+  level: "urgent" | "high" | "moderate" | "low" | "filled" | "not_used";
+}) {
+  const className =
+    level === "urgent"
+      ? "border-red-400/30 bg-red-500/10 text-red-200"
+      : level === "high"
+        ? "border-gold/35 bg-gold/10 text-gold"
+        : level === "moderate"
+          ? "border-brand/35 bg-brand/10 text-brand"
+          : level === "low"
+            ? "border-slate-400/30 bg-slate-400/10 text-slate-300"
+            : level === "filled"
+              ? "border-emerald-400/30 bg-emerald-500/10 text-emerald-200"
+              : "border-line bg-background text-slate-400";
+
+  return <span className={`rounded-full border px-2 py-1 text-[11px] uppercase tracking-wide ${className}`}>{level}</span>;
 }
 
 function EmptyTable({ colSpan, text }: { colSpan: number; text: string }) {
@@ -615,4 +824,6 @@ function formatNumber(value: number | null | undefined) {
 }
 
 // TODO: Extend War Room display logic for IDP roster slots and defensive positions.
+// TODO: Add IDP support for more defensive slot variants and multi-position roster assignment edge cases.
 // TODO: Surface player stats and projection-provider inputs when those data pipelines exist.
+// TODO: Ground a future AI explanation layer in scoreComponents once deterministic scoring is stable.

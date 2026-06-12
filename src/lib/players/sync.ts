@@ -1,4 +1,13 @@
-import { displayPlayerName, buildPlayerSearchName, normalizePosition, normalizeTeam } from "@/lib/players/normalize";
+import {
+  buildPlayerSearchName,
+  classifySideOfBall,
+  displayPlayerName,
+  normalizeEligiblePositions,
+  normalizePrimaryPosition,
+  normalizePosition,
+  normalizePositionGroup,
+  normalizeTeam
+} from "@/lib/players/normalize";
 import { getAllPlayers } from "@/lib/sleeper/client";
 import type { SleeperPlayer } from "@/lib/sleeper/types";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -11,7 +20,7 @@ type PlayerSyncCounts = {
   lastSyncedAt: string;
 };
 
-const FANTASY_POSITIONS = new Set(["QB", "RB", "WR", "TE", "K", "DEF"]);
+const FANTASY_POSITIONS = new Set(["QB", "RB", "WR", "TE", "K", "DEF", "DL", "LB", "DB"]);
 
 export async function syncSleeperPlayers() {
   const supabase = createAdminClient();
@@ -49,25 +58,35 @@ function toPlayerRow(sleeperPlayerId: string, player: SleeperPlayer, updatedAt: 
   try {
     const fullName = displayPlayerName(player);
     const normalizedName = buildPlayerSearchName(player);
+    const rawPosition = player.position?.trim().toUpperCase() || null;
+    const primaryPosition = normalizePrimaryPosition(player.position);
+    const positionGroup = normalizePositionGroup(player.position);
     const position = normalizePosition(player.position);
     const team = normalizeTeam(player.team);
-    const fantasyPositions = Array.isArray(player.fantasy_positions)
-      ? player.fantasy_positions.map((pos) => normalizePosition(pos)).filter(Boolean)
-      : [];
+    const fantasyPositions = normalizeEligiblePositions([
+      ...(Array.isArray(player.fantasy_positions) ? player.fantasy_positions : []),
+      primaryPosition
+    ]);
+    const sideOfBall = classifySideOfBall(player.position);
 
     if (!sleeperPlayerId || !normalizedName) return null;
 
     const active =
       player.status !== "Inactive" &&
-      (fantasyPositions.some((pos) => FANTASY_POSITIONS.has(pos ?? "")) || (position ? FANTASY_POSITIONS.has(position) : false));
+      (fantasyPositions.some((pos) => FANTASY_POSITIONS.has(pos)) || (positionGroup ? FANTASY_POSITIONS.has(positionGroup) : false));
 
     return {
       sleeper_player_id: sleeperPlayerId,
       full_name: fullName || null,
       first_name: player.first_name ?? null,
       last_name: player.last_name ?? null,
+      raw_position: rawPosition,
+      primary_position: primaryPosition,
+      position_group: positionGroup,
       position,
       fantasy_positions_json: fantasyPositions,
+      eligible_positions_json: fantasyPositions,
+      side_of_ball: sideOfBall,
       team,
       age: typeof player.age === "number" ? player.age : null,
       years_exp: typeof player.years_exp === "number" ? player.years_exp : null,

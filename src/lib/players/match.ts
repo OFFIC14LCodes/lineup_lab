@@ -1,4 +1,10 @@
-import { normalizePlayerName, normalizePosition, normalizeTeam } from "@/lib/players/normalize";
+import {
+  classifySideOfBall,
+  normalizePlayerName,
+  normalizePosition,
+  normalizePositionGroup,
+  normalizeTeam
+} from "@/lib/players/normalize";
 
 export type MatchablePlayer = {
   id: string;
@@ -6,6 +12,9 @@ export type MatchablePlayer = {
   full_name: string | null;
   normalized_name: string | null;
   position: string | null;
+  primary_position?: string | null;
+  position_group?: string | null;
+  side_of_ball?: string | null;
   team: string | null;
 };
 
@@ -36,6 +45,8 @@ export type PlayerMatchResult = {
 export function matchRankingRowToPlayer(row: RankingMatchInput, players: MatchablePlayer[]): PlayerMatchResult {
   const normalizedName = normalizePlayerName(row.player_name);
   const position = normalizePosition(row.position);
+  const positionGroup = normalizePositionGroup(row.position);
+  const sideOfBall = classifySideOfBall(row.position);
   const team = normalizeTeam(row.team);
 
   if (row.sleeper_player_id) {
@@ -43,10 +54,18 @@ export function matchRankingRowToPlayer(row: RankingMatchInput, players: Matchab
     if (exact) return result("exact_id", 1, [exact]);
   }
 
-  const byName = players.filter((player) => player.normalized_name === normalizedName);
+  const byName = players.filter((player) => {
+    if (player.normalized_name !== normalizedName) return false;
+    if (!sideOfBall) return true;
+    return getPlayerSideOfBall(player) === sideOfBall;
+  });
   const matchers: Array<[PlayerMatchResult["match_status"], (player: MatchablePlayer) => boolean, number]> = [
-    ["exact_name_position_team", (player) => player.position === position && player.team === team, 0.98],
-    ["exact_name_position", (player) => player.position === position, 0.93],
+    [
+      "exact_name_position_team",
+      (player) => matchesPosition(player, position, positionGroup) && player.team === team,
+      0.98
+    ],
+    ["exact_name_position", (player) => matchesPosition(player, position, positionGroup), 0.93],
     ["exact_name_team", (player) => player.team === team, 0.9],
     ["exact_name", () => true, 0.82]
   ];
@@ -61,7 +80,8 @@ export function matchRankingRowToPlayer(row: RankingMatchInput, players: Matchab
     .map((player) => ({ player, score: similarity(normalizedName, player.normalized_name ?? "") }))
     .filter(({ score, player }) => {
       if (score < 0.92) return false;
-      if (position && player.position && player.position !== position) return false;
+      if (sideOfBall && getPlayerSideOfBall(player) !== sideOfBall) return false;
+      if (positionGroup && !matchesPosition(player, position, positionGroup)) return false;
       return true;
     })
     .sort((a, b) => b.score - a.score);
@@ -79,6 +99,23 @@ export function matchRankingRowToPlayer(row: RankingMatchInput, players: Matchab
   }
 
   return result("unmatched", 0, []);
+}
+
+function matchesPosition(
+  player: MatchablePlayer,
+  position: string | null,
+  positionGroup: string | null
+) {
+  const playerPrimary = player.primary_position ?? player.position ?? null;
+  const playerGroup = player.position_group ?? normalizePositionGroup(playerPrimary) ?? null;
+
+  if (position && playerPrimary === position) return true;
+  if (positionGroup && playerGroup === positionGroup) return true;
+  return !position && !positionGroup;
+}
+
+function getPlayerSideOfBall(player: MatchablePlayer) {
+  return player.side_of_ball ?? classifySideOfBall(player.primary_position ?? player.position);
 }
 
 function result(

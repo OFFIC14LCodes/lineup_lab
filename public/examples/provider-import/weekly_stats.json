@@ -1,0 +1,18 @@
+[
+  {
+    "fullName": "Patrick Mahomes",
+    "team": "KC",
+    "position": "QB",
+    "season": 2025,
+    "week": 1,
+    "providerExternalId": "manual-mahomes-1",
+    "providerFantasyPoints": 24.6,
+    "stats": {
+      "pass_yd": 305,
+      "pass_td": 3
+    },
+    "metadata": {
+      "note": "synthetic example"
+    }
+  }
+]

@@ -1,0 +1,16 @@
+[
+  {
+    "fullName": "Amon-Ra St. Brown",
+    "team": "DET",
+    "position": "WR",
+    "season": 2025,
+    "week": 1,
+    "projectionType": "weekly",
+    "providerExternalId": "manual-arsb-week1",
+    "providerFantasyPoints": 21.4,
+    "stats": {
+      "rec_yd": 98,
+      "rec_td": 1
+    }
+  }
+]

@@ -1,11 +1,13 @@
 import { PageShell, Panel } from "@/components/ui";
 import { LogoutButton } from "@/components/logout-button";
 import { SyncPlayersButton } from "@/components/sync-players-button";
+import { isProviderDataImportEnabled } from "@/lib/providers/import/access";
 import { requireUser } from "@/lib/supabase/auth";
 import Link from "next/link";
 
 export default async function SettingsPage() {
   await requireUser();
+  const providerImportEnabled = isProviderDataImportEnabled();
 
   return (
     <PageShell className="grid gap-6 lg:grid-cols-[1fr_320px]">
@@ -19,6 +21,11 @@ export default async function SettingsPage() {
           <Link href="/rankings" className="rf-button">
             Open rankings manager
           </Link>
+          {providerImportEnabled ? (
+            <Link href="/settings/data-import" className="rf-button">
+              Open provider data import
+            </Link>
+          ) : null}
         </div>
       </Panel>
       <Panel>

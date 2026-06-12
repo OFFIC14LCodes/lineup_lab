@@ -6,6 +6,13 @@ export type RecommendationTier =
   | "avoid_for_now";
 
 export type DraftStage = "early" | "middle" | "late";
+export type InputCompleteness = "full" | "partial" | "rankings_only" | "fallback_only";
+export type PositionScoringMode =
+  | "offense_v1_1"
+  | "idp_rankings_v1"
+  | "kicker_rankings_v1"
+  | "defense_rankings_v1"
+  | "unsupported";
 
 export type DraftTargetScoreComponents = {
   rankingScore: number;
@@ -46,6 +53,7 @@ type LeagueContext = {
   is_superflex: boolean;
   is_two_qb: boolean;
   te_premium: number;
+  scoringSettings?: Record<string, number> | null;
 };
 
 export type ScoredDraftTarget = DraftTargetScorePlayer & {
@@ -54,21 +62,37 @@ export type ScoredDraftTarget = DraftTargetScorePlayer & {
   scoreComponents: DraftTargetScoreComponents | null;
   reasons: string[];
   warnings: string[];
+  inputCompleteness?: InputCompleteness;
+  positionScoringMode?: PositionScoringMode;
 };
 
-export type DraftTargetNeeds = Array<{ position: string; current: number; target: number; need: number }>;
+export type DraftTargetNeeds = Array<{
+  position: string;
+  current: number;
+  target: number;
+  need: number;
+  sharedFlexDemand?: number;
+  needLevel?: "urgent" | "high" | "moderate" | "low" | "filled" | "not_used";
+  kind?: "direct" | "shared" | "depth";
+  label?: string;
+  note?: string;
+}>;
 
 export type DraftTargetScoreResult = {
   scoredPlayers: ScoredDraftTarget[];
   recommendations: ScoredDraftTarget[];
   topNeeds: DraftTargetNeeds;
   scoringMetadata: {
-    formulaVersion: "draft_target_score_v1.1";
+    formulaVersion: "draft_target_score_v1.2";
     generatedAt: string;
     draftStage: DraftStage;
     inputsUsed: string[];
     limitations: string[];
     weights: typeof SCORE_WEIGHTS;
+    supportedScoredPositions: string[];
+    positionScoringModes: PositionScoringMode[];
+    idpScoringDetected: boolean;
+    rankingsOnlyPositions: string[];
   };
 };
 
@@ -82,17 +106,20 @@ const SCORE_WEIGHTS = {
   adpValue: 0.1
 } as const;
 
-const FLEX_POSITIONS = new Set(["FLEX", "WRRB_FLEX", "WRRB", "RB_WR", "REC_FLEX", "WRTE_FLEX", "WRT_FLEX"]);
-const SUPER_FLEX_POSITIONS = new Set(["SUPER_FLEX", "OP"]);
-const REC_FLEX_POSITIONS = new Set(["REC_FLEX", "WRTE_FLEX"]);
-const BENCH_POSITIONS = new Set(["BN", "IR", "TAXI", "TAXI_SQUAD"]);
-const POSITION_SET = ["QB", "RB", "WR", "TE"] as const;
+const FLEX_POSITIONS = new Set(["FLEX", "WRRB_FLEX", "WRRBTE_FLEX", "REC_FLEX", "W/R/T"]);
+const SUPER_FLEX_POSITIONS = new Set(["SUPER_FLEX", "SUPERFLEX", "OP"]);
+const IDP_FLEX_POSITIONS = new Set(["IDP", "IDP_FLEX", "FLEX_IDP", "DP"]);
+const BENCH_POSITIONS = new Set(["BN", "BENCH", "IR", "RESERVE", "TAXI", "TAXI_SQUAD"]);
+const OFFENSIVE_POSITIONS = ["QB", "RB", "WR", "TE"] as const;
+const DEFENSIVE_POSITIONS = ["DL", "LB", "DB"] as const;
+const SCORABLE_POSITIONS = ["QB", "RB", "WR", "TE", "K", "DEF", "DL", "LB", "DB"] as const;
+const LIMITED_DATA_POSITIONS = new Set(["DL", "LB", "DB", "K", "DEF"]);
 
 type StarterTargets = {
-  base: Record<string, number>;
-  flex: number;
-  recFlex: number;
-  superFlex: number;
+  direct: Record<(typeof SCORABLE_POSITIONS)[number], number>;
+  offensiveFlexCount: number;
+  superFlexCount: number;
+  idpFlexCount: number;
 };
 
 type ScarcitySnapshot = {
@@ -110,8 +137,9 @@ export function buildDraftTargetScore({
 }): DraftTargetScoreResult {
   const rankedPlayers = players.filter((player) => player.is_ranked && !player.is_fallback);
   const draftStage = getDraftStage(league.currentPickNumber, league.positionCounts);
-  const starterTargets = buildStarterTargets(league.rosterPositions, league);
-  const topNeeds = buildTopNeeds(starterTargets, league.positionCounts, league, draftStage);
+  const starterTargets = buildStarterTargets(league.rosterPositions);
+  const topNeeds = buildTopNeeds(starterTargets, league.positionCounts, draftStage, league);
+  const idpScoringDetected = detectIdpScoring(league.scoringSettings);
 
   if (rankedPlayers.length === 0) {
     return {
@@ -121,11 +149,13 @@ export function buildDraftTargetScore({
         recommendationTier: "avoid_for_now",
         scoreComponents: null,
         reasons: [],
-        warnings: player.is_fallback ? ["Upload rankings for true recommendations."] : []
+        warnings: player.is_fallback ? ["Upload rankings for true recommendations."] : [],
+        inputCompleteness: player.is_fallback ? "fallback_only" : "rankings_only",
+        positionScoringMode: "unsupported"
       })),
       recommendations: [],
       topNeeds,
-      scoringMetadata: metadata(draftStage)
+      scoringMetadata: metadata(draftStage, idpScoringDetected)
     };
   }
 
@@ -142,44 +172,49 @@ export function buildDraftTargetScore({
   };
 
   const scoredPlayers = players
-    .map((player) =>
-      player.is_ranked && !player.is_fallback
-        ? scoreRankedPlayer({
-            player,
-            league,
-            draftStage,
-            starterTargets,
-            topNeeds,
-            rankedValues,
-            projectedValues,
-            scarcity
-          })
-        : {
-            ...player,
-            draftTargetScore: null,
-            recommendationTier: "avoid_for_now" as const,
-            scoreComponents: null,
-            reasons: [],
-            warnings: ["Upload rankings for true recommendations."]
-          }
-    )
+    .map((player): ScoredDraftTarget => {
+      if (player.is_ranked && !player.is_fallback && isScorablePosition(player.position ?? "")) {
+        return scoreRankedPlayer({
+          player,
+          league,
+          draftStage,
+          starterTargets,
+          topNeeds,
+          rankedValues,
+          projectedValues,
+          scarcity,
+          idpScoringDetected
+        });
+      }
+
+      return {
+        ...player,
+        draftTargetScore: null,
+        recommendationTier: "avoid_for_now",
+        scoreComponents: null,
+        reasons: [],
+        warnings: buildUnsupportedWarnings(player, league),
+        inputCompleteness: player.is_fallback ? "fallback_only" : "rankings_only",
+        positionScoringMode: "unsupported"
+      };
+    })
     .sort(sortByScoreThenRank);
 
-  const eligibleRecommendations = scoredPlayers.filter(
-    (player) =>
-      player.draftTargetScore !== null &&
-      player.recommendationTier !== "avoid_for_now" &&
-      player.match_status !== "unmatched" &&
-      player.match_status !== "ambiguous"
-  );
-  const fallbackRecommendations = scoredPlayers.filter((player) => player.draftTargetScore !== null);
-  const recommendations = (eligibleRecommendations.length >= 5 ? eligibleRecommendations : fallbackRecommendations).slice(0, 10);
+  const recommendations = scoredPlayers
+    .filter(
+      (player) =>
+        player.draftTargetScore !== null &&
+        player.recommendationTier !== "avoid_for_now" &&
+        player.match_status !== "unmatched" &&
+        player.match_status !== "ambiguous"
+    )
+    .slice(0, 10);
 
   return {
     scoredPlayers,
     recommendations,
     topNeeds,
-    scoringMetadata: metadata(draftStage)
+    scoringMetadata: metadata(draftStage, idpScoringDetected)
   };
 }
 
@@ -191,7 +226,8 @@ function scoreRankedPlayer({
   topNeeds,
   rankedValues,
   projectedValues,
-  scarcity
+  scarcity,
+  idpScoringDetected
 }: {
   player: DraftTargetScorePlayer;
   league: LeagueContext;
@@ -201,15 +237,18 @@ function scoreRankedPlayer({
   rankedValues: number[];
   projectedValues: number[];
   scarcity: ScarcitySnapshot;
+  idpScoringDetected: boolean;
 }): ScoredDraftTarget {
+  const inputCompleteness = getInputCompleteness(player);
   const rankingScore = getRankingScore(player.rank);
-  const projectionScore = normalizeScore(player.projected_points, projectedValues, 45);
+  const projectionScore = getProjectionScore(player, projectedValues, rankingScore);
   const valueScore = getValueScore(player, league, rankedValues, rankingScore);
   const rosterNeedScore = getRosterNeedScore(player.position, league.positionCounts, starterTargets, league, draftStage);
   const scarcityScore = getScarcityScore(player.position, scarcity, league, draftStage);
-  const formatFitScore = getFormatFitScore(player, league, rosterNeedScore);
+  const formatFitScore = getFormatFitScore(player, league, rosterNeedScore, draftStage);
   const adpValueScore = getAdpValueScore(player.adp, league.currentPickNumber, rankingScore, valueScore);
   const matchConfidencePenalty = getMatchPenalty(player.match_status, player.match_confidence, player.is_fallback);
+  const positionAdjustment = getPositionAdjustment(player.position, league, draftStage, rosterNeedScore, adpValueScore);
 
   const weightedScore =
     rankingScore * SCORE_WEIGHTS.ranking +
@@ -218,16 +257,25 @@ function scoreRankedPlayer({
     rosterNeedScore * SCORE_WEIGHTS.rosterNeed +
     scarcityScore * SCORE_WEIGHTS.scarcity +
     formatFitScore * SCORE_WEIGHTS.formatFit +
-    adpValueScore * SCORE_WEIGHTS.adpValue -
+    adpValueScore * SCORE_WEIGHTS.adpValue +
+    positionAdjustment -
     matchConfidencePenalty;
 
   const draftTargetScore = clamp(weightedScore, 0, 100);
-  const warnings = buildWarnings(player, projectedValues.length > 0);
-  const recommendationTier = getRecommendationTier(draftTargetScore, player, warnings.length, adpValueScore);
+  const warnings = buildWarnings(player, projectedValues.length > 0, league, inputCompleteness, idpScoringDetected);
+  const recommendationTier = getRecommendationTier(
+    draftTargetScore,
+    player,
+    warnings.length,
+    adpValueScore,
+    league,
+    draftStage
+  );
+  const positionScoringMode = getPositionScoringMode(player.position);
   const reasons = buildReasons({
     player,
-    draftStage,
     league,
+    draftStage,
     projectionScore,
     valueScore,
     rosterNeedScore,
@@ -253,62 +301,70 @@ function scoreRankedPlayer({
       matchConfidencePenalty: round(matchConfidencePenalty)
     },
     reasons,
-    warnings
+    warnings,
+    inputCompleteness,
+    positionScoringMode
   };
 }
 
-function buildStarterTargets(rosterPositions: string[] | null | undefined, league: LeagueContext): StarterTargets {
-  const base: Record<string, number> = { QB: 1, RB: 2, WR: 2, TE: 1 };
-  const positions = Array.isArray(rosterPositions) ? rosterPositions : [];
-
-  if (positions.length === 0) {
-    if (league.is_superflex || league.is_two_qb) base.QB = 2;
-    return { base, flex: 0, recFlex: 0, superFlex: league.is_superflex || league.is_two_qb ? 1 : 0 };
-  }
-
-  base.QB = 0;
-  base.RB = 0;
-  base.WR = 0;
-  base.TE = 0;
-
-  let flexCount = 0;
-  let recFlexCount = 0;
+function buildStarterTargets(rosterPositions: string[]) {
+  const direct = Object.fromEntries(SCORABLE_POSITIONS.map((position) => [position, 0])) as Record<
+    (typeof SCORABLE_POSITIONS)[number],
+    number
+  >;
+  let offensiveFlexCount = 0;
   let superFlexCount = 0;
+  let idpFlexCount = 0;
 
-  for (const slot of positions) {
-    if (BENCH_POSITIONS.has(slot)) continue;
-    if (slot === "QB") base.QB += 1;
-    else if (slot === "RB") base.RB += 1;
-    else if (slot === "WR") base.WR += 1;
-    else if (slot === "TE") base.TE += 1;
-    else if (slot === "K" || slot === "DEF" || slot === "DL" || slot === "LB" || slot === "DB" || slot === "IDP") continue;
-    else if (FLEX_POSITIONS.has(slot)) flexCount += 1;
-    else if (REC_FLEX_POSITIONS.has(slot)) recFlexCount += 1;
-    else if (SUPER_FLEX_POSITIONS.has(slot)) superFlexCount += 1;
+  for (const rawSlot of rosterPositions) {
+    const slot = normalizeRosterSlot(rawSlot);
+    if (!slot || BENCH_POSITIONS.has(slot)) continue;
+
+    if (FLEX_POSITIONS.has(slot)) {
+      offensiveFlexCount += 1;
+      continue;
+    }
+    if (SUPER_FLEX_POSITIONS.has(slot)) {
+      superFlexCount += 1;
+      continue;
+    }
+    if (IDP_FLEX_POSITIONS.has(slot)) {
+      idpFlexCount += 1;
+      continue;
+    }
+
+    const normalizedDirect = normalizeRosterSlotToPosition(slot);
+    if (normalizedDirect) {
+      direct[normalizedDirect] += 1;
+    }
   }
 
-  if (league.is_superflex || league.is_two_qb) {
-    base.QB = Math.max(base.QB, 2);
-  }
-
-  return { base, flex: flexCount, recFlex: recFlexCount, superFlex: superFlexCount };
+  return { direct, offensiveFlexCount, superFlexCount, idpFlexCount };
 }
 
 function buildTopNeeds(
   starterTargets: StarterTargets,
   counts: Record<string, number>,
-  league: LeagueContext,
-  draftStage: DraftStage
+  draftStage: DraftStage,
+  league: LeagueContext
 ): DraftTargetNeeds {
-  return POSITION_SET
+  return SCORABLE_POSITIONS
+    .filter((position) => isPositionUsed(position, league, starterTargets))
     .map((position) => {
-      const target = round(getPositionDemand(position, starterTargets, league, draftStage));
       const current = counts[position] ?? 0;
+      const minimumNeed = getMinimumNeed(position, starterTargets);
+      const directStarterRequirement = starterTargets.direct[position];
+      const sharedFlexDemand = getSharedDemand(position, starterTargets);
+      const deficit = Math.max(0, minimumNeed - current);
       return {
         position,
+        label: position,
         current,
-        target,
-        need: round(clamp((target - current) / Math.max(target, 1), 0, 1) * 100)
+        target: minimumNeed,
+        need: round(scoreTopNeed(position, draftStage, deficit, directStarterRequirement, sharedFlexDemand)),
+        sharedFlexDemand: sharedFlexDemand || undefined,
+        needLevel: deriveNeedLevel(position, draftStage, current, directStarterRequirement, sharedFlexDemand),
+        kind: deficit > 0 ? ("direct" as const) : sharedFlexDemand > 0 ? ("shared" as const) : ("depth" as const)
       };
     })
     .sort((a, b) => b.need - a.need)
@@ -321,10 +377,23 @@ function getRankingScore(rank: number | null) {
   return 100 - ((cappedRank - 1) / 299) * 95;
 }
 
+function getProjectionScore(player: DraftTargetScorePlayer, projectedValues: number[], rankingScore: number) {
+  if (player.projected_points !== null && player.projected_points !== undefined && Number.isFinite(player.projected_points)) {
+    return normalizeScore(player.projected_points, projectedValues, 45);
+  }
+  if (LIMITED_DATA_POSITIONS.has(player.position ?? "")) {
+    return clamp(rankingScore * 0.72, 38, 74);
+  }
+  return 45;
+}
+
 function getValueScore(player: DraftTargetScorePlayer, league: LeagueContext, values: number[], rankingScore: number) {
   const preferredValue = selectValueField(player, league);
   if (preferredValue !== null && values.length > 1) {
     return normalizeScore(preferredValue, values, 50);
+  }
+  if (LIMITED_DATA_POSITIONS.has(player.position ?? "")) {
+    return clamp(rankingScore * 0.82, 38, 78);
   }
   return clamp(rankingScore * 0.75, 25, 80);
 }
@@ -342,14 +411,10 @@ function selectValueField(player: DraftTargetScorePlayer, league: LeagueContext)
   if (league.is_dynasty) {
     if (player.dynasty_value !== null && player.dynasty_value !== undefined) return player.dynasty_value;
   }
-
-  return (
-    player.dynasty_value ??
-    player.best_ball_value ??
-    player.superflex_value ??
-    player.te_premium_value ??
-    null
-  );
+  if (LIMITED_DATA_POSITIONS.has(player.position ?? "")) {
+    return null;
+  }
+  return player.dynasty_value ?? player.best_ball_value ?? player.superflex_value ?? player.te_premium_value ?? null;
 }
 
 function getRosterNeedScore(
@@ -359,15 +424,18 @@ function getRosterNeedScore(
   league: LeagueContext,
   draftStage: DraftStage
 ) {
-  if (!position) return 20;
-  if (!isPrimaryPosition(position)) return 20;
+  if (!position || !isScorablePosition(position) || !isPositionUsed(position, league, starterTargets)) return 0;
+
+  if (!isOffensivePosition(position)) {
+    return getSpecialPositionNeedScore(position, counts, starterTargets, draftStage);
+  }
 
   const current = counts[position] ?? 0;
-  const starterDemand = getPositionDemand(position, starterTargets, league, draftStage);
-  const baseStarters = starterTargets.base[position] ?? 0;
+  const starterDemand = getOffensiveDemand(position, starterTargets, league, draftStage);
+  const baseStarters = starterTargets.direct[position] ?? 0;
   const starterDeficit = clamp((baseStarters - current) / Math.max(baseStarters, 1), 0, 1);
   const totalDeficit = clamp((starterDemand - current) / Math.max(starterDemand, 1), 0, 1);
-  const depthTarget = getDepthTarget(position, starterTargets, league, draftStage);
+  const depthTarget = getOffensiveDepthTarget(position, starterTargets, league, draftStage);
   const depthDeficit = clamp((depthTarget - current) / Math.max(depthTarget, 1), 0, 1);
 
   let score = 18 + starterDeficit * 42 + totalDeficit * 24 + depthDeficit * 16;
@@ -403,6 +471,34 @@ function getRosterNeedScore(
   return clamp(score, 10, 100);
 }
 
+function getSpecialPositionNeedScore(
+  position: string,
+  counts: Record<string, number>,
+  starterTargets: StarterTargets,
+  draftStage: DraftStage
+) {
+  const current = counts[position] ?? 0;
+  const directRequirement = starterTargets.direct[position as keyof typeof starterTargets.direct] ?? 0;
+  const sharedDemand = getSharedDemand(position, starterTargets);
+  const minimumNeed = getMinimumNeed(position, starterTargets);
+  const directDeficit = Math.max(0, directRequirement - current);
+  const totalDeficit = Math.max(0, minimumNeed - current);
+
+  let score = 12 + directDeficit * 28 + totalDeficit * 14;
+
+  if (DEFENSIVE_POSITIONS.includes(position as (typeof DEFENSIVE_POSITIONS)[number])) {
+    if (draftStage === "early") score -= 4;
+    if (draftStage === "middle") score += directDeficit > 0 ? 8 : sharedDemand > 0 ? 5 : 0;
+    if (draftStage === "late") score += totalDeficit > 0 ? 12 : sharedDemand > 0 ? 6 : 0;
+  } else if (position === "K") {
+    score += current === 0 && draftStage === "late" ? 18 : draftStage === "middle" ? -12 : -24;
+  } else if (position === "DEF") {
+    score += current === 0 && draftStage === "late" ? 16 : draftStage === "middle" ? -10 : -22;
+  }
+
+  return clamp(score, 0, 100);
+}
+
 function countTopPositionDepth(players: DraftTargetScorePlayer[], limit: number) {
   return players
     .slice()
@@ -415,13 +511,8 @@ function countTopPositionDepth(players: DraftTargetScorePlayer[], limit: number)
     }, {});
 }
 
-function getScarcityScore(
-  position: string | null,
-  scarcity: ScarcitySnapshot,
-  league: LeagueContext,
-  draftStage: DraftStage
-) {
-  if (!position) return 35;
+function getScarcityScore(position: string | null, scarcity: ScarcitySnapshot, league: LeagueContext, draftStage: DraftStage) {
+  if (!position || !isPositionUsed(position, league)) return 0;
 
   const top24 = scarcity.top24[position] ?? 0;
   const top50 = scarcity.top50[position] ?? 0;
@@ -441,17 +532,34 @@ function getScarcityScore(
   }
   if (position === "WR" && top100 >= 28) score -= 8;
   if (position === "RB" && top50 <= 12) score += 8;
+  if (position === "K") score = top24 <= 3 ? 48 : top50 <= 6 ? 38 : 26;
+  if (position === "DEF") score = top24 <= 3 ? 52 : top50 <= 6 ? 40 : 28;
+  if (position === "DL" && top50 <= 8) score += 8;
+  if (position === "LB" && top50 <= 8) score += 6;
+  if (position === "DB" && top100 >= 18) score -= 6;
 
   return clamp(score, 20, 100);
 }
 
-function getFormatFitScore(player: DraftTargetScorePlayer, league: LeagueContext, rosterNeedScore: number) {
+function getFormatFitScore(
+  player: DraftTargetScorePlayer,
+  league: LeagueContext,
+  rosterNeedScore: number,
+  draftStage: DraftStage
+) {
   const position = player.position;
+  if (!position || !isPositionUsed(position, league)) return 0;
+
   let score = 45;
 
   if ((league.is_superflex || league.is_two_qb) && position === "QB") score += 22;
-  if (league.is_best_ball && ["WR", "RB", "TE"].includes(position ?? "")) score += 10;
+  if (league.is_best_ball && ["WR", "RB", "TE"].includes(position)) score += 10;
   if (league.te_premium > 0 && position === "TE") score += Math.min(18, league.te_premium * 10);
+  if (position === "K") score += draftStage === "late" ? 12 : draftStage === "middle" ? -8 : -18;
+  if (position === "DEF") score += draftStage === "late" ? 10 : draftStage === "middle" ? -6 : -16;
+  if (DEFENSIVE_POSITIONS.includes(position as (typeof DEFENSIVE_POSITIONS)[number])) {
+    score += getSharedDemand(position, buildStarterTargets(league.rosterPositions)) > 0 ? 10 : 6;
+  }
   if (league.is_dynasty) score += player.dynasty_value ? 10 : 4;
   if (!league.is_dynasty && player.projected_points !== null) score += 6;
   score += (rosterNeedScore - 50) * 0.2;
@@ -484,8 +592,8 @@ function getMatchPenalty(matchStatus: string | null, matchConfidence: number | n
 
 function buildReasons({
   player,
-  draftStage,
   league,
+  draftStage,
   projectionScore,
   valueScore,
   rosterNeedScore,
@@ -496,8 +604,8 @@ function buildReasons({
   recommendationTier
 }: {
   player: DraftTargetScorePlayer;
-  draftStage: DraftStage;
   league: LeagueContext;
+  draftStage: DraftStage;
   projectionScore: number;
   valueScore: number;
   rosterNeedScore: number;
@@ -512,13 +620,31 @@ function buildReasons({
 
   if (player.rank !== null && player.rank <= 12) reasons.push("Top-12 remaining rank");
   else if (player.rank !== null && player.rank <= 24) reasons.push("Top-24 remaining rank");
-  if (projectionScore >= 76) reasons.push("Strong projected points input");
+  else if (player.rank !== null && LIMITED_DATA_POSITIONS.has(player.position ?? "") && player.rank <= 6) {
+    reasons.push(`Top-ranked remaining ${labelForPosition(player.position)}`);
+  }
+
+  if (projectionScore >= 76 && !LIMITED_DATA_POSITIONS.has(player.position ?? "")) reasons.push("Strong projected points input");
   if (valueScore >= 76) reasons.push("Strong format-adjusted value");
   if (rosterNeedScore >= 70 && player.position) {
     reasons.push(`Fills urgent ${player.position} need`);
   } else if (topNeed && player.position === topNeed) {
     reasons.push(`Matches your top ${player.position} need`);
   }
+
+  if (player.position === "K" && draftStage === "late") reasons.push("Late-draft roster fit");
+  if (player.position === "DEF" && draftStage === "late") reasons.push("Late-draft roster fit");
+  if (DEFENSIVE_POSITIONS.includes((player.position ?? "") as (typeof DEFENSIVE_POSITIONS)[number])) {
+    const position = player.position ?? "";
+    const directRequirement = getDirectRequirement(position, league);
+    const currentCount = league.positionCounts[position] ?? 0;
+    if (directRequirement > currentCount) {
+      reasons.push("Direct defensive starter still unfilled");
+    } else if (getSharedDemand(position, buildStarterTargets(league.rosterPositions)) > 0) {
+      reasons.push("Fills an open IDP-flex need");
+    }
+  }
+
   if (player.position) {
     const scarcityReason = getScarcityReason(player.position, scarcity, league);
     if (scarcityScore >= 68 && scarcityReason) reasons.push(scarcityReason);
@@ -538,19 +664,36 @@ function buildReasons({
   return Array.from(new Set(reasons)).slice(0, 4);
 }
 
-function buildWarnings(player: DraftTargetScorePlayer, hasProjectionData: boolean) {
+function buildWarnings(
+  player: DraftTargetScorePlayer,
+  hasProjectionData: boolean,
+  league: LeagueContext,
+  inputCompleteness: InputCompleteness,
+  idpScoringDetected: boolean
+) {
   const warnings: string[] = [];
+
   if (player.match_status === "ambiguous") warnings.push("Ambiguous player match");
   if (player.match_status === "unmatched") warnings.push("Unmatched ranking row");
   if (player.match_status === "fuzzy" && (player.match_confidence ?? 0) < 0.95) {
     warnings.push((player.match_confidence ?? 0) < 0.85 ? "Low-confidence player match" : "Fuzzy player match");
   }
-  if (player.is_fallback) {
-    warnings.push("Fallback player pool item");
-  }
-  if (!hasProjectionData || player.projected_points === null || player.projected_points === undefined) {
+  if (player.is_fallback) warnings.push("Fallback player pool item");
+  if ((!hasProjectionData || player.projected_points === null || player.projected_points === undefined) && !LIMITED_DATA_POSITIONS.has(player.position ?? "")) {
     warnings.push("No projection value in current upload");
   }
+  if (inputCompleteness === "rankings_only" && DEFENSIVE_POSITIONS.includes((player.position ?? "") as (typeof DEFENSIVE_POSITIONS)[number])) {
+    warnings.push("Rankings-only defensive evaluation");
+  }
+  if (inputCompleteness === "rankings_only" && player.position === "K") warnings.push("No kicker projection inputs");
+  if (inputCompleteness === "rankings_only" && player.position === "DEF") {
+    warnings.push("No schedule or matchup data for DEF");
+  }
+  if (idpScoringDetected && DEFENSIVE_POSITIONS.includes((player.position ?? "") as (typeof DEFENSIVE_POSITIONS)[number])) {
+    warnings.push("No league-specific IDP stat model yet");
+  }
+  if (!isPositionUsed(player.position ?? "", league)) warnings.push(`${player.position} is not used by this league.`);
+
   return warnings.slice(0, 3);
 }
 
@@ -558,11 +701,33 @@ function getRecommendationTier(
   score: number,
   player: DraftTargetScorePlayer,
   warningCount: number,
-  adpValueScore: number
+  adpValueScore: number,
+  league: LeagueContext,
+  draftStage: DraftStage
 ): RecommendationTier {
-  if (player.is_fallback || player.match_status === "unmatched" || player.match_status === "ambiguous") {
+  if (
+    player.is_fallback ||
+    player.match_status === "unmatched" ||
+    player.match_status === "ambiguous" ||
+    !isPositionUsed(player.position ?? "", league)
+  ) {
     return "avoid_for_now";
   }
+
+  if (player.position === "K") {
+    if (draftStage === "late" && score >= 76 && warningCount <= 2) return "strong_target";
+    if (score >= 58) return "good_value";
+    if (score >= 44) return "depth_option";
+    return "avoid_for_now";
+  }
+
+  if (player.position === "DEF") {
+    if (draftStage === "late" && score >= 74 && warningCount <= 2) return "strong_target";
+    if (score >= 56) return "good_value";
+    if (score >= 42) return "depth_option";
+    return "avoid_for_now";
+  }
+
   if (score >= 84 && warningCount <= 1 && (player.rank ?? 999) <= 36) return "elite_target";
   if (score >= 74 && warningCount <= 2) return "strong_target";
   if (score >= 62 || adpValueScore >= 72) return "good_value";
@@ -581,9 +746,12 @@ function normalizeScore(value: number | null | undefined, allValues: number[], f
   return 15 + ((value - min) / (max - min)) * 85;
 }
 
-function metadata(draftStage: DraftStage) {
+function metadata(
+  draftStage: DraftStage,
+  idpScoringDetected: boolean
+): DraftTargetScoreResult["scoringMetadata"] {
   return {
-    formulaVersion: "draft_target_score_v1.1" as const,
+    formulaVersion: "draft_target_score_v1.2" as const,
     generatedAt: new Date().toISOString(),
     draftStage,
     inputsUsed: [
@@ -599,12 +767,33 @@ function metadata(draftStage: DraftStage) {
     limitations: [
       "No external projection provider, news feed, or injury feed.",
       "No AI explanation layer yet.",
+      "IDP, K, and DEF recommendations currently use imported rankings, roster need, and scarcity.",
+      "League-specific raw-stat scoring is not yet modeled.",
+      "DEF schedule and matchup context are not included.",
+      "K projections are not included.",
       "No pick survival or probability model yet.",
       "Recommendation quality depends on uploaded ranking data."
     ],
-    weights: SCORE_WEIGHTS
+    weights: SCORE_WEIGHTS,
+    supportedScoredPositions: [...SCORABLE_POSITIONS],
+    positionScoringModes: ["offense_v1_1", "idp_rankings_v1", "kicker_rankings_v1", "defense_rankings_v1"],
+    idpScoringDetected,
+    rankingsOnlyPositions: ["DL", "LB", "DB", "K", "DEF"]
   };
 }
+
+function buildUnsupportedWarnings(player: DraftTargetScorePlayer, league: LeagueContext) {
+  const warnings: string[] = [];
+  if (player.is_fallback) warnings.push("Upload rankings for true recommendations.");
+  if (player.position && !isPositionUsed(player.position, league)) warnings.push(`${player.position} is not used by this league.`);
+  return warnings.slice(0, 3);
+}
+
+// TODO: Add defensive slot assignment using multi-position eligibility.
+// TODO: Add IDP roster-need logic using league-specific fantasy point inputs once stats exist.
+// TODO: Add IDP scarcity refinement using real stat/projection context.
+// TODO: Add K and DEF recommendation logic using projections and schedule data.
+// TODO: Add league-specific fantasy point calculations from player statistics.
 
 function getDraftStage(currentPickNumber: number, positionCounts: Record<string, number>): DraftStage {
   const draftedCount = Math.max(0, Object.values(positionCounts).reduce((sum, count) => sum + count, 0));
@@ -614,24 +803,21 @@ function getDraftStage(currentPickNumber: number, positionCounts: Record<string,
   return "late";
 }
 
-function getPositionDemand(
-  position: (typeof POSITION_SET)[number],
+function getOffensiveDemand(
+  position: (typeof OFFENSIVE_POSITIONS)[number],
   starterTargets: StarterTargets,
   league: LeagueContext,
   draftStage: DraftStage
 ) {
-  let demand = starterTargets.base[position] ?? 0;
+  let demand = starterTargets.direct[position] ?? 0;
 
-  if (position === "RB") demand += starterTargets.flex * 0.55;
-  if (position === "WR") demand += starterTargets.flex * 0.45;
+  if (position === "RB") demand += starterTargets.offensiveFlexCount * 0.55;
+  if (position === "WR") demand += starterTargets.offensiveFlexCount * 0.45;
+  if (position === "TE") demand += starterTargets.offensiveFlexCount * 0.2;
 
-  if (position === "WR") demand += starterTargets.recFlex * 0.65;
-  if (position === "TE") demand += starterTargets.recFlex * 0.2;
-  if (position === "RB") demand += starterTargets.recFlex * 0.15;
-
-  if (position === "QB") demand += starterTargets.superFlex * 0.9;
-  if (position === "RB") demand += starterTargets.superFlex * 0.05;
-  if (position === "WR") demand += starterTargets.superFlex * 0.05;
+  if (position === "QB") demand += starterTargets.superFlexCount * 0.9;
+  if (position === "RB") demand += starterTargets.superFlexCount * 0.05;
+  if (position === "WR") demand += starterTargets.superFlexCount * 0.05;
 
   if (league.is_best_ball) {
     if (position === "WR") demand += draftStage === "late" ? 1.6 : 1;
@@ -650,21 +836,19 @@ function getPositionDemand(
   return demand;
 }
 
-function getDepthTarget(
-  position: string,
+function getOffensiveDepthTarget(
+  position: (typeof OFFENSIVE_POSITIONS)[number],
   starterTargets: StarterTargets,
   league: LeagueContext,
   draftStage: DraftStage
 ) {
-  const normalizedPosition = isPrimaryPosition(position) ? position : "WR";
-  const starterDemand = getPositionDemand(normalizedPosition, starterTargets, league, draftStage);
+  const starterDemand = getOffensiveDemand(position, starterTargets, league, draftStage);
   let depthTarget = starterDemand;
 
   if (position === "QB") depthTarget += league.is_superflex || league.is_two_qb ? 1.1 : 0.5;
   if (position === "RB") depthTarget += league.is_best_ball ? 2.2 : 1.4;
   if (position === "WR") depthTarget += league.is_best_ball ? 2.8 : 1.8;
   if (position === "TE") depthTarget += league.te_premium > 0 ? 1.2 : 0.7;
-
   if (draftStage === "late") depthTarget += position === "WR" || position === "RB" ? 0.8 : 0.4;
 
   return depthTarget;
@@ -673,11 +857,18 @@ function getDepthTarget(
 function getScarcityReason(position: string, scarcity: ScarcitySnapshot, league: LeagueContext) {
   const top50 = scarcity.top50[position] ?? 0;
   const top100 = scarcity.top100[position] ?? 0;
+  const starterTargets = buildStarterTargets(league.rosterPositions);
 
   if ((league.is_superflex || league.is_two_qb) && position === "QB" && top50 <= 9) return "QB tier is thinning";
   if (league.te_premium > 0 && position === "TE" && top50 <= 8) return "TE premium raises TE scarcity";
   if (position === "WR" && top100 >= 28) return "WR depth remains healthy";
   if (position === "RB" && top50 <= 12) return "RB pool is drying up";
+  if (position === "DL" && top50 <= 8) return "DL tier is thinning";
+  if (position === "LB" && top50 <= 8) return "Few ranked LB starters remain";
+  if (position === "DB" && top100 >= 18) return "DB depth remains healthy";
+  if (getSharedDemand(position, starterTargets) > 0 && DEFENSIVE_POSITIONS.includes(position as (typeof DEFENSIVE_POSITIONS)[number])) {
+    return "Open IDP-flex demand";
+  }
   if (top50 <= 6) return "Position tier is thinning";
   return null;
 }
@@ -698,8 +889,155 @@ function getAdpReason(adp: number, currentPickNumber: number) {
   return null;
 }
 
-function isPrimaryPosition(position: string): position is (typeof POSITION_SET)[number] {
-  return POSITION_SET.includes(position as (typeof POSITION_SET)[number]);
+function getInputCompleteness(player: DraftTargetScorePlayer): InputCompleteness {
+  if (player.is_fallback) return "fallback_only";
+  if (player.projected_points !== null && selectAnyValueField(player) !== null) return "full";
+  if (player.projected_points !== null || selectAnyValueField(player) !== null) return "partial";
+  return "rankings_only";
+}
+
+function selectAnyValueField(player: DraftTargetScorePlayer) {
+  return player.dynasty_value ?? player.best_ball_value ?? player.superflex_value ?? player.te_premium_value ?? null;
+}
+
+function getPositionScoringMode(position: string | null): PositionScoringMode {
+  if (!position) return "unsupported";
+  if (isOffensivePosition(position)) return "offense_v1_1";
+  if (DEFENSIVE_POSITIONS.includes(position as (typeof DEFENSIVE_POSITIONS)[number])) return "idp_rankings_v1";
+  if (position === "K") return "kicker_rankings_v1";
+  if (position === "DEF") return "defense_rankings_v1";
+  return "unsupported";
+}
+
+function getPositionAdjustment(
+  position: string | null,
+  league: LeagueContext,
+  draftStage: DraftStage,
+  rosterNeedScore: number,
+  adpValueScore: number
+) {
+  if (!position || !isPositionUsed(position, league)) return -40;
+  if (DEFENSIVE_POSITIONS.includes(position as (typeof DEFENSIVE_POSITIONS)[number])) {
+    if (draftStage === "early") return -4;
+    if (draftStage === "middle") return rosterNeedScore >= 70 ? 4 : 0;
+    return rosterNeedScore >= 70 ? 7 : 2;
+  }
+  if (position === "K") {
+    if (draftStage === "early") return -24;
+    if (draftStage === "middle") return rosterNeedScore >= 70 && adpValueScore >= 62 ? -4 : -14;
+    return rosterNeedScore >= 70 ? 4 : -6;
+  }
+  if (position === "DEF") {
+    if (draftStage === "early") return -22;
+    if (draftStage === "middle") return rosterNeedScore >= 70 && adpValueScore >= 62 ? -2 : -12;
+    return rosterNeedScore >= 70 ? 3 : -6;
+  }
+  return 0;
+}
+
+function isOffensivePosition(position: string): position is (typeof OFFENSIVE_POSITIONS)[number] {
+  return OFFENSIVE_POSITIONS.includes(position as (typeof OFFENSIVE_POSITIONS)[number]);
+}
+
+function isDefensivePosition(position: string): position is (typeof DEFENSIVE_POSITIONS)[number] {
+  return DEFENSIVE_POSITIONS.includes(position as (typeof DEFENSIVE_POSITIONS)[number]);
+}
+
+function isScorablePosition(position: string): position is (typeof SCORABLE_POSITIONS)[number] {
+  return SCORABLE_POSITIONS.includes(position as (typeof SCORABLE_POSITIONS)[number]);
+}
+
+function isPositionUsed(position: string, league: LeagueContext, starterTargets?: StarterTargets) {
+  const targets = starterTargets ?? buildStarterTargets(league.rosterPositions);
+  if (isOffensivePosition(position)) return true;
+  if (position === "K") return targets.direct.K > 0;
+  if (position === "DEF") return targets.direct.DEF > 0;
+  if (isDefensivePosition(position)) {
+    return targets.direct[position] > 0 || targets.idpFlexCount > 0;
+  }
+  return false;
+}
+
+function getDirectRequirement(position: string, league: LeagueContext) {
+  const starterTargets = buildStarterTargets(league.rosterPositions);
+  return starterTargets.direct[position as keyof typeof starterTargets.direct] ?? 0;
+}
+
+function getSharedDemand(position: string, starterTargets: StarterTargets) {
+  if (position === "QB") return starterTargets.superFlexCount;
+  if (position === "RB" || position === "WR" || position === "TE") {
+    return starterTargets.offensiveFlexCount + starterTargets.superFlexCount;
+  }
+  if (position === "DL" || position === "LB" || position === "DB") {
+    return starterTargets.idpFlexCount;
+  }
+  return 0;
+}
+
+function getMinimumNeed(position: string, starterTargets: StarterTargets) {
+  const directStarterRequirement = starterTargets.direct[position as keyof typeof starterTargets.direct] ?? 0;
+  const sharedFlexDemand = getSharedDemand(position, starterTargets);
+
+  if (position === "QB") return directStarterRequirement + Math.min(sharedFlexDemand, 1);
+  if (position === "RB" || position === "WR") return directStarterRequirement + (sharedFlexDemand > 0 ? 1 : 0);
+  if (position === "TE") return directStarterRequirement + (sharedFlexDemand >= 2 ? 1 : 0);
+  if (position === "DL" || position === "LB" || position === "DB") return directStarterRequirement + (sharedFlexDemand > 0 ? 1 : 0);
+  return directStarterRequirement;
+}
+
+function scoreTopNeed(
+  position: string,
+  draftStage: DraftStage,
+  deficit: number,
+  directStarterRequirement: number,
+  sharedFlexDemand: number
+) {
+  const stageModifier = draftStage === "early" ? 0.85 : draftStage === "middle" ? 1 : 1.15;
+  return (directStarterRequirement * 50 + sharedFlexDemand * 20 + deficit * 40) * stageModifier;
+}
+
+function deriveNeedLevel(
+  position: string,
+  draftStage: DraftStage,
+  current: number,
+  directStarterRequirement: number,
+  sharedFlexDemand: number
+): "urgent" | "high" | "moderate" | "low" | "filled" | "not_used" {
+  if (directStarterRequirement === 0 && sharedFlexDemand === 0) return "not_used";
+  if (position === "QB" && sharedFlexDemand > 0) {
+    if (current === 0) return "urgent";
+    if (current === 1) return "high";
+  }
+  if (current < directStarterRequirement - 1) return "urgent";
+  if (current < directStarterRequirement) return "high";
+  if (sharedFlexDemand > 0 && current < directStarterRequirement + 1) return draftStage === "late" ? "high" : "moderate";
+  if (sharedFlexDemand > 0) return "low";
+  return "filled";
+}
+
+function normalizeRosterSlot(slot: string) {
+  return slot.trim().toUpperCase().replace(/\s+/g, "_");
+}
+
+function normalizeRosterSlotToPosition(slot: string): (typeof SCORABLE_POSITIONS)[number] | null {
+  if (["DST", "D/ST"].includes(slot)) return "DEF";
+  if (["DE", "DT", "EDGE"].includes(slot)) return "DL";
+  if (["ILB", "OLB", "MLB"].includes(slot)) return "LB";
+  if (["CB", "S", "FS", "SS"].includes(slot)) return "DB";
+  return isScorablePosition(slot) ? slot : null;
+}
+
+function detectIdpScoring(scoringSettings?: Record<string, number> | null) {
+  const keys = Object.keys(scoringSettings ?? {}).map((key) => key.toLowerCase());
+  return keys.some((key) =>
+    ["tkl", "ast", "ff", "fr", "pd", "qb_hit", "tfl", "sack", "safe", "blk_kick"].some((marker) => key.includes(marker))
+  );
+}
+
+function labelForPosition(position: string | null) {
+  if (position === "DEF") return "defense";
+  if (position === "K") return "kicker";
+  return position ?? "player";
 }
 
 function sortByScoreThenRank(a: ScoredDraftTarget, b: ScoredDraftTarget) {

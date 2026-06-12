@@ -1,5 +1,12 @@
-import { normalizePlayerName } from "@/lib/players/normalize";
+import { normalizePlayerName, normalizePrimaryPosition } from "@/lib/players/normalize";
 import { buildDraftTargetScore, type DraftTargetScorePlayer } from "@/lib/draft/scoring";
+import {
+  buildNormalizedRosterRequirements,
+  buildPositionNeeds,
+  buildTopNeeds,
+  POSITION_GROUPS,
+  type PositionGroup
+} from "@/lib/draft/roster-slots";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 type DraftPickRow = {
@@ -39,8 +46,11 @@ type PlayerRow = {
   sleeper_player_id: string | null;
   full_name: string | null;
   position: string | null;
+  primary_position: string | null;
+  position_group: string | null;
   team: string | null;
   fantasy_positions_json: string[] | null;
+  eligible_positions_json: string[] | null;
   normalized_name: string | null;
 };
 
@@ -50,15 +60,24 @@ const POSITION_ORDER: Record<string, number> = {
   WR: 3,
   TE: 4,
   K: 5,
-  DEF: 6
+  DEF: 6,
+  DL: 7,
+  LB: 8,
+  DB: 9
 };
+
+const FALLBACK_POSITION_GROUPS = ["QB", "RB", "WR", "TE", "K", "DEF", "DL", "LB", "DB"];
 
 const WARNING_MESSAGES: Record<string, string> = {
   no_rankings_uploaded: "No rankings uploaded. Upload rankings to power recommendations.",
   unmatched_rankings_present: "Some rankings are unmatched and may not disappear when drafted until matched.",
   using_fallback_pool: "Unranked Sleeper player pool - upload rankings for real recommendations.",
   no_players_synced: "Sync Sleeper players for an unranked fallback pool.",
-  draft_not_synced: "Draft picks have not synced yet."
+  draft_not_synced: "Draft picks have not synced yet.",
+  unknown_roster_slots: "Some roster slots could not be normalized yet.",
+  no_idp_players_synced: "League uses IDP slots, but no active defensive players are available in the synced pool.",
+  no_kicker_players_synced: "League uses kicker slots, but no active kickers are available in the synced pool.",
+  no_team_defense_players_synced: "League uses team defense slots, but no active DEF players are available in the synced pool."
 };
 
 export async function getDraftRoomState(userId: string, draftRoomId: string) {
@@ -98,10 +117,11 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
         .limit(1000),
       supabase
         .from("players")
-        .select("id,sleeper_player_id,full_name,position,team,fantasy_positions_json,normalized_name")
+        .select(
+          "id,sleeper_player_id,full_name,position,primary_position,position_group,team,fantasy_positions_json,eligible_positions_json,normalized_name"
+        )
         .eq("active", true)
-        .in("position", ["QB", "RB", "WR", "TE"])
-        .limit(500)
+        .limit(1000)
     ]);
 
   const rostersById = new Map(
@@ -131,6 +151,14 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
 
   const rankingRows = (rankings ?? []) as RankingRow[];
   const playerRows = (players ?? []) as PlayerRow[];
+  const fallbackPlayers = playerRows.filter((player) =>
+    FALLBACK_POSITION_GROUPS.includes(player.position_group ?? player.primary_position ?? player.position ?? "")
+  );
+  const playerRowsBySleeperId = new Map(
+    fallbackPlayers
+      .filter((player) => Boolean(player.sleeper_player_id))
+      .map((player) => [player.sleeper_player_id as string, player])
+  );
   const hasRankings = rankingRows.length > 0;
 
   const remainingPlayers = hasRankings
@@ -161,7 +189,7 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
         }))
         .sort((a, b) => (a.rank ?? 99999) - (b.rank ?? 99999))
         .slice(0, 150)
-    : playerRows
+    : fallbackPlayers
         .filter((player) => {
           const byId = player.sleeper_player_id && draftedIds.has(player.sleeper_player_id);
           const byName = draftedNames.has(player.normalized_name ?? normalizePlayerName(player.full_name ?? ""));
@@ -172,7 +200,7 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
           sleeper_player_id: player.sleeper_player_id,
           matched_player_id: player.id,
           player_name: player.full_name,
-          position: player.position,
+          position: player.position_group ?? player.primary_position ?? player.position,
           team: player.team,
           rank: null,
           adp: null,
@@ -192,7 +220,12 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
         })
         .slice(0, 150);
 
-  const counts = countPositions(myPicks);
+  const rosterRequirements = buildNormalizedRosterRequirements(
+    Array.isArray(room.leagues?.roster_positions_json) ? room.leagues.roster_positions_json : []
+  );
+  const counts = countPositions(myPicks, playerRowsBySleeperId);
+  const positionNeeds = buildPositionNeeds(counts, rosterRequirements);
+  const topNeeds = buildTopNeeds(positionNeeds);
 
   const statusCounts = rankingRows.reduce<Record<string, number>>((acc, ranking) => {
     const status = ranking.match_status ?? "unmatched";
@@ -205,9 +238,13 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
   const warnings = [
     !hasRankings ? "no_rankings_uploaded" : null,
     issueCount > 0 ? "unmatched_rankings_present" : null,
-    !hasRankings && playerRows.length > 0 ? "using_fallback_pool" : null,
-    !hasRankings && playerRows.length === 0 ? "no_players_synced" : null,
-    !room.last_synced_at && draftPicks.length === 0 ? "draft_not_synced" : null
+    !hasRankings && fallbackPlayers.length > 0 ? "using_fallback_pool" : null,
+    !hasRankings && fallbackPlayers.length === 0 ? "no_players_synced" : null,
+    !room.last_synced_at && draftPicks.length === 0 ? "draft_not_synced" : null,
+    rosterRequirements.unknownSlots.length > 0 ? "unknown_roster_slots" : null,
+    rosterRequirements.hasIDP && !hasActiveGroup(fallbackPlayers, ["DL", "LB", "DB"]) ? "no_idp_players_synced" : null,
+    rosterRequirements.hasKicker && !hasActiveGroup(fallbackPlayers, ["K"]) ? "no_kicker_players_synced" : null,
+    rosterRequirements.hasTeamDefense && !hasActiveGroup(fallbackPlayers, ["DEF"]) ? "no_team_defense_players_synced" : null
   ].filter((warning): warning is string => Boolean(warning));
   const picksUntilMyNextPick = getPicksUntilMyNextPick(room.settings_json, myRosterId, currentPickNumber);
   const scoring = buildDraftTargetScore({
@@ -220,9 +257,15 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
       is_best_ball: Boolean(room.leagues?.is_best_ball),
       is_superflex: Boolean(room.leagues?.is_superflex),
       is_two_qb: Boolean(room.leagues?.is_two_qb),
-      te_premium: Number(room.leagues?.te_premium ?? 0)
+      te_premium: Number(room.leagues?.te_premium ?? 0),
+      scoringSettings:
+        room.leagues?.scoring_settings_json && typeof room.leagues.scoring_settings_json === "object"
+          ? (room.leagues.scoring_settings_json as Record<string, number>)
+          : null
     }
   });
+
+  const idpDetected = rosterRequirements.hasIDP;
 
   return {
     room,
@@ -237,7 +280,13 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
     draftedPlayerIds: Array.from(draftedIds),
     remainingPlayers: scoring.scoredPlayers,
     recommendations: hasRankings ? scoring.recommendations : [],
-    topNeeds: scoring.topNeeds,
+    topNeeds,
+    rosterRequirements,
+    positionNeeds,
+    hasIDP: idpDetected,
+    hasKicker: rosterRequirements.hasKicker,
+    hasTeamDefense: rosterRequirements.hasTeamDefense,
+    unknownRosterSlots: rosterRequirements.unknownSlots,
     rankingsUploaded: hasRankings,
     rankingMatchStatusCounts: statusCounts,
     boardLabel: hasRankings ? "Ranked available players" : WARNING_MESSAGES.using_fallback_pool,
@@ -248,12 +297,41 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
   };
 }
 
-function countPositions(picks: DraftPickRow[]) {
-  return picks.reduce<Record<string, number>>((acc, pick) => {
-    const position = pick.position ?? "UNK";
-    acc[position] = (acc[position] ?? 0) + 1;
-    return acc;
-  }, {});
+function countPositions(picks: DraftPickRow[], playersBySleeperId: Map<string, PlayerRow>) {
+  const counts = Object.fromEntries(POSITION_GROUPS.map((position) => [position, 0])) as Record<PositionGroup, number>;
+
+  for (const pick of picks) {
+    const player = pick.sleeper_player_id ? playersBySleeperId.get(pick.sleeper_player_id) : null;
+    const normalizedPosition = normalizeDraftedPosition(pick.position, player);
+    if (!normalizedPosition) continue;
+    counts[normalizedPosition] += 1;
+  }
+
+  return counts;
+}
+
+function normalizeDraftedPosition(rawPosition: string | null, player: PlayerRow | null | undefined): PositionGroup | null {
+  const position =
+    player?.primary_position ??
+    player?.position_group ??
+    player?.position ??
+    normalizePrimaryPosition(rawPosition) ??
+    null;
+
+  if (!position) return null;
+
+  if (FALLBACK_POSITION_GROUPS.includes(position)) {
+    return position as PositionGroup;
+  }
+
+  return null;
+}
+
+function hasActiveGroup(players: PlayerRow[], groups: PositionGroup[]) {
+  return players.some((player) => {
+    const group = player.position_group ?? player.primary_position ?? player.position;
+    return group ? groups.includes(group as PositionGroup) : false;
+  });
 }
 
 function getPicksUntilMyNextPick(settings: unknown, myRosterId: string | undefined, currentPickNumber: number) {

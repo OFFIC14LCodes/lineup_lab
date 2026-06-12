@@ -1,0 +1,16 @@
+[
+  {
+    "fullName": "Cooper Kupp",
+    "team": "SEA",
+    "position": "WR",
+    "season": 2025,
+    "week": 2,
+    "providerExternalId": "manual-kupp-injury",
+    "status": "Questionable",
+    "practiceStatus": "Limited",
+    "gameStatus": "Questionable",
+    "bodyPart": "Ankle",
+    "injuryType": "Sprain",
+    "description": "Synthetic example observation"
+  }
+]

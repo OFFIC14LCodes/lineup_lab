@@ -1,7 +1,36 @@
 import type { SleeperPlayer } from "@/lib/sleeper/types";
 
 const SUFFIXES = new Set(["jr", "sr", "ii", "iii", "iv", "v"]);
-const VALID_POSITIONS = new Set(["QB", "RB", "WR", "TE", "K", "DEF", "DST", "DL", "LB", "DB"]);
+
+const POSITION_MAP: Record<string, "QB" | "RB" | "WR" | "TE" | "K" | "DEF" | "DL" | "LB" | "DB"> = {
+  QB: "QB",
+  RB: "RB",
+  FB: "RB",
+  WR: "WR",
+  TE: "TE",
+  K: "K",
+  PK: "K",
+  DEF: "DEF",
+  DST: "DEF",
+  "D/ST": "DEF",
+  DL: "DL",
+  DE: "DL",
+  DT: "DL",
+  EDGE: "DL",
+  NT: "DL",
+  LB: "LB",
+  ILB: "LB",
+  OLB: "LB",
+  MLB: "LB",
+  DB: "DB",
+  CB: "DB",
+  S: "DB",
+  FS: "DB",
+  SS: "DB"
+};
+
+export type NormalizedFantasyPosition = "QB" | "RB" | "WR" | "TE" | "K" | "DEF" | "DL" | "LB" | "DB";
+export type SideOfBall = "offense" | "defense" | "special_teams" | "team_defense";
 
 export function normalizePlayerName(name: string) {
   const cleaned = name
@@ -30,12 +59,36 @@ export function normalizeTeam(team?: string | null) {
   return value === "JAC" ? "JAX" : value;
 }
 
-export function normalizePosition(position?: string | null) {
+export function normalizePrimaryPosition(position?: string | null): NormalizedFantasyPosition | null {
   const value = position?.trim().toUpperCase();
   if (!value) return null;
-  if (value === "PK") return "K";
-  if (value === "D/ST") return "DEF";
-  return VALID_POSITIONS.has(value) ? value : value;
+  return POSITION_MAP[value] ?? null;
+}
+
+export function normalizePositionGroup(position?: string | null): NormalizedFantasyPosition | null {
+  return normalizePrimaryPosition(position);
+}
+
+export function classifySideOfBall(position?: string | null): SideOfBall | null {
+  const normalized = normalizePrimaryPosition(position);
+  if (!normalized) return null;
+  if (["QB", "RB", "WR", "TE"].includes(normalized)) return "offense";
+  if (normalized === "K") return "special_teams";
+  if (normalized === "DEF") return "team_defense";
+  if (["DL", "LB", "DB"].includes(normalized)) return "defense";
+  return null;
+}
+
+export function normalizeEligiblePositions(positions: Array<string | null | undefined>): NormalizedFantasyPosition[] {
+  const normalized = positions
+    .map((position) => normalizePrimaryPosition(position))
+    .filter((position): position is NormalizedFantasyPosition => Boolean(position));
+
+  return Array.from(new Set(normalized));
+}
+
+export function normalizePosition(position?: string | null) {
+  return normalizePrimaryPosition(position);
 }
 
 export function buildPlayerSearchName(player: Pick<SleeperPlayer, "full_name" | "first_name" | "last_name">) {

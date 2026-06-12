@@ -91,7 +91,7 @@ export async function POST(request: Request) {
   const supabase = createAdminClient();
   const { data: players, error: playersError } = await supabase
     .from("players")
-    .select("id,sleeper_player_id,full_name,normalized_name,position,team");
+    .select("id,sleeper_player_id,full_name,normalized_name,position,primary_position,position_group,side_of_ball,team");
 
   if (playersError) {
     return NextResponse.json({ error: playersError.message }, { status: 500 });
