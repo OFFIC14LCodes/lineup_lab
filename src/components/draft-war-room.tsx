@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { RefreshCw, Search } from "lucide-react";
+import { ChevronDown, RefreshCw, Search } from "lucide-react";
 
 type RecommendationTier = "elite_target" | "strong_target" | "good_value" | "depth_option" | "avoid_for_now";
 
@@ -66,8 +66,18 @@ type DraftState = {
   scoringMetadata: {
     formulaVersion: string;
     generatedAt: string;
+    draftStage: "early" | "middle" | "late";
     inputsUsed: string[];
     limitations: string[];
+    weights: {
+      ranking: number;
+      projection: number;
+      value: number;
+      rosterNeed: number;
+      scarcity: number;
+      formatFit: number;
+      adpValue: number;
+    };
   };
   warnings: string[];
   warningMessages: string[];
@@ -259,17 +269,13 @@ export function DraftWarRoom({ draftRoomId }: { draftRoomId: string }) {
           </SidePanel>
 
           <SidePanel title="Recommended Targets">
-            <RecommendationList players={state.recommendations.slice(0, 10)} />
+            <RecommendationList
+              players={state.recommendations.slice(0, 10)}
+              rankingsUploaded={state.rankingsUploaded}
+              warningMessages={state.warningMessages}
+            />
             <NeedsList needs={state.topNeeds} compact />
-            <p className="mt-3 text-xs text-slate-500">
-              Draft Target Score v1 uses uploaded rankings, roster construction, league format flags, ADP, and
-              available value fields. It does not yet include external projection providers, news, injuries, or AI
-              explanations.
-            </p>
-            <p className="mt-2 text-xs text-slate-600">
-              {state.scoringMetadata.formulaVersion} generated at{" "}
-              {new Date(state.scoringMetadata.generatedAt).toLocaleTimeString()}.
-            </p>
+            <ScoringMetadata metadata={state.scoringMetadata} />
           </SidePanel>
         </aside>
       </div>
@@ -302,8 +308,19 @@ function AvailablePlayersTable({ players }: { players: AvailablePlayer[] }) {
           {players.map((player, index) => (
             <tr key={`${player.sleeper_player_id ?? player.player_name}-${index}`} className="border-t border-line/70">
               <td className="px-3 py-3 font-bold">{player.rank ?? (player.is_fallback ? "-" : index + 1)}</td>
-              <td className="px-3 py-3">{player.player_name ?? "Unknown"}</td>
-              <td className="px-3 py-3">{player.draftTargetScore === null ? "-" : player.draftTargetScore.toFixed(1)}</td>
+              <td className="px-3 py-3">
+                <div className="font-medium text-slate-100">{player.player_name ?? "Unknown"}</div>
+                <div className="mt-1 text-xs text-slate-500">{player.team ?? player.position ?? "Player pool item"}</div>
+              </td>
+              <td className="px-3 py-3">
+                {player.draftTargetScore === null ? (
+                  "-"
+                ) : (
+                  <span className="inline-flex min-w-[3.75rem] justify-center rounded-md border border-brand/20 bg-brand/10 px-2 py-1 font-black text-brand">
+                    {player.draftTargetScore.toFixed(1)}
+                  </span>
+                )}
+              </td>
               <td className="px-3 py-3">
                 <TierBadge tier={player.recommendationTier} />
               </td>
@@ -368,51 +385,87 @@ function NeedsList({
   );
 }
 
-function RecommendationList({ players }: { players: AvailablePlayer[] }) {
+function RecommendationList({
+  players,
+  rankingsUploaded,
+  warningMessages
+}: {
+  players: AvailablePlayer[];
+  rankingsUploaded: boolean;
+  warningMessages: string[];
+}) {
   if (!players.length) {
-    return <p className="text-sm text-slate-400">Upload matched rankings to generate Draft Target Score recommendations.</p>;
+    return (
+      <div className="rounded-xl border border-dashed border-line bg-panel2/60 px-4 py-4 text-sm">
+        <p className="font-semibold text-slate-100">
+          {rankingsUploaded ? "No actionable recommendations yet." : "Recommendations need uploaded rankings."}
+        </p>
+        <p className="mt-2 text-slate-400">
+          {rankingsUploaded
+            ? "Review unmatched rows, sync draft picks, or broaden available ranked players to restore recommendations."
+            : "Upload matched rankings to unlock Draft Target Score recommendations. If rankings are absent, the War Room falls back to the Sleeper player pool only."}
+        </p>
+        {warningMessages.length ? (
+          <p className="mt-3 text-xs text-gold">{warningMessages[0]}</p>
+        ) : null}
+      </div>
+    );
   }
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-3">
       {players.map((player, index) => (
         <div
           key={`${player.sleeper_player_id ?? player.player_name}-${index}`}
-          className="rounded-md border border-line bg-panel2 px-3 py-3 text-sm"
+          className={`rounded-xl border px-4 py-4 text-sm ${
+            index === 0
+              ? "border-gold/35 bg-gradient-to-br from-gold/10 via-panel2 to-panel2 shadow-[0_0_0_1px_rgba(250,204,21,0.06)]"
+              : index < 3
+                ? "border-brand/25 bg-gradient-to-br from-brand/6 via-panel2 to-panel2"
+                : "border-line bg-panel2"
+          }`}
         >
           <div className="flex items-start justify-between gap-3">
-            <div className="min-w-0">
-              <div className="truncate font-bold">{player.player_name ?? "Unknown"}</div>
-              <div className="mt-1 text-xs text-slate-400">
-                {player.position ?? "-"} · {player.team ?? "-"} · Rank {player.rank ?? "-"} · ADP{" "}
-                {formatNumber(player.adp)}
+            <div className="min-w-0 flex-1">
+              <div className="flex flex-wrap items-center gap-2">
+                <PriorityBadge index={index} />
+                <PositionBadge position={player.position} />
+              </div>
+              <div className="mt-3 truncate text-base font-black text-slate-50">{player.player_name ?? "Unknown"}</div>
+              <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-400">
+                <span>
+                  {player.position ?? "-"} · {player.team ?? "-"}
+                </span>
+                <span>Rank {player.rank ?? "-"}</span>
+                <span>ADP {formatNumber(player.adp)}</span>
+                {player.projected_points !== null && player.projected_points !== undefined ? (
+                  <span>Proj {formatNumber(player.projected_points)}</span>
+                ) : null}
               </div>
             </div>
-            <div className="text-right">
-              <div className="text-base font-black">{player.draftTargetScore?.toFixed(1) ?? "-"}</div>
-              <div className="mt-1">
+            <div className="min-w-[88px] text-right">
+              <div className="inline-flex min-w-[76px] justify-center rounded-lg border border-brand/25 bg-background/70 px-3 py-2 text-lg font-black text-brand">
+                {player.draftTargetScore?.toFixed(1) ?? "-"}
+              </div>
+              <div className="mt-2 flex justify-end">
                 <TierBadge tier={player.recommendationTier} />
               </div>
             </div>
           </div>
-          {player.reasons.length ? (
+          <ReasonList reasons={player.reasons} />
+          {player.warnings.length ? (
             <div className="mt-3 flex flex-wrap gap-2">
-              {player.reasons.slice(0, 4).map((reason) => (
-                <span key={reason} className="rounded-full border border-line px-2 py-1 text-xs text-slate-300">
-                  {reason}
+              {player.warnings.map((warning) => (
+                <span
+                  key={warning}
+                  className="rounded-full border border-gold/20 bg-gold/10 px-2 py-1 text-[11px] font-medium text-gold"
+                >
+                  {warning}
                 </span>
               ))}
             </div>
           ) : null}
-          {player.warnings.length ? (
-            <div className="mt-3 space-y-1">
-              {player.warnings.map((warning) => (
-                <p key={warning} className="text-xs text-gold">
-                  {warning}
-                </p>
-              ))}
-            </div>
-          ) : null}
+          <ScoreBreakdown player={player} />
         </div>
       ))}
     </div>
@@ -444,6 +497,108 @@ function TierBadge({ tier }: { tier: RecommendationTier }) {
   return <span className={`rounded-full border px-2 py-1 text-[11px] uppercase tracking-wide ${className}`}>{label}</span>;
 }
 
+function PriorityBadge({ index }: { index: number }) {
+  const label = index === 0 ? "Top target" : index < 3 ? `Top ${index + 1}` : `Target ${index + 1}`;
+  const className =
+    index === 0
+      ? "border-gold/35 bg-gold/12 text-gold"
+      : index < 3
+        ? "border-brand/35 bg-brand/12 text-brand"
+        : "border-line bg-background text-slate-400";
+
+  return <span className={`rounded-full border px-2 py-1 text-[11px] uppercase tracking-wide ${className}`}>{label}</span>;
+}
+
+function PositionBadge({ position }: { position: string | null }) {
+  return (
+    <span className="rounded-full border border-line bg-background px-2 py-1 text-[11px] uppercase tracking-wide text-slate-300">
+      {position ?? "UNK"}
+    </span>
+  );
+}
+
+function ReasonList({ reasons }: { reasons: string[] }) {
+  if (!reasons.length) return null;
+
+  const primaryReasons = reasons.slice(0, 2);
+  const extraReasons = reasons.slice(2);
+
+  return (
+    <div className="mt-3 space-y-2">
+      <div className="grid gap-2">
+        {primaryReasons.map((reason) => (
+          <div key={reason} className="rounded-lg border border-line/70 bg-background/60 px-3 py-2 text-xs text-slate-200">
+            {reason}
+          </div>
+        ))}
+      </div>
+      {extraReasons.length ? (
+        <div className="flex flex-wrap gap-2">
+          {extraReasons.map((reason) => (
+            <span key={reason} className="rounded-full border border-line px-2 py-1 text-[11px] text-slate-400">
+              {reason}
+            </span>
+          ))}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function ScoreBreakdown({ player }: { player: AvailablePlayer }) {
+  if (!player.scoreComponents) return null;
+
+  // TODO: Ground a future AI explanation layer in these deterministic score components.
+  const components = [
+    { label: "Rank", value: player.scoreComponents.rankingScore },
+    { label: "Proj", value: player.scoreComponents.projectionScore },
+    { label: "Value", value: player.scoreComponents.valueScore },
+    { label: "Need", value: player.scoreComponents.rosterNeedScore },
+    { label: "Scarcity", value: player.scoreComponents.scarcityScore },
+    { label: "Format", value: player.scoreComponents.formatFitScore },
+    { label: "ADP", value: player.scoreComponents.adpValueScore },
+    { label: "Penalty", value: player.scoreComponents.matchConfidencePenalty }
+  ];
+
+  return (
+    <details className="mt-3 group">
+      <summary className="flex cursor-pointer list-none items-center justify-between rounded-lg border border-line/70 bg-background/50 px-3 py-2 text-xs font-medium text-slate-300 transition hover:border-line hover:text-slate-100">
+        <span>Why this score?</span>
+        <ChevronDown className="h-4 w-4 transition group-open:rotate-180" />
+      </summary>
+      <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
+        {components.map((component) => (
+          <div key={component.label} className="rounded-lg border border-line/70 bg-background/60 px-2 py-2">
+            <div className="text-[11px] uppercase tracking-wide text-slate-500">{component.label}</div>
+            <div className="mt-1 text-sm font-bold text-slate-100">{component.value.toFixed(1)}</div>
+          </div>
+        ))}
+      </div>
+    </details>
+  );
+}
+
+function ScoringMetadata({
+  metadata
+}: {
+  metadata: DraftState["scoringMetadata"];
+}) {
+  return (
+    <div className="mt-4 rounded-xl border border-line/80 bg-background/50 px-3 py-3">
+      <div className="flex flex-wrap items-center gap-2 text-[11px] uppercase tracking-wide text-slate-400">
+        <span>{metadata.formulaVersion}</span>
+        <span className="text-slate-600">•</span>
+        <span>{metadata.draftStage} stage</span>
+        <span className="text-slate-600">•</span>
+        <span>{new Date(metadata.generatedAt).toLocaleTimeString()}</span>
+      </div>
+      <p className="mt-2 text-xs text-slate-500">
+        Limits: {metadata.limitations.slice(0, 2).join(" ")}
+      </p>
+    </div>
+  );
+}
+
 function EmptyTable({ colSpan, text }: { colSpan: number; text: string }) {
   return (
     <tr>
@@ -458,3 +613,6 @@ function formatNumber(value: number | null | undefined) {
   if (value === null || value === undefined) return "-";
   return Number(value).toLocaleString(undefined, { maximumFractionDigits: 1 });
 }
+
+// TODO: Extend War Room display logic for IDP roster slots and defensive positions.
+// TODO: Surface player stats and projection-provider inputs when those data pipelines exist.
