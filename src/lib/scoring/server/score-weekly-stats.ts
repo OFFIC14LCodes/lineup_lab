@@ -2,6 +2,7 @@ import "server-only";
 
 import { createClient } from "@/lib/supabase/server";
 import { compareProviderPoints } from "@/lib/scoring/server/compare-provider-points";
+import { derivedStatsKey, loadDerivedStatsForRows, mergeWithDerivedStats } from "@/lib/scoring/server/derived-stats";
 import { SCORING_INSPECTOR_ERROR_CODES, ScoringInspectorError } from "@/lib/scoring/server/errors";
 import { getLeagueScoringContext } from "@/lib/scoring/server/league-settings";
 import { buildStoredRowScoringError, buildStoredRowScoringResult, resolveStoredRowPositionGroup } from "@/lib/scoring/server/score-stored-row";
@@ -48,6 +49,7 @@ type Dependencies = {
     limit: number;
   }) => Promise<WeeklyStatsRow[]>;
   loadPlayersByIds: (playerIds: string[]) => Promise<Map<string, PlayerRow>>;
+  loadDerivedStats: (rows: { player_id: string; season: number; week: number }[]) => Promise<Map<string, Record<string, number>>>;
 };
 
 const defaultDependencies: Dependencies = {
@@ -101,6 +103,10 @@ const defaultDependencies: Dependencies = {
     }
 
     return new Map((data ?? []).map((row) => [row.id, row as PlayerRow]));
+  },
+  async loadDerivedStats(rows) {
+    const supabase = await createClient();
+    return loadDerivedStatsForRows(rows, supabase);
   }
 };
 
@@ -117,7 +123,9 @@ export async function scoreStoredWeeklyStatsForLeague(
   }
 
   const playerMap = await dependencies.loadPlayersByIds([row.player_id]);
-  return scoreWeeklyRow(league, row, playerMap.get(row.player_id) ?? null);
+  const derivedStatsMap = await dependencies.loadDerivedStats([{ player_id: row.player_id, season: row.season, week: row.week }]);
+  const derivedStats = derivedStatsMap.get(derivedStatsKey(row.player_id, row.week));
+  return scoreWeeklyRow(league, row, playerMap.get(row.player_id) ?? null, derivedStats);
 }
 
 export async function scoreWeeklyStatsRowsForLeague(
@@ -144,14 +152,18 @@ export async function scoreWeeklyStatsRowsForLeague(
     limit: args.limit ?? 25
   });
   const playerMap = await dependencies.loadPlayersByIds([...new Set(rows.map((row) => row.player_id))]);
+  const derivedStatsMap = await dependencies.loadDerivedStats(
+    rows.map((row) => ({ player_id: row.player_id, season: row.season, week: row.week }))
+  );
 
   return {
     league,
     results: rows.map((row) => {
+      const derivedStats = derivedStatsMap.get(derivedStatsKey(row.player_id, row.week));
       try {
         return {
           ok: true as const,
-          result: scoreWeeklyRow(league, row, playerMap.get(row.player_id) ?? null)
+          result: scoreWeeklyRow(league, row, playerMap.get(row.player_id) ?? null, derivedStats)
         };
       } catch (error) {
         return {
@@ -171,7 +183,12 @@ export async function scoreWeeklyStatsRowsForLeague(
   };
 }
 
-function scoreWeeklyRow(league: LeagueScoringContext, row: WeeklyStatsRow, player: PlayerRow | null) {
+function scoreWeeklyRow(
+  league: LeagueScoringContext,
+  row: WeeklyStatsRow,
+  player: PlayerRow | null,
+  derivedStats?: Record<string, number>
+) {
   if (!player) {
     throw new ScoringInspectorError(SCORING_INSPECTOR_ERROR_CODES.rowNotFound, "Canonical player record not found for weekly stats row.", 404);
   }
@@ -180,8 +197,9 @@ function scoreWeeklyRow(league: LeagueScoringContext, row: WeeklyStatsRow, playe
     rowPositionGroup: row.position_group,
     player
   });
+  const mergedStats = mergeWithDerivedStats(row.stats_json, derivedStats);
   const blackbird = scoreFantasyStats({
-    stats: row.stats_json,
+    stats: mergedStats,
     scoringSettings: league.scoringSettings,
     positionGroup: position.positionGroup,
     statSource: "actual",

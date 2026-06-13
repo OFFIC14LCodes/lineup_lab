@@ -97,6 +97,10 @@ function buildCohortReadinessDecision(input: {
   minimumCoverageRatio: number;
   warnings: string[];
 }): ScoringReadinessDecision {
+  const sourceType = input.rows[0]?.sourceType ?? "weekly_stats";
+  const projectionType = input.rows[0]?.projectionType ?? null;
+  const readyRows = input.rows.filter((row) => row.readiness.status === "ready").length;
+  const conditionalRows = input.rows.filter((row) => row.readiness.status === "conditionally_ready").length;
   const notReadyRows = input.rows.filter((row) => row.readiness.status === "not_ready").length;
   const insufficientRows = input.rows.filter((row) => row.readiness.status === "insufficient_data").length;
   const score = Math.max(
@@ -112,18 +116,33 @@ function buildCohortReadinessDecision(input: {
       ? "insufficient_data"
       : notReadyRows > 0
         ? "not_ready"
-        : input.eligiblePercentage >= 0.95 && input.minimumCoverageRatio >= 0.95
+        : readyRows === input.rows.length && input.minimumCoverageRatio >= 0.95
           ? "ready"
-          : input.eligiblePercentage >= 0.8
+          : readyRows + conditionalRows === input.rows.length
             ? "conditionally_ready"
             : insufficientRows === input.rows.length
               ? "insufficient_data"
               : "not_ready";
 
+  const eligibleForRecommendationExperiment =
+    sourceType !== "weekly_stats" &&
+    status === "ready" &&
+    input.eligiblePercentage >= 0.95 &&
+    (sourceType !== "projections" || projectionType === "weekly");
+  const eligibleExperimentScope =
+    eligibleForRecommendationExperiment && sourceType === "projections"
+      ? "weekly_projection_experiment"
+      : "none";
+
   return {
     status,
-    eligibleForRecommendationExperiment: status === "ready",
-    eligibleExperimentScope: status === "ready" ? "weekly_recommendation" : "none",
+    scoringValidationStatus: status,
+    eligibleForRecommendationExperiment,
+    eligibleExperimentScope,
+    recommendationExperimentEligibility: {
+      eligible: eligibleForRecommendationExperiment,
+      scope: eligibleExperimentScope
+    },
     score,
     reasons: [],
     warnings: input.warnings,
@@ -144,30 +163,33 @@ function buildCohortReadinessDecision(input: {
 
 export function summarizeProviderComparisons(comparisons: Array<ProviderPointComparison | null>): ProviderComparisonDistribution {
   const present = comparisons.filter((comparison): comparison is ProviderPointComparison => comparison !== null);
-  const absoluteDifferences = present.map((comparison) => comparison.absoluteDifference).sort((a, b) => a - b);
-  const signedDifferences = present.map((comparison) => comparison.difference);
   const total = comparisons.length;
+  const classified = present.filter((comparison) => comparison.comparisonStatus !== "incomplete_blackbird_coverage");
+  const absoluteDifferences = classified.map((comparison) => comparison.absoluteDifference).sort((a, b) => a - b);
+  const signedDifferences = classified.map((comparison) => comparison.difference);
 
-  const matchCount = present.filter((comparison) => comparison.comparisonStatus === "match").length;
-  const closeCount = present.filter((comparison) => comparison.comparisonStatus === "close").length;
-  const differentCount = present.filter((comparison) => comparison.comparisonStatus === "different").length;
-  const incompleteCoverageCount = present.filter((comparison) => comparison.comparisonStatus === "incomplete_blackbird_coverage").length;
+  const matchCount = classified.filter((comparison) => comparison.comparisonStatus === "match").length;
+  const closeCount = classified.filter((comparison) => comparison.comparisonStatus === "close").length;
+  const differentCount = classified.filter((comparison) => comparison.comparisonStatus === "different").length;
+  const incompleteCoverageCount = present.length - classified.length;
 
   return {
     withProviderTotals: present.length,
+    classifiedCount: classified.length,
+    excludedCount: incompleteCoverageCount,
     withoutProviderTotals: total - present.length,
     matchCount,
     closeCount,
     differentCount,
     incompleteCoverageCount,
-    meanSignedDifference: present.length > 0 ? sum(signedDifferences) / present.length : null,
-    meanAbsoluteDifference: present.length > 0 ? sum(absoluteDifferences) / present.length : null,
-    medianAbsoluteDifference: present.length > 0 ? median(absoluteDifferences) : null,
-    maximumAbsoluteDifference: present.length > 0 ? Math.max(...absoluteDifferences) : null,
+    meanSignedDifference: classified.length > 0 ? sum(signedDifferences) / classified.length : null,
+    meanAbsoluteDifference: classified.length > 0 ? sum(absoluteDifferences) / classified.length : null,
+    medianAbsoluteDifference: classified.length > 0 ? median(absoluteDifferences) : null,
+    maximumAbsoluteDifference: classified.length > 0 ? Math.max(...absoluteDifferences) : null,
     percentageWithProviderTotals: total > 0 ? present.length / total : 0,
-    percentageMatch: present.length > 0 ? matchCount / present.length : 0,
-    percentageClose: present.length > 0 ? closeCount / present.length : 0,
-    percentageDifferent: present.length > 0 ? differentCount / present.length : 0
+    percentageMatch: classified.length > 0 ? matchCount / classified.length : 0,
+    percentageClose: classified.length > 0 ? closeCount / classified.length : 0,
+    percentageDifferent: classified.length > 0 ? differentCount / classified.length : 0
   };
 }
 

@@ -1,4 +1,5 @@
 import { auditAggregateScoringCompatibility } from "@/lib/scoring";
+import { getKnownScoringKeyDefinition } from "@/lib/scoring/key-definitions";
 import type { PositionGroup } from "@/lib/scoring/types";
 import { BLACKBIRD_SCORING_FORMULA_VERSION } from "@/lib/scoring/score-player";
 import {
@@ -9,10 +10,12 @@ import {
   READINESS_THRESHOLDS
 } from "@/lib/scoring/validation/constants";
 import type {
+  DatasetCapabilityStatus,
   LeagueReadinessResult,
   ReadinessReason,
   ReadinessScoreBreakdownItem,
-  ScoringReadinessStatus
+  ScoringReadinessStatus,
+  UnsupportedKeyReason
 } from "@/lib/scoring/validation/types";
 import type { LeagueScoringContext } from "@/lib/scoring/server/types";
 
@@ -22,8 +25,22 @@ export function evaluateLeagueScoringReadiness(input: {
 }): LeagueReadinessResult {
   const { league, positionGroup } = input;
   const activeApplicableKeys = getActiveApplicableKeys(league, positionGroup);
-  const supportedApplicableKeys = getSupportedApplicableKeys(league, positionGroup);
-  const unsupportedApplicableKeys = activeApplicableKeys.filter((key) => !supportedApplicableKeys.includes(key));
+
+  // Keys the audit classifies as "supported" because the engine has a rule.
+  const auditSupportedKeys = getSupportedApplicableKeys(league, positionGroup);
+
+  // Reclassify keys that are engine-implemented but whose required canonical
+  // stat is absent from the current dataset. These must not be labeled
+  // "supported" — the stat will never appear in stored rows from this source.
+  const datasetUnavailableKeys = auditSupportedKeys.filter((key) => {
+    const def = getKnownScoringKeyDefinition(key);
+    return def?.dataCapabilityStatus === "unavailable_from_weekly_source";
+  });
+  const supportedApplicableKeys = auditSupportedKeys.filter((key) => !datasetUnavailableKeys.includes(key));
+  const unsupportedApplicableKeys = [
+    ...activeApplicableKeys.filter((key) => !auditSupportedKeys.includes(key)),
+    ...datasetUnavailableKeys
+  ].sort();
   const invalidScoringKeys = league.scoringSettings.invalidKeys.map((item) => item.key);
   const aggregateUnsafeKeys = auditAggregateScoringCompatibility({
     scoringSettings: league.scoringSettings,
@@ -33,6 +50,9 @@ export function evaluateLeagueScoringReadiness(input: {
     unsupportedApplicableKeys.map((key) => [key, classifyScoringKeyImpact(key)])
   );
   const highImpactUnsupportedKeys = unsupportedApplicableKeys.filter((key) => {
+    // Keys reclassified as dataset-unavailable are known source limitations,
+    // not implementation gaps — exclude them from blocking readiness.
+    if (datasetUnavailableKeys.includes(key)) return false;
     const impact = unsupportedKeyImpacts[key];
     return impact === "core" || impact === "material" || impact === "unknown";
   });
@@ -136,10 +156,24 @@ export function evaluateLeagueScoringReadiness(input: {
   const eligibleForRecommendationExperiment = status === "ready";
   const eligibleExperimentScope = eligibleForRecommendationExperiment ? "weekly_recommendation" : "none";
 
+  const unsupportedKeyReasons = buildUnsupportedKeyReasons(unsupportedApplicableKeys);
+  const unavailableFromCurrentDatasetCount = unsupportedKeyReasons.filter(
+    (r) =>
+      r.reason === "requires_play_by_play" ||
+      r.reason === "unavailable_from_current_source" ||
+      r.reason === "unavailable_from_weekly_source"
+  ).length;
+  const dataCapabilityStatus = resolveDataCapabilityStatus(unsupportedKeyReasons);
+
   return {
     status,
+    scoringValidationStatus: status,
     eligibleForRecommendationExperiment,
     eligibleExperimentScope,
+    recommendationExperimentEligibility: {
+      eligible: eligibleForRecommendationExperiment,
+      scope: eligibleExperimentScope
+    },
     score: clampScore(cappedScore ?? score),
     reasons,
     warnings,
@@ -156,7 +190,12 @@ export function evaluateLeagueScoringReadiness(input: {
     aggregateUnsafeKeys,
     supportRatio,
     unsupportedKeyImpacts,
-    highImpactUnsupportedKeys
+    highImpactUnsupportedKeys,
+    unsupportedApplicableKeyCount: unsupportedApplicableKeys.length,
+    unavailableFromCurrentDatasetCount,
+    applicableCoverageRatio: supportRatio,
+    dataCapabilityStatus,
+    unsupportedKeyReasons
   };
 }
 
@@ -207,6 +246,26 @@ function getSupportedApplicableKeys(league: LeagueScoringContext, positionGroup:
   }
 
   return [...league.scoringAudit.positionSpecificSupport[positionGroup].supportedKeys].sort();
+}
+
+function buildUnsupportedKeyReasons(unsupportedKeys: string[]): UnsupportedKeyReason[] {
+  return unsupportedKeys.map((key) => {
+    const definition = getKnownScoringKeyDefinition(key);
+    const capabilityStatus = definition?.dataCapabilityStatus ?? "requires_semantic_verification";
+    return {
+      key,
+      reason: capabilityStatus,
+      requiredData: definition?.dataCapabilityDetail?.requiredData
+    };
+  });
+}
+
+function resolveDataCapabilityStatus(reasons: UnsupportedKeyReason[]): DatasetCapabilityStatus {
+  if (reasons.length === 0) return "fully_supported";
+  if (reasons.some((r) => r.reason === "requires_play_by_play")) return "requires_play_by_play";
+  if (reasons.some((r) => r.reason === "unavailable_from_weekly_source")) return "unavailable_from_weekly_source";
+  if (reasons.some((r) => r.reason === "requires_weekly_canonical_field")) return "missing_weekly_canonical_fields";
+  return "fully_supported";
 }
 
 function clampScore(score: number) {

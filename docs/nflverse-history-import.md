@@ -72,6 +72,38 @@ npm run validate:nflverse-history -- --season=2025
 
 Equivalent to dry run but run as a standalone validation command. Asserts schema validity.
 
+### Audit recovery (repair control-plane only)
+
+```bash
+npm run repair:nflverse-history -- --season=2025 --recover-audit
+```
+
+Dry-run recover-audit mode:
+- Never updates `player_weekly_stats`
+- Diagnoses `football_stat_corrections` coverage for nflverse 2025
+- Reports whether row-level repair history is fully recoverable, partially recoverable, or not recoverable
+- Produces a bounded recovery plan and diagnostic artifact
+
+Execute recover-audit mode:
+- Still never updates `player_weekly_stats`
+- Inserts only missing audit-side records that are safe to create
+- If true row-level correction history cannot be reconstructed, writes a batch-level fallback audit record to `football_import_batches.report_json`
+- Uses retry-protected chunked audit reads/writes
+- Re-running after a matching completed fallback audit reports `ALREADY RECOVERED` and performs zero writes
+
+### Reconcile stale repair batches (control-plane only)
+
+```bash
+npm run reconcile:nflverse-repair-batches -- --season=2025
+```
+
+Dry-run reconcile mode:
+- Never updates `player_weekly_stats`
+- Requires a completed matching fallback audit record first
+- Validates that repaired canonical rows still match the archived source artifact
+- Selects only stale open repair batches linked by the fallback audit `relatedBatchIds`
+- Proposes a terminal `failed` status plus explicit reconciliation metadata in `football_import_batches.report_json`
+
 ---
 
 ## Prerequisites
@@ -143,8 +175,10 @@ skipped and counted in the coverage report. No partial writes occur.
 | `receiving_tds`          | `rec_td`      |
 | `receiving_first_downs`  | `rec_fd`      |
 | `receiving_2pt_conversions`| `rec_2pt`   |
+| `sack_fumbles_lost` + `rushing_fumbles_lost` + `receiving_fumbles_lost` | `fum_lost` |
 
-Zero-value and NA-value stats are omitted from the output `stats_json`.
+Numeric zero values are preserved in `stats_json` when the source column is present and parseable.
+Blank, null, `NA`, `NaN`, infinite, and absent source values are omitted instead of being coerced to zero.
 The nflverse `fantasy_points` column maps to `provider_fantasy_points`.
 
 ---
@@ -194,7 +228,11 @@ Access is via service role key only.
 | `football_data_sources`   | Raw artifact fingerprint and archive path     |
 | `football_import_batches` | Per-run tracking and final coverage report    |
 | `football_source_rows`    | Per-source-row resolution and write outcome   |
-| `football_stat_corrections` | Manual stat overrides (reserved for future) |
+| `football_stat_corrections` | Manual stat overrides / repair audit entries |
+
+Current limitation:
+- `football_stat_corrections` does not store `import_batch_id`, `game_id`, `previous_row_hash`, `replacement_row_hash`, or `changed_fields_json`.
+- That means a failed historical repair can require a batch-level fallback audit record instead of a fully reconstructed row-level audit trail.
 
 ---
 
@@ -227,3 +265,4 @@ coverageByPosition    — resolved/unresolved counts per position group
 - Identity resolution uses GSIS ID only — no name-only fallback
 - Only QB, RB, WR, TE rows from regular season are processed
 - Source artifact is immutable once archived; SHA-256 fingerprints the content
+- Control-plane audit writes are not transactionally coupled to canonical row updates through the current repository layer; resume behavior must explicitly inspect partial state

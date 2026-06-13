@@ -1,9 +1,11 @@
 import type {
   FantasyScoringComponent,
   PositionGroup,
+  ScoringKeyDefinition,
   ScoringRuleContext,
   SleeperScoringRule
 } from "@/lib/scoring/types";
+import { getKnownScoringKeyDefinition } from "@/lib/scoring/key-definitions";
 
 const OFFENSE: PositionGroup[] = ["QB", "RB", "WR", "TE"];
 const KICKER: PositionGroup[] = ["K"];
@@ -23,6 +25,7 @@ export const SLEEPER_SCORING_RULES: SleeperScoringRule[] = [
   statRule("pass_2pt", "pass_2pt", "passing", "Passing two-point conversions", ["QB"]),
   statRule("pass_fd", "pass_fd", "first_downs", "Passing first downs", ["QB"]),
   statRule("pass_pick6", "pass_pick6", "passing", "Pick-sixes thrown", ["QB"]),
+  statRule("pass_int_td", "pass_pick6", "passing", "Interception returned for touchdown (pick-six thrown)", ["QB"]),
   statRule("rush_yd", "rush_yd", "rushing", "Rushing yards", OFFENSE),
   statRule("rush_td", "rush_td", "rushing", "Rushing touchdowns", OFFENSE),
   statRule("rush_att", "rush_att", "rushing", "Rushing attempts", OFFENSE),
@@ -37,6 +40,9 @@ export const SLEEPER_SCORING_RULES: SleeperScoringRule[] = [
   statRule("rec_te_bonus", "rec", "receiving", "Tight end reception bonus", ["TE"]),
   statRule("rec_rb_bonus", "rec", "receiving", "Running back reception bonus", ["RB"]),
   statRule("rec_wr_bonus", "rec", "receiving", "Wide receiver reception bonus", ["WR"]),
+  statRule("bonus_rec_te", "rec", "receiving", "Tight end reception bonus", ["TE"]),
+  statRule("bonus_rec_rb", "rec", "receiving", "Running back reception bonus", ["RB"]),
+  statRule("bonus_rec_wr", "rec", "receiving", "Wide receiver reception bonus", ["WR"]),
   statRule("fum", "fum", "miscellaneous", "Fumbles", OFFENSE),
   statRule("fum_lost", "fum_lost", "miscellaneous", "Fumbles lost", OFFENSE),
   statRule("fum_ret_td", "fum_ret_td", "miscellaneous", "Fumble return touchdowns", OFFENSE),
@@ -44,12 +50,45 @@ export const SLEEPER_SCORING_RULES: SleeperScoringRule[] = [
   statRule("punt_ret_yd", "punt_ret_yd", "returns", "Punt return yards", OFFENSE),
   statRule("return_td", "return_td", "returns", "Return touchdowns", OFFENSE),
   statRule("return_fd", "return_fd", "first_downs", "Return first downs", OFFENSE),
-  thresholdRule("bonus_pass_yd_300", "pass_yd", 300, "bonuses", "300+ passing-yard bonus", ["QB"]),
+  // Position-specific first-down bonuses — additive to any generic first-down keys active in the league.
+  // bonus_fd_qb: per passing first down (same underlying stat as pass_fd, different scoring key)
+  statRule("bonus_fd_qb", "pass_fd", "first_downs", "Quarterback first-down bonus (per passing first down)", ["QB"]),
+  // bonus_fd_rb: per combined rushing + receiving first down (rush_fd + rec_fd)
+  combinedPerUnitStatRule("bonus_fd_rb", ["rush_fd", "rec_fd"], "first_downs", "Running back first-down bonus (per rushing or receiving first down)", ["RB"]),
+  // bonus_fd_wr: per receiving first down (same underlying stat as rec_fd, different scoring key)
+  statRule("bonus_fd_wr", "rec_fd", "first_downs", "Wide receiver first-down bonus (per receiving first down)", ["WR"]),
+  // bonus_fd_te: per receiving first down (same underlying stat as rec_fd, different scoring key)
+  statRule("bonus_fd_te", "rec_fd", "first_downs", "Tight end first-down bonus (per receiving first down)", ["TE"]),
+  // Long-TD bonuses — stat values come from player_weekly_derived_stats (nflverse PBP derivation).
+  statRule("rec_td_40p", "rec_td_40p", "bonuses", "Receiving TD of 40+ yards bonus", OFFENSE),
+  statRule("rec_td_50p", "rec_td_50p", "bonuses", "Receiving TD of 50+ yards bonus", OFFENSE),
+  statRule("rush_td_40p", "rush_td_40p", "bonuses", "Rushing TD of 40+ yards bonus", OFFENSE),
+  statRule("rush_td_50p", "rush_td_50p", "bonuses", "Rushing TD of 50+ yards bonus", OFFENSE),
+  thresholdRangeRule("bonus_pass_yd_300", "pass_yd", 300, 400, "bonuses", "300-399 passing-yard bonus", ["QB"]),
   thresholdRule("bonus_pass_yd_400", "pass_yd", 400, "bonuses", "400+ passing-yard bonus", ["QB"]),
-  thresholdRule("bonus_rush_yd_100", "rush_yd", 100, "bonuses", "100+ rushing-yard bonus", OFFENSE),
+  thresholdRule("bonus_pass_cmp_25", "pass_cmp", 25, "bonuses", "25+ pass completions bonus", ["QB"]),
+  thresholdRangeRule("bonus_rush_yd_100", "rush_yd", 100, 200, "bonuses", "100-199 rushing-yard bonus", OFFENSE),
   thresholdRule("bonus_rush_yd_200", "rush_yd", 200, "bonuses", "200+ rushing-yard bonus", OFFENSE),
-  thresholdRule("bonus_rec_yd_100", "rec_yd", 100, "bonuses", "100+ receiving-yard bonus", OFFENSE),
+  thresholdRule("bonus_rush_att_20", "rush_att", 20, "bonuses", "20+ carries bonus", OFFENSE),
+  thresholdRangeRule("bonus_rec_yd_100", "rec_yd", 100, 200, "bonuses", "100-199 receiving-yard bonus", OFFENSE),
   thresholdRule("bonus_rec_yd_200", "rec_yd", 200, "bonuses", "200+ receiving-yard bonus", OFFENSE),
+  combinedThresholdRangeRule(
+    "bonus_rush_rec_yd_100",
+    ["rush_yd", "rec_yd"],
+    100,
+    200,
+    "bonuses",
+    "100-199 combined rush + rec yards bonus",
+    OFFENSE
+  ),
+  combinedThresholdRule(
+    "bonus_rush_rec_yd_200",
+    ["rush_yd", "rec_yd"],
+    200,
+    "bonuses",
+    "200+ combined rush + rec yards bonus",
+    OFFENSE
+  ),
   statRule("xpm", "xpm", "kicking", "Extra points made", KICKER),
   statRule("xpmiss", "xpmiss", "kicking", "Extra points missed", KICKER),
   overlappingFieldGoalRule("fgm", "fgm", "kicking", "Field goals made"),
@@ -119,6 +158,27 @@ for (const rule of SLEEPER_SCORING_RULES) {
   SLEEPER_RULES_BY_KEY.set(rule.scoringKey, existing);
 }
 
+export function getScoringKeyDefinition(scoringKey: string): ScoringKeyDefinition | null {
+  const knownDefinition = getKnownScoringKeyDefinition(scoringKey);
+  if (knownDefinition) {
+    return knownDefinition;
+  }
+
+  const rules = SLEEPER_RULES_BY_KEY.get(scoringKey) ?? [];
+  if (rules.length === 0) {
+    return null;
+  }
+
+  return {
+    scoringKey,
+    category: rules[0].category,
+    description: rules[0].description,
+    allowedPositions: mergeAllowedPositions(rules),
+    requiredStats: [...new Set(rules.flatMap((rule) => rule.requiredStats))].sort(),
+    implementationStatus: "implemented"
+  };
+}
+
 function statRule(
   scoringKey: string,
   canonicalStatKey: string,
@@ -131,6 +191,7 @@ function statRule(
     category,
     description,
     allowedPositions,
+    requiredStats: [canonicalStatKey],
     evaluate(context) {
       if (!isApplicable(context, allowedPositions)) {
         return {
@@ -178,6 +239,7 @@ function thresholdRule(
     category,
     description,
     allowedPositions,
+    requiredStats: [canonicalStatKey],
     evaluate(context) {
       if (!isApplicable(context, allowedPositions)) {
         return {
@@ -215,6 +277,58 @@ function thresholdRule(
   };
 }
 
+function thresholdRangeRule(
+  scoringKey: string,
+  canonicalStatKey: string,
+  minimum: number,
+  exclusiveMaximum: number,
+  category: FantasyScoringComponent["category"],
+  description: string,
+  allowedPositions?: PositionGroup[]
+): SleeperScoringRule {
+  return {
+    scoringKey,
+    category,
+    description,
+    allowedPositions,
+    requiredStats: [canonicalStatKey],
+    evaluate(context) {
+      if (!isApplicable(context, allowedPositions)) {
+        return {
+          state: "not_applicable",
+          requiredStats: [canonicalStatKey]
+        };
+      }
+
+      const resolved = context.getStat(canonicalStatKey);
+      if (resolved.statValue === null || !resolved.statKey) {
+        return {
+          state: "missing_stat",
+          requiredStats: [canonicalStatKey]
+        };
+      }
+
+      return {
+        state: "evaluated",
+        requiredStats: [canonicalStatKey],
+        components:
+          resolved.statValue >= minimum && resolved.statValue < exclusiveMaximum
+            ? [
+                fixedPointComponent({
+                  scoringKey,
+                  statKey: resolved.statKey,
+                  statValue: resolved.statValue,
+                  scoringValue: context.scoringValue,
+                  category,
+                  description
+                })
+              ]
+            : []
+      };
+    }
+  };
+}
+
 function tierRule(
   scoringKey: string,
   canonicalStatKey: string,
@@ -229,6 +343,7 @@ function tierRule(
     category,
     description,
     allowedPositions,
+    requiredStats: [canonicalStatKey],
     evaluate(context) {
       if (!isApplicable(context, allowedPositions)) {
         return {
@@ -277,6 +392,7 @@ function overlappingFieldGoalRule(
     category,
     description,
     allowedPositions: KICKER,
+    requiredStats: [canonicalStatKey],
     evaluate(context) {
       if (!isApplicable(context, KICKER)) {
         return {
@@ -323,6 +439,177 @@ function overlappingFieldGoalRule(
   };
 }
 
+function combinedThresholdRule(
+  scoringKey: string,
+  canonicalStatKeys: [string, string],
+  threshold: number,
+  category: FantasyScoringComponent["category"],
+  description: string,
+  allowedPositions?: PositionGroup[]
+): SleeperScoringRule {
+  return {
+    scoringKey,
+    category,
+    description,
+    allowedPositions,
+    requiredStats: canonicalStatKeys,
+    evaluate(context) {
+      if (!isApplicable(context, allowedPositions)) {
+        return {
+          state: "not_applicable",
+          requiredStats: canonicalStatKeys
+        };
+      }
+
+      const [firstKey, secondKey] = canonicalStatKeys;
+      const first = context.getStat(firstKey);
+      const second = context.getStat(secondKey);
+      const hasFirst = typeof first.statValue === "number" && first.statKey;
+      const hasSecond = typeof second.statValue === "number" && second.statKey;
+
+      if (!hasFirst && !hasSecond) {
+        return {
+          state: "missing_stat",
+          requiredStats: canonicalStatKeys
+        };
+      }
+
+      const statValue = (hasFirst ? (first.statValue ?? 0) : 0) + (hasSecond ? (second.statValue ?? 0) : 0);
+      return {
+        state: "evaluated",
+        requiredStats: canonicalStatKeys,
+        components:
+          statValue >= threshold
+            ? [
+                fixedPointComponent({
+                  scoringKey,
+                  statKey: `${firstKey}+${secondKey}`,
+                  statValue,
+                  scoringValue: context.scoringValue,
+                  category,
+                  description
+                })
+              ]
+            : []
+      };
+    }
+  };
+}
+
+function combinedPerUnitStatRule(
+  scoringKey: string,
+  canonicalStatKeys: [string, string],
+  category: FantasyScoringComponent["category"],
+  description: string,
+  allowedPositions?: PositionGroup[]
+): SleeperScoringRule {
+  return {
+    scoringKey,
+    category,
+    description,
+    allowedPositions,
+    requiredStats: canonicalStatKeys,
+    evaluate(context) {
+      if (!isApplicable(context, allowedPositions)) {
+        return {
+          state: "not_applicable",
+          requiredStats: canonicalStatKeys
+        };
+      }
+
+      const [firstKey, secondKey] = canonicalStatKeys;
+      const first = context.getStat(firstKey);
+      const second = context.getStat(secondKey);
+      const hasFirst = typeof first.statValue === "number" && first.statKey;
+      const hasSecond = typeof second.statValue === "number" && second.statKey;
+
+      if (!hasFirst && !hasSecond) {
+        return {
+          state: "missing_stat",
+          requiredStats: canonicalStatKeys
+        };
+      }
+
+      const combined = (hasFirst ? (first.statValue ?? 0) : 0) + (hasSecond ? (second.statValue ?? 0) : 0);
+      return {
+        state: "evaluated",
+        requiredStats: canonicalStatKeys,
+        components:
+          combined > 0
+            ? [
+                component({
+                  scoringKey,
+                  statKey: `${firstKey}+${secondKey}`,
+                  statValue: combined,
+                  scoringValue: context.scoringValue,
+                  category,
+                  description
+                })
+              ]
+            : []
+      };
+    }
+  };
+}
+
+function combinedThresholdRangeRule(
+  scoringKey: string,
+  canonicalStatKeys: [string, string],
+  minimum: number,
+  exclusiveMaximum: number,
+  category: FantasyScoringComponent["category"],
+  description: string,
+  allowedPositions?: PositionGroup[]
+): SleeperScoringRule {
+  return {
+    scoringKey,
+    category,
+    description,
+    allowedPositions,
+    requiredStats: canonicalStatKeys,
+    evaluate(context) {
+      if (!isApplicable(context, allowedPositions)) {
+        return {
+          state: "not_applicable",
+          requiredStats: canonicalStatKeys
+        };
+      }
+
+      const [firstKey, secondKey] = canonicalStatKeys;
+      const first = context.getStat(firstKey);
+      const second = context.getStat(secondKey);
+      const hasFirst = typeof first.statValue === "number" && first.statKey;
+      const hasSecond = typeof second.statValue === "number" && second.statKey;
+
+      if (!hasFirst && !hasSecond) {
+        return {
+          state: "missing_stat",
+          requiredStats: canonicalStatKeys
+        };
+      }
+
+      const statValue = (hasFirst ? (first.statValue ?? 0) : 0) + (hasSecond ? (second.statValue ?? 0) : 0);
+      return {
+        state: "evaluated",
+        requiredStats: canonicalStatKeys,
+        components:
+          statValue >= minimum && statValue < exclusiveMaximum
+            ? [
+                fixedPointComponent({
+                  scoringKey,
+                  statKey: `${firstKey}+${secondKey}`,
+                  statValue,
+                  scoringValue: context.scoringValue,
+                  category,
+                  description
+                })
+              ]
+            : []
+      };
+    }
+  };
+}
+
 function component(input: Omit<FantasyScoringComponent, "points">): FantasyScoringComponent {
   return {
     ...input,
@@ -341,4 +628,9 @@ function isApplicable(context: ScoringRuleContext, allowedPositions?: PositionGr
   if (!allowedPositions?.length) return true;
   if (!context.positionGroup) return false;
   return allowedPositions.includes(context.positionGroup);
+}
+
+function mergeAllowedPositions(rules: SleeperScoringRule[]) {
+  const positions = [...new Set(rules.flatMap((rule) => rule.allowedPositions ?? []))];
+  return positions.length > 0 ? positions : undefined;
 }

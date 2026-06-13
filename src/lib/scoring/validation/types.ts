@@ -1,6 +1,6 @@
 import type { ProjectionType } from "@/lib/providers/data-types";
 import type { ProviderName } from "@/lib/providers/types";
-import type { PositionGroup } from "@/lib/scoring/types";
+import type { DataCapabilityStatus, PositionGroup } from "@/lib/scoring/types";
 import type {
   LeagueScoringContext,
   ProviderPointComparison,
@@ -40,10 +40,17 @@ export type RecommendationExperimentScope =
   | "season_value_experiment"
   | "historical_season_analysis";
 
+export type RecommendationExperimentEligibility = {
+  eligible: boolean;
+  scope: RecommendationExperimentScope;
+};
+
 export type ScoringReadinessDecision = {
   status: ScoringReadinessStatus;
+  scoringValidationStatus: ScoringReadinessStatus;
   eligibleForRecommendationExperiment: boolean;
   eligibleExperimentScope: RecommendationExperimentScope;
+  recommendationExperimentEligibility: RecommendationExperimentEligibility;
   score: number;
   reasons: ReadinessReason[];
   warnings: string[];
@@ -53,6 +60,21 @@ export type ScoringReadinessDecision = {
   formulaVersion: string;
   readinessVersion: string;
 };
+
+export type UnsupportedKeyReason = {
+  key: string;
+  reason: DataCapabilityStatus;
+  requiredData?: string[];
+};
+
+export type DatasetCapabilityStatus =
+  | "fully_supported"
+  | "missing_weekly_canonical_fields"
+  | "requires_play_by_play"
+  // A key whose engine rule is implemented but whose required canonical stat
+  // is absent from the current data source (e.g. nflverse weekly CSV has no
+  // pick-six column — pass_pick6 cannot be populated from this source at all).
+  | "unavailable_from_weekly_source";
 
 export type LeagueReadinessResult = ScoringReadinessDecision & {
   positionGroup: PositionGroup | null;
@@ -64,6 +86,12 @@ export type LeagueReadinessResult = ScoringReadinessDecision & {
   supportRatio: number | null;
   unsupportedKeyImpacts: Record<string, ScoringKeyImpact>;
   highImpactUnsupportedKeys: string[];
+  // Dataset capability details — why specific keys are unsupported
+  unsupportedApplicableKeyCount: number;
+  unavailableFromCurrentDatasetCount: number;
+  applicableCoverageRatio: number | null;
+  dataCapabilityStatus: DatasetCapabilityStatus;
+  unsupportedKeyReasons: UnsupportedKeyReason[];
 };
 
 export type RowValidationResult = {
@@ -91,6 +119,8 @@ export type RowValidationError = {
 
 export type ProviderComparisonDistribution = {
   withProviderTotals: number;
+  classifiedCount: number;
+  excludedCount: number;
   withoutProviderTotals: number;
   matchCount: number;
   closeCount: number;

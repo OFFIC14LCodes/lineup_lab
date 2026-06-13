@@ -1,4 +1,4 @@
-import { SLEEPER_RULES_BY_KEY } from "@/lib/scoring/sleeper-keys";
+import { getScoringKeyDefinition, SLEEPER_RULES_BY_KEY } from "@/lib/scoring/sleeper-keys";
 import { normalizeSleeperScoringSettings } from "@/lib/scoring/normalize-settings";
 import type { LeagueScoringAudit, NormalizedScoringSettings, PositionGroup } from "@/lib/scoring/types";
 
@@ -29,7 +29,8 @@ export function auditLeagueScoringSettings(raw: Record<string, unknown> | Normal
 
   for (const scoringKey of activeKeys) {
     const rules = SLEEPER_RULES_BY_KEY.get(scoringKey) ?? [];
-    if (rules.length === 0) {
+    const definition = getScoringKeyDefinition(scoringKey);
+    if (rules.length === 0 && !definition) {
       unknownKeys.push(scoringKey);
       unsupportedKeys.push(scoringKey);
       for (const position of POSITIONS) {
@@ -41,12 +42,19 @@ export function auditLeagueScoringSettings(raw: Record<string, unknown> | Normal
     let supportedSomewhere = false;
     let unsupportedSomewhere = false;
     for (const position of POSITIONS) {
-      const applicable = rules.some(
-        (rule) => !rule.allowedPositions?.length || (position !== "UNKNOWN" && rule.allowedPositions.includes(position as PositionGroup))
-      );
+      const applicable = definition?.allowedPositions?.length
+        ? position !== "UNKNOWN" && definition.allowedPositions.includes(position as PositionGroup)
+        : rules.some(
+            (rule) => !rule.allowedPositions?.length || (position !== "UNKNOWN" && rule.allowedPositions.includes(position as PositionGroup))
+          ) || Boolean(definition);
       if (applicable) {
-        supportedSomewhere = true;
-        positionSpecificSupport[position].supportedKeys.push(scoringKey);
+        if (rules.length > 0) {
+          supportedSomewhere = true;
+          positionSpecificSupport[position].supportedKeys.push(scoringKey);
+        } else {
+          unsupportedSomewhere = true;
+          positionSpecificSupport[position].unsupportedKeys.push(scoringKey);
+        }
       } else {
         unsupportedSomewhere = true;
         positionSpecificSupport[position].notApplicableKeys.push(scoringKey);

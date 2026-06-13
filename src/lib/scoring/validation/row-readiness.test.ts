@@ -89,6 +89,7 @@ describe("evaluateRowScoringReadiness", () => {
 
     expect(readiness.status).toBe("ready");
     expect(readiness.eligibleForRecommendationExperiment).toBe(true);
+    expect(readiness.scoringValidationStatus).toBe("ready");
   });
 
   it("returns not ready when a core PPR stat is missing", () => {
@@ -155,5 +156,30 @@ describe("evaluateRowScoringReadiness", () => {
 
     expect(readiness.status).toBe("insufficient_data");
     expect(readiness.score).toBeLessThanOrEqual(40);
+  });
+
+  it("allows weekly actual rows to be scoring-ready while remaining experiment-ineligible", () => {
+    const league = makeLeague({ rec: 1, rec_yd: 0.1, rec_td: 6 });
+    const result = makeResult({
+      scoringSettings: { rec: 1, rec_yd: 0.1, rec_td: 6 },
+      stats: { rec: 6, rec_yd: 80, rec_td: 1 },
+      positionGroup: "WR",
+      sourceType: "actual",
+      providerPoints: 20
+    });
+
+    const readiness = evaluateRowScoringReadiness({
+      result,
+      sourceType: "weekly_stats",
+      leagueReadiness: evaluateLeagueScoringReadiness({ league, positionGroup: "WR" })
+    });
+
+    expect(readiness.status).toBe("ready");
+    expect(readiness.scoringValidationStatus).toBe("ready");
+    expect(readiness.eligibleForRecommendationExperiment).toBe(false);
+    expect(readiness.recommendationExperimentEligibility).toEqual({
+      eligible: false,
+      scope: "none"
+    });
   });
 });

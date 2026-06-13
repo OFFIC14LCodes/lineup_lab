@@ -25,14 +25,17 @@ function makeRaw(overrides: Partial<NflversePlayerStatsRaw> = {}): NflversePlaye
     carries: "3",
     rushing_yards: "12",
     rushing_tds: "0",
+    rushing_fumbles_lost: "0",
     rushing_first_downs: "1",
     rushing_2pt_conversions: "0",
     receptions: "0",
     targets: "0",
     receiving_yards: "0",
     receiving_tds: "0",
+    receiving_fumbles_lost: "0",
     receiving_first_downs: "0",
     receiving_2pt_conversions: "0",
+    sack_fumbles_lost: "0",
     fantasy_points: "28.65",
     fantasy_points_ppr: "28.65",
     ...overrides
@@ -209,12 +212,12 @@ describe("normalizeNflverseRow — filtering", () => {
 });
 
 describe("normalizeNflverseRow — zero/missing stat handling", () => {
-  it("omits zero-value stats from output", () => {
+  it("retains numeric zero values from known source columns", () => {
     const result = normalizeNflverseRow(makeRaw({ carries: "0", rushing_yards: "0" }));
     expect(result.ok).toBe(true);
     if (!result.ok) return;
-    expect(result.row.stats["rush_att"]).toBeUndefined();
-    expect(result.row.stats["rush_yd"]).toBeUndefined();
+    expect(result.row.stats["rush_att"]).toBe(0);
+    expect(result.row.stats["rush_yd"]).toBe(0);
   });
 
   it("omits NA values", () => {
@@ -232,8 +235,38 @@ describe("normalizeNflverseRow — zero/missing stat handling", () => {
     expect(result.row.stats["rec_tgt"]).toBeUndefined();
   });
 
+  it("omits absent source columns", () => {
+    const raw = makeRaw();
+    delete raw["targets"];
+    const result = normalizeNflverseRow(raw);
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.row.stats["rec_tgt"]).toBeUndefined();
+  });
+
+  it("omits null source columns", () => {
+    const result = normalizeNflverseRow(makeRaw({ targets: null as unknown as string }));
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.row.stats["rec_tgt"]).toBeUndefined();
+  });
+
+  it("omits NaN and infinite source values instead of coercing them to zero", () => {
+    const result = normalizeNflverseRow(
+      makeRaw({
+        completions: "NaN",
+        attempts: "Infinity",
+        passing_yards: "-Infinity"
+      })
+    );
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.row.stats["pass_cmp"]).toBeUndefined();
+    expect(result.row.stats["pass_att"]).toBeUndefined();
+    expect(result.row.stats["pass_yd"]).toBeUndefined();
+  });
+
   it("counts canonical keys correctly", () => {
-    // Only nonzero stats are counted
     const result = normalizeNflverseRow(makeRaw({
       passing_yards: "305",
       passing_tds: "3",
@@ -252,14 +285,104 @@ describe("normalizeNflverseRow — zero/missing stat handling", () => {
       receiving_tds: "0",
       receiving_first_downs: "0",
       receiving_2pt_conversions: "0",
+      receiving_fumbles_lost: "0",
       sacks_suffered: "2",
+      sack_fumbles_lost: "0",
       passing_first_downs: "18",
-      passing_2pt_conversions: "0"
+      passing_2pt_conversions: "0",
+      rushing_fumbles_lost: "0"
     }));
     expect(result.ok).toBe(true);
     if (!result.ok) return;
-    // pass_cmp(28), pass_att(40), pass_yd(305), pass_td(3), pass_sack(2), pass_fd(18) = 6
-    expect(result.row.canonicalKeyCount).toBe(6);
+    expect(result.row.canonicalKeyCount).toBe(20);
+  });
+
+  it("keeps known zero receiving fields for quarterbacks", () => {
+    const result = normalizeNflverseRow(
+      makeRaw({
+        position_group: "QB",
+        receptions: "0",
+        targets: "0",
+        receiving_yards: "0",
+        receiving_tds: "0",
+        receiving_first_downs: "0",
+        receiving_2pt_conversions: "0"
+      })
+    );
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.row.stats["rec"]).toBe(0);
+    expect(result.row.stats["rec_tgt"]).toBe(0);
+    expect(result.row.stats["rec_yd"]).toBe(0);
+    expect(result.row.stats["rec_td"]).toBe(0);
+    expect(result.row.stats["rec_fd"]).toBe(0);
+    expect(result.row.stats["rec_2pt"]).toBe(0);
+  });
+
+  it("keeps known zero rushing fields for wide receivers", () => {
+    const result = normalizeNflverseRow(
+      makeRaw({
+        position_group: "WR",
+        carries: "0",
+        rushing_yards: "0",
+        rushing_tds: "0",
+        rushing_first_downs: "0",
+        rushing_2pt_conversions: "0"
+      })
+    );
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.row.stats["rush_att"]).toBe(0);
+    expect(result.row.stats["rush_yd"]).toBe(0);
+    expect(result.row.stats["rush_td"]).toBe(0);
+    expect(result.row.stats["rush_fd"]).toBe(0);
+    expect(result.row.stats["rush_2pt"]).toBe(0);
+  });
+
+  it("keeps known zero receiving touchdowns for running backs", () => {
+    const result = normalizeNflverseRow(makeRaw({ position_group: "RB", receiving_tds: "0" }));
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.row.stats["rec_td"]).toBe(0);
+  });
+
+  it("keeps known zero two-point conversion values", () => {
+    const result = normalizeNflverseRow(
+      makeRaw({
+        passing_2pt_conversions: "0",
+        rushing_2pt_conversions: "0",
+        receiving_2pt_conversions: "0"
+      })
+    );
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.row.stats["pass_2pt"]).toBe(0);
+    expect(result.row.stats["rush_2pt"]).toBe(0);
+    expect(result.row.stats["rec_2pt"]).toBe(0);
+  });
+
+  it("aggregates lost fumbles from nflverse context columns and keeps known zero", () => {
+    const zeroResult = normalizeNflverseRow(
+      makeRaw({
+        sack_fumbles_lost: "0",
+        rushing_fumbles_lost: "0",
+        receiving_fumbles_lost: "0"
+      })
+    );
+    expect(zeroResult.ok).toBe(true);
+    if (!zeroResult.ok) return;
+    expect(zeroResult.row.stats["fum_lost"]).toBe(0);
+
+    const nonzeroResult = normalizeNflverseRow(
+      makeRaw({
+        sack_fumbles_lost: "1",
+        rushing_fumbles_lost: "1",
+        receiving_fumbles_lost: "0"
+      })
+    );
+    expect(nonzeroResult.ok).toBe(true);
+    if (!nonzeroResult.ok) return;
+    expect(nonzeroResult.row.stats["fum_lost"]).toBe(2);
   });
 
   it("preserves provider fantasy points", () => {
@@ -274,6 +397,41 @@ describe("normalizeNflverseRow — zero/missing stat handling", () => {
     expect(result.ok).toBe(true);
     if (!result.ok) return;
     expect(result.row.providerFantasyPoints).toBeNull();
+  });
+});
+
+describe("normalizeNflverseRow — pass_pick6 unavailability", () => {
+  it("does not populate pass_pick6 when passing_interceptions is nonzero", () => {
+    const result = normalizeNflverseRow(makeRaw({ passing_interceptions: "3" }));
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.row.stats["pass_pick6"]).toBeUndefined();
+  });
+
+  it("does not populate pass_pick6 when passing_interceptions is zero", () => {
+    const result = normalizeNflverseRow(makeRaw({ passing_interceptions: "0" }));
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.row.stats["pass_pick6"]).toBeUndefined();
+  });
+
+  it("maps passing_interceptions to pass_int but never to pass_pick6", () => {
+    const result = normalizeNflverseRow(makeRaw({ passing_interceptions: "2" }));
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.row.stats["pass_int"]).toBe(2);
+    expect("pass_pick6" in result.row.stats).toBe(false);
+  });
+});
+
+describe("normalizeNflverseRow — week coverage", () => {
+  it("normalizes rows from all regular season weeks (1–18)", () => {
+    for (let week = 1; week <= 18; week++) {
+      const result = normalizeNflverseRow(makeRaw({ week: String(week) }));
+      expect(result.ok).toBe(true);
+      if (!result.ok) throw new Error(`Week ${week} failed: ${result.reason}`);
+      expect(result.row.week).toBe(week);
+    }
   });
 });
 

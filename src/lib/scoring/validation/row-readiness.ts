@@ -187,8 +187,10 @@ export function evaluateRowScoringReadiness(input: {
 
   return {
     status,
+    scoringValidationStatus: status,
     eligibleForRecommendationExperiment: eligibility.eligible,
     eligibleExperimentScope: eligibility.scope,
+    recommendationExperimentEligibility: eligibility,
     score: clampScore(score),
     reasons,
     warnings,
@@ -268,8 +270,8 @@ function resolveExperimentEligibility(input: {
 
   if (input.sourceType === "weekly_stats") {
     return {
-      eligible: input.status === "ready",
-      scope: input.status === "ready" ? "weekly_recommendation" as const : "none" as const
+      eligible: false,
+      scope: "none" as const
     };
   }
 

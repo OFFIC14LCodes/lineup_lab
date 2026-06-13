@@ -39,6 +39,44 @@ export type ScoringWarning = {
   details?: Record<string, unknown>;
 };
 
+export type ScoringKeyImplementationStatus = "implemented" | "known_unimplemented" | "unknown";
+
+export type DataCapabilityStatus =
+  | "implementable_now_verified"
+  | "requires_semantic_verification"
+  | "requires_weekly_canonical_field"
+  | "requires_play_by_play"
+  | "unavailable_from_current_source"
+  | "unavailable_from_weekly_source"
+  | "intentionally_deferred";
+
+// Whether the scoring engine has a functional rule for this key.
+export type EngineImplementationStatus = "implemented" | "known_unimplemented";
+
+// Whether the required canonical stat field is present in actual stored rows.
+// "absent" means the source dataset has no column that maps to this stat.
+export type RowStatAvailabilityStatus = "available" | "absent" | "unknown";
+
+export type ScoringKeyDefinition = {
+  scoringKey: string;
+  category: ScoringCategory;
+  description: string;
+  allowedPositions?: PositionGroup[];
+  requiredStats: string[];
+  implementationStatus: ScoringKeyImplementationStatus;
+  derivedStatExpression?: string;
+  dataCapabilityStatus?: DataCapabilityStatus;
+  dataCapabilityDetail?: {
+    reason: string;
+    requiredData?: string[];
+  };
+  // Separates scoring-engine capability from dataset availability.
+  // A key may be "implemented" in the engine but have "absent" row-stat availability
+  // if the underlying canonical stat is not produced by the current data source.
+  engineImplementationStatus?: EngineImplementationStatus;
+  rowStatAvailabilityStatus?: RowStatAvailabilityStatus;
+};
+
 export type FantasyScoringComponent = {
   scoringKey: string;
   statKey: string;
@@ -178,5 +216,6 @@ export type SleeperScoringRule = {
   category: ScoringCategory;
   description: string;
   allowedPositions?: PositionGroup[];
+  requiredStats: string[];
   evaluate: (context: ScoringRuleContext) => ScoringRuleEvaluation;
 };

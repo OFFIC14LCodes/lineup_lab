@@ -6,10 +6,17 @@ import { BLACKBIRD_SCORING_READINESS_VERSION } from "@/lib/scoring/validation/co
 import type { CohortValidationSummary } from "@/lib/scoring/validation/types";
 
 function makeReadiness(status: "ready" | "conditionally_ready" | "not_ready" | "insufficient_data") {
+  const eligible = status === "ready";
+  const scope = eligible ? ("weekly_recommendation" as const) : ("none" as const);
   return {
     status,
-    eligibleForRecommendationExperiment: status === "ready",
-    eligibleExperimentScope: status === "ready" ? ("weekly_recommendation" as const) : ("none" as const),
+    scoringValidationStatus: status,
+    eligibleForRecommendationExperiment: eligible,
+    eligibleExperimentScope: scope,
+    recommendationExperimentEligibility: {
+      eligible,
+      scope
+    },
     score: status === "ready" ? 100 : 40,
     reasons: [],
     warnings: [],
@@ -44,6 +51,8 @@ function makeCohort(overrides: Partial<CohortValidationSummary> = {}): CohortVal
     positionWarningCount: 0,
     providerComparison: {
       withProviderTotals: 0,
+      classifiedCount: 0,
+      excludedCount: 0,
       withoutProviderTotals: 25,
       matchCount: 0,
       closeCount: 0,
@@ -159,7 +168,9 @@ describe("extractExperimentCandidates — weekly actuals are not projection cand
     expect(candidates).toHaveLength(0);
     expect(blocked).toHaveLength(1);
     expect(blocked[0].sourceType).toBe("weekly_stats");
-    expect(blocked[0].blockReasons[0]).toMatch(/scoring.?validation/i);
+    // Always has the recommendation prohibition reason
+    expect(blocked[0].blockReasons.some((r) => /recommendation experiments/i.test(r))).toBe(true);
+    expect(blocked[0].blockReasons.some((r) => /prohibited for weekly actuals/i.test(r))).toBe(true);
   });
 
   it("does not classify a ready weekly_stats cohort as a projection recommendation candidate", () => {
@@ -172,6 +183,47 @@ describe("extractExperimentCandidates — weekly actuals are not projection cand
     const { candidates } = extractExperimentCandidates({ cohorts: [annotate(cohort)] });
 
     expect(candidates).toHaveLength(0);
+  });
+
+  it("adds a scoring-validation blocked reason when readiness is not_ready — separate from the recommendation prohibition", () => {
+    const cohort = makeCohort({
+      sourceType: "weekly_stats",
+      projectionType: null,
+      cohortKey: "manual|weekly_stats|WR|none",
+      readiness: makeReadiness("not_ready")
+    });
+    const { blocked } = extractExperimentCandidates({ cohorts: [annotate(cohort)] });
+
+    expect(blocked[0].blockReasons).toHaveLength(2);
+    expect(blocked[0].blockReasons[0]).toMatch(/scoring validation is blocked/i);
+    expect(blocked[0].blockReasons[1]).toMatch(/recommendation experiments.*prohibited/i);
+  });
+
+  it("does not add scoring-validation blocked reason when readiness is ready", () => {
+    const cohort = makeCohort({
+      sourceType: "weekly_stats",
+      projectionType: null,
+      cohortKey: "manual|weekly_stats|WR|none",
+      readiness: makeReadiness("ready")
+    });
+    const { blocked } = extractExperimentCandidates({ cohorts: [annotate(cohort)] });
+
+    // Only the recommendation prohibition; no scoring-validation block
+    expect(blocked[0].blockReasons).toHaveLength(1);
+    expect(blocked[0].blockReasons[0]).toMatch(/recommendation experiments.*prohibited/i);
+  });
+
+  it("does not add scoring-validation blocked reason when readiness is conditionally_ready", () => {
+    const cohort = makeCohort({
+      sourceType: "weekly_stats",
+      projectionType: null,
+      cohortKey: "manual|weekly_stats|WR|none",
+      readiness: makeReadiness("conditionally_ready")
+    });
+    const { blocked } = extractExperimentCandidates({ cohorts: [annotate(cohort)] });
+
+    expect(blocked[0].blockReasons).toHaveLength(1);
+    expect(blocked[0].blockReasons[0]).toMatch(/recommendation experiments.*prohibited/i);
   });
 });
 

@@ -10,38 +10,19 @@ function parseSeasonInt(raw: string | undefined): number | null {
   return n;
 }
 
-/**
- * Resolve the target season.
- * --season=XXXX CLI argument takes precedence over NFLVERSE_SEASON env var.
- */
 export function parseSeason(argv: string[], env: Record<string, string | undefined>): number {
   const arg = argv.find((a) => a.startsWith("--season="));
   if (arg) {
     const fromArg = parseSeasonInt(arg.split("=")[1]);
     if (fromArg !== null) return fromArg;
   }
-  const fromEnv = parseSeasonInt(env["NFLVERSE_SEASON"]);
+  const fromEnv = parseSeasonInt(env["NFLVERSE_PBP_SEASON"]);
   if (fromEnv !== null) return fromEnv;
   return DEFAULT_SEASON;
 }
 
-/**
- * Resolve the pipeline mode.
- * --execute CLI flag takes precedence over NFLVERSE_EXECUTE=true env var.
- * Dry run is the default.
- */
 export function parseMode(argv: string[], env: Record<string, string | undefined>): "dry_run" | "execute" {
   if (argv.includes("--execute")) return "execute";
-  if (env["NFLVERSE_EXECUTE"] === "true") return "execute";
+  if (env["NFLVERSE_PBP_EXECUTE"] === "true") return "execute";
   return "dry_run";
-}
-
-export function parseRecoverAudit(argv: string[], env: Record<string, string | undefined>): boolean {
-  if (argv.includes("--recover-audit")) return true;
-  return env["NFLVERSE_RECOVER_AUDIT"] === "true";
-}
-
-export function parseReconcileBatches(argv: string[], env: Record<string, string | undefined>): boolean {
-  if (argv.includes("--reconcile-batches")) return true;
-  return env["NFLVERSE_RECONCILE_BATCHES"] === "true";
 }

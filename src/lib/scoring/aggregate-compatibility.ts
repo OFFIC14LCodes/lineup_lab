@@ -1,4 +1,4 @@
-import { SLEEPER_RULES_BY_KEY } from "@/lib/scoring/sleeper-keys";
+import { getScoringKeyDefinition, SLEEPER_RULES_BY_KEY } from "@/lib/scoring/sleeper-keys";
 import { normalizeSleeperScoringSettings } from "@/lib/scoring/normalize-settings";
 import type {
   AggregateScoringCompatibility,
@@ -24,9 +24,11 @@ export function auditAggregateScoringCompatibility(input: {
     if (value === 0) continue;
 
     const rules = SLEEPER_RULES_BY_KEY.get(key) ?? [];
-    const applicable =
-      rules.length === 0 ||
-      rules.some((rule) => !rule.allowedPositions?.length || (input.positionGroup && rule.allowedPositions.includes(input.positionGroup)));
+    const definition = getScoringKeyDefinition(key);
+    const applicable = definition?.allowedPositions?.length
+      ? Boolean(input.positionGroup && definition.allowedPositions.includes(input.positionGroup))
+      : rules.length === 0 ||
+        rules.some((rule) => !rule.allowedPositions?.length || (input.positionGroup && rule.allowedPositions.includes(input.positionGroup)));
 
     if (!applicable) {
       continue;

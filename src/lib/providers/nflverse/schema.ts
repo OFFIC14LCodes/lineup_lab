@@ -30,14 +30,17 @@ export const NFLVERSE_REQUIRED_COLUMNS = [
   "carries",
   "rushing_yards",
   "rushing_tds",
+  "rushing_fumbles_lost",
   "rushing_first_downs",
   "rushing_2pt_conversions",
   "receptions",
   "targets",
   "receiving_yards",
   "receiving_tds",
+  "receiving_fumbles_lost",
   "receiving_first_downs",
   "receiving_2pt_conversions",
+  "sack_fumbles_lost",
   "fantasy_points",
   "fantasy_points_ppr"
 ] as const;

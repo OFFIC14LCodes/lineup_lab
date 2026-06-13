@@ -29,6 +29,7 @@ import {
 import { BLACKBIRD_SCORING_READINESS_VERSION } from "@/lib/scoring/validation/constants";
 import { buildDiscrepancyInvestigations } from "@/lib/scoring/validation/discrepancy";
 import { extractExperimentCandidates } from "@/lib/scoring/validation/experiment-candidates";
+import { chooseValidationWeeks, fetchAllPages, summarizeCounts } from "@/lib/scoring/validation/live-validation-utils";
 import type {
   AnonymizedCohortEvidence,
   AnonymizedLeagueDataInventory,
@@ -57,6 +58,9 @@ const OPERATOR_USER_ID = env("SCORING_VALIDATION_OPERATOR_USER_ID");
 const MAX_LEAGUES = 3;
 const ROWS_PER_POSITION_COHORT = 25;
 const MAX_ROWS_PER_REPORT = 100;
+const WEEKLY_POSITION_GROUPS = ["QB", "RB", "WR", "TE"] as const;
+const REQUESTED_SEASON = parseOptionalNumberArg("--season", "SCORING_VALIDATION_SEASON");
+const REQUESTED_WEEK = parseOptionalNumberArg("--week", "SCORING_VALIDATION_WEEK");
 
 // ---------------------------------------------------------------------------
 // Smoke test entry point
@@ -123,72 +127,83 @@ describe.sequential("scoring live validation (F4)", () => {
 
         // ── Weekly stats ────────────────────────────────────────────────────
         if (inventory.availableWeeks.length > 0 && inventory.weeklyStatsRowCount > 0) {
-          const targetWeek = inventory.availableWeeks[inventory.availableWeeks.length - 1];
-          const targetSeason = inventory.availableSeasons[inventory.availableSeasons.length - 1];
+          const targetSeason = REQUESTED_SEASON ?? inventory.availableSeasons[inventory.availableSeasons.length - 1];
+          const targetWeeks = chooseValidationWeeks(
+            inventory.availableWeeks.filter((week) => week >= 1 && week <= 18),
+            { explicitWeek: REQUESTED_WEEK }
+          );
 
-          try {
-            const weeklyResponse = await scoreWeeklyStatsRowsForLeague(
-              {
-                userId: OPERATOR_USER_ID!,
-                leagueId: league.id,
-                season: targetSeason,
-                week: targetWeek,
-                limit: MAX_ROWS_PER_REPORT
-              },
-              deps as Parameters<typeof scoreWeeklyStatsRowsForLeague>[1]
-            );
+          for (const targetWeek of targetWeeks) {
+            for (const positionGroup of WEEKLY_POSITION_GROUPS) {
+              try {
+                const weeklyResponse = await scoreWeeklyStatsRowsForLeague(
+                  {
+                    userId: OPERATOR_USER_ID!,
+                    leagueId: league.id,
+                    season: targetSeason,
+                    week: targetWeek,
+                    positionGroup,
+                    limit: ROWS_PER_POSITION_COHORT
+                  },
+                  deps as Parameters<typeof scoreWeeklyStatsRowsForLeague>[1]
+                );
 
-            const weeklyReport = validateLeagueScoringSample({
-              league: weeklyResponse.league,
-              request: {
-                sourceType: "weekly_stats",
-                season: targetSeason,
-                week: targetWeek,
-                provider: null,
-                positionGroup: null,
-                projectionType: null,
-                limit: MAX_ROWS_PER_REPORT
-              },
-              results: weeklyResponse.results
-            });
+                const weeklyReport = validateLeagueScoringSample({
+                  league: weeklyResponse.league,
+                  request: {
+                    sourceType: "weekly_stats",
+                    season: targetSeason,
+                    week: targetWeek,
+                    provider: null,
+                    positionGroup,
+                    projectionType: null,
+                    limit: ROWS_PER_POSITION_COHORT
+                  },
+                  results: weeklyResponse.results
+                });
 
-            const weeklyRows = weeklyReport.rows.filter((r): r is RowValidationResult => "blackbirdPoints" in r);
-            allRows.push(...weeklyRows);
-            allCohorts.push(...weeklyReport.cohorts);
+                const weeklyRows = weeklyReport.rows.filter((r): r is RowValidationResult => "blackbirdPoints" in r);
+                allRows.push(...weeklyRows);
+                allCohorts.push(...weeklyReport.cohorts);
 
-            for (const cohort of weeklyReport.cohorts) {
-              const providerLabel = providerLabels.get(String(cohort.provider)) ?? String(cohort.provider);
-              const cohortLabel = `Cohort ${allCohortEvidence.length + 1}`;
+                for (const cohort of weeklyReport.cohorts) {
+                  const providerLabel = providerLabels.get(String(cohort.provider)) ?? String(cohort.provider);
+                  const cohortLabel = `Cohort ${allCohortEvidence.length + 1} (sampled week ${targetWeek} ${positionGroup})`;
 
-              allCohortEvidence.push(
-                buildCohortEvidence({
-                  leagueLabel,
-                  cohortLabel,
-                  providerLabel,
-                  cohort,
-                  season: targetSeason,
-                  week: targetWeek
-                })
-              );
+                  allCohortEvidence.push(
+                    buildCohortEvidence({
+                      leagueLabel,
+                      cohortLabel,
+                      providerLabel,
+                      cohort,
+                      season: targetSeason,
+                      week: targetWeek
+                    })
+                  );
 
-              experimentInput.push({
-                leagueLabel,
-                providerLabel,
-                cohort,
-                errorRate:
-                  weeklyReport.sample.successfullyScoredRows + weeklyReport.sample.erroredRows > 0
-                    ? weeklyReport.sample.erroredRows /
-                      (weeklyReport.sample.successfullyScoredRows + weeklyReport.sample.erroredRows)
-                    : 0
-              });
+                  experimentInput.push({
+                    leagueLabel,
+                    providerLabel,
+                    cohort,
+                    errorRate:
+                      weeklyReport.sample.successfullyScoredRows + weeklyReport.sample.erroredRows > 0
+                        ? weeklyReport.sample.erroredRows /
+                          (weeklyReport.sample.successfullyScoredRows + weeklyReport.sample.erroredRows)
+                        : 0
+                  });
+                }
+
+                console.log(
+                  `  weekly_stats week=${targetWeek} position=${positionGroup}: ` +
+                    `${weeklyReport.sample.successfullyScoredRows} scored, ${weeklyReport.sample.erroredRows} errored, ` +
+                    `${weeklyReport.cohorts.length} cohort(s)`
+                );
+              } catch (err) {
+                console.warn(
+                  `  [WARN] weekly_stats validation failed for week=${targetWeek} position=${positionGroup}: ${String(err)}`
+                );
+              }
             }
-
-            console.log(
-              `  weekly_stats week=${targetWeek}: ${weeklyReport.sample.successfullyScoredRows} scored, ` +
-                `${weeklyReport.sample.erroredRows} errored, ${weeklyReport.cohorts.length} cohort(s)`
-            );
-          } catch (err) {
-            console.warn(`  [WARN] weekly_stats validation failed: ${String(err)}`);
           }
         } else {
           console.log("  weekly_stats: no data available");
@@ -196,7 +211,7 @@ describe.sequential("scoring live validation (F4)", () => {
 
         // ── Season stats ─────────────────────────────────────────────────────
         if (inventory.seasonStatsRowCount > 0) {
-          const targetSeason = inventory.availableSeasons[inventory.availableSeasons.length - 1];
+          const targetSeason = REQUESTED_SEASON ?? inventory.availableSeasons[inventory.availableSeasons.length - 1];
           try {
             const seasonResponse = await scoreSeasonStatsRowsForLeague(
               {
@@ -259,7 +274,7 @@ describe.sequential("scoring live validation (F4)", () => {
 
         // ── Projections ─────────────────────────────────────────────────────
         if (inventory.projectionRowCount > 0) {
-          const targetSeason = inventory.availableSeasons[inventory.availableSeasons.length - 1];
+          const targetSeason = REQUESTED_SEASON ?? inventory.availableSeasons[inventory.availableSeasons.length - 1];
           try {
             const projResponse = await scoreProjectionRowsForLeague(
               {
@@ -600,35 +615,15 @@ async function buildLeagueInventories(
   admin: SupabaseClient,
   leagues: LeagueRow[]
 ): Promise<LeagueWithInventory[]> {
+  const inventory = await buildGlobalInventory(admin);
   const results: LeagueWithInventory[] = [];
 
   for (const league of leagues) {
     try {
-      const [weeklyCount, seasonCount, projCount, weeks, seasons, providers, provStat] =
-        await Promise.all([
-          countRows(admin, "player_weekly_stats"),
-          countRows(admin, "player_season_stats"),
-          countRows(admin, "player_projections"),
-          fetchDistinctWeeks(admin),
-          fetchDistinctSeasons(admin),
-          fetchDistinctProviders(admin),
-          fetchSourceUpdatedAtRange(admin)
-        ]);
-
-      const inventory: AnonymizedLeagueDataInventory = {
-        weeklyStatsRowCount: weeklyCount,
-        seasonStatsRowCount: seasonCount,
-        projectionRowCount: projCount,
-        availableWeeks: weeks,
-        availableSeasons: seasons,
-        providers,
-        sourceUpdatedAtRange: provStat
-      };
-
       results.push({
         league,
         inventory,
-        totalRows: weeklyCount + seasonCount + projCount
+        totalRows: inventory.weeklyStatsRowCount + inventory.seasonStatsRowCount + inventory.projectionRowCount
       });
     } catch (err) {
       console.warn(`[WARN] Failed to build inventory for league ${league.id}: ${String(err)}`);
@@ -648,30 +643,61 @@ async function countRows(admin: SupabaseClient, table: string): Promise<number> 
   return count ?? 0;
 }
 
-async function fetchDistinctWeeks(admin: SupabaseClient): Promise<number[]> {
-  const { data, error } = await admin.from("player_weekly_stats").select("week").limit(500);
-  if (error || !data) return [];
-  const weeks = [...new Set((data as { week: number }[]).map((r) => r.week))].sort((a, b) => a - b);
-  return weeks;
+async function buildGlobalInventory(admin: SupabaseClient): Promise<AnonymizedLeagueDataInventory> {
+  const [weeklyCount, seasonCount, projCount, weeklyScope, providers, sourceUpdatedAtRange, provenance] = await Promise.all([
+    countRows(admin, "player_weekly_stats"),
+    countRows(admin, "player_season_stats"),
+    countRows(admin, "player_projections"),
+    fetchWeeklyInventoryScope(admin),
+    fetchDistinctProviders(admin),
+    fetchSourceUpdatedAtRange(admin),
+    fetchNflverseProvenance(admin)
+  ]);
+
+  return {
+    weeklyStatsRowCount: weeklyCount,
+    seasonStatsRowCount: seasonCount,
+    projectionRowCount: projCount,
+    availableWeeks: [...new Set(weeklyScope.map((row) => row.week))].sort((a, b) => a - b),
+    availableSeasons: [...new Set(weeklyScope.map((row) => row.season))].sort((a, b) => a - b),
+    providers,
+    sourceUpdatedAtRange,
+    rowCountByWeek: summarizeCounts(weeklyScope.map((row) => row.week)).map((row) => ({
+      week: Number(row.key),
+      count: row.count
+    })),
+    rowCountByPosition: summarizeCounts(weeklyScope.map((row) => row.position_group ?? "UNKNOWN")).map((row) => ({
+      positionGroup: row.key,
+      count: row.count
+    })),
+    provenance
+  };
 }
 
-async function fetchDistinctSeasons(admin: SupabaseClient): Promise<number[]> {
-  const { data, error } = await admin
-    .from("player_weekly_stats")
-    .select("season")
-    .limit(500);
-  if (error || !data) return [];
-  const seasons = [...new Set((data as { season: number }[]).map((r) => r.season))].sort((a, b) => a - b);
-  return seasons;
+async function fetchWeeklyInventoryScope(
+  admin: SupabaseClient
+): Promise<Array<{ season: number; week: number; position_group: string | null }>> {
+  return fetchAllPages(async (offset, limit) => {
+    const { data, error } = await admin
+      .from("player_weekly_stats")
+      .select("season,week,position_group")
+      .range(offset, offset + limit - 1);
+
+    if (error) throw new Error(`Failed to load paged weekly inventory scope: ${error.message}`);
+    return (data ?? []) as Array<{ season: number; week: number; position_group: string | null }>;
+  });
 }
 
 async function fetchDistinctProviders(admin: SupabaseClient): Promise<string[]> {
   const tables = ["player_weekly_stats", "player_season_stats", "player_projections"];
   const providerSets = await Promise.all(
     tables.map(async (table) => {
-      const { data, error } = await admin.from(table).select("provider").limit(200);
-      if (error || !data) return new Set<string>();
-      return new Set((data as { provider: string }[]).map((r) => r.provider));
+      const rows = await fetchAllPages(async (offset, limit) => {
+        const { data, error } = await admin.from(table).select("provider").range(offset, offset + limit - 1);
+        if (error) throw new Error(`Failed to load providers from ${table}: ${error.message}`);
+        return (data ?? []) as Array<{ provider: string }>;
+      });
+      return new Set(rows.map((r) => r.provider));
     })
   );
   const all = new Set<string>();
@@ -687,16 +713,21 @@ async function fetchSourceUpdatedAtRange(
   let latest: string | null = null;
 
   for (const table of tables) {
-    const { data: minData } = await admin
+    const { data: minData, error: minError } = await admin
       .from(table)
       .select("source_updated_at")
+      .not("source_updated_at", "is", null)
       .order("source_updated_at", { ascending: true })
       .limit(1);
-    const { data: maxData } = await admin
+    const { data: maxData, error: maxError } = await admin
       .from(table)
       .select("source_updated_at")
+      .not("source_updated_at", "is", null)
       .order("source_updated_at", { ascending: false })
       .limit(1);
+
+    if (minError) throw new Error(`Failed to load earliest source_updated_at from ${table}: ${minError.message}`);
+    if (maxError) throw new Error(`Failed to load latest source_updated_at from ${table}: ${maxError.message}`);
 
     const minVal = (minData?.[0] as { source_updated_at: string | null } | undefined)?.source_updated_at ?? null;
     const maxVal = (maxData?.[0] as { source_updated_at: string | null } | undefined)?.source_updated_at ?? null;
@@ -706,6 +737,47 @@ async function fetchSourceUpdatedAtRange(
   }
 
   return { earliest, latest };
+}
+
+async function fetchNflverseProvenance(admin: SupabaseClient) {
+  const [sourceRows, batchRows] = await Promise.all([
+    admin
+      .from("football_data_sources")
+      .select("sha256,downloaded_at")
+      .eq("provider", "nflverse")
+      .eq("source_type", "weekly_stats")
+      .order("downloaded_at", { ascending: true }),
+    admin
+      .from("football_import_batches")
+      .select("id,started_at,completed_at")
+      .order("started_at", { ascending: true })
+  ]);
+
+  if (sourceRows.error) throw new Error(`Failed to load football_data_sources provenance: ${sourceRows.error.message}`);
+  if (batchRows.error) throw new Error(`Failed to load football_import_batches provenance: ${batchRows.error.message}`);
+
+  const downloadedAtValues = (sourceRows.data ?? [])
+    .map((row) => row.downloaded_at)
+    .filter((value): value is string => Boolean(value));
+  const startedAtValues = (batchRows.data ?? [])
+    .map((row) => row.started_at)
+    .filter((value): value is string => Boolean(value));
+  const completedAtValues = (batchRows.data ?? [])
+    .map((row) => row.completed_at)
+    .filter((value): value is string => Boolean(value));
+
+  return {
+    artifactDownloadedAtRange: {
+      earliest: downloadedAtValues[0] ?? null,
+      latest: downloadedAtValues[downloadedAtValues.length - 1] ?? null
+    },
+    importBatchRange: {
+      earliestStartedAt: startedAtValues[0] ?? null,
+      latestCompletedAt: completedAtValues[completedAtValues.length - 1] ?? null
+    },
+    sourceShas: [...new Set((sourceRows.data ?? []).map((row) => row.sha256))],
+    importBatchIds: [...new Set((batchRows.data ?? []).map((row) => row.id))]
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -749,6 +821,7 @@ function buildScoringProfile(
     idpEnabled,
     activeScoringKeyCount: activeKeys.length,
     unsupportedActiveKeyCount: audit.unsupportedKeys.length + audit.unknownKeys.length,
+    unsupportedActiveKeys: [...new Set([...audit.unsupportedKeys, ...audit.unknownKeys])].sort(),
     invalidScoringSettingCount: normalized.invalidKeys.length
   };
 }
@@ -777,6 +850,9 @@ function buildCohortEvidence(input: {
     week: input.week,
     sampleSize: cohort.sampleSize,
     readinessStatus: cohort.readiness.status,
+    scoringValidationStatus: cohort.readiness.scoringValidationStatus,
+    recommendationExperimentEligible: cohort.readiness.eligibleForRecommendationExperiment,
+    recommendationExperimentScope: cohort.readiness.eligibleExperimentScope,
     eligibilityPercentage: cohort.eligiblePercentage,
     averageCoverageRatio: cohort.averageCoverageRatio,
     minimumCoverageRatio: cohort.minimumCoverageRatio,
@@ -786,6 +862,8 @@ function buildCohortEvidence(input: {
     aliasAmbiguityCount: cohort.aliasAmbiguityCount,
     providerComparisonMetrics: {
       withProviderTotals: cohort.providerComparison.withProviderTotals,
+      classifiedCount: cohort.providerComparison.classifiedCount,
+      excludedCount: cohort.providerComparison.excludedCount,
       matchCount: cohort.providerComparison.matchCount,
       closeCount: cohort.providerComparison.closeCount,
       differentCount: cohort.providerComparison.differentCount,
@@ -810,6 +888,9 @@ function buildOverallFindings(input: {
 
   findings.push(`Validated ${input.leagueCount} league(s).`);
   findings.push(`Inspected ${input.cohortEvidence.length} cohort(s) across all source types.`);
+  findings.push(
+    `Weekly validation uses deterministic sampled cohorts (${ROWS_PER_POSITION_COHORT} rows max per position/week, provider/player ordered).`
+  );
 
   const readyCohorts = input.cohortEvidence.filter((c) => c.readinessStatus === "ready");
   const conditionalCohorts = input.cohortEvidence.filter((c) => c.readinessStatus === "conditionally_ready");
@@ -839,6 +920,16 @@ function buildOverallFindings(input: {
   if (sourcelessCohorts.length > 0) {
     findings.push(
       `${sourcelessCohorts.length} cohort(s) have fewer than 5 rows; treat as descriptive only.`
+    );
+  }
+
+  const excludedComparisons = input.cohortEvidence.reduce(
+    (sum, cohort) => sum + cohort.providerComparisonMetrics.excludedCount,
+    0
+  );
+  if (excludedComparisons > 0) {
+    findings.push(
+      `${excludedComparisons} provider-total comparison(s) were excluded from match/close/different counts because Blackbird coverage was incomplete.`
     );
   }
 
@@ -978,6 +1069,14 @@ function printEvidence(evidence: LiveScoringValidationEvidence): void {
 
 function env(name: string): string | null {
   return process.env[name]?.trim() || null;
+}
+
+function parseOptionalNumberArg(flag: string, envName: string): number | null {
+  const match = process.argv.find((value) => value.startsWith(`${flag}=`));
+  const raw = match ? match.slice(flag.length + 1) : process.env[envName] ?? null;
+  if (raw === null) return null;
+  const parsed = Number(raw);
+  return Number.isInteger(parsed) ? parsed : null;
 }
 
 function loadLocalEnvFallback() {

@@ -32,7 +32,17 @@ export function extractExperimentCandidates(input: { cohorts: AnnotatedCohort[] 
 
     if (cohort.sourceType === "weekly_stats") {
       // Weekly actuals validate scoring accuracy but are not projection recommendation sources.
-      const isUsable = cohort.readiness.status === "ready" || cohort.readiness.status === "conditionally_ready";
+      // Two independent reasons are reported separately so each is actionable on its own.
+      const scoringBlocked = cohort.readiness.status === "not_ready" || cohort.readiness.status === "insufficient_data";
+      const blockReasons: string[] = [];
+      if (scoringBlocked) {
+        blockReasons.push(
+          `Scoring validation is blocked: applicable scoring coverage is incomplete (readiness: ${cohort.readiness.status}).`
+        );
+      }
+      blockReasons.push(
+        "Recommendation experiments are separately prohibited for weekly actuals: they represent historical outcomes, not future player projections."
+      );
       blocked.push({
         leagueLabel,
         sourceType: cohort.sourceType,
@@ -40,13 +50,7 @@ export function extractExperimentCandidates(input: { cohorts: AnnotatedCohort[] 
         positionGroup: posGroup,
         projectionType: projType,
         status: cohort.readiness.status,
-        blockReasons: isUsable
-          ? [
-              "Weekly actuals may serve as scoring-validation candidates (historical accuracy review) but are not eligible as draft projection recommendation candidates. They do not represent future player projections."
-            ]
-          : [
-              `Weekly actuals are not eligible for recommendation experiments (readiness: ${cohort.readiness.status}).`
-            ]
+        blockReasons
       });
       continue;
     }

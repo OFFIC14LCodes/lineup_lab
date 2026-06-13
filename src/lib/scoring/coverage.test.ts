@@ -43,4 +43,24 @@ describe("scoring coverage and audit", () => {
     expect(audit.positionSpecificSupport.WR.notApplicableKeys).toContain("rec_te_bonus");
     expect(audit.positionSpecificSupport.LB.supportedKeys).toContain("solo_tkl");
   });
+
+  it("ignores unsupported position-specific offensive keys when they do not apply to the row position", () => {
+    const result = scoreFantasyStats({
+      stats: {
+        pass_td: 2
+      },
+      scoringSettings: {
+        pass_td: 4,
+        bonus_rec_te: 0.5,
+        bonus_fd_rb: 1
+      },
+      positionGroup: "QB"
+    });
+
+    expect(result.coverage.unsupportedScoringKeys).toEqual([]);
+    expect(result.coverage.notApplicableScoringKeys).toEqual(
+      expect.arrayContaining(["bonus_fd_rb", "bonus_rec_te"])
+    );
+    expect(result.coverage.coverageRatio).toBe(1);
+  });
 });

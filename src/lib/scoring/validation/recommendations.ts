@@ -106,8 +106,13 @@ export function evaluateOverallRecommendationReadiness(input: {
 
   return {
     status,
+    scoringValidationStatus: status,
     eligibleForRecommendationExperiment: status === "ready",
     eligibleExperimentScope: status === "ready" ? "weekly_recommendation" : "none",
+    recommendationExperimentEligibility: {
+      eligible: status === "ready",
+      scope: status === "ready" ? "weekly_recommendation" : "none"
+    },
     score,
     reasons,
     warnings,

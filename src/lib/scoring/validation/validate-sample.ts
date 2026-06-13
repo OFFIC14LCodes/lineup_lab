@@ -26,8 +26,13 @@ export function validateLeagueScoringSample(input: ValidateScoringSampleInput): 
         error: item.error,
         readiness: {
           status: "insufficient_data",
+          scoringValidationStatus: "insufficient_data",
           eligibleForRecommendationExperiment: false,
           eligibleExperimentScope: "none",
+          recommendationExperimentEligibility: {
+            eligible: false,
+            scope: "none"
+          },
           score: 0,
           reasons: [
             {

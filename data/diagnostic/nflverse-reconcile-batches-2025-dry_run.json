@@ -1,0 +1,75 @@
+{
+  "generatedAt": "2026-06-13T02:22:12.383Z",
+  "season": 2025,
+  "mode": "dry_run",
+  "operation": "reconcile_repair_batches",
+  "existingFallbackDetectionResult": {
+    "existingFallbackAuditFound": true,
+    "existingFallbackBatchId": "e78b095a-d676-40ac-b984-fe18e45954b5",
+    "acceptedBatchFallbackPresent": true,
+    "auditRequirementSatisfied": true,
+    "warnings": []
+  },
+  "staleBatchCountSelected": 0,
+  "selectedBatchIds": [],
+  "proposedTerminalStatus": "failed",
+  "canonicalValidation": {
+    "valid": true,
+    "checkedRowCount": 5877,
+    "mismatchedRowCount": 0,
+    "mismatchedRowSamples": []
+  },
+  "reconciliationMetadata": {
+    "reconciliationOperation": "repair_batch_reconciliation",
+    "reason": "interrupted_before_audit_completion",
+    "reconciledByFallbackBatchId": "e78b095a-d676-40ac-b984-fe18e45954b5",
+    "reconciledAt": "2026-06-13T02:22:12.383Z",
+    "canonicalRowsAlreadyRepaired": true,
+    "rowLevelAuditUnavailable": true
+  },
+  "decisions": [
+    {
+      "batchId": "e78b095a-d676-40ac-b984-fe18e45954b5",
+      "action": "skip",
+      "reason": "not_open"
+    },
+    {
+      "batchId": "38c71f8a-bb24-4149-97f6-60fa38a90c8b",
+      "action": "skip",
+      "reason": "not_open"
+    },
+    {
+      "batchId": "37143139-562a-4271-870b-987709eba536",
+      "action": "skip",
+      "reason": "not_open"
+    },
+    {
+      "batchId": "7b230930-fcd8-47cc-8158-528918ae27a0",
+      "action": "skip",
+      "reason": "not_open"
+    },
+    {
+      "batchId": "e0585d44-36d0-4610-9227-20fed7741e98",
+      "action": "skip",
+      "reason": "not_open"
+    },
+    {
+      "batchId": "f60917c1-8c52-4fbc-bca5-ba3d5570ebf9",
+      "action": "skip",
+      "reason": "not_open"
+    },
+    {
+      "batchId": "05a6f9ca-b10c-43b3-9bb6-799ebae0d9fc",
+      "action": "skip",
+      "reason": "not_open"
+    },
+    {
+      "batchId": "9ac2355e-a7da-4ade-822e-065bc36b5c9e",
+      "action": "skip",
+      "reason": "not_open"
+    }
+  ],
+  "reconciledCount": 0,
+  "result": "SUCCESS",
+  "writeError": null
+}

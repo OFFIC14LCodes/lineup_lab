@@ -73,6 +73,9 @@ describe("scoreStoredWeeklyStatsForLeague", () => {
         },
         async loadPlayersByIds() {
           return new Map([["player-1", makePlayer()]]);
+        },
+        async loadDerivedStats() {
+          return new Map();
         }
       }
     );
@@ -111,6 +114,9 @@ describe("scoreStoredWeeklyStatsForLeague", () => {
         },
         async loadPlayersByIds() {
           return new Map([["player-k", makePlayer({ id: "player-k", full_name: "Kicker One", position: "K", raw_position: "K", primary_position: "K", position_group: "K" })]]);
+        },
+        async loadDerivedStats() {
+          return new Map();
         }
       }
     );
@@ -143,6 +149,9 @@ describe("scoreStoredWeeklyStatsForLeague", () => {
         },
         async loadPlayersByIds() {
           return new Map([["player-d", makePlayer({ id: "player-d", full_name: "Bears DST", position: "DEF", raw_position: "DEF", primary_position: "DEF", position_group: "DEF" })]]);
+        },
+        async loadDerivedStats() {
+          return new Map();
         }
       }
     );
@@ -183,6 +192,9 @@ describe("scoreStoredWeeklyStatsForLeague", () => {
         },
         async loadPlayersByIds() {
           return new Map([["player-1", makePlayer({ position: "LB", raw_position: "LB", primary_position: "LB", position_group: "LB" })]]);
+        },
+        async loadDerivedStats() {
+          return new Map();
         }
       }
     );
@@ -224,12 +236,58 @@ describe("scoreStoredWeeklyStatsForLeague", () => {
         },
         async loadPlayersByIds() {
           return new Map([["player-1", makePlayer({ position: "QB", raw_position: "QB", primary_position: "QB", position_group: "QB" })]]);
+        },
+        async loadDerivedStats() {
+          return new Map();
         }
       }
     );
 
     expect(result.blackbird.coverage.isComplete).toBe(false);
     expect(result.providerComparison?.comparisonStatus).toBe("incomplete_blackbird_coverage");
+  });
+
+  it("classifies provider comparison when newly supported offensive bonus keys are fully covered", async () => {
+    const league = makeLeagueContext({ pass_cmp: 0.1, bonus_pass_cmp_25: 2 });
+
+    const result = await scoreStoredWeeklyStatsForLeague(
+      {
+        userId: "user-1",
+        leagueId: "league-1",
+        weeklyStatsRowId: "row-bonus"
+      },
+      {
+        async getLeagueScoringContext() {
+          return league;
+        },
+        async loadWeeklyStatsRow() {
+          return {
+            id: "row-bonus",
+            player_id: "player-1",
+            provider: "manual",
+            provider_external_id: "ext-1",
+            season: 2026,
+            week: 1,
+            position_group: "QB",
+            stats_json: {
+              pass_cmp: 25
+            },
+            provider_fantasy_points: 4.5,
+            source_updated_at: null,
+            ingested_at: "2026-09-10T12:05:00Z"
+          };
+        },
+        async loadPlayersByIds() {
+          return new Map([["player-1", makePlayer({ position: "QB", raw_position: "QB", primary_position: "QB", position_group: "QB" })]]);
+        },
+        async loadDerivedStats() {
+          return new Map();
+        }
+      }
+    );
+
+    expect(result.blackbird.coverage.isComplete).toBe(true);
+    expect(result.providerComparison?.comparisonStatus).toBe("match");
   });
 
   it("returns per-row errors without erasing valid batch results", async () => {
@@ -279,6 +337,9 @@ describe("scoreStoredWeeklyStatsForLeague", () => {
         },
         async loadPlayersByIds() {
           return new Map([["player-1", makePlayer()]]);
+        },
+        async loadDerivedStats() {
+          return new Map();
         }
       }
     );

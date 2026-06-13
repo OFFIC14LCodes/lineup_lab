@@ -1,4 +1,4 @@
-import { SLEEPER_RULES_BY_KEY } from "@/lib/scoring/sleeper-keys";
+import { getScoringKeyDefinition, SLEEPER_RULES_BY_KEY } from "@/lib/scoring/sleeper-keys";
 import type {
   FantasyScoringComponent,
   PositionGroup,
@@ -25,11 +25,21 @@ export function evaluateActiveScoringKey(
 ) {
   const rules = SLEEPER_RULES_BY_KEY.get(scoringKey) ?? [];
   if (rules.length === 0) {
+    const definition = getScoringKeyDefinition(scoringKey);
+    if (definition?.allowedPositions?.length && (!context.positionGroup || !definition.allowedPositions.includes(context.positionGroup))) {
+      return {
+        components: [] as FantasyScoringComponent[],
+        warnings: [] as ScoringWarning[],
+        state: "not_applicable" as const,
+        requiredStats: definition.requiredStats
+      };
+    }
+
     return {
       components: [] as FantasyScoringComponent[],
       warnings: [] as ScoringWarning[],
       state: "unsupported" as const,
-      requiredStats: [] as string[]
+      requiredStats: definition?.requiredStats ?? ([] as string[])
     };
   }
 

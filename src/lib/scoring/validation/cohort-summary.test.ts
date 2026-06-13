@@ -27,8 +27,13 @@ function makeRow(overrides: Partial<RowValidationResult> = {}): RowValidationRes
     },
     readiness: {
       status: "ready",
-      eligibleForRecommendationExperiment: true,
-      eligibleExperimentScope: "weekly_recommendation",
+      scoringValidationStatus: "ready",
+      eligibleForRecommendationExperiment: false,
+      eligibleExperimentScope: "none",
+      recommendationExperimentEligibility: {
+        eligible: false,
+        scope: "none"
+      },
       score: 100,
       reasons: [],
       warnings: [],
@@ -124,5 +129,55 @@ describe("buildCohortValidationSummaries", () => {
     const cohort = buildCohortValidationSummaries(rows)[0];
     expect(cohort.providerComparison.meanSignedDifference).toBe(0);
     expect(cohort.providerComparison.medianAbsoluteDifference).toBe(2);
+    expect(cohort.providerComparison.classifiedCount).toBe(2);
+    expect(cohort.providerComparison.excludedCount).toBe(0);
+  });
+
+  it("counts incomplete-coverage provider comparisons as excluded", () => {
+    const cohort = buildCohortValidationSummaries([
+      makeRow({
+        rowId: "row-1",
+        providerComparison: {
+          providerPoints: 12,
+          blackbirdPoints: 9,
+          difference: -3,
+          absoluteDifference: 3,
+          percentDifference: 0.25,
+          comparisonStatus: "incomplete_blackbird_coverage",
+          warnings: ["incomplete"]
+        },
+        scoringResult: {
+          ...makeRow().scoringResult,
+          blackbird: {
+            ...makeRow().scoringResult.blackbird,
+            coverage: {
+              ...makeRow().scoringResult.blackbird.coverage,
+              isComplete: false
+            }
+          }
+        }
+      })
+    ])[0];
+
+    expect(cohort.providerComparison.withProviderTotals).toBe(1);
+    expect(cohort.providerComparison.classifiedCount).toBe(0);
+    expect(cohort.providerComparison.excludedCount).toBe(1);
+    expect(cohort.providerComparison.matchCount + cohort.providerComparison.closeCount + cohort.providerComparison.differentCount).toBe(0);
+    expect(cohort.providerComparison.meanAbsoluteDifference).toBeNull();
+  });
+
+  it("allows weekly actual cohorts to be scoring-ready while remaining experiment-ineligible", () => {
+    const cohort = buildCohortValidationSummaries([
+      makeRow(),
+      makeRow({ rowId: "row-2" }),
+      makeRow({ rowId: "row-3" }),
+      makeRow({ rowId: "row-4" }),
+      makeRow({ rowId: "row-5" })
+    ])[0];
+
+    expect(cohort.readiness.status).toBe("ready");
+    expect(cohort.readiness.scoringValidationStatus).toBe("ready");
+    expect(cohort.readiness.eligibleForRecommendationExperiment).toBe(false);
+    expect(cohort.eligibleCount).toBe(0);
   });
 });

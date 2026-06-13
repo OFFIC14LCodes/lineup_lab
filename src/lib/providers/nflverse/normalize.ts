@@ -27,6 +27,10 @@ const STAT_COLUMN_MAP: ReadonlyArray<readonly [nflverseCol: string, canonicalKey
   ["receiving_2pt_conversions", "rec_2pt"]
 ];
 
+// nflverse exposes lost-fumble fields split by play context rather than as a single total column.
+// For fantasy scoring, Blackbird uses the aggregate lost-fumble stat.
+const LOST_FUMBLE_COLUMNS = ["sack_fumbles_lost", "rushing_fumbles_lost", "receiving_fumbles_lost"] as const;
+
 export type NormalizedNflverseRow = {
   gsisId: string;
   playerDisplayName: string;
@@ -79,18 +83,20 @@ export function normalizeNflverseRow(raw: NflversePlayerStatsRaw): NflverseNorma
   let canonicalKeyCount = 0;
 
   for (const [nflCol, canonicalKey] of STAT_COLUMN_MAP) {
-    const raw_val = raw[nflCol];
-    if (raw_val === undefined || raw_val === null || raw_val.trim() === "" || raw_val.trim() === "NA") {
+    const parsed = parseKnownNumeric(raw[nflCol]);
+    if (parsed === null) {
       continue;
     }
-    const num = parseFloat(raw_val);
-    if (!Number.isFinite(num)) {
-      continue;
-    }
-    if (num !== 0) {
-      stats[canonicalKey] = num;
-      canonicalKeyCount += 1;
-    }
+    stats[canonicalKey] = parsed;
+    canonicalKeyCount += 1;
+  }
+
+  const lostFumbleValues = LOST_FUMBLE_COLUMNS
+    .map((column) => parseKnownNumeric(raw[column]))
+    .filter((value): value is number => value !== null);
+  if (lostFumbleValues.length > 0) {
+    stats["fum_lost"] = lostFumbleValues.reduce((sum, value) => sum + value, 0);
+    canonicalKeyCount += 1;
   }
 
   const fantasyRaw = raw["fantasy_points"]?.trim();
@@ -115,6 +121,24 @@ export function normalizeNflverseRow(raw: NflversePlayerStatsRaw): NflverseNorma
       canonicalKeyCount
     }
   };
+}
+
+function parseKnownNumeric(rawValue: string | undefined): number | null {
+  if (rawValue === undefined || rawValue === null) {
+    return null;
+  }
+
+  const normalized = rawValue.trim();
+  if (!normalized || normalized.toUpperCase() === "NA" || normalized.toUpperCase() === "NAN") {
+    return null;
+  }
+
+  const parsed = Number(normalized);
+  if (!Number.isFinite(parsed)) {
+    return null;
+  }
+
+  return parsed;
 }
 
 export function buildRowSha256Input(raw: NflversePlayerStatsRaw): string {

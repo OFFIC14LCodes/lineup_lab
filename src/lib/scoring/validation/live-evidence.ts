@@ -59,6 +59,14 @@ export type AnonymizedLeagueDataInventory = {
   availableWeeks: number[];
   providers: string[];
   sourceUpdatedAtRange: { earliest: string | null; latest: string | null };
+  rowCountByWeek: Array<{ week: number; count: number }>;
+  rowCountByPosition: Array<{ positionGroup: string; count: number }>;
+  provenance: {
+    artifactDownloadedAtRange: { earliest: string | null; latest: string | null };
+    importBatchRange: { earliestStartedAt: string | null; latestCompletedAt: string | null };
+    sourceShas: string[];
+    importBatchIds: string[];
+  };
 };
 
 export type AnonymizedLeagueScoringProfile = {
@@ -73,6 +81,7 @@ export type AnonymizedLeagueScoringProfile = {
   idpEnabled: boolean;
   activeScoringKeyCount: number;
   unsupportedActiveKeyCount: number;
+  unsupportedActiveKeys: string[];
   invalidScoringSettingCount: number;
 };
 
@@ -93,6 +102,9 @@ export type AnonymizedCohortEvidence = {
   week: number | null;
   sampleSize: number;
   readinessStatus: ScoringReadinessStatus;
+  scoringValidationStatus: ScoringReadinessStatus;
+  recommendationExperimentEligible: boolean;
+  recommendationExperimentScope: RecommendationExperimentScope;
   eligibilityPercentage: number;
   averageCoverageRatio: number;
   minimumCoverageRatio: number;
@@ -102,6 +114,8 @@ export type AnonymizedCohortEvidence = {
   aliasAmbiguityCount: number;
   providerComparisonMetrics: {
     withProviderTotals: number;
+    classifiedCount: number;
+    excludedCount: number;
     matchCount: number;
     closeCount: number;
     differentCount: number;

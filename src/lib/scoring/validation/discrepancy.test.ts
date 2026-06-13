@@ -24,8 +24,13 @@ function makeLeague() {
 function makeReadiness() {
   return {
     status: "ready" as const,
-    eligibleForRecommendationExperiment: true,
-    eligibleExperimentScope: "weekly_recommendation" as const,
+    scoringValidationStatus: "ready" as const,
+    eligibleForRecommendationExperiment: false,
+    eligibleExperimentScope: "none" as const,
+    recommendationExperimentEligibility: {
+      eligible: false,
+      scope: "none" as const
+    },
     score: 100,
     reasons: [],
     warnings: [],
@@ -117,6 +122,12 @@ function makeCohort(rows: RowValidationResult[]): CohortValidationSummary {
     positionWarningCount: 0,
     providerComparison: {
       withProviderTotals: rows.filter((r) => r.providerComparison !== null).length,
+      classifiedCount: rows.filter(
+        (r) =>
+          r.providerComparison !== null &&
+          r.providerComparison.comparisonStatus !== "incomplete_blackbird_coverage"
+      ).length,
+      excludedCount: rows.filter((r) => r.providerComparison?.comparisonStatus === "incomplete_blackbird_coverage").length,
       withoutProviderTotals: rows.filter((r) => r.providerComparison === null).length,
       matchCount: rows.filter((r) => r.providerComparison?.comparisonStatus === "match").length,
       closeCount: rows.filter((r) => r.providerComparison?.comparisonStatus === "close").length,
