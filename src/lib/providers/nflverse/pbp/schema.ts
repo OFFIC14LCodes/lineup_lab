@@ -17,6 +17,8 @@ export const PBP_REQUIRED_COLUMNS = [
   "defteam",
   // Play classification
   "play_type",
+  "posteam_score_post",
+  "defteam_score_post",
   // Yardage (used as touchdown distance)
   "yards_gained",
   // Touchdown indicators
@@ -24,14 +26,43 @@ export const PBP_REQUIRED_COLUMNS = [
   "pass_touchdown",
   "rush_touchdown",
   "return_touchdown",
+  "field_goal_attempt",
+  "field_goal_result",
+  "extra_point_attempt",
+  "extra_point_result",
+  "two_point_conv_result",
+  "safety",
+  "punt_blocked",
+  "return_team",
+  "return_yards",
+  "sack",
+  "qb_kneel",
+  "qb_spike",
+  "aborted_play",
   // Interception
   "interception",
+  // Fumble / recovery attribution
+  "fumble",
+  "fumble_lost",
+  "fumble_recovery_1_team",
+  "fumble_recovery_1_yards",
+  "fumble_recovery_1_player_id",
+  "fumble_recovery_1_player_name",
+  "fumble_recovery_2_team",
+  "fumble_recovery_2_yards",
+  "fumble_recovery_2_player_id",
+  "fumble_recovery_2_player_name",
   // Exclusion indicators
   "two_point_attempt",
   "play_deleted",
   "penalty",
+  "kickoff_attempt",
+  "punt_attempt",
+  "defensive_two_point_attempt",
+  "defensive_two_point_conv",
   // Touchdown attribution
   "td_player_id",
+  "td_player_name",
   "td_team",
   // Offensive player IDs
   "passer_player_id",
@@ -41,7 +72,7 @@ export const PBP_REQUIRED_COLUMNS = [
   "passer_player_name",
   "rusher_player_name",
   "receiver_player_name",
-  "td_player_name"
+  "desc"
 ] as const;
 
 export type PbpRequiredColumn = (typeof PBP_REQUIRED_COLUMNS)[number];

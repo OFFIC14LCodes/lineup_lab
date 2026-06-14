@@ -1,0 +1,68 @@
+# H5.3 DST Allowance Ledger - 2025
+
+## Unresolved Event Summary
+
+| Classification | Count |
+|---|---:|
+| `defensive_fumble_return_td` | 17 |
+| `safety` | 12 |
+| `defensive_two_point_return` | 2 |
+| `possession_change_misc_td` | 1 |
+| `offensive_fumble_recovery_td` | 1 |
+
+## Full Unresolved Event Ledger
+
+| Game | Week | Play | Team Scored | Charged Team | Qtr | Clock | Class | Reason | Text |
+|---|---:|---:|---|---|---:|---|---|---|---|
+| 2025_02_CAR_ARI | 2 | 114 | ARI | CAR | 1 | 13:36 | `defensive_fumble_return_td` | Sleeper DST allowance treatment for defensive fumble-return touchdowns requires empirical evidence. | (13:36) (Shotgun) 9-B.Young sacked at CAR 19 for -11 yards (10-J.Sweat). FUMBLES (10-J.Sweat) [10-J.Sweat], touched at CAR 19, RECOVERED by ARI-25-Z.Collins at CAR 3. 25-Z.Collins for 3 yards, TOUCHDOWN. |
+| 2025_02_CLE_BAL | 2 | 3773 | BAL | CLE | 4 | 08:33 | `defensive_fumble_return_td` | Sleeper DST allowance treatment for defensive fumble-return touchdowns requires empirical evidence. | (8:33) (Shotgun) 15-J.Flacco sacked at BAL 40 for -7 yards (95-T.Robinson). FUMBLES (95-T.Robinson) [95-T.Robinson], RECOVERED by BAL-0-R.Smith at BAL 37. 0-R.Smith for 63 yards, TOUCHDOWN. The Replay Official reviewed the passer was not down by contact ruling, and the play was Upheld. The ruling on the field stands. |
+| 2025_03_ARI_SF | 3 | 3694 | ARI | SF | 4 | 03:26 | `safety` | Sleeper DST allowance treatment for safeties scored against the offense requires empirical evidence. | (3:26) (Shotgun) 10-M.Jones sacked at SF 6 for 0 yards (2-Ma.Wilson). PENALTY on SF-77-D.Puni, Offensive Holding, 6 yards, enforced in End Zone, SAFETY - No Play. |
+| 2025_03_CIN_MIN | 3 | 1904 | MIN | CIN | 2 | 02:00 | `defensive_fumble_return_td` | Sleeper DST allowance treatment for defensive fumble-return touchdowns requires empirical evidence. | (2:00) (Shotgun) 6-J.Browning pass short right to 86-N.Fant to MIN 32 for 4 yards (2-I.Rodgers). FUMBLES (2-I.Rodgers), RECOVERED by MIN-2-I.Rodgers at MIN 34. 2-I.Rodgers for 66 yards, TOUCHDOWN. |
+| 2025_04_GB_DAL | 4 | 1166 | DAL | GB | 2 | 10:37 | `defensive_two_point_return` | Sleeper DST allowance treatment for defensive two-point returns requires empirical evidence. | 17-B.McManus extra point is Blocked (2-J.Thomas), Center-42-M.Orzech, Holder-19-D.Whelan. DEFENSIVE TWO-POINT ATTEMPT. 14-M.Bell recovered the blocked kick. ATTEMPT SUCCEEDS. |
+| 2025_04_PHI_TB | 4 | 4548 | TB | PHI | 4 | 00:06 | `safety` | Sleeper DST allowance treatment for safeties scored against the offense requires empirical evidence. | (:06) (Punt formation) 10-B.Mann right end tackled in End Zone for -34 yards, SAFETY (26-K.Merriweather). |
+| 2025_05_DET_CIN | 5 | 4094 | DET | CIN | 4 | 01:54 | `safety` | Sleeper DST allowance treatment for safeties scored against the offense requires empirical evidence. | (1:54) (Shotgun) 6-J.Browning sacked in End Zone for -7 yards, SAFETY (55-D.Barnes). |
+| 2025_05_NYG_NO | 5 | 3339 | NO | NYG | 4 | 15:00 | `defensive_fumble_return_td` | Sleeper DST allowance treatment for defensive fumble-return touchdowns requires empirical evidence. | (15:00) (Shotgun) 44-C.Skattebo up the middle to NO 13 for -1 yards (90-B.Bresee). FUMBLES (90-B.Bresee), RECOVERED by NO-31-J.Howden at NO 14. 31-J.Howden for 86 yards, TOUCHDOWN. |
+| 2025_05_TEN_ARI | 5 | 4224 | TEN | ARI | 4 | 04:53 | `possession_change_misc_td` | Interception return followed by fumble and offensive recovery TD requires empirical Sleeper DST allowance evidence. | (4:53) (Shotgun) 1-C.Ward pass short left intended for 0-C.Ridley INTERCEPTED by 42-D.Taylor-Demerson (2-Ma.Wilson) at ARI 5. 42-D.Taylor-Demerson to ARI 5 for no gain. FUMBLES, touched at ARI 6, RECOVERED by TEN-4-T.Lockett at ARI 0. TOUCHDOWN. |
+| 2025_06_DEN_NYJ | 6 | 2624 | NYJ | DEN | 3 | 05:02 | `safety` | Sleeper DST allowance treatment for safeties scored against the offense requires empirical evidence. | (5:02) (Shotgun) 63-A.Palczewski reported in as eligible. 10-B.Nix pass incomplete deep right to 11-T.Franklin. PENALTY on DEN-77-Q.Meinerz, Offensive Holding, 3 yards, enforced in End Zone, SAFETY - No Play. Penalty on DEN-11-T.Franklin, Offensive Pass Interference, declined. |
+| 2025_07_HOU_SEA | 7 | 2987 | HOU | SEA | 3 | 07:33 | `defensive_fumble_return_td` | Sleeper DST allowance treatment for defensive fumble-return touchdowns requires empirical evidence. | (7:33) (Shotgun) 14-S.Darnold sacked at SEA -5 for -12 yards (51-W.Anderson). FUMBLES (51-W.Anderson) [51-W.Anderson], RECOVERED by HOU-51-W.Anderson at SEA -5. TOUCHDOWN. |
+| 2025_07_NE_TEN | 7 | 2303 | NE | TEN | 3 | 07:25 | `defensive_fumble_return_td` | Sleeper DST allowance treatment for defensive fumble-return touchdowns requires empirical evidence. | (7:25) 1-C.Ward sacked at TEN 10 for -13 yards. FUMBLES, RECOVERED by NE-44-K.Chaisson at TEN 4. 44-K.Chaisson for 4 yards, TOUCHDOWN. Penalty on TEN-17-C.Dike, Offensive Holding, declined. |
+| 2025_07_WAS_DAL | 7 | 396 | WAS | DAL | 1 | 11:35 | `safety` | Sleeper DST allowance treatment for safeties scored against the offense requires empirical evidence. | (11:35) 33-J.Williams up the middle tackled in End Zone for -1 yards, SAFETY (94-D.Payne, 55-J.Martin). |
+| 2025_08_CLE_NE | 8 | 3699 | NE | CLE | 4 | 04:11 | `safety` | Sleeper DST allowance treatment for safeties scored against the offense requires empirical evidence. | (4:11) 8-D.Gabriel pass incomplete short right. PENALTY on CLE-8-D.Gabriel, Intentional Grounding, 2 yards, enforced in End Zone, SAFETY. |
+| 2025_10_ARI_SEA | 10 | 356 | SEA | ARI | 1 | 09:32 | `defensive_fumble_return_td` | Sleeper DST allowance treatment for defensive fumble-return touchdowns requires empirical evidence. | (9:32) 68-K.Beachum reported in as eligible. 7-J.Brissett sacked at ARI 32 for -11 yards (48-T.Knight). FUMBLES (48-T.Knight) [48-T.Knight], RECOVERED by SEA-0-D.Lawrence at ARI 34. 0-D.Lawrence for 34 yards, TOUCHDOWN. The Replay Official reviewed the fumble ruling, and the play was Upheld. The ruling on the field stands. |
+| 2025_10_ARI_SEA | 10 | 1049 | SEA | ARI | 2 | 14:15 | `defensive_fumble_return_td` | Sleeper DST allowance treatment for defensive fumble-return touchdowns requires empirical evidence. | (14:15) (Shotgun) 7-J.Brissett sacked at ARI 29 for -12 yards (48-T.Knight). FUMBLES (48-T.Knight) [48-T.Knight], RECOVERED by SEA-0-D.Lawrence at ARI 22. 0-D.Lawrence for 22 yards, TOUCHDOWN. The Replay Official reviewed the fumble ruling, and the play was Upheld. The ruling on the field stands. |
+| 2025_10_JAX_HOU | 10 | 4638 | HOU | JAX | 4 | 00:07 | `defensive_fumble_return_td` | Sleeper DST allowance treatment for defensive fumble-return touchdowns requires empirical evidence. | (:07) (Shotgun) 16-T.Lawrence sacked at JAX 30 for -5 yards (51-W.Anderson). FUMBLES (51-W.Anderson) [51-W.Anderson], RECOVERED by HOU-90-S.Rankins at JAX 32. 90-S.Rankins for 32 yards, TOUCHDOWN. |
+| 2025_10_PIT_LAC | 10 | 642 | LAC | PIT | 1 | 05:17 | `safety` | Sleeper DST allowance treatment for safeties scored against the offense requires empirical evidence. | (5:17) (Shotgun) 8-A.Rodgers sacked at PIT -3 for -12 yards (52-K.Mack). FUMBLES (52-K.Mack) [52-K.Mack], and recovers at PIT -5. 8-A.Rodgers tackled in End Zone, SAFETY. |
+| 2025_11_CIN_PIT | 11 | 4083 | PIT | CIN | 4 | 03:34 | `defensive_fumble_return_td` | Sleeper DST allowance treatment for defensive fumble-return touchdowns requires empirical evidence. | (3:34) (Shotgun) 16-J.Flacco pass short right to 86-N.Fant to CIN 33 for 5 yards (26-B.Echols). FUMBLES (26-B.Echols), RECOVERED by PIT-42-J.Pierre at CIN 34. 42-J.Pierre for 34 yards, TOUCHDOWN. ** Injury Update: PIT-26-B.Echols has returned to the game. |
+| 2025_11_DAL_LV | 11 | 3483 | DAL | LV | 4 | 11:43 | `safety` | Sleeper DST allowance treatment for safeties scored against the offense requires empirical evidence. | (11:43) 2-A.Jeanty up the middle tackled in End Zone for -1 yards, SAFETY (41-D.Ezeiruaku, 26-D.Bland). |
+| 2025_12_JAX_ARI | 12 | 762 | ARI | JAX | 1 | 02:34 | `defensive_fumble_return_td` | Sleeper DST allowance treatment for defensive fumble-return touchdowns requires empirical evidence. | (2:34) (Shotgun) 16-T.Lawrence sacked at JAX 3 for -9 yards (34-J.Thompson). FUMBLES (34-J.Thompson), RECOVERED by ARI-97-W.Nolen at JAX 7. 97-W.Nolen for 7 yards, TOUCHDOWN. |
+| 2025_12_PIT_CHI | 12 | 1007 | PIT | CHI | 2 | 14:54 | `defensive_fumble_return_td` | Sleeper DST allowance treatment for defensive fumble-return touchdowns requires empirical evidence. | (14:54) (Shotgun) 18-C.Williams sacked at CHI -2 for -12 yards (90-T.Watt). FUMBLES (90-T.Watt) [90-T.Watt], RECOVERED by PIT-51-N.Herbig at CHI -1. TOUCHDOWN. |
+| 2025_13_BUF_PIT | 13 | 2066 | BUF | PIT | 3 | 14:54 | `defensive_fumble_return_td` | Sleeper DST allowance treatment for defensive fumble-return touchdowns requires empirical evidence. | (14:54) (Shotgun) 74-S.Anderson reported in as eligible. 8-A.Rodgers sacked at PIT 17 for -9 yards (97-J.Bosa). FUMBLES (97-J.Bosa) [97-J.Bosa], RECOVERED by BUF-47-C.Benford at PIT 17. 47-C.Benford for 17 yards, TOUCHDOWN. PIT-8-A.Rodgers was injured during the play. |
+| 2025_13_NO_MIA | 13 | 4061 | MIA | NO | 4 | 01:17 | `defensive_two_point_return` | Sleeper DST allowance treatment for defensive two-point returns requires empirical evidence. | TWO-POINT CONVERSION ATTEMPT. 6-T.Shough pass to 14-D.Vele is intercepted. ATTEMPT FAILS. DEFENSIVE TWO-POINT ATTEMPT. 29-M.Fitzpatrick intercepted the try attempt. ATTEMPT SUCCEEDS. |
+| 2025_14_IND_JAX | 14 | 3848 | JAX | IND | 4 | 07:01 | `safety` | Sleeper DST allowance treatment for safeties scored against the offense requires empirical evidence. | (7:01) (Shotgun) 15-R.Leonard pass incomplete short left to 84-T.Warren [41-J.Hines-Allen]. Jacksonville challenged the passer was not down by contact ruling, and the play was REVERSED. (Shotgun) 15-R.Leonard sacked in End Zone for -9 yards, SAFETY (41-J.Hines-Allen). |
+| 2025_15_ARI_HOU | 15 | 653 | HOU | ARI | 1 | 06:15 | `offensive_fumble_recovery_td` | Offensive fumble recovery touchdown requires empirical Sleeper DST allowance evidence. | (6:15) 57-B.Fisher reported in as eligible. 7-C.Stroud FUMBLES (Aborted) at ARI 2, recovered by HOU-27-W.Marks at ARI 7. 27-W.Marks for 7 yards, TOUCHDOWN. |
+| 2025_16_KC_TEN | 16 | 1172 | TEN | KC | 2 | 13:09 | `safety` | Sleeper DST allowance treatment for safeties scored against the offense requires empirical evidence. | (13:09) 29-K.Hunt up the middle tackled in End Zone for -2 yards, SAFETY (98-J.Simmons). |
+| 2025_16_MIN_NYG | 16 | 1937 | NYG | MIN | 2 | 00:25 | `defensive_fumble_return_td` | Sleeper DST allowance treatment for defensive fumble-return touchdowns requires empirical evidence. | (:25) (No Huddle, Shotgun) 9-J.McCarthy sacked at MIN 33 for -8 yards (0-B.Burns). FUMBLES (0-B.Burns) [0-B.Burns], RECOVERED by NYG-27-T.Nubin at MIN 27. 27-T.Nubin for 27 yards, TOUCHDOWN. MIN-9-J.McCarthy was injured during the play. |
+| 2025_16_PIT_DET | 16 | 2582 | PIT | DET | 3 | 09:47 | `safety` | Sleeper DST allowance treatment for safeties scored against the offense requires empirical evidence. | (9:47) (Shotgun) 16-J.Goff sacked in End Zone for -5 yards, SAFETY (29-K.Dugger). |
+| 2025_17_NO_TEN | 17 | 1545 | NO | TEN | 2 | 04:02 | `defensive_fumble_return_td` | Sleeper DST allowance treatment for defensive fumble-return touchdowns requires empirical evidence. | (4:02) (Shotgun) 1-C.Ward sacked at TEN 33 for -11 yards (99-C.Young). FUMBLES (99-C.Young) [99-C.Young], RECOVERED by NO-99-C.Young at TEN 33. 99-C.Young for 33 yards, TOUCHDOWN. |
+| 2025_18_CLE_CIN | 18 | 1020 | CLE | CIN | 2 | 14:19 | `defensive_fumble_return_td` | Sleeper DST allowance treatment for defensive fumble-return touchdowns requires empirical evidence. | (14:19) (Shotgun) 9-J.Burrow pass short left to 86-N.Fant to CIN 46 for 5 yards (17-J.Baker; 9-G.Delpit). FUMBLES (17-J.Baker), RECOVERED by CLE-27-S.Webb at CIN 47. 27-S.Webb for 47 yards, TOUCHDOWN. PENALTY on CLE-27-S.Webb, Unsportsmanlike Conduct, 15 yards, enforced between downs. The Replay Official reviewed the runner was not down by contact ruling, and the play was Upheld. The ruling on the field stands. |
+| 2025_18_IND_HOU | 18 | 4468 | HOU | IND | 4 | 00:05 | `defensive_fumble_return_td` | Sleeper DST allowance treatment for defensive fumble-return touchdowns requires empirical evidence. | (:05) (Shotgun) 15-R.Leonard pass short middle to 2-J.Downs to IND 29 for 4 yards. Lateral to 11-M.Pittman to IND 20 for -9 yards. Lateral to 15-R.Leonard to IND 21 for 1 yard (92-D.Horton). FUMBLES (92-D.Horton), touched at IND 17, RECOVERED by HOU-72-T.Togiai at IND 17. 72-T.Togiai for 17 yards, TOUCHDOWN. |
+| 2025_18_KC_LV | 18 | 3537 | LV | KC | 4 | 04:42 | `safety` | Sleeper DST allowance treatment for safeties scored against the offense requires empirical evidence. | (4:42) (Shotgun) 17-S.Buechele sacked in End Zone for -10 yards, SAFETY (9-T.Wilson). |
+
+## Yardage Mismatches
+
+| Game | Week | DST | Opponent | Stored | Official-style | Diff | Root cause |
+|---|---:|---|---|---:|---:|---:|---|
+| 2025_04_NYJ_MIA | 4 | MIA | NYJ | 387 | 404 | 17 | lateral_stat_attribution |
+| 2025_07_IND_LAC | 7 | LAC | IND | 401 | 398 | -3 | aborted_play_lateral_or_fumble_stat_attribution |
+
+## Activation Eligibility
+
+Points eligible: false
+
+- 32 rare scoring events still require Sleeper-specific evidence.
+- Final-score reconciliation still includes unresolved points.
+
+Yards eligible: false
+
+- Two stored rows differ from official-style net-yard derivation and require a migration/backfill plan before activation.
+- No independent team-game total-net-yards source is available locally.

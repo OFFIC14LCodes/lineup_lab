@@ -1,0 +1,34 @@
+{
+  "investigatedAt": "2026-06-13",
+  "migration": "010_team_game_stats.sql",
+  "ledgerState": {
+    "001": { "local": true, "remote": true },
+    "002": { "local": true, "remote": true },
+    "003": { "local": true, "remote": true },
+    "004": { "local": true, "remote": true },
+    "005": { "local": true, "remote": true },
+    "006": { "local": true, "remote": true },
+    "007": { "local": true, "remote": true },
+    "008": { "local": true, "remote": true },
+    "009": { "local": true, "remote": true },
+    "010": { "local": true, "remote": false }
+  },
+  "assessment": {
+    "status": "safe_to_apply",
+    "reason": "Migrations 001-009 are all applied both locally and remotely. Migration 010 adds two new tables (nfl_teams, team_game_stats) and seeds 32 team rows. It is additive-only: no columns dropped, no existing tables modified, no data deleted. The unique index on (game_id, team_id) and the self-reference check (team_id <> opponent_id) are idempotent via IF NOT EXISTS guards.",
+    "risks": [
+      "nfl_teams seed INSERT uses ON CONFLICT (id) DO NOTHING — safe to re-run",
+      "All constraints and triggers use existence checks before CREATE — idempotent",
+      "Foreign key team_game_stats.team_id references nfl_teams.id — seed must complete before pipeline runs"
+    ],
+    "blockers": [],
+    "applyCommand": "npx supabase db push"
+  },
+  "tablesCreated": ["nfl_teams", "team_game_stats"],
+  "indexesCreated": [
+    "uniq_team_game_stats_game_team",
+    "idx_team_game_stats_season_week",
+    "idx_team_game_stats_team_season",
+    "idx_team_game_stats_batch"
+  ]
+}

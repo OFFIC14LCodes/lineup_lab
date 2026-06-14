@@ -22,9 +22,11 @@ function makeRaw(overrides: Partial<NflversePlayerStatsRaw> = {}): NflversePlaye
     sacks_suffered: "2",
     passing_first_downs: "18",
     passing_2pt_conversions: "0",
+    sack_fumbles: "0",
     carries: "3",
     rushing_yards: "12",
     rushing_tds: "0",
+    rushing_fumbles: "0",
     rushing_fumbles_lost: "0",
     rushing_first_downs: "1",
     rushing_2pt_conversions: "0",
@@ -32,10 +34,14 @@ function makeRaw(overrides: Partial<NflversePlayerStatsRaw> = {}): NflversePlaye
     targets: "0",
     receiving_yards: "0",
     receiving_tds: "0",
+    receiving_fumbles: "0",
     receiving_fumbles_lost: "0",
     receiving_first_downs: "0",
     receiving_2pt_conversions: "0",
     sack_fumbles_lost: "0",
+    punt_return_yards: "0",
+    kickoff_return_yards: "0",
+    special_teams_tds: "0",
     fantasy_points: "28.65",
     fantasy_points_ppr: "28.65",
     ...overrides
@@ -97,6 +103,47 @@ describe("normalizeNflverseRow — passing stats", () => {
     expect(result.ok).toBe(true);
     if (!result.ok) return;
     expect(result.row.stats["pass_2pt"]).toBe(1);
+  });
+
+  it("derives pass_inc from attempts minus completions", () => {
+    const result = normalizeNflverseRow(makeRaw({ attempts: "30", completions: "20" }));
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.row.stats["pass_inc"]).toBe(10);
+  });
+
+  it("derives zero pass_inc for a 0-attempt, 0-completion row", () => {
+    const result = normalizeNflverseRow(makeRaw({ attempts: "0", completions: "0" }));
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.row.stats["pass_inc"]).toBe(0);
+  });
+
+  it("omits pass_inc when both attempts and completions are absent", () => {
+    const raw = makeRaw();
+    delete raw["attempts"];
+    delete raw["completions"];
+    const result = normalizeNflverseRow(raw);
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.row.stats["pass_inc"]).toBeUndefined();
+  });
+
+  it("clamps negative pass_inc to zero and emits a visible normalization warning", () => {
+    const result = normalizeNflverseRow(makeRaw({ attempts: "20", completions: "21" }));
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.row.stats["pass_inc"]).toBe(0);
+    expect(result.row.metadata.normalizationWarnings).toEqual([
+      {
+        code: "pass_cmp_gt_pass_att",
+        message: "Completions exceeded attempts in nflverse weekly source; pass_inc was clamped to zero.",
+        details: {
+          completions: 21,
+          attempts: 20
+        }
+      }
+    ]);
   });
 });
 
@@ -171,6 +218,50 @@ describe("normalizeNflverseRow — receiving stats", () => {
     expect(result.ok).toBe(true);
     if (!result.ok) return;
     expect(result.row.stats["rec_2pt"]).toBe(1);
+  });
+});
+
+describe("normalizeNflverseRow — H4A weekly source mappings", () => {
+  it("aggregates total fumbles from nflverse weekly context columns", () => {
+    const result = normalizeNflverseRow(
+      makeRaw({
+        sack_fumbles: "1",
+        rushing_fumbles: "2",
+        receiving_fumbles: "0",
+        position_group: "RB"
+      })
+    );
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.row.stats["fum"]).toBe(3);
+  });
+
+  it("maps kickoff_return_yards to kick_ret_yd", () => {
+    const result = normalizeNflverseRow(makeRaw({ kickoff_return_yards: "63", position_group: "WR" }));
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.row.stats["kick_ret_yd"]).toBe(63);
+  });
+
+  it("maps punt_return_yards to punt_ret_yd", () => {
+    const result = normalizeNflverseRow(makeRaw({ punt_return_yards: "27", position_group: "WR" }));
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.row.stats["punt_ret_yd"]).toBe(27);
+  });
+
+  it("maps special_teams_tds to return_td", () => {
+    const result = normalizeNflverseRow(makeRaw({ special_teams_tds: "1", position_group: "RB" }));
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.row.stats["return_td"]).toBe(1);
+  });
+
+  it("does not fabricate return_fd without a verified weekly source column", () => {
+    const result = normalizeNflverseRow(makeRaw({ position_group: "WR" }));
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.row.stats["return_fd"]).toBeUndefined();
   });
 });
 
@@ -290,11 +381,17 @@ describe("normalizeNflverseRow — zero/missing stat handling", () => {
       sack_fumbles_lost: "0",
       passing_first_downs: "18",
       passing_2pt_conversions: "0",
-      rushing_fumbles_lost: "0"
+      sack_fumbles: "0",
+      rushing_fumbles: "0",
+      receiving_fumbles: "0",
+      rushing_fumbles_lost: "0",
+      punt_return_yards: "0",
+      kickoff_return_yards: "0",
+      special_teams_tds: "0"
     }));
     expect(result.ok).toBe(true);
     if (!result.ok) return;
-    expect(result.row.canonicalKeyCount).toBe(20);
+    expect(result.row.canonicalKeyCount).toBe(25);
   });
 
   it("keeps known zero receiving fields for quarterbacks", () => {

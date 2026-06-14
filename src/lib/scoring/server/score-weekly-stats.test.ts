@@ -290,6 +290,103 @@ describe("scoreStoredWeeklyStatsForLeague", () => {
     expect(result.providerComparison?.comparisonStatus).toBe("match");
   });
 
+  it("scores stored weekly rows that include new H4A canonical stats", async () => {
+    const league = makeLeagueContext({
+      pass_inc: -0.1,
+      fum: -1,
+      kick_ret_yd: 0.04,
+      punt_ret_yd: 0.04,
+      return_td: 6
+    });
+
+    const result = await scoreStoredWeeklyStatsForLeague(
+      {
+        userId: "user-1",
+        leagueId: "league-1",
+        weeklyStatsRowId: "row-h4a"
+      },
+      {
+        async getLeagueScoringContext() {
+          return league;
+        },
+        async loadWeeklyStatsRow() {
+          return {
+            id: "row-h4a",
+            player_id: "player-1",
+            provider: "nflverse",
+            provider_external_id: "00-0000001",
+            season: 2026,
+            week: 1,
+            position_group: "WR",
+            stats_json: {
+              pass_inc: 10,
+              fum: 1,
+              kick_ret_yd: 40,
+              punt_ret_yd: 15,
+              return_td: 1
+            },
+            provider_fantasy_points: 7.2,
+            source_updated_at: null,
+            ingested_at: "2026-09-10T12:05:00Z"
+          };
+        },
+        async loadPlayersByIds() {
+          return new Map([["player-1", makePlayer()]]);
+        },
+        async loadDerivedStats() {
+          return new Map();
+        }
+      }
+    );
+
+    expect(result.blackbird.totalPoints).toBeCloseTo(7.2, 8);
+    expect(result.providerComparison?.comparisonStatus).toBe("match");
+  });
+
+  it("scores fum_ret_td through the stored-row derived-stats merge path", async () => {
+    const league = makeLeagueContext({
+      fum_ret_td: 6
+    });
+
+    const result = await scoreStoredWeeklyStatsForLeague(
+      {
+        userId: "user-1",
+        leagueId: "league-1",
+        weeklyStatsRowId: "row-fum-ret-td"
+      },
+      {
+        async getLeagueScoringContext() {
+          return league;
+        },
+        async loadWeeklyStatsRow() {
+          return {
+            id: "row-fum-ret-td",
+            player_id: "player-1",
+            provider: "nflverse",
+            provider_external_id: "00-0040583",
+            season: 2026,
+            week: 1,
+            position_group: "RB",
+            stats_json: {},
+            provider_fantasy_points: 6,
+            source_updated_at: null,
+            ingested_at: "2026-09-10T12:05:00Z"
+          };
+        },
+        async loadPlayersByIds() {
+          return new Map([["player-1", makePlayer({ position: "RB", raw_position: "RB", primary_position: "RB", position_group: "RB" })]]);
+        },
+        async loadDerivedStats() {
+          return new Map([["player-1|1", { fum_ret_td: 1 }]]);
+        }
+      }
+    );
+
+    expect(result.blackbird.totalPoints).toBe(6);
+    expect(result.blackbird.coverage.evaluatedScoringKeys).toContain("fum_ret_td");
+    expect(result.providerComparison?.comparisonStatus).toBe("match");
+  });
+
   it("returns per-row errors without erasing valid batch results", async () => {
     const league = makeLeagueContext({ rec: 0.5 });
 

@@ -224,7 +224,7 @@ export async function runNflversePipeline(
                 position_group: row.positionGroup,
                 stats_json: row.stats,
                 provider_fantasy_points: row.providerFantasyPoints ?? null,
-                metadata_json: {}
+                metadata_json: row.metadata
               },
               { requireVerifiedMapping: false },
               adminClient as Parameters<typeof upsertWeeklyStats>[2]

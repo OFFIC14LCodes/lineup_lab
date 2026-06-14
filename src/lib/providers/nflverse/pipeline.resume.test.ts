@@ -121,7 +121,10 @@ vi.mock("./normalize", () => ({
       positionGroup: raw["position_group"],
       stats: {},
       providerFantasyPoints: parseFloat(raw["fantasy_points_ppr"]),
-      canonicalKeyCount: 1
+      canonicalKeyCount: 1,
+      metadata: {
+        normalizationWarnings: []
+      }
     }
   }))
 }));

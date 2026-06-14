@@ -9,11 +9,14 @@ import { decompressPbpFile, downloadAndArchivePbp } from "./download";
 import {
   accumulatePlayEvents,
   verifyDerivedStatsInvariants,
+  type ExcludedEventRecord,
+  type ResolvedEventRecord,
   type DerivedStatsAccumulator,
   type PlayerWeekDerivedStats
 } from "./derive";
 import { validatePbpSchema } from "./schema";
 import type {
+  FumRetTdAuditRecord,
   PbpPipelineCoverage,
   PbpPipelineMode,
   PbpPipelineOptions,
@@ -59,6 +62,9 @@ export async function runPbpDerivedPipeline(
       batchId: null,
       coverage: emptyCoverage(),
       invariantViolations: [],
+      fumRetTdQualifiedEvents: [],
+      fumRetTdExcludedEvents: [],
+      fumRetTdIdentityUnresolvedEvents: [],
       durationMs: Date.now() - startedAt,
       completedAt: new Date().toISOString()
     };
@@ -86,12 +92,16 @@ export async function runPbpDerivedPipeline(
 
   // 4. Accumulate all plays into the DerivedStatsAccumulator.
   const accumulator: DerivedStatsAccumulator = new Map();
+  const fumRetTdQualifiedEvents: FumRetTdAuditRecord[] = [];
+  const fumRetTdExcludedEvents: FumRetTdAuditRecord[] = [];
+  const fumRetTdIdentityUnresolvedEvents: FumRetTdAuditRecord[] = [];
 
   for (const raw of rawPlays) {
     const summary = accumulatePlayEvents(accumulator, raw);
     if (summary.resolved.length > 0) coverage.regularSeasonPlays += 1;
     else coverage.excludedPlays += 1;
     coverage.unresolvedPlays += summary.unresolved.length;
+    collectFumRetTdAudit(summary.resolved, summary.excluded, fumRetTdQualifiedEvents, fumRetTdExcludedEvents, coverage);
   }
 
   // 5. Invariant check before any writes.
@@ -110,13 +120,13 @@ export async function runPbpDerivedPipeline(
   coverage.unresolvedGsisIds = allGsisIds.size - gsisMap.size;
 
   // 7. Pre-flight: fetch existing (player_id, week) natural keys to skip on resume.
-  const existingNaturalKeys = new Set<string>();
+  const existingDerivedRows = new Map<string, Record<string, number>>();
   if (mode === "execute") {
     let offset = 0;
     while (true) {
       const { data, error } = await adminClient
         .from("player_weekly_derived_stats")
-        .select("player_id,week")
+        .select("player_id,week,stats_json")
         .eq("season", season)
         .eq("season_type", SEASON_TYPE)
         .eq("stat_scope", STAT_SCOPE)
@@ -124,12 +134,14 @@ export async function runPbpDerivedPipeline(
 
       if (error) throw new Error(`Pre-flight derived stats query failed: ${error.message}`);
       for (const row of data ?? []) {
-        existingNaturalKeys.add(`${row.player_id as string}|${row.week as number}`);
+        existingDerivedRows.set(
+          `${row.player_id as string}|${row.week as number}`,
+          (row.stats_json ?? {}) as Record<string, number>
+        );
       }
       if ((data?.length ?? 0) < 1000) break;
       offset += 1000;
     }
-    coverage.existingPlayerWeeks = existingNaturalKeys.size;
   }
 
   // 8. Write results.
@@ -150,12 +162,33 @@ export async function runPbpDerivedPipeline(
     }
     coverage.totalPlayerWeeks += 1;
 
+    if (stats.fum_ret_td > 0) {
+      if (playerId) {
+        coverage.fumRetTdResolvedPlayerWeeks += 1;
+      } else {
+        coverage.fumRetTdUnresolvedPlayerWeeks += 1;
+        const matchingEvents = fumRetTdQualifiedEvents.filter((event) => event.recoveryPlayerGsisId === gsisId && event.week === week);
+        for (const event of matchingEvents) {
+          fumRetTdIdentityUnresolvedEvents.push({
+            ...event,
+            canonicalPlayerId: null,
+            resolutionFailureReason: "gsis_id_not_found_in_player_external_ids"
+          });
+        }
+      }
+    }
+
     let writeStatus: PbpPlayerWeekResult["writeStatus"] = null;
 
     if (playerId && mode === "execute") {
       const naturalKey = `${playerId}|${week}`;
-      if (existingNaturalKeys.has(naturalKey)) {
+      const existingStats = existingDerivedRows.get(naturalKey);
+      if (existingStats && areDerivedStatsEqual(existingStats, stats)) {
         writeStatus = "skipped_existing";
+        coverage.existingPlayerWeeks += 1;
+        if (stats.fum_ret_td > 0) {
+          coverage.fumRetTdExistingRows += 1;
+        }
       } else {
         try {
           await upsertDerivedStats(adminClient, {
@@ -168,9 +201,15 @@ export async function runPbpDerivedPipeline(
           });
           writeStatus = "written";
           coverage.writtenPlayerWeeks += 1;
+          if (stats.fum_ret_td > 0) {
+            coverage.fumRetTdWrittenRows += 1;
+          }
         } catch (err) {
           writeStatus = "error";
           coverage.errorPlayerWeeks += 1;
+          if (stats.fum_ret_td > 0) {
+            coverage.fumRetTdFailedRows += 1;
+          }
           playerWeekResults.push({
             gsisId,
             playerId,
@@ -228,6 +267,9 @@ export async function runPbpDerivedPipeline(
     batchId,
     coverage,
     invariantViolations,
+    fumRetTdQualifiedEvents,
+    fumRetTdExcludedEvents,
+    fumRetTdIdentityUnresolvedEvents,
     durationMs: Date.now() - startedAt,
     completedAt: new Date().toISOString()
   };
@@ -251,8 +293,78 @@ function emptyCoverage(): PbpPipelineCoverage {
     errorPlayerWeeks: 0,
     uniqueGsisIds: 0,
     resolvedGsisIds: 0,
-    unresolvedGsisIds: 0
+    unresolvedGsisIds: 0,
+    fumRetTdCandidatePlays: 0,
+    fumRetTdQualifiedPlays: 0,
+    fumRetTdAmbiguousPlays: 0,
+    fumRetTdExcludedPlays: 0,
+    fumRetTdResolvedPlayerWeeks: 0,
+    fumRetTdUnresolvedPlayerWeeks: 0,
+    fumRetTdWrittenRows: 0,
+    fumRetTdExistingRows: 0,
+    fumRetTdFailedRows: 0
   };
+}
+
+function collectFumRetTdAudit(
+  resolved: ResolvedEventRecord[],
+  excluded: ExcludedEventRecord[],
+  qualifiedEvents: FumRetTdAuditRecord[],
+  excludedEvents: FumRetTdAuditRecord[],
+  coverage: PbpPipelineCoverage
+) {
+  for (const event of resolved) {
+    if (event.eventType !== "fum_ret_td" || !event.evidence) continue;
+    coverage.fumRetTdCandidatePlays += 1;
+    coverage.fumRetTdQualifiedPlays += 1;
+    qualifiedEvents.push({
+      gameId: event.gameId,
+      week: event.week,
+      playId: event.playId,
+      playType: event.evidence.playType,
+      description: event.evidence.description,
+      recoveryPlayerGsisId: event.evidence.recoveryPlayerGsisId,
+      recoveryPlayerName: event.evidence.recoveryPlayerName,
+      recoveryTeam: event.evidence.recoveryTeam,
+      touchdownPlayerGsisId: event.evidence.touchdownPlayerGsisId,
+      touchdownPlayerName: event.evidence.touchdownPlayerName,
+      touchdownTeam: event.evidence.touchdownTeam,
+      recoveryYards: event.evidence.recoveryYards,
+      reason: "qualified"
+    });
+  }
+
+  for (const event of excluded) {
+    if (event.eventType !== "fum_ret_td" || !event.evidence) continue;
+    coverage.fumRetTdCandidatePlays += 1;
+    coverage.fumRetTdExcludedPlays += 1;
+    if (event.reason === "excluded_multiple_recoveries" || event.reason === "excluded_recovery_td_player_mismatch") {
+      coverage.fumRetTdAmbiguousPlays += 1;
+    }
+    excludedEvents.push({
+      gameId: event.gameId,
+      week: event.week,
+      playId: event.playId,
+      playType: event.evidence.playType,
+      description: event.evidence.description,
+      recoveryPlayerGsisId: event.evidence.recoveryPlayerGsisId,
+      recoveryPlayerName: event.evidence.recoveryPlayerName,
+      recoveryTeam: event.evidence.recoveryTeam,
+      touchdownPlayerGsisId: event.evidence.touchdownPlayerGsisId,
+      touchdownPlayerName: event.evidence.touchdownPlayerName,
+      touchdownTeam: event.evidence.touchdownTeam,
+      recoveryYards: event.evidence.recoveryYards,
+      reason: event.reason
+    });
+  }
+}
+
+function areDerivedStatsEqual(
+  existing: Record<string, number>,
+  next: PlayerWeekDerivedStats
+) {
+  const keys = Object.keys(next) as Array<keyof PlayerWeekDerivedStats>;
+  return keys.every((key) => Number(existing[key] ?? 0) === next[key]);
 }
 
 function computePipelineStatus(

@@ -169,93 +169,108 @@ describe("evaluateLeagueScoringReadiness", () => {
     expect(result.applicableCoverageRatio).toBe(result.supportRatio);
   });
 
-  describe("pass_pick6 / pass_int_td dataset unavailability", () => {
-    it("reclassifies pass_pick6 into unsupportedApplicableKeys, not supportedApplicableKeys", () => {
+  it("reclassifies return_fd as unavailable from the current weekly dataset", () => {
+    const result = evaluateLeagueScoringReadiness({
+      league: makeLeague({ return_fd: 0.25, rec: 1 }),
+      positionGroup: "WR"
+    });
+
+    expect(result.unsupportedApplicableKeys).toContain("return_fd");
+    expect(result.supportedApplicableKeys).not.toContain("return_fd");
+    expect(result.dataCapabilityStatus).toBe("unavailable_from_weekly_source");
+    expect(result.unsupportedKeyReasons).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          key: "return_fd",
+          reason: "unavailable_from_weekly_source"
+        })
+      ])
+    );
+  });
+
+  it("treats fum_ret_td as a supported applicable key once the PBP derivation is available", () => {
+    const result = evaluateLeagueScoringReadiness({
+      league: makeLeague({ fum_ret_td: 6, rec: 1 }),
+      positionGroup: "RB"
+    });
+
+    expect(result.supportedApplicableKeys).toContain("fum_ret_td");
+    expect(result.unsupportedApplicableKeys).not.toContain("fum_ret_td");
+    expect(result.dataCapabilityStatus).toBe("fully_supported");
+  });
+
+  describe("pass_pick6 / pass_int_td derived support", () => {
+    it("treats pass_pick6 as a supported applicable key", () => {
       const result = evaluateLeagueScoringReadiness({
         league: makeLeague({ pass_td: 4, pass_yd: 0.04, pass_int: -2, pass_pick6: -2 }),
         positionGroup: "QB"
       });
 
-      expect(result.unsupportedApplicableKeys).toContain("pass_pick6");
-      expect(result.supportedApplicableKeys).not.toContain("pass_pick6");
+      expect(result.supportedApplicableKeys).toContain("pass_pick6");
+      expect(result.unsupportedApplicableKeys).not.toContain("pass_pick6");
     });
 
-    it("reclassifies pass_int_td into unsupportedApplicableKeys, not supportedApplicableKeys", () => {
+    it("treats pass_int_td as a supported applicable key", () => {
       const result = evaluateLeagueScoringReadiness({
         league: makeLeague({ pass_td: 4, pass_yd: 0.04, pass_int: -2, pass_int_td: -6 }),
         positionGroup: "QB"
       });
 
-      expect(result.unsupportedApplicableKeys).toContain("pass_int_td");
-      expect(result.supportedApplicableKeys).not.toContain("pass_int_td");
+      expect(result.supportedApplicableKeys).toContain("pass_int_td");
+      expect(result.unsupportedApplicableKeys).not.toContain("pass_int_td");
     });
 
-    it("dataset-unavailable keys do not block readiness (excluded from highImpactUnsupportedKeys)", () => {
-      // pass_pick6 is active but unavailable_from_weekly_source — it must not appear in
-      // highImpactUnsupportedKeys, so it cannot force not_ready via a blocking-key cap.
+    it("derived pick-six keys do not appear in unsupported readiness buckets", () => {
       const result = evaluateLeagueScoringReadiness({
         league: makeLeague({ pass_td: 4, pass_yd: 0.04, pass_pick6: -2 }),
         positionGroup: "QB"
       });
 
       expect(result.highImpactUnsupportedKeys).not.toContain("pass_pick6");
-      // The "no_high_impact_unsupported_keys" rule passes — the key is unsupported but
-      // excluded from blocking checks because it is a known source limitation.
       expect(result.failedRules).not.toContain("no_high_impact_unsupported_keys");
       expect(result.passedRules).toContain("no_high_impact_unsupported_keys");
     });
 
-    it("resolves dataCapabilityStatus to unavailable_from_weekly_source when pass_pick6 is active", () => {
+    it("resolves dataCapabilityStatus to fully_supported when pass_pick6 is active", () => {
       const result = evaluateLeagueScoringReadiness({
         league: makeLeague({ pass_td: 4, pass_yd: 0.04, pass_pick6: -2 }),
         positionGroup: "QB"
       });
 
-      expect(result.dataCapabilityStatus).toBe("unavailable_from_weekly_source");
+      expect(result.dataCapabilityStatus).toBe("fully_supported");
     });
 
-    it("counts dataset-unavailable keys in unavailableFromCurrentDatasetCount", () => {
+    it("does not count supported derived pick-six keys as unavailable", () => {
       const result = evaluateLeagueScoringReadiness({
         league: makeLeague({ pass_td: 4, pass_yd: 0.04, pass_pick6: -2, pass_int_td: -6 }),
         positionGroup: "QB"
       });
 
-      // Both pass_pick6 and pass_int_td are unavailable_from_weekly_source
-      expect(result.unavailableFromCurrentDatasetCount).toBe(2);
+      expect(result.unavailableFromCurrentDatasetCount).toBe(0);
     });
 
-    it("unsupportedKeyReasons records unavailable_from_weekly_source for pass_pick6", () => {
+    it("does not emit unsupportedKeyReasons for supported pick-six keys", () => {
       const result = evaluateLeagueScoringReadiness({
         league: makeLeague({ pass_td: 4, pass_yd: 0.04, pass_pick6: -2 }),
         positionGroup: "QB"
       });
 
       const reason = result.unsupportedKeyReasons.find((r) => r.key === "pass_pick6");
-      expect(reason).toBeDefined();
-      expect(reason?.reason).toBe("unavailable_from_weekly_source");
-      expect(reason?.requiredData).toContain("pick-six outcome per interception play");
+      expect(reason).toBeUndefined();
     });
 
-    it("unavailable_from_weekly_source when pass_pick6 active and long-TD keys are now supported", () => {
-      // rec_td_40p is now supported (H2 PBP derivation).
-      // With only pass_pick6 unsupported (unavailable_from_weekly_source), the
-      // dataCapabilityStatus reflects the remaining unsupported key, not requires_play_by_play.
+    it("remains fully_supported when pass_pick6 is combined with long-TD derived keys", () => {
       const result = evaluateLeagueScoringReadiness({
         league: makeLeague({ rec_td: 6, rec_td_40p: 2, pass_pick6: -2 }),
         positionGroup: "QB"
       });
 
-      expect(result.dataCapabilityStatus).toBe("unavailable_from_weekly_source");
+      expect(result.dataCapabilityStatus).toBe("fully_supported");
     });
   });
 
-  describe("League B QB coverage math (24/29 = 82.7586%)", () => {
-    // League B active QB keys: pass_td, pass_yd, pass_int, pass_2pt, pass_cmp (and similar)
-    // 24 evaluated + 4 unsupported (long-TD bonuses) + 1 missing_stat (pass_pick6) = 29
-    // supportRatio = supportedApplicableKeys / activeApplicableKeys
-    // pass_pick6 active → not in supportedApplicableKeys → lowers supportRatio
-
-    it("pass_pick6 active in League B reduces supportRatio below 1", () => {
+  describe("League B QB coverage math", () => {
+    it("pass_pick6 no longer reduces supportRatio below 1 by itself", () => {
       const result = evaluateLeagueScoringReadiness({
         league: makeLeague({
           pass_td: 4,
@@ -268,10 +283,9 @@ describe("evaluateLeagueScoringReadiness", () => {
         positionGroup: "QB"
       });
 
-      // pass_pick6 is now unsupported (dataset-unavailable); supportRatio < 1
-      expect(result.supportRatio).toBeLessThan(1);
-      expect(result.supportedApplicableKeys).not.toContain("pass_pick6");
-      expect(result.unsupportedApplicableKeys).toContain("pass_pick6");
+      expect(result.supportRatio).toBe(1);
+      expect(result.supportedApplicableKeys).toContain("pass_pick6");
+      expect(result.unsupportedApplicableKeys).not.toContain("pass_pick6");
     });
   });
 });

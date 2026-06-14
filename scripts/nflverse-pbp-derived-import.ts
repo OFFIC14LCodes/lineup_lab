@@ -87,6 +87,12 @@ async function main() {
     `Excluded plays:       ${coverage.excludedPlays}`,
     `Unresolved plays:     ${coverage.unresolvedPlays}`,
     "",
+    "--- fum_ret_td Audit ---",
+    `Candidate plays:      ${coverage.fumRetTdCandidatePlays}`,
+    `Qualified plays:      ${coverage.fumRetTdQualifiedPlays}`,
+    `Ambiguous plays:      ${coverage.fumRetTdAmbiguousPlays}`,
+    `Excluded plays:       ${coverage.fumRetTdExcludedPlays}`,
+    "",
     "--- Player-Week Results ---",
     `Total player-weeks:   ${coverage.totalPlayerWeeks}`,
     `Resolved:             ${coverage.resolvedPlayerWeeks} (${resolvedPct}%)`,
@@ -94,6 +100,13 @@ async function main() {
     `Existing (skipped):   ${coverage.existingPlayerWeeks}`,
     `Written this run:     ${coverage.writtenPlayerWeeks}`,
     `Write errors:         ${coverage.errorPlayerWeeks}`,
+    "",
+    "--- fum_ret_td Player-Weeks ---",
+    `Resolved player-weeks:${coverage.fumRetTdResolvedPlayerWeeks}`,
+    `Unresolved player-weeks: ${coverage.fumRetTdUnresolvedPlayerWeeks}`,
+    `Written rows:         ${coverage.fumRetTdWrittenRows}`,
+    `Existing rows:        ${coverage.fumRetTdExistingRows}`,
+    `Failed rows:          ${coverage.fumRetTdFailedRows}`,
     "",
     "--- GSIS Identity ---",
     `Unique GSIS IDs:      ${coverage.uniqueGsisIds}`,
@@ -107,6 +120,17 @@ async function main() {
   if (report.invariantViolations.length > 0) {
     for (const v of report.invariantViolations) {
       lines.push(`  ${v.gsisId} week ${v.week}: ${v.rule} — ${JSON.stringify(v.values)}`);
+    }
+  }
+
+  if (report.fumRetTdExcludedEvents.length > 0) {
+    const grouped = new Map<string, number>();
+    for (const event of report.fumRetTdExcludedEvents) {
+      grouped.set(event.reason, (grouped.get(event.reason) ?? 0) + 1);
+    }
+    lines.push("", "--- fum_ret_td Exclusion Reasons ---");
+    for (const [reason, count] of [...grouped.entries()].sort()) {
+      lines.push(`  ${reason}: ${count}`);
     }
   }
 

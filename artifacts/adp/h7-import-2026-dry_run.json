@@ -1,0 +1,100 @@
+{
+  "generatedAt": "2026-06-14T15:55:26.726Z",
+  "mode": "dry_run",
+  "args": {
+    "provider": "mfl",
+    "season": 2026,
+    "teamCount": 12,
+    "mode": "dry_run",
+    "mflBaseUrl": null
+  },
+  "mflFetch": {
+    "rawRecords": 134,
+    "rejected": 1,
+    "rejectedReasons": {
+      "skip_position": 1
+    },
+    "sampleSize": 397,
+    "sourceVersion": "1781451049",
+    "fileHash": "49d8b42e3c74df23bd0c488c962ed13910eef08de5897d892973d54edd6fe8cd"
+  },
+  "resolution": {
+    "resolved": 130,
+    "ambiguous": 0,
+    "unresolved": 4,
+    "rookie": 0,
+    "total": 134,
+    "resolvedRate": 97,
+    "unresolvedSample": [
+      {
+        "rawName": "David Bailey",
+        "rawPosition": "DE",
+        "rawTeam": "NYJ",
+        "method": "unresolved"
+      },
+      {
+        "rawName": "Brendan Sorsby",
+        "rawPosition": "XX",
+        "rawTeam": null,
+        "method": "unresolved"
+      },
+      {
+        "rawName": "Matthew Hibner",
+        "rawPosition": "TE",
+        "rawTeam": "BAL",
+        "method": "unresolved"
+      },
+      {
+        "rawName": "Chigoziem Okonkwo",
+        "rawPosition": "TE",
+        "rawTeam": "WAS",
+        "method": "unresolved"
+      }
+    ]
+  },
+  "importResult": {
+    "mode": "dry_run",
+    "snapshotInserted": 1,
+    "snapshotId": null,
+    "existingSnapshotId": null,
+    "playerRecordsInserted": 134,
+    "playerRecordsDuplicate": 0,
+    "movementsInserted": 0,
+    "errors": [],
+    "diagnostics": {
+      "totalRecords": 134,
+      "resolvedCount": 130,
+      "unresolvedCount": 4,
+      "ambiguousCount": 0,
+      "rookieCount": 0,
+      "fileHash": "49d8b42e3c74df23bd0c488c962ed13910eef08de5897d892973d54edd6fe8cd",
+      "sourceIdentifier": "mfl-2026-redraft-ppr-12team-20260614 [DRY RUN — not written]"
+    }
+  },
+  "sourceMeta": {
+    "provider": "mfl",
+    "sourceIdentifier": "mfl-2026-redraft-ppr-12team-20260614",
+    "sourceUrl": "https://api.myfantasyleague.com/2026/export?TYPE=adp&PERIOD=recent&FCOUNT=12&JSON=1",
+    "capturedAt": "2026-06-14T15:55:26.726Z",
+    "effectiveDate": "2026-06-14",
+    "season": 2026,
+    "formatProfile": {
+      "draftType": "redraft",
+      "platform": "mfl",
+      "scoringFormat": "ppr",
+      "pprValue": 1,
+      "tePremiumValue": 0,
+      "rosterPositions": [],
+      "teamCount": 12,
+      "isBestBall": false,
+      "isDynasty": false,
+      "isStartup": false,
+      "isSuperflex": false,
+      "isTePremium": false
+    },
+    "sampleSize": 397,
+    "sourceVersion": "1781451049",
+    "fileHash": "49d8b42e3c74df23bd0c488c962ed13910eef08de5897d892973d54edd6fe8cd",
+    "parserVersion": "h7-mfl-parser-v1"
+  }
+}

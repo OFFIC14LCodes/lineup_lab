@@ -1,0 +1,2719 @@
+{
+  "meta": {
+    "auditedAt": "2026-06-14T22:11:44.869Z",
+    "totalRegistryKeys": 115,
+    "totalEngineKeys": 105,
+    "operationalNowKeyCount": 52,
+    "currentScopeBacklogKeyCount": 17,
+    "deferredCurrentPhaseKeyCount": 42,
+    "findingCount": 0,
+    "errorCount": 0,
+    "warningCount": 0
+  },
+  "summary": {
+    "engineStatus": {
+      "implemented_verified": 105,
+      "implemented_unverified": 0,
+      "not_implemented": 10
+    },
+    "dataAvailabilityStatus": {
+      "nflverse_weekly_verified": 45,
+      "nflverse_weekly_available": 0,
+      "nflverse_weekly_derivable": 0,
+      "nflverse_weekly_unwired": 0,
+      "nflverse_pbp_derived": 7,
+      "nflverse_pbp_derivable": 4,
+      "requires_team_game_context": 16,
+      "requires_new_source": 1,
+      "not_safely_derivable": 0,
+      "out_of_scope": 42
+    },
+    "statFamily": {
+      "passing_volume": 5,
+      "passing_outcomes": 5,
+      "rushing": 5,
+      "receiving": 6,
+      "miscellaneous_skill": 4,
+      "special_teams_skill": 4,
+      "first_down_bonuses": 5,
+      "yardage_threshold_bonuses": 10,
+      "long_td_bonuses": 7,
+      "position_rec_bonuses": 6,
+      "kicking": 16,
+      "team_defense": 32,
+      "idp": 10
+    },
+    "sourceClassification": {
+      "nflverse_weekly_player_stats": 45,
+      "nflverse_pbp_derived_stats": 11,
+      "team_game_context": 16,
+      "deferred_position_source": 43
+    },
+    "scopeClassification": {
+      "operational_now": 52,
+      "current_scope_backlog": 21,
+      "deferred_current_phase": 42
+    },
+    "verificationLevel": {
+      "real_play_verified": 5,
+      "repository_test_verified": 110
+    }
+  },
+  "summaryNotes": [
+    "Each summary dimension is independent and reconciles to 105 keys on its own.",
+    "Do not add counts across independent dimensions.",
+    "Only scopeClassification is intended as an implementation partition.",
+    "Previous stale reporting misclassified pass_pick6 and pass_int_td as backlog even though the derived-stat pipeline and scoring merge path already supported them."
+  ],
+  "operationalKeys": [
+    "bonus_fd_qb",
+    "bonus_fd_rb",
+    "bonus_fd_te",
+    "bonus_fd_wr",
+    "bonus_pass_cmp_25",
+    "bonus_pass_yd_300",
+    "bonus_pass_yd_400",
+    "bonus_rec_rb",
+    "bonus_rec_te",
+    "bonus_rec_wr",
+    "bonus_rec_yd_100",
+    "bonus_rec_yd_200",
+    "bonus_rush_att_20",
+    "bonus_rush_rec_yd_100",
+    "bonus_rush_rec_yd_200",
+    "bonus_rush_yd_100",
+    "bonus_rush_yd_200",
+    "fum",
+    "fum_lost",
+    "fum_ret_td",
+    "kick_ret_yd",
+    "pass_2pt",
+    "pass_att",
+    "pass_cmp",
+    "pass_fd",
+    "pass_inc",
+    "pass_int",
+    "pass_int_td",
+    "pass_pick6",
+    "pass_sack",
+    "pass_td",
+    "pass_yd",
+    "punt_ret_yd",
+    "rec",
+    "rec_2pt",
+    "rec_fd",
+    "rec_rb_bonus",
+    "rec_td",
+    "rec_td_40p",
+    "rec_td_50p",
+    "rec_te_bonus",
+    "rec_tgt",
+    "rec_wr_bonus",
+    "rec_yd",
+    "return_td",
+    "rush_2pt",
+    "rush_att",
+    "rush_fd",
+    "rush_td",
+    "rush_td_40p",
+    "rush_td_50p",
+    "rush_yd"
+  ],
+  "currentScopeBacklogKeys": [
+    "pts_allow_0",
+    "pts_allow_14_20",
+    "pts_allow_1_6",
+    "pts_allow_21_27",
+    "pts_allow_28_34",
+    "pts_allow_35p",
+    "pts_allow_7_13",
+    "return_fd",
+    "yds_allow_0_100",
+    "yds_allow_101_199",
+    "yds_allow_200_299",
+    "yds_allow_300_349",
+    "yds_allow_350_399",
+    "yds_allow_400_449",
+    "yds_allow_450_499",
+    "yds_allow_500_549",
+    "yds_allow_550p"
+  ],
+  "deferredCurrentPhaseKeys": [
+    "ast_tkl",
+    "blk_kick",
+    "bonus_def_fum_td_50p",
+    "bonus_def_int_td_50p",
+    "bonus_sack_2p",
+    "def_2pt_ret",
+    "def_st_ff",
+    "def_st_fum_rec",
+    "def_st_td",
+    "def_td",
+    "ff",
+    "fgm",
+    "fgm_0_19",
+    "fgm_20_29",
+    "fgm_30_39",
+    "fgm_40_49",
+    "fgm_50_59",
+    "fgm_50p",
+    "fgm_60p",
+    "fgmiss",
+    "fgmiss_0_19",
+    "fgmiss_20_29",
+    "fgmiss_30_39",
+    "fgmiss_40_49",
+    "fgmiss_50p",
+    "fourth_down_stop",
+    "fr",
+    "fr_ret_yd",
+    "fum_rec_td",
+    "int",
+    "int_ret_yd",
+    "pd",
+    "qb_hit",
+    "sack",
+    "safe",
+    "solo_tkl",
+    "st_tkl",
+    "three_and_out",
+    "tkl",
+    "tkl_loss",
+    "xpm",
+    "xpmiss"
+  ],
+  "h2VerifiedKeys": [
+    {
+      "scoringKey": "pass_pick6",
+      "engineStatus": "implemented_verified",
+      "dataStatus": "nflverse_pbp_derived",
+      "source": "nflverse_pbp_derived_stats",
+      "persistencePath": "src/lib/providers/nflverse/pbp/pipeline.ts -> public.player_weekly_derived_stats(stats_json, stat_scope=nflverse_pbp_derived)",
+      "scoringReadPath": "src/lib/scoring/server/derived-stats.ts -> mergeWithDerivedStats() -> src/lib/scoring/sleeper-keys.ts",
+      "unitTestEvidence": "src/lib/providers/nflverse/pbp/derive.test.ts — play classification, attribution, threshold, and invariant coverage.",
+      "integrationTestEvidence": "src/lib/scoring/score-offense.test.ts — scoring with pass_pick6 and additive alias handling via pass_int_td.",
+      "realPlayVerificationEvidence": "Local archived 2025 nflverse PBP: game 2025_01_MIN_CHI, play 2188, week 1, passer J.McCarthy, qualifies as pick-six."
+    },
+    {
+      "scoringKey": "rec_td_40p",
+      "engineStatus": "implemented_verified",
+      "dataStatus": "nflverse_pbp_derived",
+      "source": "nflverse_pbp_derived_stats",
+      "persistencePath": "src/lib/providers/nflverse/pbp/pipeline.ts -> public.player_weekly_derived_stats(stats_json, stat_scope=nflverse_pbp_derived)",
+      "scoringReadPath": "src/lib/scoring/server/derived-stats.ts -> mergeWithDerivedStats() -> src/lib/scoring/sleeper-keys.ts",
+      "unitTestEvidence": "src/lib/providers/nflverse/pbp/derive.test.ts — play classification, attribution, threshold, and invariant coverage.",
+      "integrationTestEvidence": "src/lib/scoring/score-offense.test.ts — long-TD derived stat scores through the live scoring engine when present.",
+      "realPlayVerificationEvidence": "Local archived 2025 nflverse PBP: game 2025_01_TB_ATL, play 110, week 1, receiver B.Robinson, 50-yard receiving TD."
+    },
+    {
+      "scoringKey": "rec_td_50p",
+      "engineStatus": "implemented_verified",
+      "dataStatus": "nflverse_pbp_derived",
+      "source": "nflverse_pbp_derived_stats",
+      "persistencePath": "src/lib/providers/nflverse/pbp/pipeline.ts -> public.player_weekly_derived_stats(stats_json, stat_scope=nflverse_pbp_derived)",
+      "scoringReadPath": "src/lib/scoring/server/derived-stats.ts -> mergeWithDerivedStats() -> src/lib/scoring/sleeper-keys.ts",
+      "unitTestEvidence": "src/lib/providers/nflverse/pbp/derive.test.ts — play classification, attribution, threshold, and invariant coverage.",
+      "integrationTestEvidence": "src/lib/scoring/score-offense.test.ts — long-TD derived stat scores through the live scoring engine when present.",
+      "realPlayVerificationEvidence": "Local archived 2025 nflverse PBP: game 2025_01_TB_ATL, play 110, week 1, receiver B.Robinson, 50-yard receiving TD."
+    },
+    {
+      "scoringKey": "rush_td_40p",
+      "engineStatus": "implemented_verified",
+      "dataStatus": "nflverse_pbp_derived",
+      "source": "nflverse_pbp_derived_stats",
+      "persistencePath": "src/lib/providers/nflverse/pbp/pipeline.ts -> public.player_weekly_derived_stats(stats_json, stat_scope=nflverse_pbp_derived)",
+      "scoringReadPath": "src/lib/scoring/server/derived-stats.ts -> mergeWithDerivedStats() -> src/lib/scoring/sleeper-keys.ts",
+      "unitTestEvidence": "src/lib/providers/nflverse/pbp/derive.test.ts — play classification, attribution, threshold, and invariant coverage.",
+      "integrationTestEvidence": "src/lib/scoring/score-offense.test.ts — long-TD derived stat scores through the live scoring engine when present.",
+      "realPlayVerificationEvidence": "Local archived 2025 nflverse PBP: game 2025_01_BAL_BUF, play 3313, week 1, rusher D.Henry, 46-yard rushing TD."
+    },
+    {
+      "scoringKey": "rush_td_50p",
+      "engineStatus": "implemented_verified",
+      "dataStatus": "nflverse_pbp_derived",
+      "source": "nflverse_pbp_derived_stats",
+      "persistencePath": "src/lib/providers/nflverse/pbp/pipeline.ts -> public.player_weekly_derived_stats(stats_json, stat_scope=nflverse_pbp_derived)",
+      "scoringReadPath": "src/lib/scoring/server/derived-stats.ts -> mergeWithDerivedStats() -> src/lib/scoring/sleeper-keys.ts",
+      "unitTestEvidence": "src/lib/providers/nflverse/pbp/derive.test.ts — play classification, attribution, threshold, and invariant coverage.",
+      "integrationTestEvidence": "src/lib/scoring/score-offense.test.ts — long-TD derived stat scores through the live scoring engine when present.",
+      "realPlayVerificationEvidence": "Local archived 2025 nflverse PBP: game 2025_03_LV_WAS, play 1709, week 3, rusher J.McNichols, 60-yard rushing TD."
+    }
+  ],
+  "h4Backlog": [
+    {
+      "id": "group_a_weekly_derivable",
+      "title": "Group A — derivable from existing weekly data",
+      "description": "Keys that can be computed from already-extracted weekly player stats without adding a new upstream source.",
+      "currentKeyCount": 0,
+      "keys": []
+    },
+    {
+      "id": "group_b_weekly_unwired",
+      "title": "Group B — source available but unwired",
+      "description": "Keys whose raw columns already exist in the nflverse weekly player stats artifact but are not yet normalized into canonical stats.",
+      "currentKeyCount": 0,
+      "keys": []
+    },
+    {
+      "id": "group_ab_blocked_candidates",
+      "title": "Group A/B candidates blocked after verification",
+      "description": "Keys reviewed in the same quick-win tranche that could not be safely activated because the archived weekly source did not verify the needed field.",
+      "currentKeyCount": 1,
+      "keys": [
+        {
+          "key": "return_fd",
+          "label": "Return first downs",
+          "family": "special_teams_skill",
+          "dataStatus": "requires_new_source",
+          "recommendedPath": "Keep blocked until a verified source field exists.",
+          "blockers": [
+            "Archived nflverse weekly player stats do not expose a verified return-first-down column; return_fd cannot be activated from the current weekly source."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "group_c_additional_pbp_derivations",
+      "title": "Group C — additional PBP derivations",
+      "description": "Keys that still require more play-by-play-derived canonical stats beyond the H2/H2.1 set now in production.",
+      "currentKeyCount": 4,
+      "keys": [
+        {
+          "key": "fum_rec",
+          "label": "Offensive fumble recovery",
+          "family": "miscellaneous_skill",
+          "dataStatus": "nflverse_pbp_derivable",
+          "recommendedPath": "Extend the PBP derivation pipeline with a new derived canonical stat.",
+          "blockers": []
+        },
+        {
+          "key": "pass_td_40p",
+          "label": "Passing TD of 40+ yards bonus",
+          "family": "long_td_bonuses",
+          "dataStatus": "nflverse_pbp_derivable",
+          "recommendedPath": "Extend the PBP derivation pipeline with a new derived canonical stat.",
+          "blockers": []
+        },
+        {
+          "key": "pass_td_50p",
+          "label": "Passing TD of 50+ yards bonus",
+          "family": "long_td_bonuses",
+          "dataStatus": "nflverse_pbp_derivable",
+          "recommendedPath": "Extend the PBP derivation pipeline with a new derived canonical stat.",
+          "blockers": []
+        },
+        {
+          "key": "pass_cmp_40p",
+          "label": "Passing completion of 40+ yards bonus",
+          "family": "long_td_bonuses",
+          "dataStatus": "nflverse_pbp_derivable",
+          "recommendedPath": "Extend the PBP derivation pipeline with a new derived canonical stat.",
+          "blockers": []
+        }
+      ]
+    },
+    {
+      "id": "group_d_team_context_dependent",
+      "title": "Group D — team-context dependent",
+      "description": "Keys that depend on team-level game results rather than player stat rows or player-level PBP accumulation.",
+      "currentKeyCount": 16,
+      "keys": [
+        {
+          "key": "pts_allow_0",
+          "label": "Points allowed: shutout (0)",
+          "family": "team_defense",
+          "dataStatus": "requires_team_game_context",
+          "recommendedPath": "Add a team game-result ingestion layer and team-defense aggregation.",
+          "blockers": [
+            "Requires team-level game aggregate (points allowed per game), not per-player stats"
+          ]
+        },
+        {
+          "key": "pts_allow_1_6",
+          "label": "Points allowed: 1-6",
+          "family": "team_defense",
+          "dataStatus": "requires_team_game_context",
+          "recommendedPath": "Add a team game-result ingestion layer and team-defense aggregation.",
+          "blockers": []
+        },
+        {
+          "key": "pts_allow_7_13",
+          "label": "Points allowed: 7-13",
+          "family": "team_defense",
+          "dataStatus": "requires_team_game_context",
+          "recommendedPath": "Add a team game-result ingestion layer and team-defense aggregation.",
+          "blockers": []
+        },
+        {
+          "key": "pts_allow_14_20",
+          "label": "Points allowed: 14-20",
+          "family": "team_defense",
+          "dataStatus": "requires_team_game_context",
+          "recommendedPath": "Add a team game-result ingestion layer and team-defense aggregation.",
+          "blockers": []
+        },
+        {
+          "key": "pts_allow_21_27",
+          "label": "Points allowed: 21-27",
+          "family": "team_defense",
+          "dataStatus": "requires_team_game_context",
+          "recommendedPath": "Add a team game-result ingestion layer and team-defense aggregation.",
+          "blockers": []
+        },
+        {
+          "key": "pts_allow_28_34",
+          "label": "Points allowed: 28-34",
+          "family": "team_defense",
+          "dataStatus": "requires_team_game_context",
+          "recommendedPath": "Add a team game-result ingestion layer and team-defense aggregation.",
+          "blockers": []
+        },
+        {
+          "key": "pts_allow_35p",
+          "label": "Points allowed: 35+",
+          "family": "team_defense",
+          "dataStatus": "requires_team_game_context",
+          "recommendedPath": "Add a team game-result ingestion layer and team-defense aggregation.",
+          "blockers": []
+        },
+        {
+          "key": "yds_allow_0_100",
+          "label": "Yards allowed: 0-100",
+          "family": "team_defense",
+          "dataStatus": "requires_team_game_context",
+          "recommendedPath": "Add a team game-result ingestion layer and team-defense aggregation.",
+          "blockers": []
+        },
+        {
+          "key": "yds_allow_101_199",
+          "label": "Yards allowed: 101-199",
+          "family": "team_defense",
+          "dataStatus": "requires_team_game_context",
+          "recommendedPath": "Add a team game-result ingestion layer and team-defense aggregation.",
+          "blockers": []
+        },
+        {
+          "key": "yds_allow_200_299",
+          "label": "Yards allowed: 200-299",
+          "family": "team_defense",
+          "dataStatus": "requires_team_game_context",
+          "recommendedPath": "Add a team game-result ingestion layer and team-defense aggregation.",
+          "blockers": []
+        },
+        {
+          "key": "yds_allow_300_349",
+          "label": "Yards allowed: 300-349",
+          "family": "team_defense",
+          "dataStatus": "requires_team_game_context",
+          "recommendedPath": "Add a team game-result ingestion layer and team-defense aggregation.",
+          "blockers": []
+        },
+        {
+          "key": "yds_allow_350_399",
+          "label": "Yards allowed: 350-399",
+          "family": "team_defense",
+          "dataStatus": "requires_team_game_context",
+          "recommendedPath": "Add a team game-result ingestion layer and team-defense aggregation.",
+          "blockers": []
+        },
+        {
+          "key": "yds_allow_400_449",
+          "label": "Yards allowed: 400-449",
+          "family": "team_defense",
+          "dataStatus": "requires_team_game_context",
+          "recommendedPath": "Add a team game-result ingestion layer and team-defense aggregation.",
+          "blockers": []
+        },
+        {
+          "key": "yds_allow_450_499",
+          "label": "Yards allowed: 450-499",
+          "family": "team_defense",
+          "dataStatus": "requires_team_game_context",
+          "recommendedPath": "Add a team game-result ingestion layer and team-defense aggregation.",
+          "blockers": []
+        },
+        {
+          "key": "yds_allow_500_549",
+          "label": "Yards allowed: 500-549",
+          "family": "team_defense",
+          "dataStatus": "requires_team_game_context",
+          "recommendedPath": "Add a team game-result ingestion layer and team-defense aggregation.",
+          "blockers": []
+        },
+        {
+          "key": "yds_allow_550p",
+          "label": "Yards allowed: 550+",
+          "family": "team_defense",
+          "dataStatus": "requires_team_game_context",
+          "recommendedPath": "Add a team game-result ingestion layer and team-defense aggregation.",
+          "blockers": []
+        }
+      ]
+    }
+  ],
+  "findings": [],
+  "implementationRoadmap": [
+    {
+      "key": "pts_allow_0",
+      "label": "Points allowed: shutout (0)",
+      "family": "team_defense",
+      "dataStatus": "requires_team_game_context",
+      "blockers": [
+        "Requires team-level game aggregate (points allowed per game), not per-player stats"
+      ],
+      "notes": "pts_allow is a team-level stat; needs a separate team game-result ingestion pipeline."
+    },
+    {
+      "key": "pts_allow_1_6",
+      "label": "Points allowed: 1-6",
+      "family": "team_defense",
+      "dataStatus": "requires_team_game_context",
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "pts_allow_7_13",
+      "label": "Points allowed: 7-13",
+      "family": "team_defense",
+      "dataStatus": "requires_team_game_context",
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "pts_allow_14_20",
+      "label": "Points allowed: 14-20",
+      "family": "team_defense",
+      "dataStatus": "requires_team_game_context",
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "pts_allow_21_27",
+      "label": "Points allowed: 21-27",
+      "family": "team_defense",
+      "dataStatus": "requires_team_game_context",
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "pts_allow_28_34",
+      "label": "Points allowed: 28-34",
+      "family": "team_defense",
+      "dataStatus": "requires_team_game_context",
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "pts_allow_35p",
+      "label": "Points allowed: 35+",
+      "family": "team_defense",
+      "dataStatus": "requires_team_game_context",
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "yds_allow_0_100",
+      "label": "Yards allowed: 0-100",
+      "family": "team_defense",
+      "dataStatus": "requires_team_game_context",
+      "blockers": [],
+      "notes": "yds_allow is a team-level stat; needs team game-result ingestion pipeline."
+    },
+    {
+      "key": "yds_allow_101_199",
+      "label": "Yards allowed: 101-199",
+      "family": "team_defense",
+      "dataStatus": "requires_team_game_context",
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "yds_allow_200_299",
+      "label": "Yards allowed: 200-299",
+      "family": "team_defense",
+      "dataStatus": "requires_team_game_context",
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "yds_allow_300_349",
+      "label": "Yards allowed: 300-349",
+      "family": "team_defense",
+      "dataStatus": "requires_team_game_context",
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "yds_allow_350_399",
+      "label": "Yards allowed: 350-399",
+      "family": "team_defense",
+      "dataStatus": "requires_team_game_context",
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "yds_allow_400_449",
+      "label": "Yards allowed: 400-449",
+      "family": "team_defense",
+      "dataStatus": "requires_team_game_context",
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "yds_allow_450_499",
+      "label": "Yards allowed: 450-499",
+      "family": "team_defense",
+      "dataStatus": "requires_team_game_context",
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "yds_allow_500_549",
+      "label": "Yards allowed: 500-549",
+      "family": "team_defense",
+      "dataStatus": "requires_team_game_context",
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "yds_allow_550p",
+      "label": "Yards allowed: 550+",
+      "family": "team_defense",
+      "dataStatus": "requires_team_game_context",
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "return_fd",
+      "label": "Return first downs",
+      "family": "special_teams_skill",
+      "dataStatus": "requires_new_source",
+      "blockers": [
+        "Archived nflverse weekly player stats do not expose a verified return-first-down column; return_fd cannot be activated from the current weekly source."
+      ],
+      "notes": "H4A investigated this key explicitly and left it non-operational rather than inferring it from unrelated fields."
+    }
+  ],
+  "registry": [
+    {
+      "key": "pass_yd",
+      "label": "Passing yards",
+      "family": "passing_volume",
+      "category": "passing",
+      "allowedPositions": [
+        "QB"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "nflverse_weekly_verified",
+      "canonicalStatKey": "pass_yd",
+      "derivedStatExpression": null,
+      "normalizedFrom": "passing_yards",
+      "implementationPhase": "H1",
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "pass_att",
+      "label": "Passing attempts",
+      "family": "passing_volume",
+      "category": "passing",
+      "allowedPositions": [
+        "QB"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "nflverse_weekly_verified",
+      "canonicalStatKey": "pass_att",
+      "derivedStatExpression": null,
+      "normalizedFrom": "attempts",
+      "implementationPhase": "H1",
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "pass_cmp",
+      "label": "Passing completions",
+      "family": "passing_volume",
+      "category": "passing",
+      "allowedPositions": [
+        "QB"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "nflverse_weekly_verified",
+      "canonicalStatKey": "pass_cmp",
+      "derivedStatExpression": null,
+      "normalizedFrom": "completions",
+      "implementationPhase": "H1",
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "pass_inc",
+      "label": "Passing incompletions",
+      "family": "passing_volume",
+      "category": "passing",
+      "allowedPositions": [
+        "QB"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "nflverse_weekly_verified",
+      "canonicalStatKey": "pass_inc",
+      "derivedStatExpression": "pass_att - pass_cmp",
+      "normalizedFrom": null,
+      "implementationPhase": "H4A",
+      "blockers": [],
+      "notes": "Derived during weekly normalization as pass_att - pass_cmp with a persisted warning when source completions exceed attempts."
+    },
+    {
+      "key": "pass_sack",
+      "label": "Sacks taken (QB)",
+      "family": "passing_volume",
+      "category": "passing",
+      "allowedPositions": [
+        "QB"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "nflverse_weekly_verified",
+      "canonicalStatKey": "pass_sack",
+      "derivedStatExpression": null,
+      "normalizedFrom": "sacks_suffered",
+      "implementationPhase": "H1",
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "pass_td",
+      "label": "Passing touchdowns",
+      "family": "passing_outcomes",
+      "category": "passing",
+      "allowedPositions": [
+        "QB"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "nflverse_weekly_verified",
+      "canonicalStatKey": "pass_td",
+      "derivedStatExpression": null,
+      "normalizedFrom": "passing_tds",
+      "implementationPhase": "H1",
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "pass_int",
+      "label": "Interceptions thrown",
+      "family": "passing_outcomes",
+      "category": "passing",
+      "allowedPositions": [
+        "QB"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "nflverse_weekly_verified",
+      "canonicalStatKey": "pass_int",
+      "derivedStatExpression": null,
+      "normalizedFrom": "passing_interceptions",
+      "implementationPhase": "H1",
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "pass_2pt",
+      "label": "Passing two-point conversions",
+      "family": "passing_outcomes",
+      "category": "passing",
+      "allowedPositions": [
+        "QB"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "nflverse_weekly_verified",
+      "canonicalStatKey": "pass_2pt",
+      "derivedStatExpression": null,
+      "normalizedFrom": "passing_2pt_conversions",
+      "implementationPhase": "H1",
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "pass_pick6",
+      "label": "Pick-sixes thrown",
+      "family": "passing_outcomes",
+      "category": "passing",
+      "allowedPositions": [
+        "QB"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "nflverse_pbp_derived",
+      "canonicalStatKey": "pass_pick6",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": "H2.1",
+      "blockers": [],
+      "notes": "Derived from nflverse PBP; stored in player_weekly_derived_stats and merged onto weekly scoring rows."
+    },
+    {
+      "key": "pass_int_td",
+      "label": "Pick-six thrown (alternate key)",
+      "family": "passing_outcomes",
+      "category": "passing",
+      "allowedPositions": [
+        "QB"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "nflverse_pbp_derived",
+      "canonicalStatKey": "pass_pick6",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": "H2.1",
+      "blockers": [],
+      "notes": "Alias for pass_pick6. Both keys evaluate identically once the derived pass_pick6 canonical stat is present."
+    },
+    {
+      "key": "rush_yd",
+      "label": "Rushing yards",
+      "family": "rushing",
+      "category": "rushing",
+      "allowedPositions": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "nflverse_weekly_verified",
+      "canonicalStatKey": "rush_yd",
+      "derivedStatExpression": null,
+      "normalizedFrom": "rushing_yards",
+      "implementationPhase": "H1",
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "rush_att",
+      "label": "Rushing attempts (carries)",
+      "family": "rushing",
+      "category": "rushing",
+      "allowedPositions": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "nflverse_weekly_verified",
+      "canonicalStatKey": "rush_att",
+      "derivedStatExpression": null,
+      "normalizedFrom": "carries",
+      "implementationPhase": "H1",
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "rush_td",
+      "label": "Rushing touchdowns",
+      "family": "rushing",
+      "category": "rushing",
+      "allowedPositions": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "nflverse_weekly_verified",
+      "canonicalStatKey": "rush_td",
+      "derivedStatExpression": null,
+      "normalizedFrom": "rushing_tds",
+      "implementationPhase": "H1",
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "rush_fd",
+      "label": "Rushing first downs",
+      "family": "rushing",
+      "category": "first_downs",
+      "allowedPositions": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "nflverse_weekly_verified",
+      "canonicalStatKey": "rush_fd",
+      "derivedStatExpression": null,
+      "normalizedFrom": "rushing_first_downs",
+      "implementationPhase": "H1",
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "rush_2pt",
+      "label": "Rushing two-point conversions",
+      "family": "rushing",
+      "category": "rushing",
+      "allowedPositions": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "nflverse_weekly_verified",
+      "canonicalStatKey": "rush_2pt",
+      "derivedStatExpression": null,
+      "normalizedFrom": "rushing_2pt_conversions",
+      "implementationPhase": "H1",
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "rec",
+      "label": "Receptions",
+      "family": "receiving",
+      "category": "receiving",
+      "allowedPositions": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "nflverse_weekly_verified",
+      "canonicalStatKey": "rec",
+      "derivedStatExpression": null,
+      "normalizedFrom": "receptions",
+      "implementationPhase": "H1",
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "rec_tgt",
+      "label": "Targets",
+      "family": "receiving",
+      "category": "receiving",
+      "allowedPositions": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "nflverse_weekly_verified",
+      "canonicalStatKey": "rec_tgt",
+      "derivedStatExpression": null,
+      "normalizedFrom": "targets",
+      "implementationPhase": "H1",
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "rec_yd",
+      "label": "Receiving yards",
+      "family": "receiving",
+      "category": "receiving",
+      "allowedPositions": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "nflverse_weekly_verified",
+      "canonicalStatKey": "rec_yd",
+      "derivedStatExpression": null,
+      "normalizedFrom": "receiving_yards",
+      "implementationPhase": "H1",
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "rec_td",
+      "label": "Receiving touchdowns",
+      "family": "receiving",
+      "category": "receiving",
+      "allowedPositions": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "nflverse_weekly_verified",
+      "canonicalStatKey": "rec_td",
+      "derivedStatExpression": null,
+      "normalizedFrom": "receiving_tds",
+      "implementationPhase": "H1",
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "rec_fd",
+      "label": "Receiving first downs",
+      "family": "receiving",
+      "category": "first_downs",
+      "allowedPositions": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "nflverse_weekly_verified",
+      "canonicalStatKey": "rec_fd",
+      "derivedStatExpression": null,
+      "normalizedFrom": "receiving_first_downs",
+      "implementationPhase": "H1",
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "rec_2pt",
+      "label": "Receiving two-point conversions",
+      "family": "receiving",
+      "category": "receiving",
+      "allowedPositions": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "nflverse_weekly_verified",
+      "canonicalStatKey": "rec_2pt",
+      "derivedStatExpression": null,
+      "normalizedFrom": "receiving_2pt_conversions",
+      "implementationPhase": "H1",
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "rec_te_bonus",
+      "label": "TE reception bonus (legacy key)",
+      "family": "position_rec_bonuses",
+      "category": "receiving",
+      "allowedPositions": [
+        "TE"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "nflverse_weekly_verified",
+      "canonicalStatKey": "rec",
+      "derivedStatExpression": null,
+      "normalizedFrom": "receptions",
+      "implementationPhase": "H1",
+      "blockers": [],
+      "notes": "Legacy Sleeper key; bonus_rec_te is the preferred modern key. Both resolve to the same rec stat for TE."
+    },
+    {
+      "key": "rec_rb_bonus",
+      "label": "RB reception bonus (legacy key)",
+      "family": "position_rec_bonuses",
+      "category": "receiving",
+      "allowedPositions": [
+        "RB"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "nflverse_weekly_verified",
+      "canonicalStatKey": "rec",
+      "derivedStatExpression": null,
+      "normalizedFrom": "receptions",
+      "implementationPhase": "H1",
+      "blockers": [],
+      "notes": "Legacy Sleeper key; bonus_rec_rb is the preferred modern key."
+    },
+    {
+      "key": "rec_wr_bonus",
+      "label": "WR reception bonus (legacy key)",
+      "family": "position_rec_bonuses",
+      "category": "receiving",
+      "allowedPositions": [
+        "WR"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "nflverse_weekly_verified",
+      "canonicalStatKey": "rec",
+      "derivedStatExpression": null,
+      "normalizedFrom": "receptions",
+      "implementationPhase": "H1",
+      "blockers": [],
+      "notes": "Legacy Sleeper key; bonus_rec_wr is the preferred modern key."
+    },
+    {
+      "key": "bonus_rec_te",
+      "label": "TE reception bonus",
+      "family": "position_rec_bonuses",
+      "category": "receiving",
+      "allowedPositions": [
+        "TE"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "nflverse_weekly_verified",
+      "canonicalStatKey": "rec",
+      "derivedStatExpression": null,
+      "normalizedFrom": "receptions",
+      "implementationPhase": "H1",
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "bonus_rec_rb",
+      "label": "RB reception bonus",
+      "family": "position_rec_bonuses",
+      "category": "receiving",
+      "allowedPositions": [
+        "RB"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "nflverse_weekly_verified",
+      "canonicalStatKey": "rec",
+      "derivedStatExpression": null,
+      "normalizedFrom": "receptions",
+      "implementationPhase": "H1",
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "bonus_rec_wr",
+      "label": "WR reception bonus",
+      "family": "position_rec_bonuses",
+      "category": "receiving",
+      "allowedPositions": [
+        "WR"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "nflverse_weekly_verified",
+      "canonicalStatKey": "rec",
+      "derivedStatExpression": null,
+      "normalizedFrom": "receptions",
+      "implementationPhase": "H1",
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "fum_lost",
+      "label": "Fumbles lost",
+      "family": "miscellaneous_skill",
+      "category": "miscellaneous",
+      "allowedPositions": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "nflverse_weekly_verified",
+      "canonicalStatKey": "fum_lost",
+      "derivedStatExpression": null,
+      "normalizedFrom": "sack_fumbles_lost+rushing_fumbles_lost+receiving_fumbles_lost",
+      "implementationPhase": "H1",
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "fum",
+      "label": "Total fumbles (lost + recovered)",
+      "family": "miscellaneous_skill",
+      "category": "miscellaneous",
+      "allowedPositions": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "nflverse_weekly_verified",
+      "canonicalStatKey": "fum",
+      "derivedStatExpression": null,
+      "normalizedFrom": "sack_fumbles+rushing_fumbles+receiving_fumbles",
+      "implementationPhase": "H4A",
+      "blockers": [],
+      "notes": "Different from fum_lost: counts all fumbles regardless of recovery. Columns exist in nflverse weekly CSV."
+    },
+    {
+      "key": "fum_ret_td",
+      "label": "Fumble return touchdowns",
+      "family": "miscellaneous_skill",
+      "category": "miscellaneous",
+      "allowedPositions": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "nflverse_pbp_derived",
+      "canonicalStatKey": "fum_ret_td",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": "H4B",
+      "blockers": [],
+      "notes": "Derived from nflverse PBP only when the recovery player and touchdown scorer match unambiguously in structured fields."
+    },
+    {
+      "key": "fum_rec",
+      "label": "Offensive fumble recovery",
+      "family": "miscellaneous_skill",
+      "category": "miscellaneous",
+      "allowedPositions": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "engineStatus": "not_implemented",
+      "dataStatus": "nflverse_pbp_derivable",
+      "canonicalStatKey": "fum_rec",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [],
+      "notes": "Points for an offensive player recovering any fumble; not exposed in nflverse weekly CSV — requires PBP recovery attribution. No engine rule implemented."
+    },
+    {
+      "key": "kick_ret_yd",
+      "label": "Kick return yards",
+      "family": "special_teams_skill",
+      "category": "returns",
+      "allowedPositions": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "nflverse_weekly_verified",
+      "canonicalStatKey": "kick_ret_yd",
+      "derivedStatExpression": null,
+      "normalizedFrom": "kickoff_return_yards",
+      "implementationPhase": "H4A",
+      "blockers": [],
+      "notes": "Return stats exist in nflverse weekly CSV for all players including offensive skill positions."
+    },
+    {
+      "key": "punt_ret_yd",
+      "label": "Punt return yards",
+      "family": "special_teams_skill",
+      "category": "returns",
+      "allowedPositions": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "nflverse_weekly_verified",
+      "canonicalStatKey": "punt_ret_yd",
+      "derivedStatExpression": null,
+      "normalizedFrom": "punt_return_yards",
+      "implementationPhase": "H4A",
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "return_td",
+      "label": "Return touchdowns (kick or punt)",
+      "family": "special_teams_skill",
+      "category": "returns",
+      "allowedPositions": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "nflverse_weekly_verified",
+      "canonicalStatKey": "return_td",
+      "derivedStatExpression": null,
+      "normalizedFrom": "special_teams_tds",
+      "implementationPhase": "H4A",
+      "blockers": [],
+      "notes": "nflverse weekly exposes a single player-level special_teams_tds total rather than separate kick and punt return touchdown columns."
+    },
+    {
+      "key": "return_fd",
+      "label": "Return first downs",
+      "family": "special_teams_skill",
+      "category": "first_downs",
+      "allowedPositions": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "requires_new_source",
+      "canonicalStatKey": "return_fd",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [
+        "Archived nflverse weekly player stats do not expose a verified return-first-down column; return_fd cannot be activated from the current weekly source."
+      ],
+      "notes": "H4A investigated this key explicitly and left it non-operational rather than inferring it from unrelated fields."
+    },
+    {
+      "key": "pass_fd",
+      "label": "Passing first downs",
+      "family": "first_down_bonuses",
+      "category": "first_downs",
+      "allowedPositions": [
+        "QB"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "nflverse_weekly_verified",
+      "canonicalStatKey": "pass_fd",
+      "derivedStatExpression": null,
+      "normalizedFrom": "passing_first_downs",
+      "implementationPhase": "H1",
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "bonus_fd_qb",
+      "label": "QB first-down bonus (per passing first down)",
+      "family": "first_down_bonuses",
+      "category": "first_downs",
+      "allowedPositions": [
+        "QB"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "nflverse_weekly_verified",
+      "canonicalStatKey": "pass_fd",
+      "derivedStatExpression": null,
+      "normalizedFrom": "passing_first_downs",
+      "implementationPhase": "H1",
+      "blockers": [],
+      "notes": "Additive to pass_fd; reads same pass_fd stat but under a different scoring key."
+    },
+    {
+      "key": "bonus_fd_rb",
+      "label": "RB first-down bonus (per rushing + receiving first down)",
+      "family": "first_down_bonuses",
+      "category": "first_downs",
+      "allowedPositions": [
+        "RB"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "nflverse_weekly_verified",
+      "canonicalStatKey": "bonus_fd_rb",
+      "derivedStatExpression": "rush_fd + rec_fd",
+      "normalizedFrom": "rushing_first_downs+receiving_first_downs",
+      "implementationPhase": "H1",
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "bonus_fd_wr",
+      "label": "WR first-down bonus (per receiving first down)",
+      "family": "first_down_bonuses",
+      "category": "first_downs",
+      "allowedPositions": [
+        "WR"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "nflverse_weekly_verified",
+      "canonicalStatKey": "rec_fd",
+      "derivedStatExpression": null,
+      "normalizedFrom": "receiving_first_downs",
+      "implementationPhase": "H1",
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "bonus_fd_te",
+      "label": "TE first-down bonus (per receiving first down)",
+      "family": "first_down_bonuses",
+      "category": "first_downs",
+      "allowedPositions": [
+        "TE"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "nflverse_weekly_verified",
+      "canonicalStatKey": "rec_fd",
+      "derivedStatExpression": null,
+      "normalizedFrom": "receiving_first_downs",
+      "implementationPhase": "H1",
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "rec_td_40p",
+      "label": "Receiving TD of 40+ yards bonus",
+      "family": "long_td_bonuses",
+      "category": "bonuses",
+      "allowedPositions": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "nflverse_pbp_derived",
+      "canonicalStatKey": "rec_td_40p",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": "H2",
+      "blockers": [],
+      "notes": "Derived from nflverse PBP; stored in player_weekly_derived_stats with stat_scope=nflverse_pbp_derived."
+    },
+    {
+      "key": "rec_td_50p",
+      "label": "Receiving TD of 50+ yards bonus",
+      "family": "long_td_bonuses",
+      "category": "bonuses",
+      "allowedPositions": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "nflverse_pbp_derived",
+      "canonicalStatKey": "rec_td_50p",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": "H2",
+      "blockers": [],
+      "notes": "50p is a subset of 40p; leagues use either the lower threshold or both additively."
+    },
+    {
+      "key": "rush_td_40p",
+      "label": "Rushing TD of 40+ yards bonus",
+      "family": "long_td_bonuses",
+      "category": "bonuses",
+      "allowedPositions": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "nflverse_pbp_derived",
+      "canonicalStatKey": "rush_td_40p",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": "H2",
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "rush_td_50p",
+      "label": "Rushing TD of 50+ yards bonus",
+      "family": "long_td_bonuses",
+      "category": "bonuses",
+      "allowedPositions": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "nflverse_pbp_derived",
+      "canonicalStatKey": "rush_td_50p",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": "H2",
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "pass_td_40p",
+      "label": "Passing TD of 40+ yards bonus",
+      "family": "long_td_bonuses",
+      "category": "bonuses",
+      "allowedPositions": [
+        "QB"
+      ],
+      "engineStatus": "not_implemented",
+      "dataStatus": "nflverse_pbp_derivable",
+      "canonicalStatKey": "pass_td_40p",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [],
+      "notes": "PBP-derivable equivalent of rec_td_40p/rush_td_40p for the passer; H2 pipeline not yet extended to passing long TDs. No engine rule implemented."
+    },
+    {
+      "key": "pass_td_50p",
+      "label": "Passing TD of 50+ yards bonus",
+      "family": "long_td_bonuses",
+      "category": "bonuses",
+      "allowedPositions": [
+        "QB"
+      ],
+      "engineStatus": "not_implemented",
+      "dataStatus": "nflverse_pbp_derivable",
+      "canonicalStatKey": "pass_td_50p",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [],
+      "notes": "50p is a subset of 40p; engine rule not yet implemented."
+    },
+    {
+      "key": "pass_cmp_40p",
+      "label": "Passing completion of 40+ yards bonus",
+      "family": "long_td_bonuses",
+      "category": "bonuses",
+      "allowedPositions": [
+        "QB"
+      ],
+      "engineStatus": "not_implemented",
+      "dataStatus": "nflverse_pbp_derivable",
+      "canonicalStatKey": "pass_cmp_40p",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [],
+      "notes": "Bonus for a reception that travels 40+ air yards to the passer's credit; requires PBP air-yards data."
+    },
+    {
+      "key": "bonus_pass_yd_300",
+      "label": "300-399 passing-yard bonus",
+      "family": "yardage_threshold_bonuses",
+      "category": "bonuses",
+      "allowedPositions": [
+        "QB"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "nflverse_weekly_verified",
+      "canonicalStatKey": "pass_yd",
+      "derivedStatExpression": null,
+      "normalizedFrom": "passing_yards",
+      "implementationPhase": "H1",
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "bonus_pass_yd_400",
+      "label": "400+ passing-yard bonus",
+      "family": "yardage_threshold_bonuses",
+      "category": "bonuses",
+      "allowedPositions": [
+        "QB"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "nflverse_weekly_verified",
+      "canonicalStatKey": "pass_yd",
+      "derivedStatExpression": null,
+      "normalizedFrom": "passing_yards",
+      "implementationPhase": "H1",
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "bonus_pass_cmp_25",
+      "label": "25+ completions bonus",
+      "family": "yardage_threshold_bonuses",
+      "category": "bonuses",
+      "allowedPositions": [
+        "QB"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "nflverse_weekly_verified",
+      "canonicalStatKey": "pass_cmp",
+      "derivedStatExpression": null,
+      "normalizedFrom": "completions",
+      "implementationPhase": "H1",
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "bonus_rush_yd_100",
+      "label": "100-199 rushing-yard bonus",
+      "family": "yardage_threshold_bonuses",
+      "category": "bonuses",
+      "allowedPositions": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "nflverse_weekly_verified",
+      "canonicalStatKey": "rush_yd",
+      "derivedStatExpression": null,
+      "normalizedFrom": "rushing_yards",
+      "implementationPhase": "H1",
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "bonus_rush_yd_200",
+      "label": "200+ rushing-yard bonus",
+      "family": "yardage_threshold_bonuses",
+      "category": "bonuses",
+      "allowedPositions": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "nflverse_weekly_verified",
+      "canonicalStatKey": "rush_yd",
+      "derivedStatExpression": null,
+      "normalizedFrom": "rushing_yards",
+      "implementationPhase": "H1",
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "bonus_rush_att_20",
+      "label": "20+ carries bonus",
+      "family": "yardage_threshold_bonuses",
+      "category": "bonuses",
+      "allowedPositions": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "nflverse_weekly_verified",
+      "canonicalStatKey": "rush_att",
+      "derivedStatExpression": null,
+      "normalizedFrom": "carries",
+      "implementationPhase": "H1",
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "bonus_rec_yd_100",
+      "label": "100-199 receiving-yard bonus",
+      "family": "yardage_threshold_bonuses",
+      "category": "bonuses",
+      "allowedPositions": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "nflverse_weekly_verified",
+      "canonicalStatKey": "rec_yd",
+      "derivedStatExpression": null,
+      "normalizedFrom": "receiving_yards",
+      "implementationPhase": "H1",
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "bonus_rec_yd_200",
+      "label": "200+ receiving-yard bonus",
+      "family": "yardage_threshold_bonuses",
+      "category": "bonuses",
+      "allowedPositions": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "nflverse_weekly_verified",
+      "canonicalStatKey": "rec_yd",
+      "derivedStatExpression": null,
+      "normalizedFrom": "receiving_yards",
+      "implementationPhase": "H1",
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "bonus_rush_rec_yd_100",
+      "label": "100-199 combined rush+rec yards bonus",
+      "family": "yardage_threshold_bonuses",
+      "category": "bonuses",
+      "allowedPositions": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "nflverse_weekly_verified",
+      "canonicalStatKey": "bonus_rush_rec_yd_100",
+      "derivedStatExpression": "rush_yd + rec_yd",
+      "normalizedFrom": "rushing_yards+receiving_yards",
+      "implementationPhase": "H1",
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "bonus_rush_rec_yd_200",
+      "label": "200+ combined rush+rec yards bonus",
+      "family": "yardage_threshold_bonuses",
+      "category": "bonuses",
+      "allowedPositions": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "nflverse_weekly_verified",
+      "canonicalStatKey": "bonus_rush_rec_yd_200",
+      "derivedStatExpression": "rush_yd + rec_yd",
+      "normalizedFrom": "rushing_yards+receiving_yards",
+      "implementationPhase": "H1",
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "xpm",
+      "label": "Extra points made",
+      "family": "kicking",
+      "category": "kicking",
+      "allowedPositions": [
+        "K"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "out_of_scope",
+      "canonicalStatKey": "xpm",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [
+        "K position excluded from current nflverse weekly ingestion scope"
+      ],
+      "notes": "nflverse weekly has kicker stats; data pipeline scope must be extended to K."
+    },
+    {
+      "key": "xpmiss",
+      "label": "Extra points missed",
+      "family": "kicking",
+      "category": "kicking",
+      "allowedPositions": [
+        "K"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "out_of_scope",
+      "canonicalStatKey": "xpmiss",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [
+        "Same as xpm"
+      ],
+      "notes": null
+    },
+    {
+      "key": "fgm",
+      "label": "Field goals made",
+      "family": "kicking",
+      "category": "kicking",
+      "allowedPositions": [
+        "K"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "out_of_scope",
+      "canonicalStatKey": "fgm",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [],
+      "notes": "Overlapping-FG rule: deactivated when distance-band keys are also active to avoid double-counting."
+    },
+    {
+      "key": "fgmiss",
+      "label": "Field goals missed",
+      "family": "kicking",
+      "category": "kicking",
+      "allowedPositions": [
+        "K"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "out_of_scope",
+      "canonicalStatKey": "fgmiss",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "fgm_0_19",
+      "label": "FG made 0-19 yards",
+      "family": "kicking",
+      "category": "kicking",
+      "allowedPositions": [
+        "K"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "out_of_scope",
+      "canonicalStatKey": "fgm_0_19",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "fgm_20_29",
+      "label": "FG made 20-29 yards",
+      "family": "kicking",
+      "category": "kicking",
+      "allowedPositions": [
+        "K"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "out_of_scope",
+      "canonicalStatKey": "fgm_20_29",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "fgm_30_39",
+      "label": "FG made 30-39 yards",
+      "family": "kicking",
+      "category": "kicking",
+      "allowedPositions": [
+        "K"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "out_of_scope",
+      "canonicalStatKey": "fgm_30_39",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "fgm_40_49",
+      "label": "FG made 40-49 yards",
+      "family": "kicking",
+      "category": "kicking",
+      "allowedPositions": [
+        "K"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "out_of_scope",
+      "canonicalStatKey": "fgm_40_49",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "fgm_50_59",
+      "label": "FG made 50-59 yards",
+      "family": "kicking",
+      "category": "kicking",
+      "allowedPositions": [
+        "K"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "out_of_scope",
+      "canonicalStatKey": "fgm_50_59",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "fgm_50p",
+      "label": "FG made 50+ yards",
+      "family": "kicking",
+      "category": "kicking",
+      "allowedPositions": [
+        "K"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "out_of_scope",
+      "canonicalStatKey": "fgm_50p",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [],
+      "notes": "Overlaps fgm_50_59 and fgm_60p; Sleeper leagues use one or the other."
+    },
+    {
+      "key": "fgm_60p",
+      "label": "FG made 60+ yards",
+      "family": "kicking",
+      "category": "kicking",
+      "allowedPositions": [
+        "K"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "out_of_scope",
+      "canonicalStatKey": "fgm_60p",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "fgmiss_0_19",
+      "label": "FG missed 0-19 yards",
+      "family": "kicking",
+      "category": "kicking",
+      "allowedPositions": [
+        "K"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "out_of_scope",
+      "canonicalStatKey": "fgmiss_0_19",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "fgmiss_20_29",
+      "label": "FG missed 20-29 yards",
+      "family": "kicking",
+      "category": "kicking",
+      "allowedPositions": [
+        "K"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "out_of_scope",
+      "canonicalStatKey": "fgmiss_20_29",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "fgmiss_30_39",
+      "label": "FG missed 30-39 yards",
+      "family": "kicking",
+      "category": "kicking",
+      "allowedPositions": [
+        "K"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "out_of_scope",
+      "canonicalStatKey": "fgmiss_30_39",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "fgmiss_40_49",
+      "label": "FG missed 40-49 yards",
+      "family": "kicking",
+      "category": "kicking",
+      "allowedPositions": [
+        "K"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "out_of_scope",
+      "canonicalStatKey": "fgmiss_40_49",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "fgmiss_50p",
+      "label": "FG missed 50+ yards",
+      "family": "kicking",
+      "category": "kicking",
+      "allowedPositions": [
+        "K"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "out_of_scope",
+      "canonicalStatKey": "fgmiss_50p",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "sack",
+      "label": "Sacks",
+      "family": "team_defense",
+      "category": "team_defense",
+      "allowedPositions": [
+        "DEF",
+        "DL",
+        "LB",
+        "DB"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "out_of_scope",
+      "canonicalStatKey": "sack",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [
+        "DEF and IDP positions excluded from current ingestion scope"
+      ],
+      "notes": "Rule handles both DEF and IDP positions with the same key; Sleeper registers one entry per position group."
+    },
+    {
+      "key": "int",
+      "label": "Interceptions",
+      "family": "team_defense",
+      "category": "team_defense",
+      "allowedPositions": [
+        "DEF",
+        "DL",
+        "LB",
+        "DB"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "out_of_scope",
+      "canonicalStatKey": "int",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [],
+      "notes": "Same dual-position key as sack."
+    },
+    {
+      "key": "ff",
+      "label": "Forced fumbles",
+      "family": "team_defense",
+      "category": "team_defense",
+      "allowedPositions": [
+        "DEF",
+        "DL",
+        "LB",
+        "DB"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "out_of_scope",
+      "canonicalStatKey": "ff",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "fr",
+      "label": "Fumble recoveries",
+      "family": "team_defense",
+      "category": "team_defense",
+      "allowedPositions": [
+        "DEF",
+        "DL",
+        "LB",
+        "DB"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "out_of_scope",
+      "canonicalStatKey": "fr",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "safe",
+      "label": "Safeties",
+      "family": "team_defense",
+      "category": "team_defense",
+      "allowedPositions": [
+        "DEF",
+        "DL",
+        "LB",
+        "DB"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "out_of_scope",
+      "canonicalStatKey": "safe",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "blk_kick",
+      "label": "Blocked kicks",
+      "family": "team_defense",
+      "category": "team_defense",
+      "allowedPositions": [
+        "DEF",
+        "DL",
+        "LB",
+        "DB"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "out_of_scope",
+      "canonicalStatKey": "blk_kick",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "def_td",
+      "label": "Defensive touchdowns",
+      "family": "team_defense",
+      "category": "team_defense",
+      "allowedPositions": [
+        "DEF",
+        "DL",
+        "LB",
+        "DB"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "out_of_scope",
+      "canonicalStatKey": "def_td",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "def_st_td",
+      "label": "Defensive/special-teams touchdowns",
+      "family": "team_defense",
+      "category": "team_defense",
+      "allowedPositions": [
+        "DEF",
+        "DL",
+        "LB",
+        "DB"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "out_of_scope",
+      "canonicalStatKey": "def_st_td",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "def_st_ff",
+      "label": "Special-teams forced fumble",
+      "family": "team_defense",
+      "category": "team_defense",
+      "allowedPositions": [
+        "DEF",
+        "DL",
+        "LB",
+        "DB"
+      ],
+      "engineStatus": "not_implemented",
+      "dataStatus": "out_of_scope",
+      "canonicalStatKey": "def_st_ff",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [
+        "DEF and IDP positions excluded from current ingestion scope"
+      ],
+      "notes": "Forced fumble credited to a kicking/coverage-unit player; separate from field-player ff. No engine rule implemented."
+    },
+    {
+      "key": "def_st_fum_rec",
+      "label": "Special-teams fumble recovery",
+      "family": "team_defense",
+      "category": "team_defense",
+      "allowedPositions": [
+        "DEF",
+        "DL",
+        "LB",
+        "DB"
+      ],
+      "engineStatus": "not_implemented",
+      "dataStatus": "out_of_scope",
+      "canonicalStatKey": "def_st_fum_rec",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [],
+      "notes": "Fumble recovery credited to a kicking/coverage-unit player; no engine rule implemented."
+    },
+    {
+      "key": "fum_rec_td",
+      "label": "Fumble recovery touchdown",
+      "family": "team_defense",
+      "category": "team_defense",
+      "allowedPositions": [
+        "DEF",
+        "DL",
+        "LB",
+        "DB"
+      ],
+      "engineStatus": "not_implemented",
+      "dataStatus": "out_of_scope",
+      "canonicalStatKey": "fum_rec_td",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [],
+      "notes": "Sleeper key for scoring a TD after recovering a fumble; primarily a DEF/IDP key. Offensive equivalent is fum_ret_td."
+    },
+    {
+      "key": "def_2pt_ret",
+      "label": "Defensive two-point return",
+      "family": "team_defense",
+      "category": "team_defense",
+      "allowedPositions": [
+        "DEF"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "out_of_scope",
+      "canonicalStatKey": "def_2pt_ret",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "fourth_down_stop",
+      "label": "Fourth-down stops",
+      "family": "team_defense",
+      "category": "team_defense",
+      "allowedPositions": [
+        "DEF"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "out_of_scope",
+      "canonicalStatKey": "fourth_down_stop",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [],
+      "notes": "Requires play-by-play or team game-log data; not in standard player_stats CSV."
+    },
+    {
+      "key": "three_and_out",
+      "label": "Three-and-outs forced",
+      "family": "team_defense",
+      "category": "team_defense",
+      "allowedPositions": [
+        "DEF"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "out_of_scope",
+      "canonicalStatKey": "three_and_out",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [],
+      "notes": "Requires drive-level team data; not derivable from player stats."
+    },
+    {
+      "key": "pts_allow_0",
+      "label": "Points allowed: shutout (0)",
+      "family": "team_defense",
+      "category": "team_defense",
+      "allowedPositions": [
+        "DEF"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "requires_team_game_context",
+      "canonicalStatKey": "pts_allow",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [
+        "Requires team-level game aggregate (points allowed per game), not per-player stats"
+      ],
+      "notes": "pts_allow is a team-level stat; needs a separate team game-result ingestion pipeline."
+    },
+    {
+      "key": "pts_allow_1_6",
+      "label": "Points allowed: 1-6",
+      "family": "team_defense",
+      "category": "team_defense",
+      "allowedPositions": [
+        "DEF"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "requires_team_game_context",
+      "canonicalStatKey": "pts_allow",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "pts_allow_7_13",
+      "label": "Points allowed: 7-13",
+      "family": "team_defense",
+      "category": "team_defense",
+      "allowedPositions": [
+        "DEF"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "requires_team_game_context",
+      "canonicalStatKey": "pts_allow",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "pts_allow_14_20",
+      "label": "Points allowed: 14-20",
+      "family": "team_defense",
+      "category": "team_defense",
+      "allowedPositions": [
+        "DEF"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "requires_team_game_context",
+      "canonicalStatKey": "pts_allow",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "pts_allow_21_27",
+      "label": "Points allowed: 21-27",
+      "family": "team_defense",
+      "category": "team_defense",
+      "allowedPositions": [
+        "DEF"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "requires_team_game_context",
+      "canonicalStatKey": "pts_allow",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "pts_allow_28_34",
+      "label": "Points allowed: 28-34",
+      "family": "team_defense",
+      "category": "team_defense",
+      "allowedPositions": [
+        "DEF"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "requires_team_game_context",
+      "canonicalStatKey": "pts_allow",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "pts_allow_35p",
+      "label": "Points allowed: 35+",
+      "family": "team_defense",
+      "category": "team_defense",
+      "allowedPositions": [
+        "DEF"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "requires_team_game_context",
+      "canonicalStatKey": "pts_allow",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "yds_allow_0_100",
+      "label": "Yards allowed: 0-100",
+      "family": "team_defense",
+      "category": "team_defense",
+      "allowedPositions": [
+        "DEF"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "requires_team_game_context",
+      "canonicalStatKey": "yds_allow",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [],
+      "notes": "yds_allow is a team-level stat; needs team game-result ingestion pipeline."
+    },
+    {
+      "key": "yds_allow_101_199",
+      "label": "Yards allowed: 101-199",
+      "family": "team_defense",
+      "category": "team_defense",
+      "allowedPositions": [
+        "DEF"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "requires_team_game_context",
+      "canonicalStatKey": "yds_allow",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "yds_allow_200_299",
+      "label": "Yards allowed: 200-299",
+      "family": "team_defense",
+      "category": "team_defense",
+      "allowedPositions": [
+        "DEF"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "requires_team_game_context",
+      "canonicalStatKey": "yds_allow",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "yds_allow_300_349",
+      "label": "Yards allowed: 300-349",
+      "family": "team_defense",
+      "category": "team_defense",
+      "allowedPositions": [
+        "DEF"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "requires_team_game_context",
+      "canonicalStatKey": "yds_allow",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "yds_allow_350_399",
+      "label": "Yards allowed: 350-399",
+      "family": "team_defense",
+      "category": "team_defense",
+      "allowedPositions": [
+        "DEF"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "requires_team_game_context",
+      "canonicalStatKey": "yds_allow",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "yds_allow_400_449",
+      "label": "Yards allowed: 400-449",
+      "family": "team_defense",
+      "category": "team_defense",
+      "allowedPositions": [
+        "DEF"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "requires_team_game_context",
+      "canonicalStatKey": "yds_allow",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "yds_allow_450_499",
+      "label": "Yards allowed: 450-499",
+      "family": "team_defense",
+      "category": "team_defense",
+      "allowedPositions": [
+        "DEF"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "requires_team_game_context",
+      "canonicalStatKey": "yds_allow",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "yds_allow_500_549",
+      "label": "Yards allowed: 500-549",
+      "family": "team_defense",
+      "category": "team_defense",
+      "allowedPositions": [
+        "DEF"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "requires_team_game_context",
+      "canonicalStatKey": "yds_allow",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "yds_allow_550p",
+      "label": "Yards allowed: 550+",
+      "family": "team_defense",
+      "category": "team_defense",
+      "allowedPositions": [
+        "DEF"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "requires_team_game_context",
+      "canonicalStatKey": "yds_allow",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "solo_tkl",
+      "label": "Solo tackles",
+      "family": "idp",
+      "category": "idp",
+      "allowedPositions": [
+        "DL",
+        "LB",
+        "DB"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "out_of_scope",
+      "canonicalStatKey": "solo_tkl",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [
+        "IDP position group excluded from current nflverse weekly ingestion scope"
+      ],
+      "notes": "nflverse has defensive player stats via a separate endpoint/CSV; not yet wired."
+    },
+    {
+      "key": "ast_tkl",
+      "label": "Assisted tackles",
+      "family": "idp",
+      "category": "idp",
+      "allowedPositions": [
+        "DL",
+        "LB",
+        "DB"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "out_of_scope",
+      "canonicalStatKey": "ast_tkl",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "tkl",
+      "label": "Total tackles",
+      "family": "idp",
+      "category": "idp",
+      "allowedPositions": [
+        "DL",
+        "LB",
+        "DB"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "out_of_scope",
+      "canonicalStatKey": "tkl",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "tkl_loss",
+      "label": "Tackles for loss",
+      "family": "idp",
+      "category": "idp",
+      "allowedPositions": [
+        "DL",
+        "LB",
+        "DB"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "out_of_scope",
+      "canonicalStatKey": "tkl_loss",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "st_tkl",
+      "label": "Special-teams tackles",
+      "family": "idp",
+      "category": "idp",
+      "allowedPositions": [
+        "DL",
+        "LB",
+        "DB"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "out_of_scope",
+      "canonicalStatKey": "st_tkl",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "qb_hit",
+      "label": "QB hits",
+      "family": "idp",
+      "category": "idp",
+      "allowedPositions": [
+        "DL",
+        "LB",
+        "DB"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "out_of_scope",
+      "canonicalStatKey": "qb_hit",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "pd",
+      "label": "Passes defended",
+      "family": "idp",
+      "category": "idp",
+      "allowedPositions": [
+        "DL",
+        "LB",
+        "DB"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "out_of_scope",
+      "canonicalStatKey": "pd",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "int_ret_yd",
+      "label": "Interception return yards",
+      "family": "idp",
+      "category": "idp",
+      "allowedPositions": [
+        "DL",
+        "LB",
+        "DB"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "out_of_scope",
+      "canonicalStatKey": "int_ret_yd",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "fr_ret_yd",
+      "label": "Fumble return yards",
+      "family": "idp",
+      "category": "idp",
+      "allowedPositions": [
+        "DL",
+        "LB",
+        "DB"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "out_of_scope",
+      "canonicalStatKey": "fr_ret_yd",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [],
+      "notes": null
+    },
+    {
+      "key": "bonus_def_fum_td_50p",
+      "label": "Defensive fumble-return TD 50+ yards bonus",
+      "family": "team_defense",
+      "category": "team_defense",
+      "allowedPositions": [
+        "DEF",
+        "DL",
+        "LB",
+        "DB"
+      ],
+      "engineStatus": "not_implemented",
+      "dataStatus": "out_of_scope",
+      "canonicalStatKey": "bonus_def_fum_td_50p",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [
+        "DEF and IDP positions excluded from current ingestion scope"
+      ],
+      "notes": "Bonus for a defensive fumble return touchdown of 50+ yards; no engine rule implemented."
+    },
+    {
+      "key": "bonus_def_int_td_50p",
+      "label": "Defensive INT-return TD 50+ yards bonus",
+      "family": "team_defense",
+      "category": "team_defense",
+      "allowedPositions": [
+        "DEF",
+        "DL",
+        "LB",
+        "DB"
+      ],
+      "engineStatus": "not_implemented",
+      "dataStatus": "out_of_scope",
+      "canonicalStatKey": "bonus_def_int_td_50p",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [],
+      "notes": "Bonus for an interception return touchdown of 50+ yards; no engine rule implemented."
+    },
+    {
+      "key": "bonus_sack_2p",
+      "label": "2+ sack game bonus (IDP)",
+      "family": "idp",
+      "category": "idp",
+      "allowedPositions": [
+        "DL",
+        "LB",
+        "DB"
+      ],
+      "engineStatus": "not_implemented",
+      "dataStatus": "out_of_scope",
+      "canonicalStatKey": "bonus_sack_2p",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": null,
+      "blockers": [],
+      "notes": "Bonus points for recording 2 or more sacks in a single game; no engine rule implemented."
+    }
+  ]
+}

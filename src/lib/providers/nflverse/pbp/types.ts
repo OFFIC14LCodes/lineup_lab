@@ -20,6 +20,7 @@ export type PbpPlayerWeekResult = {
   rush_td_40p: number;
   rush_td_50p: number;
   pass_pick6: number;
+  fum_ret_td: number;
   errorMessage: string | null;
 };
 
@@ -37,6 +38,33 @@ export type PbpPipelineCoverage = {
   uniqueGsisIds: number;
   resolvedGsisIds: number;
   unresolvedGsisIds: number;
+  fumRetTdCandidatePlays: number;
+  fumRetTdQualifiedPlays: number;
+  fumRetTdAmbiguousPlays: number;
+  fumRetTdExcludedPlays: number;
+  fumRetTdResolvedPlayerWeeks: number;
+  fumRetTdUnresolvedPlayerWeeks: number;
+  fumRetTdWrittenRows: number;
+  fumRetTdExistingRows: number;
+  fumRetTdFailedRows: number;
+};
+
+export type FumRetTdAuditRecord = {
+  gameId: string;
+  week: number;
+  playId: string;
+  playType: string | null;
+  description: string;
+  recoveryPlayerGsisId: string | null;
+  recoveryPlayerName: string | null;
+  recoveryTeam: string | null;
+  touchdownPlayerGsisId: string | null;
+  touchdownPlayerName: string | null;
+  touchdownTeam: string | null;
+  recoveryYards: number | null;
+  reason: string;
+  canonicalPlayerId?: string | null;
+  resolutionFailureReason?: string | null;
 };
 
 export type PbpPipelineReport = {
@@ -53,6 +81,9 @@ export type PbpPipelineReport = {
   batchId: string | null;
   coverage: PbpPipelineCoverage;
   invariantViolations: InvariantViolation[];
+  fumRetTdQualifiedEvents: FumRetTdAuditRecord[];
+  fumRetTdExcludedEvents: FumRetTdAuditRecord[];
+  fumRetTdIdentityUnresolvedEvents: FumRetTdAuditRecord[];
   durationMs: number;
   completedAt: string;
 };

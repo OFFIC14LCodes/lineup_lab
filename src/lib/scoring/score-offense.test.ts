@@ -160,6 +160,118 @@ describe("offensive fantasy scoring", () => {
     expect(qb.totalPoints).toBeCloseTo(25 * 0.1 + 2, 8);
   });
 
+  it("scores pass_inc and return-related H4A weekly stats without changing formulas", () => {
+    const qb = scoreFantasyStats({
+      stats: {
+        pass_inc: 10
+      },
+      scoringSettings: {
+        pass_inc: -0.1
+      },
+      positionGroup: "QB"
+    });
+    const wr = scoreFantasyStats({
+      stats: {
+        fum: 1,
+        kick_ret_yd: 40,
+        punt_ret_yd: 15,
+        return_td: 1
+      },
+      scoringSettings: {
+        fum: -1,
+        kick_ret_yd: 0.04,
+        punt_ret_yd: 0.04,
+        return_td: 6
+      },
+      positionGroup: "WR"
+    });
+
+    expect(qb.totalPoints).toBeCloseTo(-1, 8);
+    expect(wr.totalPoints).toBeCloseTo(-1 + 1.6 + 0.6 + 6, 8);
+  });
+
+  it("scores fum_ret_td when the derived stat is present", () => {
+    const result = scoreFantasyStats({
+      stats: {
+        fum_ret_td: 1
+      },
+      scoringSettings: {
+        fum_ret_td: 6
+      },
+      positionGroup: "RB"
+    });
+
+    expect(result.totalPoints).toBeCloseTo(6, 8);
+    expect(result.coverage.evaluatedScoringKeys).toContain("fum_ret_td");
+  });
+
+  it("treats a zero fum_ret_td as supported rather than missing or unsupported", () => {
+    const result = scoreFantasyStats({
+      stats: {
+        fum_ret_td: 0
+      },
+      scoringSettings: {
+        fum_ret_td: 6
+      },
+      positionGroup: "RB"
+    });
+
+    expect(result.totalPoints).toBe(0);
+    expect(result.coverage.evaluatedScoringKeys).toContain("fum_ret_td");
+    expect(result.coverage.missingStatsForSupportedKeys).toEqual([]);
+    expect(result.coverage.unsupportedScoringKeys).toEqual([]);
+  });
+
+  it("keeps leagues without fum_ret_td scoring unchanged even if the stat is present", () => {
+    const result = scoreFantasyStats({
+      stats: {
+        rush_yd: 20,
+        fum_ret_td: 1
+      },
+      scoringSettings: {
+        rush_yd: 0.1
+      },
+      positionGroup: "RB"
+    });
+
+    expect(result.totalPoints).toBeCloseTo(2, 8);
+    expect(result.coverage.activeScoringKeys).not.toContain("fum_ret_td");
+  });
+
+  it("preserves additive behavior if a row ever contains both rush_td and fum_ret_td", () => {
+    const result = scoreFantasyStats({
+      stats: {
+        rush_td: 1,
+        fum_ret_td: 1
+      },
+      scoringSettings: {
+        rush_td: 6,
+        fum_ret_td: 6
+      },
+      positionGroup: "RB"
+    });
+
+    expect(result.totalPoints).toBe(12);
+  });
+
+  it("keeps leagues without pass_inc scoring unaffected when the stat is present", () => {
+    const result = scoreFantasyStats({
+      stats: {
+        pass_yd: 250,
+        pass_td: 2,
+        pass_inc: 10
+      },
+      scoringSettings: {
+        pass_yd: 0.04,
+        pass_td: 4
+      },
+      positionGroup: "QB"
+    });
+
+    expect(result.totalPoints).toBeCloseTo(10 + 8, 8);
+    expect(result.coverage.activeScoringKeys).not.toContain("pass_inc");
+  });
+
   it("supports carry and combined-yard bonuses without double counting", () => {
     const result = scoreFantasyStats({
       stats: {
@@ -334,6 +446,40 @@ describe("offensive fantasy scoring", () => {
     expect(result.totalPoints).toBeCloseTo(-2 + -4, 8);
     expect(result.coverage.evaluatedScoringKeys).toContain("pass_pick6");
     expect(result.coverage.evaluatedScoringKeys).toContain("pass_int_td");
+  });
+
+  it("pass_pick6: scores directly when derived stat is present", () => {
+    const result = scoreFantasyStats({
+      stats: { pass_pick6: 1 },
+      scoringSettings: { pass_pick6: -2 },
+      positionGroup: "QB"
+    });
+
+    expect(result.totalPoints).toBeCloseTo(-2, 8);
+    expect(result.coverage.evaluatedScoringKeys).toContain("pass_pick6");
+  });
+
+  it("long-TD derived stats score when present", () => {
+    const result = scoreFantasyStats({
+      stats: {
+        rec_td_40p: 1,
+        rec_td_50p: 1,
+        rush_td_40p: 1,
+        rush_td_50p: 1
+      },
+      scoringSettings: {
+        rec_td_40p: 2,
+        rec_td_50p: 3,
+        rush_td_40p: 2,
+        rush_td_50p: 3
+      },
+      positionGroup: "RB"
+    });
+
+    expect(result.totalPoints).toBeCloseTo(10, 8);
+    for (const key of ["rec_td_40p", "rec_td_50p", "rush_td_40p", "rush_td_50p"]) {
+      expect(result.coverage.evaluatedScoringKeys).toContain(key);
+    }
   });
 
   it("long-TD keys score 0 when stats absent (values must come from PBP derivation, not inferred from totals)", () => {

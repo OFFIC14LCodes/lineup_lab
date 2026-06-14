@@ -13,10 +13,11 @@ export type PlayerWeekDerivedStats = {
   rush_td_40p: number;
   rush_td_50p: number;
   pass_pick6: number;
+  fum_ret_td: number;
 };
 
 export function emptyDerivedStats(): PlayerWeekDerivedStats {
-  return { rec_td_40p: 0, rec_td_50p: 0, rush_td_40p: 0, rush_td_50p: 0, pass_pick6: 0 };
+  return { rec_td_40p: 0, rec_td_50p: 0, rush_td_40p: 0, rush_td_50p: 0, pass_pick6: 0, fum_ret_td: 0 };
 }
 
 export type PlayEligibilityOutcome =
@@ -28,7 +29,26 @@ export type PlayEligibilityOutcome =
   | "excluded_no_applicable_event"
   | "excluded_missing_player_id"
   | "excluded_wrong_team_td"
+  | "excluded_interception_context"
+  | "excluded_special_teams_return"
+  | "excluded_multiple_recoveries"
+  | "excluded_missing_td_player_id"
+  | "excluded_missing_recovery_player_id"
+  | "excluded_recovery_td_player_mismatch"
+  | "excluded_recovery_td_team_mismatch"
   | "info_non_offensive_return_td";
+
+export type FumRetTdEvidence = {
+  playType: string | null;
+  description: string;
+  recoveryPlayerGsisId: string | null;
+  recoveryPlayerName: string | null;
+  recoveryTeam: string | null;
+  touchdownPlayerGsisId: string | null;
+  touchdownPlayerName: string | null;
+  touchdownTeam: string | null;
+  recoveryYards: number | null;
+};
 
 export type ExcludedEventRecord = {
   gameId: string;
@@ -36,6 +56,8 @@ export type ExcludedEventRecord = {
   week: number;
   reason: PlayEligibilityOutcome;
   detail: string;
+  eventType?: ResolvedEventRecord["eventType"];
+  evidence?: FumRetTdEvidence;
 };
 
 export type ResolvedEventRecord = {
@@ -43,16 +65,18 @@ export type ResolvedEventRecord = {
   playId: string;
   week: number;
   gsisId: string;
-  eventType: "rec_td_long" | "rush_td_long" | "pick_six";
+  eventType: "rec_td_long" | "rush_td_long" | "pick_six" | "fum_ret_td";
   yardsGained: number | null;
+  evidence?: FumRetTdEvidence;
 };
 
 export type UnresolvedEventRecord = {
   gameId: string;
   playId: string;
   week: number;
-  eventType: "rec_td_long" | "rush_td_long" | "pick_six";
+  eventType: "rec_td_long" | "rush_td_long" | "pick_six" | "fum_ret_td";
   reason: "missing_player_id";
+  evidence?: FumRetTdEvidence;
 };
 
 export type DerivePlayResult = {
@@ -230,6 +254,247 @@ export function derivePickSix(raw: NflversePbpRaw): DerivePlayResult {
 }
 
 // ---------------------------------------------------------------------------
+// Fumble-recovery touchdown derivation (fum_ret_td)
+// ---------------------------------------------------------------------------
+
+function buildFumRetTdEvidence(raw: NflversePbpRaw): FumRetTdEvidence {
+  return {
+    playType: parsePbpString(raw["play_type"]),
+    description: parsePbpString(raw["desc"]) ?? "",
+    recoveryPlayerGsisId: parsePbpString(raw["fumble_recovery_1_player_id"]),
+    recoveryPlayerName: parsePbpString(raw["fumble_recovery_1_player_name"]),
+    recoveryTeam: parsePbpString(raw["fumble_recovery_1_team"]),
+    touchdownPlayerGsisId: parsePbpString(raw["td_player_id"]),
+    touchdownPlayerName: parsePbpString(raw["td_player_name"]),
+    touchdownTeam: parsePbpString(raw["td_team"]),
+    recoveryYards: parsePbpNumeric(raw["fumble_recovery_1_yards"])
+  };
+}
+
+export function deriveFumbleReturnTouchdown(raw: NflversePbpRaw): DerivePlayResult {
+  const week = parsePbpNumeric(raw["week"]) ?? 0;
+  const gameId = parsePbpString(raw["game_id"]) ?? "";
+  const playId = parsePbpString(raw["play_id"]) ?? "";
+
+  const eligibility = checkPlayEligibility(raw, week, gameId, playId);
+  if (!eligibility.eligible) {
+    return { gsisId: null, week, increments: {}, resolved: [], unresolved: [], excluded: [{ gameId, playId, week, reason: eligibility.reason, detail: eligibility.detail }] };
+  }
+
+  const hasRecovery1 = Boolean(parsePbpString(raw["fumble_recovery_1_player_id"]) || parsePbpString(raw["fumble_recovery_1_team"]));
+  const hasRecovery2 = Boolean(parsePbpString(raw["fumble_recovery_2_player_id"]) || parsePbpString(raw["fumble_recovery_2_team"]));
+  const isTouchdown = parsePbpFlag(raw["touchdown"]);
+  const isFumblePlay = parsePbpFlag(raw["fumble"]) || parsePbpFlag(raw["fumble_lost"]) || hasRecovery1 || hasRecovery2;
+
+  if (!isTouchdown || !isFumblePlay) {
+    return { gsisId: null, week, increments: {}, resolved: [], unresolved: [], excluded: [{ gameId, playId, week, reason: "excluded_no_applicable_event", detail: `touchdown=${raw["touchdown"]} fumble=${raw["fumble"]} fumble_lost=${raw["fumble_lost"]}` }] };
+  }
+
+  const recoveryCandidates = [
+    {
+      slot: 1,
+      playerId: parsePbpString(raw["fumble_recovery_1_player_id"]),
+      playerName: parsePbpString(raw["fumble_recovery_1_player_name"]),
+      team: parsePbpString(raw["fumble_recovery_1_team"]),
+      yards: parsePbpNumeric(raw["fumble_recovery_1_yards"])
+    },
+    {
+      slot: 2,
+      playerId: parsePbpString(raw["fumble_recovery_2_player_id"]),
+      playerName: parsePbpString(raw["fumble_recovery_2_player_name"]),
+      team: parsePbpString(raw["fumble_recovery_2_team"]),
+      yards: parsePbpNumeric(raw["fumble_recovery_2_yards"])
+    }
+  ].filter((candidate) => candidate.playerId || candidate.team);
+
+  const touchdownPlayerId = parsePbpString(raw["td_player_id"]);
+  const touchdownPlayerName = parsePbpString(raw["td_player_name"]);
+  const touchdownTeam = parsePbpString(raw["td_team"]);
+  const playType = parsePbpString(raw["play_type"]);
+  const evidence = buildFumRetTdEvidence(raw);
+
+  if (parsePbpFlag(raw["interception"])) {
+    return {
+      gsisId: null,
+      week,
+      increments: {},
+      resolved: [],
+      unresolved: [],
+      excluded: [{
+        gameId,
+        playId,
+        week,
+        reason: "excluded_interception_context",
+        detail: `interception=${raw["interception"]}`,
+        eventType: "fum_ret_td",
+        evidence
+      }]
+    };
+  }
+
+  if (
+    playType === "kickoff" ||
+    playType === "punt" ||
+    parsePbpFlag(raw["kickoff_attempt"]) ||
+    parsePbpFlag(raw["punt_attempt"]) ||
+    parsePbpFlag(raw["defensive_two_point_attempt"]) ||
+    parsePbpFlag(raw["defensive_two_point_conv"])
+  ) {
+    return {
+      gsisId: null,
+      week,
+      increments: {},
+      resolved: [],
+      unresolved: [],
+      excluded: [{
+        gameId,
+        playId,
+        week,
+        reason: "excluded_special_teams_return",
+        detail: `play_type=${raw["play_type"]} kickoff_attempt=${raw["kickoff_attempt"]} punt_attempt=${raw["punt_attempt"]}`,
+        eventType: "fum_ret_td",
+        evidence
+      }]
+    };
+  }
+
+  if (!touchdownPlayerId) {
+    return {
+      gsisId: null,
+      week,
+      increments: {},
+      resolved: [],
+      unresolved: [],
+      excluded: [{
+        gameId,
+        playId,
+        week,
+        reason: "excluded_missing_td_player_id",
+        detail: "td_player_id is empty",
+        eventType: "fum_ret_td",
+        evidence
+      }]
+    };
+  }
+
+  const matchingRecoveries = recoveryCandidates.filter((candidate) => candidate.playerId === touchdownPlayerId);
+  if (matchingRecoveries.length > 1) {
+    return {
+      gsisId: null,
+      week,
+      increments: {},
+      resolved: [],
+      unresolved: [],
+      excluded: [{
+        gameId,
+        playId,
+        week,
+        reason: "excluded_multiple_recoveries",
+        detail: `Multiple recovery slots matched td_player_id=${touchdownPlayerId}`,
+        eventType: "fum_ret_td",
+        evidence
+      }]
+    };
+  }
+
+  if (matchingRecoveries.length === 0) {
+    const mismatchReason = recoveryCandidates.length > 1
+      ? "excluded_multiple_recoveries"
+      : recoveryCandidates.length === 0
+        ? "excluded_missing_recovery_player_id"
+        : "excluded_recovery_td_player_mismatch";
+    const detail = recoveryCandidates.length === 0
+      ? "No structured recovery player present"
+      : `No recovery player matched td_player_id=${touchdownPlayerId}`;
+    return {
+      gsisId: null,
+      week,
+      increments: {},
+      resolved: [],
+      unresolved: [],
+      excluded: [{
+        gameId,
+        playId,
+        week,
+        reason: mismatchReason,
+        detail,
+        eventType: "fum_ret_td",
+        evidence
+      }]
+    };
+  }
+
+  const matchedRecovery = matchingRecoveries[0];
+  const matchedEvidence: FumRetTdEvidence = {
+    playType,
+    description: parsePbpString(raw["desc"]) ?? "",
+    recoveryPlayerGsisId: matchedRecovery.playerId,
+    recoveryPlayerName: matchedRecovery.playerName,
+    recoveryTeam: matchedRecovery.team,
+    touchdownPlayerGsisId: touchdownPlayerId,
+    touchdownPlayerName,
+    touchdownTeam,
+    recoveryYards: matchedRecovery.yards
+  };
+
+  if (!matchedRecovery.playerId) {
+    return {
+      gsisId: null,
+      week,
+      increments: {},
+      resolved: [],
+      unresolved: [],
+      excluded: [{
+        gameId,
+        playId,
+        week,
+        reason: "excluded_missing_recovery_player_id",
+        detail: "Matched recovery slot has no player id",
+        eventType: "fum_ret_td",
+        evidence: matchedEvidence
+      }]
+    };
+  }
+
+  if (touchdownTeam && matchedRecovery.team && touchdownTeam !== matchedRecovery.team) {
+    return {
+      gsisId: null,
+      week,
+      increments: {},
+      resolved: [],
+      unresolved: [],
+      excluded: [{
+        gameId,
+        playId,
+        week,
+        reason: "excluded_recovery_td_team_mismatch",
+        detail: `td_team=${touchdownTeam} recovery_team=${matchedRecovery.team}`,
+        eventType: "fum_ret_td",
+        evidence: matchedEvidence
+      }]
+    };
+  }
+
+  const resolved: ResolvedEventRecord = {
+    gameId,
+    playId,
+    week,
+    gsisId: matchedRecovery.playerId,
+    eventType: "fum_ret_td",
+    yardsGained: matchedRecovery.yards,
+    evidence: matchedEvidence
+  };
+  return {
+    gsisId: matchedRecovery.playerId,
+    week,
+    increments: { fum_ret_td: 1 },
+    resolved: [resolved],
+    unresolved: [],
+    excluded: []
+  };
+}
+
+// ---------------------------------------------------------------------------
 // Play router — decides which derivation paths apply to a given play.
 // A single play may contribute to multiple paths (e.g., a 55-yard passing TD
 // does NOT also produce a pick-six, but this design stays open to future keys).
@@ -278,6 +543,22 @@ export function derivePlayEvents(raw: NflversePbpRaw): {
   // Check for pick-six.
   if (parsePbpFlag(raw["interception"]) && parsePbpFlag(raw["return_touchdown"])) {
     const result = derivePickSix(raw);
+    allResolved.push(...result.resolved);
+    allUnresolved.push(...result.unresolved);
+    allExcluded.push(...result.excluded);
+    if (result.gsisId && Object.keys(result.increments).length > 0) {
+      mergeIncrements(contributions, result.gsisId, result.increments);
+    }
+  }
+
+  // Check for fumble recovery touchdown.
+  if (parsePbpFlag(raw["touchdown"]) && (
+    parsePbpFlag(raw["fumble"]) ||
+    parsePbpFlag(raw["fumble_lost"]) ||
+    parsePbpString(raw["fumble_recovery_1_player_id"]) ||
+    parsePbpString(raw["fumble_recovery_2_player_id"])
+  )) {
+    const result = deriveFumbleReturnTouchdown(raw);
     allResolved.push(...result.resolved);
     allUnresolved.push(...result.unresolved);
     allExcluded.push(...result.excluded);

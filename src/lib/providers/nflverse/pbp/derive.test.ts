@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   accumulatePlayEvents,
+  deriveFumbleReturnTouchdown,
   derivePickSix,
   derivePlayEvents,
   deriveReceivingTdDistance,
@@ -84,6 +85,30 @@ function pickSixPlay(passerId = "00-0033873", overrides: Partial<NflversePbpRaw>
     td_player_id: "00-0031280",
     td_team: "BAL",
     passer_player_id: passerId,
+    ...overrides
+  });
+}
+
+function fumRetTdPlay(
+  recoveryPlayerId = "00-0040583",
+  overrides: Partial<NflversePbpRaw> = {}
+): NflversePbpRaw {
+  return basePlay({
+    play_type: "run",
+    touchdown: "1",
+    fumble: "1",
+    fumble_lost: "0",
+    return_touchdown: "0",
+    td_player_id: recoveryPlayerId,
+    td_player_name: "W.Marks",
+    td_team: "HOU",
+    posteam: "HOU",
+    defteam: "ARI",
+    fumble_recovery_1_team: "HOU",
+    fumble_recovery_1_yards: "7",
+    fumble_recovery_1_player_id: recoveryPlayerId,
+    fumble_recovery_1_player_name: "W.Marks",
+    desc: "(6:15) 57-B.Fisher reported in as eligible. 7-C.Stroud FUMBLES (Aborted) at ARI 2, recovered by HOU-27-W.Marks at ARI 7. 27-W.Marks for 7 yards, TOUCHDOWN.",
     ...overrides
   });
 }
@@ -254,6 +279,121 @@ describe("derivePickSix", () => {
 });
 
 // ---------------------------------------------------------------------------
+// Fumble-return touchdown derivation
+// ---------------------------------------------------------------------------
+
+describe("deriveFumbleReturnTouchdown", () => {
+  it("qualifies an unambiguous recovery touchdown", () => {
+    const result = deriveFumbleReturnTouchdown(fumRetTdPlay("00-0040583"));
+    expect(result.gsisId).toBe("00-0040583");
+    expect(result.increments).toEqual({ fum_ret_td: 1 });
+    expect(result.resolved[0]?.eventType).toBe("fum_ret_td");
+    expect(result.resolved[0]?.evidence?.recoveryPlayerGsisId).toBe("00-0040583");
+  });
+
+  it("does not qualify a recovery without a touchdown", () => {
+    const result = deriveFumbleReturnTouchdown(fumRetTdPlay("00-0040583", { touchdown: "0" }));
+    expect(result.increments).toEqual({});
+    expect(result.excluded[0]?.reason).toBe("excluded_no_applicable_event");
+  });
+
+  it("does not qualify a touchdown without a recovering player", () => {
+    const result = deriveFumbleReturnTouchdown(
+      fumRetTdPlay("00-0040583", {
+        fumble_recovery_1_player_id: "",
+        fumble_recovery_1_player_name: "",
+        fumble_recovery_1_team: ""
+      })
+    );
+    expect(result.increments).toEqual({});
+    expect(result.excluded[0]?.reason).toBe("excluded_missing_recovery_player_id");
+  });
+
+  it("excludes plays where the recovery player differs from the touchdown scorer", () => {
+    const result = deriveFumbleReturnTouchdown(
+      fumRetTdPlay("00-0040583", {
+        fumble_recovery_1_player_id: "00-0030001",
+        fumble_recovery_1_player_name: "Other Player"
+      })
+    );
+    expect(result.increments).toEqual({});
+    expect(result.excluded[0]?.reason).toBe("excluded_recovery_td_player_mismatch");
+  });
+
+  it("excludes plays where the recovery team conflicts with the touchdown team", () => {
+    const result = deriveFumbleReturnTouchdown(
+      fumRetTdPlay("00-0040583", {
+        fumble_recovery_1_team: "ARI"
+      })
+    );
+    expect(result.increments).toEqual({});
+    expect(result.excluded[0]?.reason).toBe("excluded_recovery_td_team_mismatch");
+  });
+
+  it("excludes nullified touchdowns", () => {
+    const result = deriveFumbleReturnTouchdown(fumRetTdPlay("00-0040583", { play_deleted: "1" }));
+    expect(result.increments).toEqual({});
+    expect(result.excluded[0]?.reason).toBe("excluded_nullified_play");
+  });
+
+  it("excludes interception-context touchdown recoveries", () => {
+    const result = deriveFumbleReturnTouchdown(
+      fumRetTdPlay("00-0032211", {
+        play_type: "pass",
+        posteam: "TEN",
+        defteam: "ARI",
+        interception: "1",
+        return_touchdown: "1",
+        td_team: "TEN",
+        fumble_lost: "1",
+        fumble_recovery_1_team: "TEN",
+        fumble_recovery_1_yards: "0",
+        td_player_name: "T.Lockett",
+        fumble_recovery_1_player_name: "T.Lockett",
+        desc: "(4:53) (Shotgun) 1-C.Ward pass short left intended for 0-C.Ridley INTERCEPTED by 42-D.Taylor-Demerson (2-Ma.Wilson) at ARI 5. 42-D.Taylor-Demerson to ARI 5 for no gain. FUMBLES, touched at ARI 6, RECOVERED by TEN-4-T.Lockett at ARI 0. TOUCHDOWN."
+      })
+    );
+    expect(result.increments).toEqual({});
+    expect(result.excluded[0]?.reason).toBe("excluded_interception_context");
+  });
+
+  it("excludes kickoff-return touchdowns", () => {
+    const result = deriveFumbleReturnTouchdown(
+      fumRetTdPlay("00-0040583", {
+        play_type: "kickoff",
+        kickoff_attempt: "1"
+      })
+    );
+    expect(result.increments).toEqual({});
+    expect(result.excluded[0]?.reason).toBe("excluded_special_teams_return");
+  });
+
+  it("excludes punt-return touchdowns", () => {
+    const result = deriveFumbleReturnTouchdown(
+      fumRetTdPlay("00-0040583", {
+        play_type: "punt",
+        punt_attempt: "1"
+      })
+    );
+    expect(result.increments).toEqual({});
+    expect(result.excluded[0]?.reason).toBe("excluded_special_teams_return");
+  });
+
+  it("handles multiple recovery ambiguity safely", () => {
+    const result = deriveFumbleReturnTouchdown(
+      fumRetTdPlay("00-0040583", {
+        fumble_recovery_2_player_id: "00-0040583",
+        fumble_recovery_2_player_name: "W.Marks",
+        fumble_recovery_2_team: "HOU",
+        fumble_recovery_2_yards: "7"
+      })
+    );
+    expect(result.increments).toEqual({});
+    expect(result.excluded[0]?.reason).toBe("excluded_multiple_recoveries");
+  });
+});
+
+// ---------------------------------------------------------------------------
 // Play router and accumulator
 // ---------------------------------------------------------------------------
 
@@ -277,6 +417,12 @@ describe("derivePlayEvents", () => {
     expect(contributions.get("00-0033873")).toEqual({ pass_pick6: 1 });
   });
 
+  it("routes fum_ret_td to the recovering touchdown scorer", () => {
+    const { contributions } = derivePlayEvents(fumRetTdPlay("00-0040583"));
+    expect(contributions.has("00-0040583")).toBe(true);
+    expect(contributions.get("00-0040583")).toEqual({ fum_ret_td: 1 });
+  });
+
   it("returns empty contributions for a non-scoring play", () => {
     const { contributions, summary } = derivePlayEvents(basePlay({ yards_gained: "12" }));
     expect(contributions.size).toBe(0);
@@ -297,7 +443,7 @@ describe("accumulatePlayEvents", () => {
     accumulatePlayEvents(acc, recTdPlay(42, "00-0033288", { play_id: "102" }));
     // 55yd: 40+ and 50+; 42yd: 40+ only
     const key = makeAccumulatorKey("00-0033288", 1);
-    expect(acc.get(key)).toEqual({ rec_td_40p: 2, rec_td_50p: 1, rush_td_40p: 0, rush_td_50p: 0, pass_pick6: 0 });
+    expect(acc.get(key)).toEqual({ rec_td_40p: 2, rec_td_50p: 1, rush_td_40p: 0, rush_td_50p: 0, pass_pick6: 0, fum_ret_td: 0 });
   });
 
   it("distinguishes receiving vs rushing attribution for the same player", () => {
@@ -307,7 +453,7 @@ describe("accumulatePlayEvents", () => {
     // Same player also rushes for a 50-yard TD (rare but possible for WR trick plays)
     accumulatePlayEvents(acc, rushTdPlay(50, "00-0035676"));
     const key = makeAccumulatorKey("00-0035676", 1);
-    expect(acc.get(key)).toEqual({ rec_td_40p: 1, rec_td_50p: 0, rush_td_40p: 1, rush_td_50p: 1, pass_pick6: 0 });
+    expect(acc.get(key)).toEqual({ rec_td_40p: 1, rec_td_50p: 0, rush_td_40p: 1, rush_td_50p: 1, pass_pick6: 0, fum_ret_td: 0 });
   });
 
   it("accumulates multiple pick-sixes for a QB in one week", () => {
@@ -316,6 +462,22 @@ describe("accumulatePlayEvents", () => {
     accumulatePlayEvents(acc, pickSixPlay("00-0033873", { play_id: "202" }));
     const key = makeAccumulatorKey("00-0033873", 1);
     expect(acc.get(key)?.pass_pick6).toBe(2);
+  });
+
+  it("aggregates two qualifying fum_ret_td plays for one player-week", () => {
+    const acc: DerivedStatsAccumulator = new Map();
+    accumulatePlayEvents(acc, fumRetTdPlay("00-0040583", { play_id: "301" }));
+    accumulatePlayEvents(acc, fumRetTdPlay("00-0040583", { play_id: "302" }));
+    const key = makeAccumulatorKey("00-0040583", 1);
+    expect(acc.get(key)?.fum_ret_td).toBe(2);
+  });
+
+  it("keeps different fum_ret_td players separate within the same game", () => {
+    const acc: DerivedStatsAccumulator = new Map();
+    accumulatePlayEvents(acc, fumRetTdPlay("00-0040583", { play_id: "401", game_id: "2025_15_ARI_HOU" }));
+    accumulatePlayEvents(acc, fumRetTdPlay("00-0032211", { play_id: "402", game_id: "2025_15_ARI_HOU", td_player_id: "00-0032211", td_player_name: "Other Runner", fumble_recovery_1_player_id: "00-0032211", fumble_recovery_1_player_name: "Other Runner" }));
+    expect(acc.get(makeAccumulatorKey("00-0040583", 1))?.fum_ret_td).toBe(1);
+    expect(acc.get(makeAccumulatorKey("00-0032211", 1))?.fum_ret_td).toBe(1);
   });
 
   it("does not create accumulator entry for non-scoring plays", () => {
@@ -391,13 +553,13 @@ describe("play eligibility", () => {
 describe("verifyDerivedStatsInvariants", () => {
   it("passes for valid accumulated stats", () => {
     const acc: DerivedStatsAccumulator = new Map();
-    acc.set(makeAccumulatorKey("00-0033288", 1), { rec_td_40p: 2, rec_td_50p: 1, rush_td_40p: 0, rush_td_50p: 0, pass_pick6: 0 });
+    acc.set(makeAccumulatorKey("00-0033288", 1), { rec_td_40p: 2, rec_td_50p: 1, rush_td_40p: 0, rush_td_50p: 0, pass_pick6: 0, fum_ret_td: 0 });
     expect(verifyDerivedStatsInvariants(acc)).toHaveLength(0);
   });
 
   it("flags rec_td_50p > rec_td_40p violation", () => {
     const acc: DerivedStatsAccumulator = new Map();
-    acc.set(makeAccumulatorKey("00-0033288", 1), { rec_td_40p: 1, rec_td_50p: 2, rush_td_40p: 0, rush_td_50p: 0, pass_pick6: 0 });
+    acc.set(makeAccumulatorKey("00-0033288", 1), { rec_td_40p: 1, rec_td_50p: 2, rush_td_40p: 0, rush_td_50p: 0, pass_pick6: 0, fum_ret_td: 0 });
     const violations = verifyDerivedStatsInvariants(acc);
     expect(violations).toHaveLength(1);
     expect(violations[0]?.rule).toContain("rec_td_50p <= rec_td_40p");
@@ -405,14 +567,14 @@ describe("verifyDerivedStatsInvariants", () => {
 
   it("flags rush_td_50p > rush_td_40p violation", () => {
     const acc: DerivedStatsAccumulator = new Map();
-    acc.set(makeAccumulatorKey("00-0035676", 2), { rec_td_40p: 0, rec_td_50p: 0, rush_td_40p: 0, rush_td_50p: 1, pass_pick6: 0 });
+    acc.set(makeAccumulatorKey("00-0035676", 2), { rec_td_40p: 0, rec_td_50p: 0, rush_td_40p: 0, rush_td_50p: 1, pass_pick6: 0, fum_ret_td: 0 });
     const violations = verifyDerivedStatsInvariants(acc);
     expect(violations.some((v) => v.rule.includes("rush_td_50p <= rush_td_40p"))).toBe(true);
   });
 
   it("flags negative count violation", () => {
     const acc: DerivedStatsAccumulator = new Map();
-    acc.set(makeAccumulatorKey("00-0033873", 1), { rec_td_40p: 0, rec_td_50p: 0, rush_td_40p: 0, rush_td_50p: 0, pass_pick6: -1 });
+    acc.set(makeAccumulatorKey("00-0033873", 1), { rec_td_40p: 0, rec_td_50p: 0, rush_td_40p: 0, rush_td_50p: 0, pass_pick6: -1, fum_ret_td: 0 });
     const violations = verifyDerivedStatsInvariants(acc);
     expect(violations.some((v) => v.rule.includes("pass_pick6"))).toBe(true);
   });

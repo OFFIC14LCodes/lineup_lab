@@ -1,0 +1,88 @@
+{
+  "generatedAt": "2026-06-14T15:56:22.868Z",
+  "mode": "execute",
+  "args": {
+    "provider": "mfl",
+    "season": 2026,
+    "teamCount": 12,
+    "mode": "execute",
+    "mflBaseUrl": null
+  },
+  "mflFetch": {
+    "rawRecords": 134,
+    "rejected": 1,
+    "rejectedReasons": {
+      "skip_position": 1
+    },
+    "sampleSize": 397,
+    "sourceVersion": "1781450704",
+    "fileHash": "fb2e61e5207126d7076b32490a7d7dc174f367659a97298025c6a1b386516818"
+  },
+  "resolution": {
+    "resolved": 132,
+    "ambiguous": 0,
+    "unresolved": 2,
+    "rookie": 0,
+    "total": 134,
+    "resolvedRate": 98.5,
+    "unresolvedSample": [
+      {
+        "rawName": "David Bailey",
+        "rawPosition": "DE",
+        "rawTeam": "NYJ",
+        "method": "unresolved"
+      },
+      {
+        "rawName": "Brendan Sorsby",
+        "rawPosition": "XX",
+        "rawTeam": null,
+        "method": "unresolved"
+      }
+    ]
+  },
+  "importResult": {
+    "mode": "execute",
+    "snapshotInserted": 0,
+    "snapshotId": null,
+    "existingSnapshotId": "59989f71-45c3-4e47-a601-b60bc9e70933",
+    "playerRecordsInserted": 0,
+    "playerRecordsDuplicate": 134,
+    "movementsInserted": 0,
+    "errors": [],
+    "diagnostics": {
+      "totalRecords": 134,
+      "resolvedCount": 132,
+      "unresolvedCount": 2,
+      "ambiguousCount": 0,
+      "rookieCount": 0,
+      "fileHash": "fb2e61e5207126d7076b32490a7d7dc174f367659a97298025c6a1b386516818",
+      "sourceIdentifier": "mfl-2026-redraft-ppr-12team-20260614"
+    }
+  },
+  "sourceMeta": {
+    "provider": "mfl",
+    "sourceIdentifier": "mfl-2026-redraft-ppr-12team-20260614",
+    "sourceUrl": "https://api.myfantasyleague.com/2026/export?TYPE=adp&PERIOD=recent&FCOUNT=12&JSON=1",
+    "capturedAt": "2026-06-14T15:56:22.868Z",
+    "effectiveDate": "2026-06-14",
+    "season": 2026,
+    "formatProfile": {
+      "draftType": "redraft",
+      "platform": "mfl",
+      "scoringFormat": "ppr",
+      "pprValue": 1,
+      "tePremiumValue": 0,
+      "rosterPositions": [],
+      "teamCount": 12,
+      "isBestBall": false,
+      "isDynasty": false,
+      "isStartup": false,
+      "isSuperflex": false,
+      "isTePremium": false
+    },
+    "sampleSize": 397,
+    "sourceVersion": "1781450704",
+    "fileHash": "fb2e61e5207126d7076b32490a7d7dc174f367659a97298025c6a1b386516818",
+    "parserVersion": "h7-mfl-parser-v1"
+  }
+}

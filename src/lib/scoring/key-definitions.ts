@@ -8,6 +8,72 @@ type KeyDefinitionInput = Omit<ScoringKeyDefinition, "implementationStatus"> & {
 
 const KNOWN_KEY_DEFINITIONS: ScoringKeyDefinition[] = [
   define({
+    scoringKey: "fum_ret_td",
+    category: "miscellaneous",
+    description: "Fumble-recovery touchdowns derived from nflverse play-by-play when recovery and touchdown attribution are structurally unambiguous",
+    allowedPositions: OFFENSE,
+    requiredStats: ["fum_ret_td"],
+    dataCapabilityStatus: "implementable_now_verified",
+    rowStatAvailabilityStatus: "available",
+    dataCapabilityDetail: {
+      reason: "Derived from nflverse PBP by matching the touchdown scorer to the fumble recovery player on qualifying plays.",
+      requiredData: ["nflverse PBP fumble recovery player attribution", "nflverse PBP touchdown scorer attribution"]
+    }
+  }),
+  define({
+    scoringKey: "pass_inc",
+    category: "passing",
+    description: "Passing incompletions derived from pass_att - pass_cmp during weekly normalization",
+    allowedPositions: ["QB"],
+    requiredStats: ["pass_inc"],
+    dataCapabilityStatus: "implementable_now_verified"
+  }),
+  define({
+    scoringKey: "fum",
+    category: "miscellaneous",
+    description: "Total fumbles aggregated from nflverse weekly context columns",
+    allowedPositions: OFFENSE,
+    requiredStats: ["fum"],
+    dataCapabilityStatus: "implementable_now_verified"
+  }),
+  define({
+    scoringKey: "kick_ret_yd",
+    category: "returns",
+    description: "Kickoff return yards from nflverse weekly player stats",
+    allowedPositions: OFFENSE,
+    requiredStats: ["kick_ret_yd"],
+    dataCapabilityStatus: "implementable_now_verified"
+  }),
+  define({
+    scoringKey: "punt_ret_yd",
+    category: "returns",
+    description: "Punt return yards from nflverse weekly player stats",
+    allowedPositions: OFFENSE,
+    requiredStats: ["punt_ret_yd"],
+    dataCapabilityStatus: "implementable_now_verified"
+  }),
+  define({
+    scoringKey: "return_td",
+    category: "returns",
+    description: "Kick or punt return touchdowns from nflverse weekly special_teams_tds",
+    allowedPositions: OFFENSE,
+    requiredStats: ["return_td"],
+    dataCapabilityStatus: "implementable_now_verified"
+  }),
+  define({
+    scoringKey: "return_fd",
+    category: "first_downs",
+    description: "Return first downs",
+    allowedPositions: OFFENSE,
+    requiredStats: ["return_fd"],
+    dataCapabilityStatus: "unavailable_from_weekly_source",
+    rowStatAvailabilityStatus: "absent",
+    dataCapabilityDetail: {
+      reason: "The archived nflverse weekly player stats schema does not expose a verified return-first-down column, so return_fd cannot be sourced from the current weekly pipeline.",
+      requiredData: ["A verified weekly player return-first-down field or a new trustworthy source"]
+    }
+  }),
+  define({
     scoringKey: "bonus_rec_rb",
     category: "receiving",
     description: "Running back reception bonus",
@@ -94,29 +160,29 @@ const KNOWN_KEY_DEFINITIONS: ScoringKeyDefinition[] = [
   define({
     scoringKey: "pass_pick6",
     category: "passing",
-    description: "Pick-sixes thrown — interceptions returned for a touchdown against the QB",
+    description: "Pick-sixes thrown — derived from nflverse play-by-play and merged from player_weekly_derived_stats",
     allowedPositions: ["QB"],
     requiredStats: ["pass_pick6"],
     engineImplementationStatus: "implemented",
-    dataCapabilityStatus: "unavailable_from_weekly_source",
-    rowStatAvailabilityStatus: "absent",
+    dataCapabilityStatus: "implementable_now_verified",
+    rowStatAvailabilityStatus: "available",
     dataCapabilityDetail: {
-      reason: "The nflverse weekly player stats CSV has no column that tracks whether a QB's interception was returned for a touchdown. Only the total interception count (passing_interceptions → pass_int) is recorded. The pass_pick6 canonical stat is absent from every nflverse weekly row.",
-      requiredData: ["pick-six outcome per interception play"]
+      reason: "The canonical pass_pick6 stat is produced by the nflverse PBP derivation pipeline and merged onto weekly scoring rows before scoring.",
+      requiredData: ["nflverse PBP interception + return_touchdown attribution"]
     }
   }),
   define({
     scoringKey: "pass_int_td",
     category: "passing",
-    description: "QB penalty when thrown interception is returned for a touchdown (pick-six) — same event as pass_pick6, maps to identical canonical stat",
+    description: "QB penalty when a thrown interception is returned for a touchdown — alias of pass_pick6 and backed by the same derived canonical stat",
     allowedPositions: ["QB"],
     requiredStats: ["pass_pick6"],
     engineImplementationStatus: "implemented",
-    dataCapabilityStatus: "unavailable_from_weekly_source",
-    rowStatAvailabilityStatus: "absent",
+    dataCapabilityStatus: "implementable_now_verified",
+    rowStatAvailabilityStatus: "available",
     dataCapabilityDetail: {
-      reason: "Maps to the pass_pick6 canonical stat, which is absent from the nflverse weekly source. The nflverse weekly CSV tracks only total interception count, not per-interception return outcomes. No inference from pass_int is permitted.",
-      requiredData: ["pick-six outcome per interception play"]
+      reason: "Maps to the derived pass_pick6 canonical stat, which is available after the nflverse PBP derivation merge.",
+      requiredData: ["nflverse PBP interception + return_touchdown attribution"]
     }
   }),
   define({

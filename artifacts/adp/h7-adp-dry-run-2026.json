@@ -1,0 +1,566 @@
+{
+  "generatedAt": "2026-06-14T16:13:15.104Z",
+  "mode": "dry_run",
+  "note": "Dry run — no rows written to adp_snapshots or adp_player_records.",
+  "sourceMeta": {
+    "provider": "mfl",
+    "sourceIdentifier": "mfl-2026-redraft-ppr-12team-20260614",
+    "sourceUrl": "https://api.myfantasyleague.com/2026/export?TYPE=adp&PERIOD=recent&FCOUNT=12&JSON=1",
+    "capturedAt": "2026-06-14T16:13:15.104Z",
+    "effectiveDate": "2026-06-14",
+    "season": 2026,
+    "formatProfile": {
+      "draftType": "redraft",
+      "platform": "mfl",
+      "scoringFormat": "ppr",
+      "pprValue": 1,
+      "tePremiumValue": 0,
+      "rosterPositions": [],
+      "teamCount": 12,
+      "isBestBall": false,
+      "isDynasty": false,
+      "isStartup": false,
+      "isSuperflex": false,
+      "isTePremium": false
+    },
+    "sampleSize": 397,
+    "sourceVersion": "1781450761",
+    "fileHash": "2444084deda101c1371d9d63de99641e0a0ad59d5fe9bee7136f3a59ca700a6c",
+    "parserVersion": "h7-mfl-parser-v1"
+  },
+  "adpFetch": {
+    "rawRecords": 134,
+    "fileHash": "2444084deda101c1371d9d63de99641e0a0ad59d5fe9bee7136f3a59ca700a6c",
+    "sourceUrl": "https://api.myfantasyleague.com/2026/export?TYPE=adp&PERIOD=recent&FCOUNT=12&JSON=1",
+    "sampleSize": 397,
+    "sourceVersion": "1781450761",
+    "rejectedCount": 1,
+    "rejectedReasons": {
+      "skip_position": 1
+    }
+  },
+  "identityResolution": {
+    "resolved": 132,
+    "ambiguous": 0,
+    "unresolved": 2,
+    "rookie": 0,
+    "total": 134,
+    "resolvedRate": 98.5,
+    "unresolvedSample": [
+      {
+        "rawName": "David Bailey",
+        "rawPosition": "DE",
+        "rawTeam": "NYJ",
+        "method": "unresolved"
+      },
+      {
+        "rawName": "Brendan Sorsby",
+        "rawPosition": "XX",
+        "rawTeam": null,
+        "method": "unresolved"
+      }
+    ]
+  },
+  "consensus": {
+    "playerCount": 132,
+    "top20": [
+      {
+        "rank": 1,
+        "name": "Jeremiyah Love",
+        "pos": "RB",
+        "team": "ARI",
+        "adp": 2.1,
+        "isRookie": false
+      },
+      {
+        "rank": 2,
+        "name": "Carnell Tate",
+        "pos": "WR",
+        "team": "TEN",
+        "adp": 4.9,
+        "isRookie": false
+      },
+      {
+        "rank": 3,
+        "name": "Jadarian Price",
+        "pos": "RB",
+        "team": "SEA",
+        "adp": 7.4,
+        "isRookie": false
+      },
+      {
+        "rank": 4,
+        "name": "Jordyn Tyson",
+        "pos": "WR",
+        "team": "NO",
+        "adp": 7.6,
+        "isRookie": false
+      },
+      {
+        "rank": 5,
+        "name": "Fernando Mendoza",
+        "pos": "QB",
+        "team": "LV",
+        "adp": 8.3,
+        "isRookie": false
+      },
+      {
+        "rank": 6,
+        "name": "Makai Lemon",
+        "pos": "WR",
+        "team": "PHI",
+        "adp": 8.7,
+        "isRookie": false
+      },
+      {
+        "rank": 7,
+        "name": "Sonny Styles",
+        "pos": "LB",
+        "team": "WAS",
+        "adp": 10.4,
+        "isRookie": false
+      },
+      {
+        "rank": 8,
+        "name": "Kenyon Sadiq",
+        "pos": "TE",
+        "team": "NYJ",
+        "adp": 11.2,
+        "isRookie": false
+      },
+      {
+        "rank": 9,
+        "name": "KC Concepcion",
+        "pos": "WR",
+        "team": "CLE",
+        "adp": 11.5,
+        "isRookie": false
+      },
+      {
+        "rank": 10,
+        "name": "Omar Cooper",
+        "pos": "WR",
+        "team": "NYJ",
+        "adp": 15.2,
+        "isRookie": false
+      },
+      {
+        "rank": 11,
+        "name": "Eli Stowers",
+        "pos": "TE",
+        "team": "PHI",
+        "adp": 15.6,
+        "isRookie": false
+      },
+      {
+        "rank": 12,
+        "name": "CJ Allen",
+        "pos": "LB",
+        "team": "IND",
+        "adp": 16,
+        "isRookie": false
+      },
+      {
+        "rank": 13,
+        "name": "Arvell Reese",
+        "pos": "LB",
+        "team": "NYG",
+        "adp": 17,
+        "isRookie": false
+      },
+      {
+        "rank": 14,
+        "name": "Denzel Boston",
+        "pos": "WR",
+        "team": "CLE",
+        "adp": 19,
+        "isRookie": false
+      },
+      {
+        "rank": 15,
+        "name": "Jonah Coleman",
+        "pos": "RB",
+        "team": "DEN",
+        "adp": 19.3,
+        "isRookie": false
+      },
+      {
+        "rank": 16,
+        "name": "Antonio Williams",
+        "pos": "WR",
+        "team": "WAS",
+        "adp": 19.9,
+        "isRookie": false
+      },
+      {
+        "rank": 17,
+        "name": "Ty Simpson",
+        "pos": "QB",
+        "team": "LAR",
+        "adp": 21.3,
+        "isRookie": false
+      },
+      {
+        "rank": 18,
+        "name": "Jacob Rodriguez",
+        "pos": "LB",
+        "team": "MIA",
+        "adp": 22.4,
+        "isRookie": false
+      },
+      {
+        "rank": 19,
+        "name": "Chris Bell",
+        "pos": "WR",
+        "team": "MIA",
+        "adp": 23.2,
+        "isRookie": false
+      },
+      {
+        "rank": 20,
+        "name": "Caleb Downs",
+        "pos": "DB",
+        "team": "DAL",
+        "adp": 23.7,
+        "isRookie": false
+      }
+    ]
+  },
+  "formatMatch": [
+    {
+      "leagueId": "fde3c4a0-3cb6-4fac-890d-b43c5c2f0c1a",
+      "leagueName": "Legacy League",
+      "score": 0.95,
+      "compatible": true,
+      "warnings": []
+    },
+    {
+      "leagueId": "8d1a3d47-0b1d-494c-bdab-1590fa630d7d",
+      "leagueName": "🪓 Chopped",
+      "score": 0.66,
+      "compatible": true,
+      "warnings": [
+        "Superflex mismatch: snapshot=false, league=true — QB tiers differ",
+        "Team count difference: snapshot=12, league=18"
+      ]
+    },
+    {
+      "leagueId": "b329b0f4-9e4a-4f3d-9e8a-ee8482be0138",
+      "leagueName": "Tua girls one Kupp",
+      "score": 0.61,
+      "compatible": true,
+      "warnings": [
+        "Draft type mismatch: snapshot=redraft, league=dynasty — ADP not applicable",
+        "Superflex mismatch: snapshot=false, league=true — QB tiers differ"
+      ]
+    },
+    {
+      "leagueId": "da459ccd-6144-47ee-9453-735b39c62f65",
+      "leagueName": "All Buck$ No Cucks",
+      "score": 0.56,
+      "compatible": true,
+      "warnings": [
+        "Draft type mismatch: snapshot=redraft, league=dynasty — ADP not applicable",
+        "Superflex mismatch: snapshot=false, league=true — QB tiers differ"
+      ]
+    },
+    {
+      "leagueId": "566b01f1-28df-48f2-ac3d-2ecaf0eeb09e",
+      "leagueName": "3qbs playing circle jerk with their best balls ",
+      "score": 0.553,
+      "compatible": true,
+      "warnings": [
+        "Draft type mismatch: snapshot=redraft, league=dynasty — ADP not applicable",
+        "Superflex mismatch: snapshot=false, league=true — QB tiers differ"
+      ]
+    },
+    {
+      "leagueId": "9574e197-b403-4798-9f89-15832da09d15",
+      "leagueName": "The 12th Mans $$Bag",
+      "score": 0.51,
+      "compatible": false,
+      "warnings": [
+        "Draft type mismatch: snapshot=redraft, league=dynasty — ADP not applicable",
+        "Superflex mismatch: snapshot=false, league=true — QB tiers differ"
+      ]
+    },
+    {
+      "leagueId": "8d83d1ce-d9e5-4921-8e51-97c5d96a3700",
+      "leagueName": "Bikini Bottom Boys",
+      "score": 0.51,
+      "compatible": false,
+      "warnings": [
+        "Draft type mismatch: snapshot=redraft, league=dynasty — ADP not applicable",
+        "Superflex mismatch: snapshot=false, league=true — QB tiers differ"
+      ]
+    },
+    {
+      "leagueId": "4b06eb95-c193-41a0-857a-c9059b327891",
+      "leagueName": "Hard Knock Lyfe ",
+      "score": 0.51,
+      "compatible": false,
+      "warnings": [
+        "Draft type mismatch: snapshot=redraft, league=dynasty — ADP not applicable",
+        "Superflex mismatch: snapshot=false, league=true — QB tiers differ"
+      ]
+    },
+    {
+      "leagueId": "5a828edf-c69f-4ae6-93fc-c97a453e62c7",
+      "leagueName": "No FK shit at the function W/O Bob",
+      "score": 0.51,
+      "compatible": false,
+      "warnings": [
+        "Draft type mismatch: snapshot=redraft, league=dynasty — ADP not applicable",
+        "Superflex mismatch: snapshot=false, league=true — QB tiers differ"
+      ]
+    },
+    {
+      "leagueId": "bb695a41-86ad-4a9c-9948-95604c5cfa41",
+      "leagueName": "Fap Circle Of Trust - No Eye Contact",
+      "score": 0.502,
+      "compatible": false,
+      "warnings": [
+        "Draft type mismatch: snapshot=redraft, league=dynasty — ADP not applicable",
+        "Superflex mismatch: snapshot=false, league=true — QB tiers differ"
+      ]
+    },
+    {
+      "leagueId": "95c929b9-cc55-411e-8493-06fd85308c1c",
+      "leagueName": "BestBalls in Hand IDP Dynasty ",
+      "score": 0.502,
+      "compatible": false,
+      "warnings": [
+        "Draft type mismatch: snapshot=redraft, league=dynasty — ADP not applicable",
+        "Superflex mismatch: snapshot=false, league=true — QB tiers differ"
+      ]
+    },
+    {
+      "leagueId": "64a3d6af-449f-41c5-a1f9-5a3918bfc8e9",
+      "leagueName": "Trade Pros Auto Draft Dynasty",
+      "score": 0.46,
+      "compatible": false,
+      "warnings": [
+        "Draft type mismatch: snapshot=redraft, league=dynasty — ADP not applicable",
+        "Superflex mismatch: snapshot=false, league=true — QB tiers differ"
+      ]
+    },
+    {
+      "leagueId": "c8b07cf4-7062-4cb7-8340-3b7dc431a575",
+      "leagueName": "Bob’sBurner Bowl",
+      "score": 0.21,
+      "compatible": false,
+      "warnings": [
+        "PPR mismatch: snapshot=1, league=0.5 — values not comparable",
+        "Draft type mismatch: snapshot=redraft, league=dynasty — ADP not applicable",
+        "Superflex mismatch: snapshot=false, league=true — QB tiers differ"
+      ]
+    }
+  ],
+  "hlv": {
+    "computed": true,
+    "leagueId": "8d1a3d47-0b1d-494c-bdab-1590fa630d7d",
+    "recordCount": 0,
+    "top20": []
+  },
+  "valueVsMarket": {
+    "computed": true,
+    "recordCount": 132,
+    "strongValue": [],
+    "clearOverdraft": []
+  },
+  "tiers": {
+    "computed": true,
+    "positionCount": 7,
+    "tierCount": 40,
+    "sample": [
+      {
+        "position": "RB",
+        "tierNumber": 1,
+        "tierLabel": "Elite",
+        "playerIds": [
+          "24621c8f-d6e8-4589-bcf7-12aaabaa54a0"
+        ],
+        "tierBasis": "market_adp",
+        "adpCeiling": 2.1,
+        "adpFloor": 2.1,
+        "tierGapAbove": 5.3
+      },
+      {
+        "position": "RB",
+        "tierNumber": 2,
+        "tierLabel": "Tier 2",
+        "playerIds": [
+          "1db25de0-f231-4d4d-b3fe-fa41ebf3fb92"
+        ],
+        "tierBasis": "market_adp",
+        "adpCeiling": 7.4,
+        "adpFloor": 7.4,
+        "tierGapAbove": 11.9
+      },
+      {
+        "position": "WR",
+        "tierNumber": 1,
+        "tierLabel": "Elite",
+        "playerIds": [
+          "f0a50309-dad9-4288-ba08-3642844b395c",
+          "671424b1-fec3-4b49-aa32-411613b2130f",
+          "65e8bc23-70a4-43d6-a621-a42bbe07ab2c",
+          "26fd37e0-80ca-40e9-92da-d6c450960f0f",
+          "16eacc7a-eacb-4651-a019-16f98734c8c5",
+          "dab133d8-1c75-47a6-a47b-f4916c6f1557",
+          "be27ee99-545c-44ad-bb27-601496fb049d",
+          "16c39e22-71f8-4140-aa7d-1338bcc47101",
+          "9cda2f82-1833-49a7-bfc4-ff658092c47c",
+          "38e0ab6b-fbdd-4f8b-a756-74a4e752ea81",
+          "a008b81a-0259-4860-a52a-b6d0ad426a1d",
+          "7b5d1c3c-9389-408f-a394-5b2d5739077c",
+          "553d4b02-c3d4-4bd9-9715-6fbe5757f330",
+          "9896a9b2-3004-40a7-8fb3-b5eea4890436",
+          "1a4ea6cd-4a9b-4ab7-94b4-e464e768d1b9",
+          "8be8c6fd-dc39-4dc2-87dd-630352ee554c",
+          "03cfad40-3a40-4eed-9375-e246f0736186",
+          "92c66b8d-1f8c-4d27-a90d-1e413bb53633",
+          "09a1c325-e499-4449-9615-4546d4422257",
+          "419afa48-41d2-4e21-8156-94862a4d5b04",
+          "8581514d-4f5f-46de-9982-1141fe8ff89a",
+          "c3ea8bec-8076-4ed9-876e-b8770f1226e7",
+          "0b9c09a7-b6e9-40fa-8882-b2ebceaa089c",
+          "a7a5de63-8fbb-4ec6-9953-633623ff0130",
+          "06fd04ec-53f9-4875-8ffc-b72d65be03df",
+          "e24daabb-2a41-4a61-a9d5-32e0c26a450c",
+          "8698ed88-91d5-411e-8233-1fdfea686c95",
+          "c2925496-efd0-45d6-b86f-620c13c6f7e2",
+          "d8ef1b9a-11e1-41ba-b3ea-f41e59a04d9e",
+          "0c97391e-010a-4d3e-9f67-e912b2c67269",
+          "de859277-f748-4323-b0b3-bd4e420e13db",
+          "72cd4084-5655-41ba-b1e6-1e2b6efc4887",
+          "6f8fb36b-8551-4f17-b52e-b42557086790"
+        ],
+        "tierBasis": "market_adp",
+        "adpCeiling": 4.9,
+        "adpFloor": 80.5,
+        "tierGapAbove": 26.7
+      },
+      {
+        "position": "WR",
+        "tierNumber": 2,
+        "tierLabel": "Tier 2",
+        "playerIds": [
+          "c856bff2-094a-4f08-9d9a-b0339ba0bf02"
+        ],
+        "tierBasis": "market_adp",
+        "adpCeiling": 107.2,
+        "adpFloor": 107.2,
+        "tierGapAbove": null
+      },
+      {
+        "position": "QB",
+        "tierNumber": 1,
+        "tierLabel": "Elite",
+        "playerIds": [
+          "966f6cde-8a1e-4a65-866c-e52640692857"
+        ],
+        "tierBasis": "market_adp",
+        "adpCeiling": 8.3,
+        "adpFloor": 8.3,
+        "tierGapAbove": 13
+      },
+      {
+        "position": "QB",
+        "tierNumber": 2,
+        "tierLabel": "Tier 2",
+        "playerIds": [
+          "4d9981ef-77e0-4c12-bf7e-8f4bf696547c"
+        ],
+        "tierBasis": "market_adp",
+        "adpCeiling": 21.3,
+        "adpFloor": 21.3,
+        "tierGapAbove": 16.5
+      },
+      {
+        "position": "TE",
+        "tierNumber": 1,
+        "tierLabel": "Elite",
+        "playerIds": [
+          "f567bc18-a57f-4afb-bbfc-0cd41b480b55"
+        ],
+        "tierBasis": "market_adp",
+        "adpCeiling": 11.2,
+        "adpFloor": 11.2,
+        "tierGapAbove": 4.4
+      },
+      {
+        "position": "TE",
+        "tierNumber": 2,
+        "tierLabel": "Tier 2",
+        "playerIds": [
+          "62764a74-17e9-4fdb-97ba-ef182b0afb76"
+        ],
+        "tierBasis": "market_adp",
+        "adpCeiling": 15.6,
+        "adpFloor": 15.6,
+        "tierGapAbove": 21.2
+      }
+    ]
+  },
+  "availability": {
+    "computed": true,
+    "sample": [
+      {
+        "name": "Jeremiyah Love",
+        "adp": 2.1,
+        "stddev": 4,
+        "stage": "tight",
+        "probAt": {
+          "minus12": null,
+          "adpPick": 0.51,
+          "plus12": 0.001
+        }
+      },
+      {
+        "name": "Carnell Tate",
+        "adp": 4.9,
+        "stddev": 4,
+        "stage": "tight",
+        "probAt": {
+          "minus12": null,
+          "adpPick": 0.49,
+          "plus12": 0.001
+        }
+      },
+      {
+        "name": "Jadarian Price",
+        "adp": 7.4,
+        "stddev": 4,
+        "stage": "tight",
+        "probAt": {
+          "minus12": null,
+          "adpPick": 0.54,
+          "plus12": 0.002
+        }
+      },
+      {
+        "name": "Jordyn Tyson",
+        "adp": 7.6,
+        "stddev": 4,
+        "stage": "tight",
+        "probAt": {
+          "minus12": null,
+          "adpPick": 0.46,
+          "plus12": null
+        }
+      },
+      {
+        "name": "Fernando Mendoza",
+        "adp": 8.3,
+        "stddev": 4,
+        "stage": "tight",
+        "probAt": {
+          "minus12": null,
+          "adpPick": 0.53,
+          "plus12": 0.002
+        }
+      }
+    ]
+  }
+}

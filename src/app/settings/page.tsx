@@ -1,15 +1,19 @@
 import { PageShell, Panel } from "@/components/ui";
 import { LogoutButton } from "@/components/logout-button";
 import { SyncPlayersButton } from "@/components/sync-players-button";
+import { isAdpBoardEnabled } from "@/lib/adp/server/access";
 import { isProviderDataImportEnabled } from "@/lib/providers/import/access";
 import { isScoringInspectorEnabled } from "@/lib/scoring/server";
+import { isPlayerContextEnabled } from "@/lib/context/server/access";
 import { requireUser } from "@/lib/supabase/auth";
 import Link from "next/link";
 
 export default async function SettingsPage() {
   await requireUser();
+  const adpBoardEnabled = isAdpBoardEnabled();
   const providerImportEnabled = isProviderDataImportEnabled();
   const scoringInspectorEnabled = isScoringInspectorEnabled();
+  const playerContextEnabled = isPlayerContextEnabled();
 
   return (
     <PageShell className="grid gap-6 lg:grid-cols-[1fr_320px]">
@@ -31,6 +35,16 @@ export default async function SettingsPage() {
           {scoringInspectorEnabled ? (
             <Link href="/settings/scoring-inspector" className="rf-button secondary">
               Open scoring inspector
+            </Link>
+          ) : null}
+          {adpBoardEnabled ? (
+            <Link href="/settings/adp-board" className="rf-button secondary">
+              Open ADP board
+            </Link>
+          ) : null}
+          {playerContextEnabled ? (
+            <Link href="/settings/player-context" className="rf-button secondary">
+              Open player context
             </Link>
           ) : null}
         </div>

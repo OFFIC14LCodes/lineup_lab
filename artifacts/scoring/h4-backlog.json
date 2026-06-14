@@ -1,0 +1,215 @@
+{
+  "auditedAt": "2026-06-14T22:11:44.869Z",
+  "groups": [
+    {
+      "id": "group_a_weekly_derivable",
+      "title": "Group A — derivable from existing weekly data",
+      "description": "Keys that can be computed from already-extracted weekly player stats without adding a new upstream source.",
+      "currentKeyCount": 0,
+      "keys": []
+    },
+    {
+      "id": "group_b_weekly_unwired",
+      "title": "Group B — source available but unwired",
+      "description": "Keys whose raw columns already exist in the nflverse weekly player stats artifact but are not yet normalized into canonical stats.",
+      "currentKeyCount": 0,
+      "keys": []
+    },
+    {
+      "id": "group_ab_blocked_candidates",
+      "title": "Group A/B candidates blocked after verification",
+      "description": "Keys reviewed in the same quick-win tranche that could not be safely activated because the archived weekly source did not verify the needed field.",
+      "currentKeyCount": 1,
+      "keys": [
+        {
+          "key": "return_fd",
+          "label": "Return first downs",
+          "family": "special_teams_skill",
+          "dataStatus": "requires_new_source",
+          "recommendedPath": "Keep blocked until a verified source field exists.",
+          "blockers": [
+            "Archived nflverse weekly player stats do not expose a verified return-first-down column; return_fd cannot be activated from the current weekly source."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "group_c_additional_pbp_derivations",
+      "title": "Group C — additional PBP derivations",
+      "description": "Keys that still require more play-by-play-derived canonical stats beyond the H2/H2.1 set now in production.",
+      "currentKeyCount": 4,
+      "keys": [
+        {
+          "key": "fum_rec",
+          "label": "Offensive fumble recovery",
+          "family": "miscellaneous_skill",
+          "dataStatus": "nflverse_pbp_derivable",
+          "recommendedPath": "Extend the PBP derivation pipeline with a new derived canonical stat.",
+          "blockers": []
+        },
+        {
+          "key": "pass_td_40p",
+          "label": "Passing TD of 40+ yards bonus",
+          "family": "long_td_bonuses",
+          "dataStatus": "nflverse_pbp_derivable",
+          "recommendedPath": "Extend the PBP derivation pipeline with a new derived canonical stat.",
+          "blockers": []
+        },
+        {
+          "key": "pass_td_50p",
+          "label": "Passing TD of 50+ yards bonus",
+          "family": "long_td_bonuses",
+          "dataStatus": "nflverse_pbp_derivable",
+          "recommendedPath": "Extend the PBP derivation pipeline with a new derived canonical stat.",
+          "blockers": []
+        },
+        {
+          "key": "pass_cmp_40p",
+          "label": "Passing completion of 40+ yards bonus",
+          "family": "long_td_bonuses",
+          "dataStatus": "nflverse_pbp_derivable",
+          "recommendedPath": "Extend the PBP derivation pipeline with a new derived canonical stat.",
+          "blockers": []
+        }
+      ]
+    },
+    {
+      "id": "group_d_team_context_dependent",
+      "title": "Group D — team-context dependent",
+      "description": "Keys that depend on team-level game results rather than player stat rows or player-level PBP accumulation.",
+      "currentKeyCount": 16,
+      "keys": [
+        {
+          "key": "pts_allow_0",
+          "label": "Points allowed: shutout (0)",
+          "family": "team_defense",
+          "dataStatus": "requires_team_game_context",
+          "recommendedPath": "Add a team game-result ingestion layer and team-defense aggregation.",
+          "blockers": [
+            "Requires team-level game aggregate (points allowed per game), not per-player stats"
+          ]
+        },
+        {
+          "key": "pts_allow_1_6",
+          "label": "Points allowed: 1-6",
+          "family": "team_defense",
+          "dataStatus": "requires_team_game_context",
+          "recommendedPath": "Add a team game-result ingestion layer and team-defense aggregation.",
+          "blockers": []
+        },
+        {
+          "key": "pts_allow_7_13",
+          "label": "Points allowed: 7-13",
+          "family": "team_defense",
+          "dataStatus": "requires_team_game_context",
+          "recommendedPath": "Add a team game-result ingestion layer and team-defense aggregation.",
+          "blockers": []
+        },
+        {
+          "key": "pts_allow_14_20",
+          "label": "Points allowed: 14-20",
+          "family": "team_defense",
+          "dataStatus": "requires_team_game_context",
+          "recommendedPath": "Add a team game-result ingestion layer and team-defense aggregation.",
+          "blockers": []
+        },
+        {
+          "key": "pts_allow_21_27",
+          "label": "Points allowed: 21-27",
+          "family": "team_defense",
+          "dataStatus": "requires_team_game_context",
+          "recommendedPath": "Add a team game-result ingestion layer and team-defense aggregation.",
+          "blockers": []
+        },
+        {
+          "key": "pts_allow_28_34",
+          "label": "Points allowed: 28-34",
+          "family": "team_defense",
+          "dataStatus": "requires_team_game_context",
+          "recommendedPath": "Add a team game-result ingestion layer and team-defense aggregation.",
+          "blockers": []
+        },
+        {
+          "key": "pts_allow_35p",
+          "label": "Points allowed: 35+",
+          "family": "team_defense",
+          "dataStatus": "requires_team_game_context",
+          "recommendedPath": "Add a team game-result ingestion layer and team-defense aggregation.",
+          "blockers": []
+        },
+        {
+          "key": "yds_allow_0_100",
+          "label": "Yards allowed: 0-100",
+          "family": "team_defense",
+          "dataStatus": "requires_team_game_context",
+          "recommendedPath": "Add a team game-result ingestion layer and team-defense aggregation.",
+          "blockers": []
+        },
+        {
+          "key": "yds_allow_101_199",
+          "label": "Yards allowed: 101-199",
+          "family": "team_defense",
+          "dataStatus": "requires_team_game_context",
+          "recommendedPath": "Add a team game-result ingestion layer and team-defense aggregation.",
+          "blockers": []
+        },
+        {
+          "key": "yds_allow_200_299",
+          "label": "Yards allowed: 200-299",
+          "family": "team_defense",
+          "dataStatus": "requires_team_game_context",
+          "recommendedPath": "Add a team game-result ingestion layer and team-defense aggregation.",
+          "blockers": []
+        },
+        {
+          "key": "yds_allow_300_349",
+          "label": "Yards allowed: 300-349",
+          "family": "team_defense",
+          "dataStatus": "requires_team_game_context",
+          "recommendedPath": "Add a team game-result ingestion layer and team-defense aggregation.",
+          "blockers": []
+        },
+        {
+          "key": "yds_allow_350_399",
+          "label": "Yards allowed: 350-399",
+          "family": "team_defense",
+          "dataStatus": "requires_team_game_context",
+          "recommendedPath": "Add a team game-result ingestion layer and team-defense aggregation.",
+          "blockers": []
+        },
+        {
+          "key": "yds_allow_400_449",
+          "label": "Yards allowed: 400-449",
+          "family": "team_defense",
+          "dataStatus": "requires_team_game_context",
+          "recommendedPath": "Add a team game-result ingestion layer and team-defense aggregation.",
+          "blockers": []
+        },
+        {
+          "key": "yds_allow_450_499",
+          "label": "Yards allowed: 450-499",
+          "family": "team_defense",
+          "dataStatus": "requires_team_game_context",
+          "recommendedPath": "Add a team game-result ingestion layer and team-defense aggregation.",
+          "blockers": []
+        },
+        {
+          "key": "yds_allow_500_549",
+          "label": "Yards allowed: 500-549",
+          "family": "team_defense",
+          "dataStatus": "requires_team_game_context",
+          "recommendedPath": "Add a team game-result ingestion layer and team-defense aggregation.",
+          "blockers": []
+        },
+        {
+          "key": "yds_allow_550p",
+          "label": "Yards allowed: 550+",
+          "family": "team_defense",
+          "dataStatus": "requires_team_game_context",
+          "recommendedPath": "Add a team game-result ingestion layer and team-defense aggregation.",
+          "blockers": []
+        }
+      ]
+    }
+  ]
+}

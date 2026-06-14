@@ -1,0 +1,128 @@
+{
+  "generatedAt": "2026-06-14T18:42:26.255Z",
+  "mode": "dry_run",
+  "args": {
+    "file": "C:\\Projects\\lineup_lab\\data\\raw\\adp\\fantasypros\\FantasyPros_2026_Overall_ADP_Rankings.csv",
+    "provider": "fantasypros",
+    "season": 2026,
+    "format": "redraft",
+    "scoring": "ppr",
+    "teamCount": 12,
+    "isSuperflex": false,
+    "tePremium": 0,
+    "confidence": "medium",
+    "mode": "dry_run"
+  },
+  "parse": {
+    "rawRecords": 411,
+    "skippedRows": 2,
+    "detectedFormat": "fantasypros",
+    "fileHash": "31b0c3153bba938ef190cb966510e42235c10836fabc7b21d119b68e95502189"
+  },
+  "formatProfile": {
+    "draftType": "redraft",
+    "platform": "fantasypros",
+    "scoringFormat": "ppr",
+    "pprValue": 1,
+    "tePremiumValue": 0,
+    "rosterPositions": [
+      "QB",
+      "RB",
+      "RB",
+      "WR",
+      "WR",
+      "WR",
+      "TE",
+      "FLEX",
+      "K",
+      "DEF",
+      "BN",
+      "BN",
+      "BN",
+      "BN"
+    ],
+    "teamCount": 12,
+    "isBestBall": false,
+    "isDynasty": false,
+    "isStartup": false,
+    "isSuperflex": false,
+    "isTePremium": false
+  },
+  "formatGroupKey": "redraft_1qb",
+  "resolution": {
+    "resolved": 410,
+    "ambiguous": 0,
+    "unresolved": 1,
+    "rookie": 0,
+    "total": 411,
+    "resolvedRate": 99.8,
+    "unresolvedSample": [
+      {
+        "rawName": "Hollywood Brown",
+        "rawPosition": "WR118",
+        "rawTeam": "PHI",
+        "method": "unresolved"
+      }
+    ]
+  },
+  "importResult": {
+    "mode": "dry_run",
+    "snapshotInserted": 1,
+    "snapshotId": null,
+    "existingSnapshotId": null,
+    "playerRecordsInserted": 411,
+    "playerRecordsDuplicate": 0,
+    "movementsInserted": 0,
+    "errors": [],
+    "diagnostics": {
+      "totalRecords": 411,
+      "resolvedCount": 410,
+      "unresolvedCount": 1,
+      "ambiguousCount": 0,
+      "rookieCount": 0,
+      "fileHash": "31b0c3153bba938ef190cb966510e42235c10836fabc7b21d119b68e95502189",
+      "sourceIdentifier": "fantasypros-2026-redraft-ppr-12team-20260614 [DRY RUN — not written]"
+    }
+  },
+  "sourceMeta": {
+    "provider": "fantasypros",
+    "sourceIdentifier": "fantasypros-2026-redraft-ppr-12team-20260614",
+    "sourceUrl": null,
+    "capturedAt": "2026-06-14T18:42:26.255Z",
+    "effectiveDate": "2026-06-14",
+    "season": 2026,
+    "formatProfile": {
+      "draftType": "redraft",
+      "platform": "fantasypros",
+      "scoringFormat": "ppr",
+      "pprValue": 1,
+      "tePremiumValue": 0,
+      "rosterPositions": [
+        "QB",
+        "RB",
+        "RB",
+        "WR",
+        "WR",
+        "WR",
+        "TE",
+        "FLEX",
+        "K",
+        "DEF",
+        "BN",
+        "BN",
+        "BN",
+        "BN"
+      ],
+      "teamCount": 12,
+      "isBestBall": false,
+      "isDynasty": false,
+      "isStartup": false,
+      "isSuperflex": false,
+      "isTePremium": false
+    },
+    "sampleSize": null,
+    "sourceVersion": "FantasyPros_2026_Overall_ADP_Rankings.csv",
+    "fileHash": "31b0c3153bba938ef190cb966510e42235c10836fabc7b21d119b68e95502189",
+    "parserVersion": "h7-csv-parser-v1"
+  }
+}

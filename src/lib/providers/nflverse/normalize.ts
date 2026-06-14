@@ -24,12 +24,25 @@ const STAT_COLUMN_MAP: ReadonlyArray<readonly [nflverseCol: string, canonicalKey
   ["receiving_yards", "rec_yd"],
   ["receiving_tds", "rec_td"],
   ["receiving_first_downs", "rec_fd"],
-  ["receiving_2pt_conversions", "rec_2pt"]
+  ["receiving_2pt_conversions", "rec_2pt"],
+  ["punt_return_yards", "punt_ret_yd"],
+  ["kickoff_return_yards", "kick_ret_yd"],
+  ["special_teams_tds", "return_td"]
 ];
 
 // nflverse exposes lost-fumble fields split by play context rather than as a single total column.
 // For fantasy scoring, Blackbird uses the aggregate lost-fumble stat.
 const LOST_FUMBLE_COLUMNS = ["sack_fumbles_lost", "rushing_fumbles_lost", "receiving_fumbles_lost"] as const;
+const FUMBLE_COLUMNS = ["sack_fumbles", "rushing_fumbles", "receiving_fumbles"] as const;
+
+type NormalizationWarning = {
+  code: "pass_cmp_gt_pass_att";
+  message: string;
+  details: {
+    completions: number;
+    attempts: number;
+  };
+};
 
 export type NormalizedNflverseRow = {
   gsisId: string;
@@ -43,6 +56,9 @@ export type NormalizedNflverseRow = {
   stats: ProviderStatsJson;
   providerFantasyPoints: number | null;
   canonicalKeyCount: number;
+  metadata: {
+    normalizationWarnings: NormalizationWarning[];
+  };
 };
 
 export type NflverseNormalizeResult =
@@ -80,6 +96,7 @@ export function normalizeNflverseRow(raw: NflversePlayerStatsRaw): NflverseNorma
   }
 
   const stats: ProviderStatsJson = {};
+  const normalizationWarnings: NormalizationWarning[] = [];
   let canonicalKeyCount = 0;
 
   for (const [nflCol, canonicalKey] of STAT_COLUMN_MAP) {
@@ -97,6 +114,34 @@ export function normalizeNflverseRow(raw: NflversePlayerStatsRaw): NflverseNorma
   if (lostFumbleValues.length > 0) {
     stats["fum_lost"] = lostFumbleValues.reduce((sum, value) => sum + value, 0);
     canonicalKeyCount += 1;
+  }
+
+  const fumbleValues = FUMBLE_COLUMNS
+    .map((column) => parseKnownNumeric(raw[column]))
+    .filter((value): value is number => value !== null);
+  if (fumbleValues.length > 0) {
+    stats["fum"] = fumbleValues.reduce((sum, value) => sum + value, 0);
+    canonicalKeyCount += 1;
+  }
+
+  const passAttempts = typeof stats["pass_att"] === "number" ? stats["pass_att"] : null;
+  const passCompletions = typeof stats["pass_cmp"] === "number" ? stats["pass_cmp"] : null;
+  if (passAttempts !== null || passCompletions !== null) {
+    const safeAttempts = Number.isFinite(passAttempts) ? passAttempts ?? 0 : 0;
+    const safeCompletions = Number.isFinite(passCompletions) ? passCompletions ?? 0 : 0;
+    stats["pass_inc"] = Math.max(0, safeAttempts - safeCompletions);
+    canonicalKeyCount += 1;
+
+    if (safeCompletions > safeAttempts) {
+      normalizationWarnings.push({
+        code: "pass_cmp_gt_pass_att",
+        message: "Completions exceeded attempts in nflverse weekly source; pass_inc was clamped to zero.",
+        details: {
+          completions: safeCompletions,
+          attempts: safeAttempts
+        }
+      });
+    }
   }
 
   const fantasyRaw = raw["fantasy_points"]?.trim();
@@ -118,7 +163,10 @@ export function normalizeNflverseRow(raw: NflversePlayerStatsRaw): NflverseNorma
       providerFantasyPoints: providerFantasyPoints !== null && Number.isFinite(providerFantasyPoints)
         ? providerFantasyPoints
         : null,
-      canonicalKeyCount
+      canonicalKeyCount,
+      metadata: {
+        normalizationWarnings
+      }
     }
   };
 }
