@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { ChevronDown, RefreshCw, Search, Users } from "lucide-react";
+import { ChevronDown, RefreshCw, Search, Users, X } from "lucide-react";
 
 import type { WarRoomValueOverlayRow, WarRoomValueOverlayResult } from "@/lib/draft/h10-war-room-overlay";
 import type { H10RecommendationExperimentDiagnostics } from "@/lib/draft/war-room-recommendation-experiment";
@@ -198,6 +198,52 @@ type DraftState = {
   warning: string | null;
 };
 
+type PlayerProfileResponse = {
+  player: {
+    id: string;
+    sleeperPlayerId: string | null;
+    fullName: string | null;
+    position: string | null;
+    team: string | null;
+    status: string | null;
+  };
+  projection: {
+    projectionRunId: string;
+    projectionSeason: number | null;
+    asOfDate: string | null;
+    position: string;
+    projectedPpgWhenInRole: number;
+    floorPoints: number;
+    medianPoints: number;
+    ceilingPoints: number;
+    upsidePoints: number;
+    confidenceLabel: string;
+    projectedPositionRank: number | null;
+    projectionMethod: string;
+    statLine: Array<{ key: string; label: string; value: number }>;
+  } | null;
+  history: Array<{
+    season: number;
+    team: string | null;
+    position: string | null;
+    gamesPlayed: number | null;
+    gamesStarted: number | null;
+    fantasyPoints: number | null;
+    statLine: Array<{ key: string; label: string; value: number }>;
+  }>;
+  dataAvailability: {
+    projection: boolean;
+    projectedStatLine: boolean;
+    historicalSeasons: number;
+  };
+};
+
+type PlayerProfileLoadState = {
+  status: "idle" | "loading" | "ready" | "error";
+  profile: PlayerProfileResponse | null;
+  error: string | null;
+};
+
 type PreDraftStrategyResponse = {
   strategyPreviewLabel: string;
   leagueSummary: {
@@ -283,6 +329,11 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
   const [visibleBoardRows, setVisibleBoardRows] = useState(50);
   const [search, setSearch] = useState("");
   const [selectedRosterId, setSelectedRosterId] = useState<string | null>(null);
+  const [selectedPlayerProfile, setSelectedPlayerProfile] = useState<PlayerProfileLoadState>({
+    status: "idle",
+    profile: null,
+    error: null,
+  });
   const [recommendationSource, setRecommendationSource] = useState<H10RecommendationSource>(DEFAULT_H10_RECOMMENDATION_SOURCE);
   const [strategyState, setStrategyState] = useState<StrategyLoadState>({
     status: "loading",
@@ -337,6 +388,37 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
     await loadState();
     await loadStrategy();
   }, [draftRoomId, loadState, loadStrategy]);
+
+  const openPlayerProfile = useCallback(async (row: BlackbirdBoardRow) => {
+    if (!row.playerId) return;
+    setSelectedPlayerProfile({ status: "loading", profile: null, error: null });
+    try {
+      const response = await fetch(
+        `/api/draft-rooms/${draftRoomId}/players/${encodeURIComponent(row.playerId)}/profile`,
+        { cache: "no-store" }
+      );
+      const payload = await response.json();
+      if (!response.ok) {
+        setSelectedPlayerProfile({
+          status: "error",
+          profile: null,
+          error: payload.error ?? "Unable to load player profile.",
+        });
+        return;
+      }
+      setSelectedPlayerProfile({ status: "ready", profile: payload as PlayerProfileResponse, error: null });
+    } catch {
+      setSelectedPlayerProfile({
+        status: "error",
+        profile: null,
+        error: "Unable to load player profile.",
+      });
+    }
+  }, [draftRoomId]);
+
+  const closePlayerProfile = useCallback(() => {
+    setSelectedPlayerProfile({ status: "idle", profile: null, error: null });
+  }, []);
 
   useEffect(() => {
     void loadStrategy();
@@ -543,7 +625,7 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
               </div>
               <BlackbirdBoardStatus diagnostics={blackbirdBoard.diagnostics} filteredCount={filteredBoardRows.length} visibleCount={visibleBlackbirdRows.length} />
             </div>
-            <AvailablePlayersTable rows={visibleBlackbirdRows} />
+            <AvailablePlayersTable rows={visibleBlackbirdRows} onSelectPlayer={openPlayerProfile} />
             <div className="flex flex-col gap-2 border-t border-line bg-panel2/40 p-4 sm:flex-row sm:items-center sm:justify-between">
               <p className="text-xs text-slate-400">
                 Showing {visibleBlackbirdRows.length} of {filteredBoardRows.length} filtered players. Filters and sort are local to this browser view.
@@ -623,6 +705,9 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
           ) : null}
         </aside>
       </div>
+      {selectedPlayerProfile.status !== "idle" ? (
+        <PlayerProfileModal loadState={selectedPlayerProfile} onClose={closePlayerProfile} />
+      ) : null}
     </div>
   );
 }
@@ -664,26 +749,26 @@ function SleeperStyleDraftBoard({
           <p className="mt-2 text-xs text-slate-500">No picks are synced yet; empty slots are shown in snake order until Sleeper pick data arrives.</p>
         ) : null}
       </div>
-      <div className="overflow-x-auto">
+      <div className="overflow-hidden">
         <div
-          className="grid min-w-[1120px] gap-px bg-line/70 p-px"
-          style={{ gridTemplateColumns: `56px repeat(${teams.length}, minmax(128px, 1fr))` }}
+          className="grid w-full gap-px bg-line/70 p-px"
+          style={{ gridTemplateColumns: `clamp(34px, 3vw, 48px) repeat(${teams.length}, minmax(0, 1fr))` }}
         >
-          <div className="sticky left-0 z-10 bg-panel2 px-2 py-3 text-center text-[11px] font-bold uppercase tracking-wide text-slate-500">
+          <div className="bg-panel2 px-1 py-2 text-center text-[10px] font-bold uppercase tracking-wide text-slate-500">
             Rd
           </div>
           {teams.map((team) => (
             <div
               key={team.rosterId}
-              className={`bg-panel2 px-3 py-3 text-xs ${team.draftSlot === myDraftSlot ? "ring-1 ring-inset ring-gold/60" : ""}`}
+              className={`min-w-0 bg-panel2 px-2 py-2 text-[11px] ${team.draftSlot === myDraftSlot ? "ring-1 ring-inset ring-gold/60" : ""}`}
             >
-              <div className="font-black text-slate-100">Slot {team.draftSlot}</div>
+              <div className="truncate font-black text-slate-100">Slot {team.draftSlot}</div>
               <div className="mt-1 truncate text-slate-400">{team.label}</div>
               {team.draftSlot === myDraftSlot ? <div className="mt-1 text-[11px] font-bold uppercase tracking-wide text-gold">My slot</div> : null}
             </div>
           ))}
           {Array.from({ length: maxRound }, (_, index) => index + 1).flatMap((round) => [
-            <div key={`round-${round}`} className="sticky left-0 z-10 flex items-center justify-center bg-panel2 text-sm font-black text-slate-300">
+            <div key={`round-${round}`} className="flex items-center justify-center bg-panel2 text-xs font-black text-slate-300">
               {round}
             </div>,
             ...teams.map((team) => {
@@ -715,7 +800,7 @@ function PositionLegend() {
 function DraftPickCard({ pick, expectedPickNo, isCurrent }: { pick: PickLine | null; expectedPickNo: number; isCurrent: boolean }) {
   if (!pick) {
     return (
-      <div className={`min-h-[78px] bg-background/70 p-2 ${isCurrent ? "outline outline-2 outline-gold/70" : ""}`}>
+      <div className={`min-h-[72px] min-w-0 bg-background/70 p-1.5 ${isCurrent ? "outline outline-2 outline-gold/70" : ""}`}>
         <div className="text-[11px] font-semibold text-slate-600">#{expectedPickNo}</div>
         {isCurrent ? <div className="mt-3 text-xs font-bold text-gold">On clock</div> : null}
       </div>
@@ -724,13 +809,13 @@ function DraftPickCard({ pick, expectedPickNo, isCurrent }: { pick: PickLine | n
 
   const position = normalizeDraftBoardPosition(pick.position);
   return (
-    <div className={`min-h-[78px] border-l-4 p-2 ${draftBoardPositionCardClass(pick.position)}`}>
+    <div className={`min-h-[72px] min-w-0 border p-1.5 ${draftBoardPositionCardClass(pick.position)}`}>
       <div className="flex items-center justify-between gap-2 text-[11px]">
-        <span className="font-semibold text-slate-300">#{pick.pick_no}</span>
-        <span className="rounded-full bg-background/50 px-2 py-0.5 font-bold text-slate-100">{position}</span>
+        <span className="font-semibold text-white/75">#{pick.pick_no}</span>
+        <span className="rounded-full bg-black/25 px-1.5 py-0.5 font-bold text-white">{position}</span>
       </div>
-      <div className="mt-2 line-clamp-2 text-sm font-black leading-tight text-slate-50">{pick.player_name ?? "Unknown"}</div>
-      <div className="mt-1 truncate text-[11px] text-slate-300">{pick.team ?? pick.roster_label ?? "-"}</div>
+      <div className="mt-1.5 line-clamp-2 text-[13px] font-black leading-tight text-white">{pick.player_name ?? "Unknown"}</div>
+      <div className="mt-1 truncate text-[11px] text-white/75">{pick.team ?? pick.roster_label ?? "-"}</div>
     </div>
   );
 }
@@ -809,7 +894,7 @@ function BoardStatusPill({ label, value, warning = false }: { label: string; val
   );
 }
 
-function AvailablePlayersTable({ rows }: { rows: BlackbirdBoardRow[] }) {
+function AvailablePlayersTable({ rows, onSelectPlayer }: { rows: BlackbirdBoardRow[]; onSelectPlayer: (row: BlackbirdBoardRow) => void }) {
   return (
     <div className="overflow-x-auto">
       <table className="w-full min-w-[1180px] text-left text-sm">
@@ -835,7 +920,17 @@ function AvailablePlayersTable({ rows }: { rows: BlackbirdBoardRow[] }) {
             <tr key={`${row.playerId ?? row.playerName}-${row.blackbirdBoardRank}`} className="border-t border-line/70">
               <td className="px-3 py-3 font-black text-brand">#{row.blackbirdBoardRank}</td>
               <td className="px-3 py-3">
-                <div className="font-medium text-slate-100">{row.playerName}</div>
+                {row.playerId ? (
+                  <button
+                    type="button"
+                    className="block max-w-[220px] truncate text-left font-medium text-slate-100 underline decoration-brand/40 underline-offset-4 hover:text-brand"
+                    onClick={() => onSelectPlayer(row)}
+                  >
+                    {row.playerName}
+                  </button>
+                ) : (
+                  <div className="font-medium text-slate-100">{row.playerName}</div>
+                )}
                 <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-slate-500">
                   <span>{row.playerId ? "Matched context" : "Fallback context"}</span>
                   <span>{row.dataStatus.ordering.replace("_", " ")}</span>
@@ -871,6 +966,135 @@ function AvailablePlayersTable({ rows }: { rows: BlackbirdBoardRow[] }) {
           {rows.length === 0 ? <EmptyTable colSpan={13} text="No available players match these filters." /> : null}
         </tbody>
       </table>
+    </div>
+  );
+}
+
+function PlayerProfileModal({ loadState, onClose }: { loadState: PlayerProfileLoadState; onClose: () => void }) {
+  const profile = loadState.profile;
+  const title = profile?.player.fullName ?? "Player Profile";
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/70 px-3 py-6 sm:px-6">
+      <div className="w-full max-w-5xl rounded-lg border border-line bg-panel shadow-2xl">
+        <div className="flex items-start justify-between gap-3 border-b border-line px-4 py-4 sm:px-5">
+          <div className="min-w-0">
+            <h2 className="break-words text-xl font-black text-slate-50">{title}</h2>
+            {profile ? (
+              <p className="mt-1 text-sm text-slate-400">
+                {profile.player.position ?? "-"} · {profile.player.team ?? "-"} · {profile.player.status ?? "status unknown"}
+              </p>
+            ) : null}
+          </div>
+          <button
+            type="button"
+            className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-line bg-background text-slate-200 hover:border-brand/40 hover:text-brand"
+            onClick={onClose}
+            aria-label="Close player profile"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+
+        <div className="space-y-4 px-4 py-4 sm:px-5">
+          {loadState.status === "loading" ? (
+            <div className="rounded-md border border-line bg-panel2 px-3 py-3 text-sm text-slate-300">Loading player profile...</div>
+          ) : null}
+          {loadState.status === "error" ? (
+            <div className="rounded-md border border-red-400/30 bg-red-500/10 px-3 py-3 text-sm text-red-200">
+              {loadState.error ?? "Unable to load player profile."}
+            </div>
+          ) : null}
+          {profile ? (
+            <>
+              <section className="rounded-md border border-line bg-panel2 px-3 py-3">
+                <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-start">
+                  <div>
+                    <h3 className="text-sm font-black uppercase tracking-wide text-slate-300">Upcoming Projection</h3>
+                    <p className="mt-1 text-xs text-slate-500">
+                      {profile.projection?.projectionSeason ?? "Projection season unavailable"} · Confidence{" "}
+                      {profile.projection?.confidenceLabel ?? "unavailable"} · Rank{" "}
+                      {profile.projection?.projectedPositionRank ?? "-"}
+                    </p>
+                  </div>
+                  {profile.projection ? (
+                    <div className="grid grid-cols-3 gap-2 text-xs sm:min-w-[360px]">
+                      <H11MiniMetric label="Floor" value={formatNumber(profile.projection.floorPoints)} />
+                      <H11MiniMetric label="Median" value={formatNumber(profile.projection.medianPoints)} />
+                      <H11MiniMetric label="Ceiling" value={formatNumber(profile.projection.ceilingPoints)} />
+                    </div>
+                  ) : null}
+                </div>
+                {profile.projection ? (
+                  <StatLineGrid items={profile.projection.statLine} empty="Projected stat components are not available for this player." />
+                ) : (
+                  <p className="mt-3 text-sm text-slate-400">No league projection row is available for this player in this room.</p>
+                )}
+              </section>
+
+              <section className="rounded-md border border-line bg-panel2 px-3 py-3">
+                <h3 className="text-sm font-black uppercase tracking-wide text-slate-300">Previous Seasons</h3>
+                {profile.history.length ? (
+                  <div className="mt-3 overflow-x-auto">
+                    <table className="w-full min-w-[780px] text-left text-sm">
+                      <thead className="text-xs uppercase text-slate-500">
+                        <tr>
+                          <th className="px-2 py-2">Season</th>
+                          <th className="px-2 py-2">Team</th>
+                          <th className="px-2 py-2">G</th>
+                          <th className="px-2 py-2">GS</th>
+                          <th className="px-2 py-2">Fantasy Pts</th>
+                          <th className="px-2 py-2">Stat Line</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {profile.history.map((row) => (
+                          <tr key={row.season} className="border-t border-line/70">
+                            <td className="px-2 py-3 font-bold text-slate-100">{row.season}</td>
+                            <td className="px-2 py-3">{row.team ?? "-"}</td>
+                            <td className="px-2 py-3">{row.gamesPlayed ?? "-"}</td>
+                            <td className="px-2 py-3">{row.gamesStarted ?? "-"}</td>
+                            <td className="px-2 py-3">{row.fantasyPoints === null ? "-" : formatNumber(row.fantasyPoints)}</td>
+                            <td className="px-2 py-3">
+                              {row.statLine.length ? (
+                                <div className="flex flex-wrap gap-1">
+                                  {row.statLine.slice(0, 8).map((stat) => (
+                                    <span key={`${row.season}-${stat.key}`} className="rounded-full border border-line bg-background px-2 py-1 text-[11px] text-slate-300">
+                                      {stat.label} {formatNumber(stat.value)}
+                                    </span>
+                                  ))}
+                                </div>
+                              ) : (
+                                <span className="text-slate-500">Stat line unavailable</span>
+                              )}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <p className="mt-3 text-sm text-slate-400">No previous season stat rows are available for this player.</p>
+                )}
+              </section>
+            </>
+          ) : null}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function StatLineGrid({ items, empty }: { items: Array<{ key: string; label: string; value: number }>; empty: string }) {
+  if (!items.length) return <p className="mt-3 text-sm text-slate-400">{empty}</p>;
+  return (
+    <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
+      {items.map((item) => (
+        <div key={item.key} className="rounded-md border border-line/70 bg-background/50 px-2 py-2">
+          <div className="text-[11px] uppercase tracking-wide text-slate-500">{item.label}</div>
+          <div className="mt-1 font-black text-slate-100">{formatNumber(item.value)}</div>
+        </div>
+      ))}
     </div>
   );
 }

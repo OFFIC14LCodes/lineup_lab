@@ -12,15 +12,15 @@ export function draftBoardPositionCardClass(position: string | null | undefined)
   const normalized = normalizeDraftBoardPosition(position);
   const base = "border-line bg-panel2 text-slate-100";
   const classes: Record<DraftBoardDisplayPosition, string> = {
-    QB: "border-red-400 bg-red-500/20",
-    RB: "border-emerald-400 bg-emerald-500/18",
-    WR: "border-sky-400 bg-sky-500/18",
-    TE: "border-orange-300 bg-orange-500/18",
-    K: "border-fuchsia-300 bg-fuchsia-500/16",
-    DST: "border-zinc-300 bg-zinc-500/18",
-    DL: "border-violet-300 bg-violet-500/18",
-    LB: "border-lime-300 bg-lime-500/16",
-    DB: "border-cyan-300 bg-cyan-500/16",
+    QB: "border-red-300/35 bg-red-950/85 text-red-50",
+    RB: "border-emerald-300/35 bg-emerald-950/85 text-emerald-50",
+    WR: "border-sky-300/35 bg-sky-950/85 text-sky-50",
+    TE: "border-orange-300/35 bg-orange-950/85 text-orange-50",
+    K: "border-fuchsia-300/35 bg-fuchsia-950/85 text-fuchsia-50",
+    DST: "border-zinc-300/35 bg-zinc-800/90 text-zinc-50",
+    DL: "border-violet-300/35 bg-violet-950/85 text-violet-50",
+    LB: "border-lime-300/35 bg-lime-950/85 text-lime-50",
+    DB: "border-cyan-300/35 bg-cyan-950/85 text-cyan-50",
     UNK: base,
   };
   return classes[normalized] ?? base;
