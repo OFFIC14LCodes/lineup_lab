@@ -1,4 +1,4 @@
-// H10.6 — War Room recommendation validation across league types.
+// H10.8 — War Room recommendation validation and controlled experiment readiness.
 //
 // Read-only. Discovers draft rooms, runs the H10 preview in memory, and writes
 // validation artifacts. No persistence, legacy replacement, or ordering change.
@@ -67,7 +67,7 @@ type Args = {
 
 type ValidationArtifact = {
   generatedAt: string;
-  artifactVersion: "h10.7-war-room-recommendation-validation-v2";
+  artifactVersion: "h10.8-war-room-recommendation-validation-v3";
   args: Args;
   roomInventory: H10WarRoomInventoryRow[];
   formatCoverage: Record<string, boolean>;
@@ -153,7 +153,7 @@ async function main() {
   const readiness = buildValidationReadiness({ inventory: roomInventory, roomResults });
   const artifact: ValidationArtifact = {
     generatedAt: new Date().toISOString(),
-    artifactVersion: "h10.7-war-room-recommendation-validation-v2",
+    artifactVersion: "h10.8-war-room-recommendation-validation-v3",
     args,
     roomInventory,
     formatCoverage: readiness.formatCoverage,
@@ -163,7 +163,7 @@ async function main() {
   };
   const artifactPaths = writeArtifacts(artifact);
 
-  console.log("\nH10.7 War Room Recommendation Validation");
+  console.log("\nH10.8 War Room Recommendation Validation");
   console.log(JSON.stringify({
     args,
     draftRoomsDiscovered: roomInventory.length,
@@ -171,6 +171,14 @@ async function main() {
     formatCoverage: readiness.formatCoverage,
     thresholdResults: readiness.thresholdResults,
     failures: readiness.failures,
+    roomExperimentReadiness: roomResults.map((room) => ({
+      source: room.source,
+      draftRoomId: room.draftRoomId,
+      legacyReady: room.experimentReadiness.legacyReady,
+      blackbirdPreviewReady: room.experimentReadiness.blackbirdPreviewReady,
+      blackbirdExperimentEligible: room.experimentReadiness.blackbirdExperimentEligible,
+      failedExperimentGates: room.experimentReadiness.failedExperimentGates,
+    })),
     limitations,
     verdict: readiness.verdict,
     artifactPaths,
@@ -640,7 +648,7 @@ function writeArtifacts(artifact: ValidationArtifact) {
 
 function renderMarkdown(artifact: ValidationArtifact): string {
   const lines = [
-    "# H10.6 War Room Recommendation Validation",
+    "# H10.8 War Room Recommendation Validation",
     "",
     `Generated: ${artifact.generatedAt}`,
     "",
@@ -678,6 +686,12 @@ function renderMarkdown(artifact: ValidationArtifact): string {
       `- Rows by status: ${JSON.stringify(room.rowsByStatus)}`,
       `- Warnings: ${JSON.stringify(room.warningCounts)}`,
       `- Thresholds: ${JSON.stringify(room.thresholdResults)}`,
+      `- Experiment readiness: ${JSON.stringify({
+        legacyReady: room.experimentReadiness.legacyReady,
+        blackbirdPreviewReady: room.experimentReadiness.blackbirdPreviewReady,
+        blackbirdExperimentEligible: room.experimentReadiness.blackbirdExperimentEligible,
+        failedExperimentGates: room.experimentReadiness.failedExperimentGates,
+      })}`,
       `- Legacy changed: ${room.legacyRowsChanged}`,
       `- Remaining order changed: ${room.remainingPlayersOrderChanged}`,
       `- Top rows: ${room.topRecommendations.slice(0, 5).map((row) => `${row.displayName} ${row.position ?? ""} ${row.recommendationTier} ${row.recommendationScore}`).join("; ")}`,

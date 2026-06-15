@@ -1,4 +1,5 @@
 import type { WarRoomRecommendationResult, WarRoomRecommendationRow } from "@/lib/draft/war-room-recommendations";
+import { buildH10RecommendationExperimentDiagnostics, type H10RecommendationExperimentDiagnostics } from "@/lib/draft/war-room-recommendation-experiment";
 import { buildNormalizedRosterRequirements, type NormalizedRosterRequirements } from "@/lib/draft/roster-slots";
 
 export type H10WarRoomInventoryRow = {
@@ -50,6 +51,7 @@ export type H10WarRoomPerRoomValidation = {
   remainingPlayersOrderChanged: boolean;
   thresholdResults: H10WarRoomThresholdResults;
   formatDiagnostics: Record<string, unknown>;
+  experimentReadiness: H10RecommendationExperimentDiagnostics;
 };
 
 export type H10WarRoomThresholdResults = {
@@ -159,6 +161,12 @@ export function buildPerRoomValidation(input: {
   const nonQbAverageRosterNeed = average(nonQbOffense.map((row) => row.scoreComponents.rosterNeed));
   const kRows = rows.filter((row) => normalizePosition(row.position) === "K");
   const dstRows = rows.filter((row) => normalizePosition(row.position) === "DEF");
+  const experimentReadiness = buildH10RecommendationExperimentDiagnostics({
+    recommendations: input.recommendations,
+    legacyRecommendationCount: input.inventory.legacyRecommendationCount,
+    legacyRecommendationsUnchanged: !input.legacyRowsChanged,
+    remainingPlayersOrderUnchanged: !input.remainingPlayersOrderChanged,
+  });
 
   const thresholdResults: H10WarRoomThresholdResults = {
     matchRatePass: matchRate === null ? false : matchRate >= 0.85,
@@ -202,6 +210,7 @@ export function buildPerRoomValidation(input: {
     legacyRowsChanged: input.legacyRowsChanged,
     remainingPlayersOrderChanged: input.remainingPlayersOrderChanged,
     thresholdResults,
+    experimentReadiness,
     formatDiagnostics: {
       superflexQbUrgencyApplied: thresholdResults.superflexQbUrgencyPass,
       qbAverageRosterNeed,

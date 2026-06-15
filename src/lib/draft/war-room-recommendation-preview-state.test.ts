@@ -13,13 +13,19 @@ describe("buildH10RecommendationPreviewPayload", () => {
   });
 
   it("includes H10 preview and diagnostics when enabled", () => {
-    const payload = buildH10RecommendationPreviewPayload(baseInput({ enabled: true }));
+    const payload = buildH10RecommendationPreviewPayload(baseInput({ enabled: true, legacyRecommendationCount: 2 }));
 
     expect(payload.h10RecommendationPreview?.length).toBe(1);
     expect(payload.h10RecommendationDiagnostics).toMatchObject({
       remainingPlayersLoaded: 1,
       overlayRowsLoaded: 1,
       recommendationsGenerated: 1,
+    });
+    expect(payload.h10RecommendationExperimentDiagnostics).toMatchObject({
+      legacyReady: true,
+      blackbirdPreviewReady: true,
+      blackbirdExperimentEligible: true,
+      failedExperimentGates: [],
     });
   });
 
@@ -43,6 +49,7 @@ describe("buildH10RecommendationPreviewPayload", () => {
 
     expect(payload.h10RecommendationPreview?.[0].recommendationTier).toBe("insufficient_data");
     expect(payload.h10RecommendationDiagnostics?.contextLimitations).toContain("H10_VALUE_OVERLAY_MISSING");
+    expect(payload.h10RecommendationExperimentDiagnostics?.blackbirdExperimentEligible).toBe(false);
   });
 });
 
@@ -63,6 +70,23 @@ function baseInput(overrides: Partial<Parameters<typeof buildH10RecommendationPr
     picksUntilMyNextPick: 10,
     draftedPlayerIds: [],
     positionCounts: {},
+    matchCoverageSummary: {
+      leagueId: "league",
+      rowsLoaded: 1,
+      rowsMatched: 1,
+      rowsUnmatched: 0,
+      matchRate: 1,
+      matchRateByPosition: {},
+      matchRateBySource: {},
+      missingProjectionCount: 0,
+      formatExcludedCount: 0,
+      lowConfidenceCount: 0,
+      classificationCounts: {},
+      missingProjectionReasons: {},
+      topMissingHighRankPlayers: [],
+      topMissingHighAdpPlayers: [],
+      highPriorityMissingProjectionExamples: [],
+    },
     ...overrides,
   };
 }

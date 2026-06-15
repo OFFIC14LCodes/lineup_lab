@@ -2,11 +2,13 @@ import type { DraftTargetScorePlayer } from "@/lib/draft/scoring";
 import type { NormalizedRosterRequirements } from "@/lib/draft/roster-slots";
 import type { WarRoomMatchingCoverageSummary } from "@/lib/draft/war-room-matching-coverage";
 import type { WarRoomValueOverlayRow } from "@/lib/draft/h10-war-room-overlay";
+import { buildH10RecommendationExperimentDiagnostics, type H10RecommendationExperimentDiagnostics } from "@/lib/draft/war-room-recommendation-experiment";
 import { buildWarRoomRecommendations, type WarRoomRecommendationResult, type WarRoomRecommendationRow } from "@/lib/draft/war-room-recommendations";
 
 export type H10RecommendationPreviewPayload = {
   h10RecommendationPreview?: WarRoomRecommendationRow[];
   h10RecommendationDiagnostics?: WarRoomRecommendationResult["diagnostics"];
+  h10RecommendationExperimentDiagnostics?: H10RecommendationExperimentDiagnostics;
 };
 
 export type BuildH10RecommendationPreviewPayloadInput = {
@@ -27,6 +29,9 @@ export type BuildH10RecommendationPreviewPayloadInput = {
   positionCounts?: Record<string, number>;
   includeDstDryRun?: boolean;
   matchCoverageSummary?: WarRoomMatchingCoverageSummary;
+  legacyRecommendationCount?: number;
+  legacyRecommendationsUnchanged?: boolean;
+  remainingPlayersOrderUnchanged?: boolean;
 };
 
 export function buildH10RecommendationPreviewPayload(
@@ -56,6 +61,12 @@ export function buildH10RecommendationPreviewPayload(
     return {
       h10RecommendationPreview: preview.rows,
       h10RecommendationDiagnostics: preview.diagnostics,
+      h10RecommendationExperimentDiagnostics: buildH10RecommendationExperimentDiagnostics({
+        recommendations: preview,
+        legacyRecommendationCount: input.legacyRecommendationCount ?? 0,
+        legacyRecommendationsUnchanged: input.legacyRecommendationsUnchanged ?? true,
+        remainingPlayersOrderUnchanged: input.remainingPlayersOrderUnchanged ?? true,
+      }),
     };
   } catch (error) {
     return {
@@ -78,6 +89,20 @@ export function buildH10RecommendationPreviewPayload(
         idpTopTierCliffRows: [],
         idpSuppressionReasons: {},
         invariantFailures: [error instanceof Error ? error.message : "Unable to build H10 recommendation preview."],
+        contextLimitations: ["H10_RECOMMENDATION_PREVIEW_UNAVAILABLE"],
+      },
+      h10RecommendationExperimentDiagnostics: {
+        legacyReady: (input.legacyRecommendationCount ?? 0) > 0,
+        blackbirdPreviewReady: false,
+        blackbirdExperimentEligible: false,
+        failedExperimentGates: ["INVARIANT_FAILURES_PRESENT"],
+        blackbirdRowsGenerated: 0,
+        blackbirdRowsShown: 0,
+        rowsByTier: {},
+        rowsByStatus: {},
+        matchRate: null,
+        insufficientDataRate: 1,
+        warningCounts: {},
         contextLimitations: ["H10_RECOMMENDATION_PREVIEW_UNAVAILABLE"],
       },
     };

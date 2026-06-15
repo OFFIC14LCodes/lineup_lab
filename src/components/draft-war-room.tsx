@@ -4,6 +4,13 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { ChevronDown, RefreshCw, Search } from "lucide-react";
 
 import type { WarRoomValueOverlayRow, WarRoomValueOverlayResult } from "@/lib/draft/h10-war-room-overlay";
+import type { H10RecommendationExperimentDiagnostics } from "@/lib/draft/war-room-recommendation-experiment";
+import {
+  buildH10RecommendationExperimentUiState,
+  DEFAULT_H10_RECOMMENDATION_SOURCE,
+  H10_RECOMMENDATION_READINESS_LABELS,
+  type H10RecommendationSource,
+} from "@/lib/draft/war-room-recommendation-experiment-ui";
 import type { WarRoomRecommendationResult, WarRoomRecommendationRow, WarRoomRecommendationTier } from "@/lib/draft/war-room-recommendations";
 
 type RecommendationTier = "elite_target" | "strong_target" | "good_value" | "depth_option" | "avoid_for_now";
@@ -76,6 +83,9 @@ type DraftState = {
   h10ValueOverlayDiagnostics?: WarRoomValueOverlayResult["diagnostics"];
   h10RecommendationPreview?: WarRoomRecommendationRow[];
   h10RecommendationDiagnostics?: WarRoomRecommendationResult["diagnostics"];
+  h10RecommendationExperimentDiagnostics?: H10RecommendationExperimentDiagnostics;
+  h10RecommendationPreviewEnabled?: boolean;
+  h10RecommendationExperimentEnabled?: boolean;
   fallbackRelevanceDiagnostics?: {
     fallbackRowsTotal: number;
     fallbackRowsIncluded: number;
@@ -180,6 +190,7 @@ export function DraftWarRoom({ draftRoomId }: { draftRoomId: string }) {
   const [positionFilter, setPositionFilter] = useState("All");
   const [matchFilter, setMatchFilter] = useState("All");
   const [search, setSearch] = useState("");
+  const [recommendationSource, setRecommendationSource] = useState<H10RecommendationSource>(DEFAULT_H10_RECOMMENDATION_SOURCE);
 
   const loadState = useCallback(async () => {
     const response = await fetch(`/api/draft-rooms/${draftRoomId}/state`, { cache: "no-store" });
@@ -360,21 +371,37 @@ export function DraftWarRoom({ draftRoomId }: { draftRoomId: string }) {
           </SidePanel>
 
           <SidePanel title="Recommended Targets">
-            <RecommendationList
-              players={state.recommendations.slice(0, 10)}
-              rankingsUploaded={state.rankingsUploaded}
-              warningMessages={state.warningMessages}
-              usesLimitedDataPositions={state.hasIDP || state.hasKicker || state.hasTeamDefense}
-            />
+            {state.h10RecommendationExperimentEnabled ? (
+              <RecommendationSourcePanel
+                source={recommendationSource}
+                onSourceChange={setRecommendationSource}
+                legacyRows={state.recommendations.slice(0, 10)}
+                rankingsUploaded={state.rankingsUploaded}
+                warningMessages={state.warningMessages}
+                usesLimitedDataPositions={state.hasIDP || state.hasKicker || state.hasTeamDefense}
+                blackbirdRows={state.h10RecommendationPreview ?? []}
+                blackbirdDiagnostics={state.h10RecommendationDiagnostics ?? null}
+                experimentDiagnostics={state.h10RecommendationExperimentDiagnostics ?? null}
+              />
+            ) : (
+              <RecommendationList
+                players={state.recommendations.slice(0, 10)}
+                rankingsUploaded={state.rankingsUploaded}
+                warningMessages={state.warningMessages}
+                usesLimitedDataPositions={state.hasIDP || state.hasKicker || state.hasTeamDefense}
+              />
+            )}
             <NeedsList needs={state.topNeeds} compact />
             <ScoringMetadata metadata={state.scoringMetadata} />
           </SidePanel>
 
-          {state.h10RecommendationPreview || state.h10RecommendationDiagnostics ? (
+          {!state.h10RecommendationExperimentEnabled && (state.h10RecommendationPreview || state.h10RecommendationDiagnostics) ? (
             <SidePanel title="Blackbird Value Preview">
               <H10RecommendationPreview
                 rows={state.h10RecommendationPreview ?? []}
                 diagnostics={state.h10RecommendationDiagnostics ?? null}
+                experimentDiagnostics={state.h10RecommendationExperimentDiagnostics ?? null}
+                mode="preview"
               />
             </SidePanel>
           ) : null}
@@ -676,15 +703,97 @@ function RecommendationList({
   );
 }
 
+function RecommendationSourcePanel({
+  source,
+  onSourceChange,
+  legacyRows,
+  rankingsUploaded,
+  warningMessages,
+  usesLimitedDataPositions,
+  blackbirdRows,
+  blackbirdDiagnostics,
+  experimentDiagnostics,
+}: {
+  source: H10RecommendationSource;
+  onSourceChange: (source: H10RecommendationSource) => void;
+  legacyRows: AvailablePlayer[];
+  rankingsUploaded: boolean;
+  warningMessages: string[];
+  usesLimitedDataPositions: boolean;
+  blackbirdRows: WarRoomRecommendationRow[];
+  blackbirdDiagnostics: WarRoomRecommendationResult["diagnostics"] | null;
+  experimentDiagnostics: H10RecommendationExperimentDiagnostics | null;
+}) {
+  const uiState = buildH10RecommendationExperimentUiState({
+    experimentEnabled: true,
+    selectedSource: source,
+    rows: blackbirdRows,
+    experimentDiagnostics,
+  });
+
+  return (
+    <div className="space-y-3">
+      <div className="rounded-lg border border-line bg-background/50 p-2">
+        <div className="mb-2 text-[11px] uppercase tracking-wide text-slate-500">Recommendation Source</div>
+        <div className="grid grid-cols-2 gap-2">
+          <button
+            type="button"
+            className={`rounded-md border px-3 py-2 text-xs font-semibold ${source === "legacy" ? "border-brand/40 bg-brand/15 text-brand" : "border-line bg-panel2 text-slate-300"}`}
+            onClick={() => onSourceChange("legacy")}
+          >
+            Legacy
+          </button>
+          <button
+            type="button"
+            className={`rounded-md border px-3 py-2 text-xs font-semibold ${source === "blackbird" ? "border-gold/40 bg-gold/10 text-gold" : "border-line bg-panel2 text-slate-300"}`}
+            onClick={() => onSourceChange("blackbird")}
+          >
+            Blackbird Value Preview
+          </button>
+        </div>
+      </div>
+      {source === "legacy" ? (
+        <RecommendationList
+          players={legacyRows}
+          rankingsUploaded={rankingsUploaded}
+          warningMessages={warningMessages}
+          usesLimitedDataPositions={usesLimitedDataPositions}
+        />
+      ) : (
+        <H10RecommendationPreview
+          rows={blackbirdRows}
+          diagnostics={blackbirdDiagnostics}
+          experimentDiagnostics={experimentDiagnostics}
+          mode="experiment"
+          disabled={!uiState.blackbirdPanelEnabled}
+        />
+      )}
+    </div>
+  );
+}
+
 function H10RecommendationPreview({
   rows,
-  diagnostics
+  diagnostics,
+  experimentDiagnostics,
+  mode,
+  disabled = false,
 }: {
   rows: WarRoomRecommendationRow[];
   diagnostics: WarRoomRecommendationResult["diagnostics"] | null;
+  experimentDiagnostics: H10RecommendationExperimentDiagnostics | null;
+  mode: "preview" | "experiment";
+  disabled?: boolean;
 }) {
+  const uiState = buildH10RecommendationExperimentUiState({
+    previewEnabled: mode === "preview",
+    experimentEnabled: mode === "experiment",
+    selectedSource: mode === "experiment" ? "blackbird" : "legacy",
+    rows,
+    experimentDiagnostics,
+  });
   const visibleRows = rows
-    .filter((row) => row.status === "recommendable" || row.status === "watch_only" || row.recommendationTier === "insufficient_data")
+    .filter((row) => row.status === "recommendable" || row.status === "watch_only")
     .slice(0, 8);
   const insufficientCount = diagnostics?.rowsByTier.insufficient_data ?? rows.filter((row) => row.recommendationTier === "insufficient_data").length;
   const mostlyInsufficient = rows.length > 0 && insufficientCount / rows.length >= 0.5;
@@ -692,14 +801,20 @@ function H10RecommendationPreview({
   return (
     <div className="space-y-3">
       <div className="rounded-md border border-brand/20 bg-brand/10 px-3 py-2 text-xs text-brand">
-        Experimental, read-only. Uses Blackbird projections, league value, roster context, scarcity, tiers, and market signals. Does not replace current recommendations.
+        {H10_RECOMMENDATION_READINESS_LABELS.join(" · ")}. Blackbird value recommendations do not replace legacy recommendations.
       </div>
+      {mode === "experiment" && disabled ? (
+        <p className="rounded-md border border-gold/25 bg-gold/10 px-3 py-2 text-xs text-gold">
+          Blackbird experiment panel is diagnostics-only because validation gates did not pass:{" "}
+          {experimentDiagnostics?.failedExperimentGates.join(", ") || "unknown gate failure"}.
+        </p>
+      ) : null}
       {mostlyInsufficient ? (
         <p className="rounded-md border border-gold/25 bg-gold/10 px-3 py-2 text-xs text-gold">
           Blackbird has value data for some players, but many available players are missing deterministic projection matches in this room.
         </p>
       ) : null}
-      {visibleRows.length ? (
+      {!disabled && visibleRows.length ? (
         <div className="space-y-3">
           {visibleRows.map((row) => (
             <H10RecommendationCard key={`${row.entityId ?? row.displayName}-${row.recommendationRank}`} row={row} />
@@ -711,7 +826,14 @@ function H10RecommendationPreview({
           <p className="mt-2 text-slate-400">The preview needs a synced draft room plus deterministic H10 value overlay rows.</p>
         </div>
       )}
-      {diagnostics ? <H10RecommendationDiagnostics diagnostics={diagnostics} /> : null}
+      {diagnostics ? (
+        <H10RecommendationDiagnostics
+          diagnostics={diagnostics}
+          experimentDiagnostics={experimentDiagnostics}
+          sourceSelected={mode === "experiment" ? "blackbird" : "preview"}
+          diagnosticsOnlyRows={uiState.diagnosticsOnlyRows}
+        />
+      ) : null}
     </div>
   );
 }
@@ -749,8 +871,13 @@ function H10RecommendationCard({ row }: { row: WarRoomRecommendationRow }) {
         <H10MiniStat label="Risk value" value={formatNumber(row.h10.riskAdjustedValue)} />
         <H10MiniStat label="Tier" value={row.h10.tier === null ? "-" : String(row.h10.tier)} />
         <H10MiniStat label="Market" value={row.h10.marketValueSignal ?? "-"} />
-        <H10MiniStat label="Scarcity" value={String(row.scoreComponents.scarcity.toFixed(1))} />
+        <H10MiniStat label="League value" value={formatNumber(row.scoreComponents.leagueValue)} />
+        <H10MiniStat label="Roster need" value={formatNumber(row.scoreComponents.rosterNeed)} />
+        <H10MiniStat label="Scarcity" value={formatNumber(row.scoreComponents.scarcity)} />
+        <H10MiniStat label="Tier cliff" value={formatNumber(row.scoreComponents.tierCliff)} />
+        <H10MiniStat label="Availability" value={formatNumber(row.scoreComponents.availabilityRisk)} />
         <H10MiniStat label="Confidence" value={row.h10.confidenceLabel ?? row.status} />
+        <H10MiniStat label="Risk" value={row.h10.valueReadiness ?? "-"} />
       </div>
       {row.warningCodes.length ? (
         <div className="mt-3 flex flex-wrap gap-1">
@@ -803,7 +930,17 @@ function H10RecommendationTierBadge({ tier }: { tier: WarRoomRecommendationTier 
   return <span className={`rounded-full border px-2 py-1 text-[11px] uppercase tracking-wide ${className}`}>{label}</span>;
 }
 
-function H10RecommendationDiagnostics({ diagnostics }: { diagnostics: WarRoomRecommendationResult["diagnostics"] }) {
+function H10RecommendationDiagnostics({
+  diagnostics,
+  experimentDiagnostics,
+  sourceSelected,
+  diagnosticsOnlyRows,
+}: {
+  diagnostics: WarRoomRecommendationResult["diagnostics"];
+  experimentDiagnostics: H10RecommendationExperimentDiagnostics | null;
+  sourceSelected: string;
+  diagnosticsOnlyRows: number;
+}) {
   return (
     <details className="group rounded-lg border border-line bg-background/40 px-3 py-2 text-xs">
       <summary className="flex cursor-pointer list-none items-center justify-between text-slate-300">
@@ -811,11 +948,26 @@ function H10RecommendationDiagnostics({ diagnostics }: { diagnostics: WarRoomRec
         <ChevronDown className="h-4 w-4 transition group-open:rotate-180" />
       </summary>
       <div className="mt-3 space-y-2 text-slate-400">
+        <DiagnosticsLine label="Source selected" value={sourceSelected} />
         <DiagnosticsLine label="Rows generated" value={String(diagnostics.recommendationsGenerated)} />
+        <DiagnosticsLine label="Rows shown" value={String(experimentDiagnostics?.blackbirdRowsShown ?? diagnostics.recommendationsGenerated - diagnosticsOnlyRows)} />
+        <DiagnosticsLine label="Diagnostics-only rows" value={String(diagnosticsOnlyRows)} />
+        <DiagnosticsLine label="Match rate" value={formatNullableRate(experimentDiagnostics?.matchRate ?? diagnostics.matchCoverageSummary?.matchRate ?? null)} />
+        <DiagnosticsLine label="Insufficient data rate" value={formatRate(experimentDiagnostics?.insufficientDataRate ?? 0)} />
         <DiagnosticsLine label="Rows by tier" value={formatCounts(diagnostics.rowsByTier)} />
         <DiagnosticsLine label="Rows by status" value={formatCounts(diagnostics.rowsByStatus)} />
         <DiagnosticsLine label="Rows by position" value={formatCounts(diagnostics.rowsByPosition)} />
         <DiagnosticsLine label="Warning counts" value={formatCounts(diagnostics.warningCounts)} />
+        <DiagnosticsLine
+          label="Experiment eligible"
+          value={experimentDiagnostics ? String(experimentDiagnostics.blackbirdExperimentEligible) : "Preview only"}
+          warning={experimentDiagnostics ? !experimentDiagnostics.blackbirdExperimentEligible : false}
+        />
+        <DiagnosticsLine
+          label="Failed gates"
+          value={experimentDiagnostics?.failedExperimentGates.join(", ") || "None"}
+          warning={Boolean(experimentDiagnostics?.failedExperimentGates.length)}
+        />
         <DiagnosticsLine label="IDP rows evaluated" value={String(diagnostics.idpRowsEvaluated)} />
         <DiagnosticsLine label="IDP rows by tier" value={formatCounts(diagnostics.idpRowsByTier)} />
         <DiagnosticsLine label="IDP avg components" value={formatScoreComponents(diagnostics.idpAverageScoreComponents)} />
@@ -1130,6 +1282,14 @@ function formatCounts(counts: Record<string, number>) {
   const entries = Object.entries(counts);
   if (!entries.length) return "None";
   return entries.map(([key, value]) => `${key}: ${value}`).join(", ");
+}
+
+function formatRate(value: number) {
+  return `${Math.round(value * 1000) / 10}%`;
+}
+
+function formatNullableRate(value: number | null) {
+  return value === null ? "Unknown" : formatRate(value);
 }
 
 function formatScoreComponents(components: WarRoomRecommendationResult["diagnostics"]["idpAverageScoreComponents"]) {

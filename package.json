@@ -48,6 +48,7 @@
     "dry-run:h10-war-room-matching": "tsx scripts/h10-war-room-matching-dry-run.ts",
     "dry-run:h10-war-room-recommendations": "tsx scripts/h10-war-room-recommendation-dry-run.ts",
     "validate:h10-war-room-recommendations": "tsx scripts/h10-war-room-recommendation-validation.ts",
+    "diagnose:h10-war-room-side-by-side": "tsx scripts/h10-war-room-side-by-side-diagnostics.ts",
     "seed:h10-validation-rooms": "tsx scripts/seed-h10-validation-draft-rooms.ts",
     "repair:sleeper-player-identities": "tsx scripts/repair-sleeper-player-identities.ts",
     "test:watch": "vitest",

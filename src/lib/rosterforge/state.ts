@@ -92,6 +92,7 @@ const WARNING_MESSAGES: Record<string, string> = {
 
 const H10_WAR_ROOM_OVERLAY_FEATURE_FLAG = "ENABLE_H10_WAR_ROOM_OVERLAY";
 const H10_WAR_ROOM_RECOMMENDATIONS_PREVIEW_FEATURE_FLAG = "ENABLE_H10_WAR_ROOM_RECOMMENDATIONS_PREVIEW";
+const H10_WAR_ROOM_RECOMMENDATIONS_EXPERIMENT_FEATURE_FLAG = "ENABLE_H10_WAR_ROOM_RECOMMENDATIONS_EXPERIMENT";
 const WAR_ROOM_DIAGNOSTIC_FALLBACKS_FEATURE_FLAG = "ENABLE_WAR_ROOM_DIAGNOSTIC_FALLBACKS";
 
 export async function getDraftRoomState(userId: string, draftRoomId: string) {
@@ -310,7 +311,9 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
         fallbackPlayers,
       })
     : {};
-  const recommendationPreviewPayload = getBooleanEnv(H10_WAR_ROOM_RECOMMENDATIONS_PREVIEW_FEATURE_FLAG, false)
+  const h10RecommendationPreviewEnabled = getBooleanEnv(H10_WAR_ROOM_RECOMMENDATIONS_PREVIEW_FEATURE_FLAG, false);
+  const h10RecommendationExperimentEnabled = getBooleanEnv(H10_WAR_ROOM_RECOMMENDATIONS_EXPERIMENT_FEATURE_FLAG, false);
+  const recommendationPreviewPayload = h10RecommendationPreviewEnabled || h10RecommendationExperimentEnabled
     ? buildOptionalH10RecommendationPreview({
         leagueId: room.league_id as string,
         draftRoomId,
@@ -326,6 +329,7 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
         picksUntilMyNextPick,
         draftedPlayerIds: Array.from(draftedIds).filter((id): id is string => Boolean(id)),
         positionCounts: counts,
+        legacyRecommendationCount: hasRankings ? scoring.recommendations.length : 0,
       })
     : {};
 
@@ -357,6 +361,8 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
     warningMessages: warnings.map((warning) => WARNING_MESSAGES[warning] ?? warning),
     warning: warnings.map((warning) => WARNING_MESSAGES[warning] ?? warning).join(" ") || null,
     fallbackRelevanceDiagnostics: hasRankings ? emptyFallbackDiagnostics(includeDiagnosticFallbacks) : fallbackRelevance.diagnostics,
+    h10RecommendationPreviewEnabled,
+    h10RecommendationExperimentEnabled,
     ...overlayPayload,
     ...recommendationPreviewPayload
   };
@@ -404,6 +410,7 @@ function buildOptionalH10RecommendationPreview(input: {
   picksUntilMyNextPick: number | null;
   draftedPlayerIds: string[];
   positionCounts: Record<PositionGroup, number>;
+  legacyRecommendationCount: number;
 }) {
   try {
     const valueRows = loadH10ValueRowsFromArtifact(input.leagueId);
@@ -439,6 +446,9 @@ function buildOptionalH10RecommendationPreview(input: {
       positionCounts: input.positionCounts,
       includeDstDryRun: false,
       matchCoverageSummary: overlay.diagnostics.matchCoverageSummary,
+      legacyRecommendationCount: input.legacyRecommendationCount,
+      legacyRecommendationsUnchanged: true,
+      remainingPlayersOrderUnchanged: true,
     });
   } catch (error) {
     return {
@@ -461,6 +471,20 @@ function buildOptionalH10RecommendationPreview(input: {
         idpTopTierCliffRows: [],
         idpSuppressionReasons: {},
         invariantFailures: [error instanceof Error ? error.message : "Unable to build H10 recommendation preview."],
+        contextLimitations: ["H10_RECOMMENDATION_PREVIEW_UNAVAILABLE"],
+      },
+      h10RecommendationExperimentDiagnostics: {
+        legacyReady: input.legacyRecommendationCount > 0,
+        blackbirdPreviewReady: false,
+        blackbirdExperimentEligible: false,
+        failedExperimentGates: ["INVARIANT_FAILURES_PRESENT"],
+        blackbirdRowsGenerated: 0,
+        blackbirdRowsShown: 0,
+        rowsByTier: {},
+        rowsByStatus: {},
+        matchRate: null,
+        insufficientDataRate: 1,
+        warningCounts: {},
         contextLimitations: ["H10_RECOMMENDATION_PREVIEW_UNAVAILABLE"],
       },
     };
