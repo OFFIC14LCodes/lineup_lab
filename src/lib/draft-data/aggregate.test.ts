@@ -425,10 +425,10 @@ describe("H6.1 inapplicable key filtering (DEF/IDP/K keys excluded from offensiv
     const { scoringCompletenessRatio, historicalScoreConfidence, unsupportedScoringKeys } = profile.scoringCompleteness;
 
     // Keys with NO engine rule (NOT_IMPL) appear in unsupportedScoringKeys for all positions.
-    // Keys WITH an engine rule (sack, int) are evaluated by the engine (as 0 for offensive
+    // Keys WITH an engine rule (sack, int, bonus_sack_2p) are evaluated by the engine (as 0 for offensive
     // players) and do NOT appear in unsupportedScoringKeys — the engine handles them.
     expect(unsupportedScoringKeys).toContain("def_st_ff");
-    expect(unsupportedScoringKeys).toContain("bonus_sack_2p");
+    expect(unsupportedScoringKeys).not.toContain("bonus_sack_2p");
     expect(scoringCompletenessRatio).toBeGreaterThanOrEqual(0.9);
     expect(["complete", "high"]).toContain(historicalScoreConfidence);
   });
@@ -470,11 +470,11 @@ describe("H6.1 inapplicable key filtering (DEF/IDP/K keys excluded from offensiv
     });
 
     // Only keys with NO engine rule (NOT_IMPL) appear in unsupportedScoringKeys and thus in
-    // outOfScopeLeagueScoringKeys. Keys with engine rules (sack, int) are evaluated by the
+    // outOfScopeLeagueScoringKeys. Keys with engine rules (sack, int, bonus_sack_2p) are evaluated by the
     // engine at 0 for offensive players and do not flow through unsupportedScoringKeys.
     const { outOfScopeLeagueScoringKeys } = result.leagueSummary;
     expect(outOfScopeLeagueScoringKeys).toContain("def_st_ff");
-    expect(outOfScopeLeagueScoringKeys).toContain("bonus_sack_2p");
+    expect(outOfScopeLeagueScoringKeys).not.toContain("bonus_sack_2p");
   });
 
   it("applicable unsupported offensive keys appear in limitations and increment unsupportedEngineKeyCount", () => {

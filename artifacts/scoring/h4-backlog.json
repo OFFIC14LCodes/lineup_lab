@@ -1,5 +1,5 @@
 {
-  "auditedAt": "2026-06-14T22:11:44.869Z",
+  "auditedAt": "2026-06-15T05:53:14.794Z",
   "groups": [
     {
       "id": "group_a_weekly_derivable",
@@ -37,7 +37,7 @@
       "id": "group_c_additional_pbp_derivations",
       "title": "Group C — additional PBP derivations",
       "description": "Keys that still require more play-by-play-derived canonical stats beyond the H2/H2.1 set now in production.",
-      "currentKeyCount": 4,
+      "currentKeyCount": 7,
       "keys": [
         {
           "key": "fum_rec",
@@ -67,6 +67,30 @@
           "key": "pass_cmp_40p",
           "label": "Passing completion of 40+ yards bonus",
           "family": "long_td_bonuses",
+          "dataStatus": "nflverse_pbp_derivable",
+          "recommendedPath": "Extend the PBP derivation pipeline with a new derived canonical stat.",
+          "blockers": []
+        },
+        {
+          "key": "rec_40p",
+          "label": "Reception of 40+ yards bonus",
+          "family": "long_td_bonuses",
+          "dataStatus": "nflverse_pbp_derivable",
+          "recommendedPath": "Extend the PBP derivation pipeline with a new derived canonical stat.",
+          "blockers": []
+        },
+        {
+          "key": "rush_40p",
+          "label": "Rush of 40+ yards bonus",
+          "family": "long_td_bonuses",
+          "dataStatus": "nflverse_pbp_derivable",
+          "recommendedPath": "Extend the PBP derivation pipeline with a new derived canonical stat.",
+          "blockers": []
+        },
+        {
+          "key": "fum_rec_td",
+          "label": "Offensive fumble recovery touchdown",
+          "family": "miscellaneous_skill",
           "dataStatus": "nflverse_pbp_derivable",
           "recommendedPath": "Extend the PBP derivation pipeline with a new derived canonical stat.",
           "blockers": []

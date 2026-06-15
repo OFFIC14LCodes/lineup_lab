@@ -1,0 +1,5466 @@
+{
+  "generatedAt": "2026-06-15T05:54:11.862Z",
+  "artifactVersion": "h10.7-war-room-recommendation-validation-v2",
+  "args": {
+    "includeLive": true,
+    "includeValidation": true,
+    "includeFixtures": true
+  },
+  "roomInventory": [
+    {
+      "source": "validation_seed",
+      "draftRoomId": "c82aef89-ce90-40f0-936f-545656045554",
+      "leagueId": "95c929b9-cc55-411e-8493-06fd85308c1c",
+      "leagueName": "BestBalls in Hand IDP Dynasty ",
+      "season": "2026",
+      "has_uploaded_rankings": true,
+      "remaining_player_count": 24,
+      "fallback_row_count": 0,
+      "ranked_row_count": 24,
+      "positions_present": [
+        "DB",
+        "DL",
+        "LB"
+      ],
+      "hasIDP": true,
+      "hasKicker": false,
+      "hasTeamDefense": false,
+      "isSuperflex": true,
+      "is2QB": false,
+      "isTEPremium": false,
+      "benchDepth": 18,
+      "currentPickKnown": true,
+      "picksUntilMyNextPickKnown": true,
+      "legacyRecommendationCount": 0,
+      "h10PreviewEnabledPossible": true
+    },
+    {
+      "source": "validation_seed",
+      "draftRoomId": "b386e78a-c7ff-4688-828e-6b48cbca863e",
+      "leagueId": "8d1a3d47-0b1d-494c-bdab-1590fa630d7d",
+      "leagueName": "🪓 Chopped",
+      "season": "2026",
+      "has_uploaded_rankings": true,
+      "remaining_player_count": 20,
+      "fallback_row_count": 0,
+      "ranked_row_count": 20,
+      "positions_present": [
+        "QB",
+        "RB",
+        "TE",
+        "WR"
+      ],
+      "hasIDP": false,
+      "hasKicker": false,
+      "hasTeamDefense": false,
+      "isSuperflex": true,
+      "is2QB": false,
+      "isTEPremium": false,
+      "benchDepth": 2,
+      "currentPickKnown": true,
+      "picksUntilMyNextPickKnown": true,
+      "legacyRecommendationCount": 0,
+      "h10PreviewEnabledPossible": true
+    },
+    {
+      "source": "validation_seed",
+      "draftRoomId": "2f62d6e3-d309-4d50-8e7e-2ef05a83771c",
+      "leagueId": "fde3c4a0-3cb6-4fac-890d-b43c5c2f0c1a",
+      "leagueName": "Legacy League",
+      "season": "2026",
+      "has_uploaded_rankings": true,
+      "remaining_player_count": 6,
+      "fallback_row_count": 0,
+      "ranked_row_count": 6,
+      "positions_present": [
+        "DEF"
+      ],
+      "hasIDP": false,
+      "hasKicker": true,
+      "hasTeamDefense": true,
+      "isSuperflex": false,
+      "is2QB": false,
+      "isTEPremium": false,
+      "benchDepth": 6,
+      "currentPickKnown": true,
+      "picksUntilMyNextPickKnown": true,
+      "legacyRecommendationCount": 0,
+      "h10PreviewEnabledPossible": true
+    },
+    {
+      "source": "validation_seed",
+      "draftRoomId": "2a5c27ce-1a26-4473-95cc-9da9ed78520a",
+      "leagueId": "fde3c4a0-3cb6-4fac-890d-b43c5c2f0c1a",
+      "leagueName": "Legacy League",
+      "season": "2026",
+      "has_uploaded_rankings": true,
+      "remaining_player_count": 22,
+      "fallback_row_count": 0,
+      "ranked_row_count": 22,
+      "positions_present": [
+        "K",
+        "QB",
+        "RB",
+        "TE",
+        "WR"
+      ],
+      "hasIDP": false,
+      "hasKicker": true,
+      "hasTeamDefense": true,
+      "isSuperflex": false,
+      "is2QB": false,
+      "isTEPremium": false,
+      "benchDepth": 6,
+      "currentPickKnown": true,
+      "picksUntilMyNextPickKnown": true,
+      "legacyRecommendationCount": 0,
+      "h10PreviewEnabledPossible": true
+    },
+    {
+      "source": "validation_seed",
+      "draftRoomId": "f131b67c-c646-4e01-a925-c7d9f3eab4b0",
+      "leagueId": "8d1a3d47-0b1d-494c-bdab-1590fa630d7d",
+      "leagueName": "🪓 Chopped",
+      "season": "2026",
+      "has_uploaded_rankings": true,
+      "remaining_player_count": 26,
+      "fallback_row_count": 0,
+      "ranked_row_count": 26,
+      "positions_present": [
+        "QB",
+        "RB",
+        "TE",
+        "WR"
+      ],
+      "hasIDP": false,
+      "hasKicker": false,
+      "hasTeamDefense": false,
+      "isSuperflex": true,
+      "is2QB": false,
+      "isTEPremium": false,
+      "benchDepth": 2,
+      "currentPickKnown": true,
+      "picksUntilMyNextPickKnown": true,
+      "legacyRecommendationCount": 0,
+      "h10PreviewEnabledPossible": true
+    },
+    {
+      "source": "live",
+      "draftRoomId": "f85238ff-b2ee-4053-8493-e38c4cb63bd3",
+      "leagueId": "95c929b9-cc55-411e-8493-06fd85308c1c",
+      "leagueName": "BestBalls in Hand IDP Dynasty ",
+      "season": "2026",
+      "has_uploaded_rankings": false,
+      "remaining_player_count": 150,
+      "fallback_row_count": 150,
+      "ranked_row_count": 0,
+      "positions_present": [
+        "DB"
+      ],
+      "hasIDP": true,
+      "hasKicker": false,
+      "hasTeamDefense": false,
+      "isSuperflex": true,
+      "is2QB": false,
+      "isTEPremium": false,
+      "benchDepth": 18,
+      "currentPickKnown": true,
+      "picksUntilMyNextPickKnown": true,
+      "legacyRecommendationCount": 0,
+      "h10PreviewEnabledPossible": true
+    },
+    {
+      "source": "fixture",
+      "draftRoomId": "fixture-one-qb-offense",
+      "leagueId": "fixture-one-qb-offense",
+      "leagueName": "[Fixture] 1QB Offense",
+      "season": 2026,
+      "has_uploaded_rankings": true,
+      "remaining_player_count": 4,
+      "fallback_row_count": 0,
+      "ranked_row_count": 4,
+      "positions_present": [
+        "QB",
+        "RB",
+        "TE",
+        "WR"
+      ],
+      "hasIDP": false,
+      "hasKicker": false,
+      "hasTeamDefense": false,
+      "isSuperflex": false,
+      "is2QB": false,
+      "isTEPremium": false,
+      "benchDepth": 3,
+      "currentPickKnown": true,
+      "picksUntilMyNextPickKnown": true,
+      "legacyRecommendationCount": 0,
+      "h10PreviewEnabledPossible": true
+    },
+    {
+      "source": "fixture",
+      "draftRoomId": "fixture-superflex-qb",
+      "leagueId": "fixture-superflex-qb",
+      "leagueName": "[Fixture] Superflex QB",
+      "season": 2026,
+      "has_uploaded_rankings": true,
+      "remaining_player_count": 3,
+      "fallback_row_count": 0,
+      "ranked_row_count": 3,
+      "positions_present": [
+        "QB",
+        "RB",
+        "WR"
+      ],
+      "hasIDP": false,
+      "hasKicker": false,
+      "hasTeamDefense": false,
+      "isSuperflex": true,
+      "is2QB": false,
+      "isTEPremium": false,
+      "benchDepth": 3,
+      "currentPickKnown": true,
+      "picksUntilMyNextPickKnown": true,
+      "legacyRecommendationCount": 0,
+      "h10PreviewEnabledPossible": true
+    },
+    {
+      "source": "fixture",
+      "draftRoomId": "fixture-te-premium",
+      "leagueId": "fixture-te-premium",
+      "leagueName": "[Fixture] TE Premium",
+      "season": 2026,
+      "has_uploaded_rankings": true,
+      "remaining_player_count": 2,
+      "fallback_row_count": 0,
+      "ranked_row_count": 2,
+      "positions_present": [
+        "TE",
+        "WR"
+      ],
+      "hasIDP": false,
+      "hasKicker": false,
+      "hasTeamDefense": false,
+      "isSuperflex": false,
+      "is2QB": false,
+      "isTEPremium": true,
+      "benchDepth": 3,
+      "currentPickKnown": true,
+      "picksUntilMyNextPickKnown": true,
+      "legacyRecommendationCount": 0,
+      "h10PreviewEnabledPossible": true
+    },
+    {
+      "source": "fixture",
+      "draftRoomId": "fixture-kicker-dst",
+      "leagueId": "fixture-kicker-dst",
+      "leagueName": "[Fixture] Kicker DST",
+      "season": 2026,
+      "has_uploaded_rankings": true,
+      "remaining_player_count": 2,
+      "fallback_row_count": 0,
+      "ranked_row_count": 2,
+      "positions_present": [
+        "DEF",
+        "K"
+      ],
+      "hasIDP": false,
+      "hasKicker": true,
+      "hasTeamDefense": true,
+      "isSuperflex": false,
+      "is2QB": false,
+      "isTEPremium": false,
+      "benchDepth": 2,
+      "currentPickKnown": true,
+      "picksUntilMyNextPickKnown": true,
+      "legacyRecommendationCount": 0,
+      "h10PreviewEnabledPossible": true
+    },
+    {
+      "source": "fixture",
+      "draftRoomId": "fixture-idp-mixed",
+      "leagueId": "fixture-idp-mixed",
+      "leagueName": "[Fixture] Mixed IDP",
+      "season": 2026,
+      "has_uploaded_rankings": true,
+      "remaining_player_count": 3,
+      "fallback_row_count": 0,
+      "ranked_row_count": 3,
+      "positions_present": [
+        "DB",
+        "DL",
+        "LB"
+      ],
+      "hasIDP": true,
+      "hasKicker": false,
+      "hasTeamDefense": false,
+      "isSuperflex": false,
+      "is2QB": false,
+      "isTEPremium": false,
+      "benchDepth": 2,
+      "currentPickKnown": true,
+      "picksUntilMyNextPickKnown": true,
+      "legacyRecommendationCount": 0,
+      "h10PreviewEnabledPossible": true
+    }
+  ],
+  "formatCoverage": {
+    "1QB offense": true,
+    "Superflex / 2QB": true,
+    "TE premium": true,
+    "IDP": true,
+    "Kicker": true,
+    "DST": true,
+    "Deep rosters": true,
+    "Shallow rosters": true,
+    "Uploaded rankings": true,
+    "Fallback pools": true
+  },
+  "roomResults": [
+    {
+      "source": "validation_seed",
+      "draftRoomId": "c82aef89-ce90-40f0-936f-545656045554",
+      "leagueId": "95c929b9-cc55-411e-8493-06fd85308c1c",
+      "leagueName": "BestBalls in Hand IDP Dynasty ",
+      "formats": [
+        "Superflex",
+        "IDP",
+        "Deep roster",
+        "Uploaded rankings"
+      ],
+      "remainingPlayersLoaded": 24,
+      "overlayRowsLoaded": 24,
+      "recommendationsGenerated": 24,
+      "matchRate": 1,
+      "rowsByTier": {
+        "watchlist": 1,
+        "avoid_for_now": 23
+      },
+      "rowsByStatus": {
+        "watch_only": 24
+      },
+      "rowsByPosition": {
+        "DL": 8,
+        "LB": 8,
+        "DB": 8
+      },
+      "warningCounts": {
+        "LOW_PROJECTION_CONFIDENCE": 24,
+        "MARKET_NOT_IMPLEMENTED": 24
+      },
+      "contextLimitations": [],
+      "invariantFailures": [],
+      "topRecommendations": [
+        {
+          "recommendationRank": 1,
+          "displayName": "Myles Garrett",
+          "position": "DL",
+          "team": "LAR",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 56,
+          "status": "watch_only",
+          "primaryReason": "High league value: +2.7 points above replacement.",
+          "warningCodes": [
+            "LOW_PROJECTION_CONFIDENCE",
+            "MARKET_NOT_IMPLEMENTED"
+          ],
+          "reasonCodes": [
+            "IDP_BIG_PLAY_REGRESSION",
+            "IDP_DEFENSIVE_TD_VOLATILITY",
+            "IDP_POSITION_GROUP_COMPATIBLE",
+            "IDP_TACKLE_VOLUME_PROJECTED",
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 30,
+            "rosterNeed": 20,
+            "scarcity": 11,
+            "tierCliff": 2,
+            "marketValue": 3,
+            "availabilityRisk": 4,
+            "confidencePenalty": -14,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 2,
+          "displayName": "Aidan Hutchinson",
+          "position": "DL",
+          "team": "DET",
+          "recommendationTier": "avoid_for_now",
+          "recommendationScore": 41,
+          "status": "watch_only",
+          "primaryReason": "League value: +1.1 points above replacement.",
+          "warningCodes": [
+            "LOW_PROJECTION_CONFIDENCE",
+            "MARKET_NOT_IMPLEMENTED"
+          ],
+          "reasonCodes": [
+            "IDP_BIG_PLAY_REGRESSION",
+            "IDP_DEFENSIVE_TD_VOLATILITY",
+            "IDP_POSITION_GROUP_COMPATIBLE",
+            "IDP_TACKLE_VOLUME_PROJECTED",
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 15,
+            "rosterNeed": 20,
+            "scarcity": 11,
+            "tierCliff": 2,
+            "marketValue": 3,
+            "availabilityRisk": 4,
+            "confidencePenalty": -14,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 3,
+          "displayName": "Danielle Hunter",
+          "position": "DL",
+          "team": "HOU",
+          "recommendationTier": "avoid_for_now",
+          "recommendationScore": 37.2,
+          "status": "watch_only",
+          "primaryReason": "League value: +0.7 points above replacement.",
+          "warningCodes": [
+            "LOW_PROJECTION_CONFIDENCE",
+            "MARKET_NOT_IMPLEMENTED"
+          ],
+          "reasonCodes": [
+            "IDP_BIG_PLAY_REGRESSION",
+            "IDP_DEFENSIVE_TD_VOLATILITY",
+            "IDP_POSITION_GROUP_COMPATIBLE",
+            "IDP_TACKLE_VOLUME_PROJECTED",
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 11.2,
+            "rosterNeed": 20,
+            "scarcity": 11,
+            "tierCliff": 2,
+            "marketValue": 3,
+            "availabilityRisk": 4,
+            "confidencePenalty": -14,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 4,
+          "displayName": "Chase Young",
+          "position": "DL",
+          "team": "NO",
+          "recommendationTier": "avoid_for_now",
+          "recommendationScore": 29.5,
+          "status": "watch_only",
+          "primaryReason": "League value: +0 points above replacement.",
+          "warningCodes": [
+            "LOW_PROJECTION_CONFIDENCE",
+            "MARKET_NOT_IMPLEMENTED"
+          ],
+          "reasonCodes": [
+            "IDP_BIG_PLAY_REGRESSION",
+            "IDP_DEFENSIVE_TD_VOLATILITY",
+            "IDP_POSITION_GROUP_COMPATIBLE",
+            "IDP_TACKLE_VOLUME_PROJECTED",
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 5.5,
+            "rosterNeed": 20,
+            "scarcity": 11,
+            "tierCliff": 2,
+            "marketValue": 3,
+            "availabilityRisk": 2,
+            "confidencePenalty": -14,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 5,
+          "displayName": "Brian Burns",
+          "position": "LB",
+          "team": "NYG",
+          "recommendationTier": "avoid_for_now",
+          "recommendationScore": 29.3,
+          "status": "watch_only",
+          "primaryReason": "League value: +1 points above replacement.",
+          "warningCodes": [
+            "LOW_PROJECTION_CONFIDENCE",
+            "MARKET_NOT_IMPLEMENTED"
+          ],
+          "reasonCodes": [
+            "IDP_BIG_PLAY_REGRESSION",
+            "IDP_DEFENSIVE_TD_VOLATILITY",
+            "IDP_POSITION_GROUP_COMPATIBLE",
+            "IDP_TACKLE_VOLUME_PROJECTED",
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 15.3,
+            "rosterNeed": 20,
+            "scarcity": 1,
+            "tierCliff": 2,
+            "marketValue": 3,
+            "availabilityRisk": 2,
+            "confidencePenalty": -14,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 6,
+          "displayName": "Jeffery Simmons",
+          "position": "DL",
+          "team": "TEN",
+          "recommendationTier": "avoid_for_now",
+          "recommendationScore": 29.1,
+          "status": "watch_only",
+          "primaryReason": "League value: +0 points above replacement.",
+          "warningCodes": [
+            "LOW_PROJECTION_CONFIDENCE",
+            "MARKET_NOT_IMPLEMENTED"
+          ],
+          "reasonCodes": [
+            "IDP_BIG_PLAY_REGRESSION",
+            "IDP_DEFENSIVE_TD_VOLATILITY",
+            "IDP_POSITION_GROUP_COMPATIBLE",
+            "IDP_TACKLE_VOLUME_PROJECTED",
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 5.1,
+            "rosterNeed": 20,
+            "scarcity": 11,
+            "tierCliff": 2,
+            "marketValue": 3,
+            "availabilityRisk": 2,
+            "confidencePenalty": -14,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 7,
+          "displayName": "Laiatu Latu",
+          "position": "DL",
+          "team": "IND",
+          "recommendationTier": "avoid_for_now",
+          "recommendationScore": 29,
+          "status": "watch_only",
+          "primaryReason": "League value: -0.1 points above replacement.",
+          "warningCodes": [
+            "LOW_PROJECTION_CONFIDENCE",
+            "MARKET_NOT_IMPLEMENTED"
+          ],
+          "reasonCodes": [
+            "IDP_BIG_PLAY_REGRESSION",
+            "IDP_DEFENSIVE_TD_VOLATILITY",
+            "IDP_POSITION_GROUP_COMPATIBLE",
+            "IDP_TACKLE_VOLUME_PROJECTED",
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 4,
+            "rosterNeed": 20,
+            "scarcity": 11,
+            "tierCliff": 2,
+            "marketValue": 4,
+            "availabilityRisk": 2,
+            "confidencePenalty": -14,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 8,
+          "displayName": "Maxx Crosby",
+          "position": "DL",
+          "team": "LV",
+          "recommendationTier": "avoid_for_now",
+          "recommendationScore": 27.4,
+          "status": "watch_only",
+          "primaryReason": "League value: -0.3 points above replacement.",
+          "warningCodes": [
+            "LOW_PROJECTION_CONFIDENCE",
+            "MARKET_NOT_IMPLEMENTED"
+          ],
+          "reasonCodes": [
+            "IDP_BIG_PLAY_REGRESSION",
+            "IDP_DEFENSIVE_TD_VOLATILITY",
+            "IDP_POSITION_GROUP_COMPATIBLE",
+            "IDP_TACKLE_VOLUME_PROJECTED",
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 2.4,
+            "rosterNeed": 20,
+            "scarcity": 11,
+            "tierCliff": 2,
+            "marketValue": 4,
+            "availabilityRisk": 2,
+            "confidencePenalty": -14,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 9,
+          "displayName": "Will Anderson",
+          "position": "DL",
+          "team": "HOU",
+          "recommendationTier": "avoid_for_now",
+          "recommendationScore": 25,
+          "status": "watch_only",
+          "primaryReason": "League value: -0.6 points above replacement.",
+          "warningCodes": [
+            "LOW_PROJECTION_CONFIDENCE",
+            "MARKET_NOT_IMPLEMENTED"
+          ],
+          "reasonCodes": [
+            "IDP_BIG_PLAY_REGRESSION",
+            "IDP_DEFENSIVE_TD_VOLATILITY",
+            "IDP_POSITION_GROUP_COMPATIBLE",
+            "IDP_TACKLE_VOLUME_PROJECTED",
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 0,
+            "rosterNeed": 20,
+            "scarcity": 11,
+            "tierCliff": 2,
+            "marketValue": 4,
+            "availabilityRisk": 2,
+            "confidencePenalty": -14,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 10,
+          "displayName": "Antonio Johnson",
+          "position": "DB",
+          "team": "JAX",
+          "recommendationTier": "avoid_for_now",
+          "recommendationScore": 24.2,
+          "status": "watch_only",
+          "primaryReason": "League value: +0.6 points above replacement.",
+          "warningCodes": [
+            "LOW_PROJECTION_CONFIDENCE",
+            "MARKET_NOT_IMPLEMENTED"
+          ],
+          "reasonCodes": [
+            "IDP_BIG_PLAY_REGRESSION",
+            "IDP_DEFENSIVE_TD_VOLATILITY",
+            "IDP_POSITION_GROUP_COMPATIBLE",
+            "IDP_TACKLE_VOLUME_PROJECTED",
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 11.2,
+            "rosterNeed": 20,
+            "scarcity": 1,
+            "tierCliff": 2,
+            "marketValue": 3,
+            "availabilityRisk": 1,
+            "confidencePenalty": -14,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 11,
+          "displayName": "Jamel Dean",
+          "position": "DB",
+          "team": "PIT",
+          "recommendationTier": "avoid_for_now",
+          "recommendationScore": 23.3,
+          "status": "watch_only",
+          "primaryReason": "League value: +0.5 points above replacement.",
+          "warningCodes": [
+            "LOW_PROJECTION_CONFIDENCE",
+            "MARKET_NOT_IMPLEMENTED"
+          ],
+          "reasonCodes": [
+            "IDP_BIG_PLAY_REGRESSION",
+            "IDP_DEFENSIVE_TD_VOLATILITY",
+            "IDP_POSITION_GROUP_COMPATIBLE",
+            "IDP_TACKLE_VOLUME_PROJECTED",
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 10.3,
+            "rosterNeed": 20,
+            "scarcity": 1,
+            "tierCliff": 2,
+            "marketValue": 3,
+            "availabilityRisk": 1,
+            "confidencePenalty": -14,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 12,
+          "displayName": "Josh Sweat",
+          "position": "LB",
+          "team": "ARI",
+          "recommendationTier": "avoid_for_now",
+          "recommendationScore": 22.5,
+          "status": "watch_only",
+          "primaryReason": "League value: +0.3 points above replacement.",
+          "warningCodes": [
+            "LOW_PROJECTION_CONFIDENCE",
+            "MARKET_NOT_IMPLEMENTED"
+          ],
+          "reasonCodes": [
+            "IDP_BIG_PLAY_REGRESSION",
+            "IDP_DEFENSIVE_TD_VOLATILITY",
+            "IDP_POSITION_GROUP_COMPATIBLE",
+            "IDP_TACKLE_VOLUME_PROJECTED",
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 8.5,
+            "rosterNeed": 20,
+            "scarcity": 1,
+            "tierCliff": 2,
+            "marketValue": 3,
+            "availabilityRisk": 2,
+            "confidencePenalty": -14,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 13,
+          "displayName": "T.J. Watt",
+          "position": "LB",
+          "team": "PIT",
+          "recommendationTier": "avoid_for_now",
+          "recommendationScore": 22.5,
+          "status": "watch_only",
+          "primaryReason": "League value: +0.3 points above replacement.",
+          "warningCodes": [
+            "LOW_PROJECTION_CONFIDENCE",
+            "MARKET_NOT_IMPLEMENTED"
+          ],
+          "reasonCodes": [
+            "IDP_BIG_PLAY_REGRESSION",
+            "IDP_DEFENSIVE_TD_VOLATILITY",
+            "IDP_POSITION_GROUP_COMPATIBLE",
+            "IDP_TACKLE_VOLUME_PROJECTED",
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 8.5,
+            "rosterNeed": 20,
+            "scarcity": 1,
+            "tierCliff": 2,
+            "marketValue": 3,
+            "availabilityRisk": 2,
+            "confidencePenalty": -14,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 14,
+          "displayName": "Kevin Byard",
+          "position": "DB",
+          "team": "NE",
+          "recommendationTier": "avoid_for_now",
+          "recommendationScore": 19.8,
+          "status": "watch_only",
+          "primaryReason": "League value: +0.2 points above replacement.",
+          "warningCodes": [
+            "LOW_PROJECTION_CONFIDENCE",
+            "MARKET_NOT_IMPLEMENTED"
+          ],
+          "reasonCodes": [
+            "IDP_BIG_PLAY_REGRESSION",
+            "IDP_DEFENSIVE_TD_VOLATILITY",
+            "IDP_POSITION_GROUP_COMPATIBLE",
+            "IDP_TACKLE_VOLUME_PROJECTED",
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 6.8,
+            "rosterNeed": 20,
+            "scarcity": 1,
+            "tierCliff": 2,
+            "marketValue": 3,
+            "availabilityRisk": 1,
+            "confidencePenalty": -14,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 15,
+          "displayName": "Nik Bonitto",
+          "position": "LB",
+          "team": "DEN",
+          "recommendationTier": "avoid_for_now",
+          "recommendationScore": 19.8,
+          "status": "watch_only",
+          "primaryReason": "League value: +0 points above replacement.",
+          "warningCodes": [
+            "LOW_PROJECTION_CONFIDENCE",
+            "MARKET_NOT_IMPLEMENTED"
+          ],
+          "reasonCodes": [
+            "IDP_BIG_PLAY_REGRESSION",
+            "IDP_DEFENSIVE_TD_VOLATILITY",
+            "IDP_POSITION_GROUP_COMPATIBLE",
+            "IDP_TACKLE_VOLUME_PROJECTED",
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 5.8,
+            "rosterNeed": 20,
+            "scarcity": 1,
+            "tierCliff": 2,
+            "marketValue": 3,
+            "availabilityRisk": 2,
+            "confidencePenalty": -14,
+            "formatPenalty": 0
+          }
+        }
+      ],
+      "watchlistExamples": [
+        {
+          "recommendationRank": 1,
+          "displayName": "Myles Garrett",
+          "position": "DL",
+          "team": "LAR",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 56,
+          "status": "watch_only",
+          "primaryReason": "High league value: +2.7 points above replacement.",
+          "warningCodes": [
+            "LOW_PROJECTION_CONFIDENCE",
+            "MARKET_NOT_IMPLEMENTED"
+          ],
+          "reasonCodes": [
+            "IDP_BIG_PLAY_REGRESSION",
+            "IDP_DEFENSIVE_TD_VOLATILITY",
+            "IDP_POSITION_GROUP_COMPATIBLE",
+            "IDP_TACKLE_VOLUME_PROJECTED",
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 30,
+            "rosterNeed": 20,
+            "scarcity": 11,
+            "tierCliff": 2,
+            "marketValue": 3,
+            "availabilityRisk": 4,
+            "confidencePenalty": -14,
+            "formatPenalty": 0
+          }
+        }
+      ],
+      "insufficientDataExamples": [],
+      "legacyRecommendationCount": 0,
+      "legacyRecommendationTopRows": [],
+      "legacyRowsChanged": false,
+      "remainingPlayersOrderChanged": false,
+      "thresholdResults": {
+        "matchRatePass": true,
+        "insufficientDataPass": true,
+        "invariantPass": true,
+        "legacyUnchangedPass": true,
+        "remainingOrderUnchangedPass": true,
+        "forbiddenLanguagePass": true,
+        "offensiveTargetTierPass": null,
+        "superflexQbUrgencyPass": null,
+        "kEarlySuppressionPass": null,
+        "dstEarlySuppressionPass": null
+      },
+      "formatDiagnostics": {
+        "superflexQbUrgencyApplied": null,
+        "qbAverageRosterNeed": 0,
+        "nonQbAverageRosterNeed": 0,
+        "idpRows": 24,
+        "kickerRows": 0,
+        "dstRows": 0
+      }
+    },
+    {
+      "source": "validation_seed",
+      "draftRoomId": "b386e78a-c7ff-4688-828e-6b48cbca863e",
+      "leagueId": "8d1a3d47-0b1d-494c-bdab-1590fa630d7d",
+      "leagueName": "🪓 Chopped",
+      "formats": [
+        "Superflex",
+        "Shallow roster",
+        "Uploaded rankings"
+      ],
+      "remainingPlayersLoaded": 20,
+      "overlayRowsLoaded": 20,
+      "recommendationsGenerated": 20,
+      "matchRate": 1,
+      "rowsByTier": {
+        "solid_target": 2,
+        "watchlist": 4,
+        "avoid_for_now": 14
+      },
+      "rowsByStatus": {
+        "watch_only": 20
+      },
+      "rowsByPosition": {
+        "TE": 4,
+        "RB": 6,
+        "WR": 6,
+        "QB": 4
+      },
+      "warningCounts": {
+        "SINGLE_SEASON_OFFENSIVE_BASELINE": 20,
+        "Superflex mismatch: snapshot=false, league=true — QB tiers differ": 20,
+        "Team count difference (12 vs 18) — positional scarcity shifts": 20,
+        "Team count difference: snapshot=12, league=18": 20,
+        "Superflex mismatch — QB tier values diverge (snapshot=false, league=true)": 4
+      },
+      "contextLimitations": [],
+      "invariantFailures": [],
+      "topRecommendations": [
+        {
+          "recommendationRank": 1,
+          "displayName": "Trey McBride",
+          "position": "TE",
+          "team": "ARI",
+          "recommendationTier": "solid_target",
+          "recommendationScore": 65,
+          "status": "watch_only",
+          "primaryReason": "High league value: +94 points above replacement.",
+          "warningCodes": [
+            "SINGLE_SEASON_OFFENSIVE_BASELINE",
+            "Superflex mismatch: snapshot=false, league=true — QB tiers differ",
+            "Team count difference (12 vs 18) — positional scarcity shifts",
+            "Team count difference: snapshot=12, league=18"
+          ],
+          "reasonCodes": [
+            "ESTABLISHED_FULL_SEASON",
+            "FIRST_DOWN_PROJECTED_FROM_HISTORY",
+            "FUMBLE_PENALTY_IMPACT",
+            "FUMBLE_RATE_REGRESSION_UP",
+            "LEAGUE_SCORING_APPLIED",
+            "MARKET_ALIGNED",
+            "MARKET_FORMAT_WARNING",
+            "MARKET_SINGLE_PROVIDER",
+            "PPR_SCORING_IMPACT",
+            "ROLE_STABILITY_HIGH",
+            "SCORING_UNSUPPORTED_KEY",
+            "SINGLE_SEASON_ONLY",
+            "STARTER_NEED",
+            "TE_PREMIUM_SCORING_IMPACT",
+            "THRESHOLD_BONUS_PROJECTED_FROM_ROLE_WEEKS",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 28,
+            "rosterNeed": 20,
+            "scarcity": 11,
+            "tierCliff": 15,
+            "marketValue": 6,
+            "availabilityRisk": 3,
+            "confidencePenalty": -18,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 2,
+          "displayName": "Christian McCaffrey",
+          "position": "RB",
+          "team": "SF",
+          "recommendationTier": "solid_target",
+          "recommendationScore": 60.7,
+          "status": "watch_only",
+          "primaryReason": "High league value: +72.8 points above replacement.",
+          "warningCodes": [
+            "SINGLE_SEASON_OFFENSIVE_BASELINE",
+            "Superflex mismatch: snapshot=false, league=true — QB tiers differ",
+            "Team count difference (12 vs 18) — positional scarcity shifts",
+            "Team count difference: snapshot=12, league=18"
+          ],
+          "reasonCodes": [
+            "ESTABLISHED_FULL_SEASON",
+            "FIRST_DOWN_PROJECTED_FROM_HISTORY",
+            "FUMBLE_PENALTY_IMPACT",
+            "FUMBLE_RATE_REGRESSION_UP",
+            "LEAGUE_SCORING_APPLIED",
+            "MARKET_ALIGNED",
+            "MARKET_FORMAT_WARNING",
+            "MARKET_SINGLE_PROVIDER",
+            "PPR_SCORING_IMPACT",
+            "ROLE_STABILITY_HIGH",
+            "SCORING_UNSUPPORTED_KEY",
+            "SINGLE_SEASON_ONLY",
+            "STARTER_NEED",
+            "THRESHOLD_BONUS_PROJECTED_FROM_ROLE_WEEKS",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 26.3,
+            "rosterNeed": 20,
+            "scarcity": 6.4,
+            "tierCliff": 15,
+            "marketValue": 6,
+            "availabilityRisk": 5,
+            "confidencePenalty": -18,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 3,
+          "displayName": "Puka Nacua",
+          "position": "WR",
+          "team": "LAR",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 48,
+          "status": "watch_only",
+          "primaryReason": "High league value: +41.3 points above replacement.",
+          "warningCodes": [
+            "SINGLE_SEASON_OFFENSIVE_BASELINE",
+            "Superflex mismatch: snapshot=false, league=true — QB tiers differ",
+            "Team count difference (12 vs 18) — positional scarcity shifts",
+            "Team count difference: snapshot=12, league=18"
+          ],
+          "reasonCodes": [
+            "EFFICIENCY_REGRESSION_DOWN",
+            "ESTABLISHED_FULL_SEASON",
+            "FIRST_DOWN_PROJECTED_FROM_HISTORY",
+            "FUMBLE_PENALTY_IMPACT",
+            "LEAGUE_SCORING_APPLIED",
+            "LONG_PLAY_BONUS_PROJECTED_REGRESSED",
+            "LONG_TD_VOLATILITY",
+            "LOW_SAMPLE_EFFICIENCY_REGRESSION",
+            "LOW_SAMPLE_TD_REGRESSION",
+            "MARKET_ALIGNED",
+            "MARKET_FORMAT_WARNING",
+            "MARKET_SINGLE_PROVIDER",
+            "PPR_SCORING_IMPACT",
+            "ROLE_STABILITY_HIGH",
+            "SCORING_UNSUPPORTED_KEY",
+            "SINGLE_SEASON_ONLY",
+            "STARTER_NEED",
+            "TD_RATE_REGRESSION_DOWN",
+            "THRESHOLD_BONUS_PROJECTED_FROM_ROLE_WEEKS",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 20,
+            "rosterNeed": 20,
+            "scarcity": 1,
+            "tierCliff": 15,
+            "marketValue": 6,
+            "availabilityRisk": 4,
+            "confidencePenalty": -18,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 4,
+          "displayName": "Kyle Pitts",
+          "position": "TE",
+          "team": "ATL",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 45.6,
+          "status": "watch_only",
+          "primaryReason": "League value: +0 points above replacement.",
+          "warningCodes": [
+            "SINGLE_SEASON_OFFENSIVE_BASELINE",
+            "Superflex mismatch: snapshot=false, league=true — QB tiers differ",
+            "Team count difference (12 vs 18) — positional scarcity shifts",
+            "Team count difference: snapshot=12, league=18"
+          ],
+          "reasonCodes": [
+            "ESTABLISHED_FULL_SEASON",
+            "FIRST_DOWN_PROJECTED_FROM_HISTORY",
+            "FUMBLE_PENALTY_IMPACT",
+            "FUMBLE_RATE_REGRESSION_UP",
+            "LEAGUE_SCORING_APPLIED",
+            "MARKET_ALIGNED",
+            "MARKET_FORMAT_WARNING",
+            "MARKET_SINGLE_PROVIDER",
+            "PPR_SCORING_IMPACT",
+            "ROLE_STABILITY_HIGH",
+            "SCORING_UNSUPPORTED_KEY",
+            "SINGLE_SEASON_ONLY",
+            "STARTER_NEED",
+            "TE_PREMIUM_SCORING_IMPACT",
+            "THRESHOLD_BONUS_PROJECTED_FROM_ROLE_WEEKS",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 8.6,
+            "rosterNeed": 20,
+            "scarcity": 11,
+            "tierCliff": 15,
+            "marketValue": 6,
+            "availabilityRisk": 3,
+            "confidencePenalty": -18,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 5,
+          "displayName": "Jonathan Taylor",
+          "position": "RB",
+          "team": "IND",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 42.6,
+          "status": "watch_only",
+          "primaryReason": "League value: +33.2 points above replacement.",
+          "warningCodes": [
+            "SINGLE_SEASON_OFFENSIVE_BASELINE",
+            "Superflex mismatch: snapshot=false, league=true — QB tiers differ",
+            "Team count difference (12 vs 18) — positional scarcity shifts",
+            "Team count difference: snapshot=12, league=18"
+          ],
+          "reasonCodes": [
+            "ESTABLISHED_FULL_SEASON",
+            "FIRST_DOWN_PROJECTED_FROM_HISTORY",
+            "FUMBLE_PENALTY_IMPACT",
+            "LEAGUE_SCORING_APPLIED",
+            "LONG_PLAY_BONUS_PROJECTED_REGRESSED",
+            "LONG_TD_VOLATILITY",
+            "MARKET_ALIGNED",
+            "MARKET_FORMAT_WARNING",
+            "MARKET_SINGLE_PROVIDER",
+            "PPR_SCORING_IMPACT",
+            "ROLE_STABILITY_HIGH",
+            "SCORING_UNSUPPORTED_KEY",
+            "SINGLE_SEASON_ONLY",
+            "STARTER_NEED",
+            "THRESHOLD_BONUS_PROJECTED_FROM_ROLE_WEEKS",
+            "TIER_CLIFF_VISIBLE",
+            "TWO_POINT_NOT_PROJECTED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 18.2,
+            "rosterNeed": 20,
+            "scarcity": 6.4,
+            "tierCliff": 8,
+            "marketValue": 6,
+            "availabilityRisk": 2,
+            "confidencePenalty": -18,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 6,
+          "displayName": "James Cook",
+          "position": "RB",
+          "team": "BUF",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 42.1,
+          "status": "watch_only",
+          "primaryReason": "League value: -2.8 points above replacement.",
+          "warningCodes": [
+            "SINGLE_SEASON_OFFENSIVE_BASELINE",
+            "Superflex mismatch: snapshot=false, league=true — QB tiers differ",
+            "Team count difference (12 vs 18) — positional scarcity shifts",
+            "Team count difference: snapshot=12, league=18"
+          ],
+          "reasonCodes": [
+            "ESTABLISHED_FULL_SEASON",
+            "FIRST_DOWN_PROJECTED_FROM_HISTORY",
+            "FUMBLE_PENALTY_IMPACT",
+            "LEAGUE_SCORING_APPLIED",
+            "LONG_PLAY_BONUS_PROJECTED_REGRESSED",
+            "LONG_TD_VOLATILITY",
+            "MARKET_ALIGNED",
+            "MARKET_FORMAT_WARNING",
+            "MARKET_SINGLE_PROVIDER",
+            "PPR_SCORING_IMPACT",
+            "ROLE_STABILITY_HIGH",
+            "SCORING_UNSUPPORTED_KEY",
+            "SINGLE_SEASON_ONLY",
+            "STARTER_NEED",
+            "THRESHOLD_BONUS_PROJECTED_FROM_ROLE_WEEKS",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 10.7,
+            "rosterNeed": 20,
+            "scarcity": 6.4,
+            "tierCliff": 12,
+            "marketValue": 7,
+            "availabilityRisk": 4,
+            "confidencePenalty": -18,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 7,
+          "displayName": "Bijan Robinson",
+          "position": "RB",
+          "team": "ATL",
+          "recommendationTier": "avoid_for_now",
+          "recommendationScore": 41.9,
+          "status": "watch_only",
+          "primaryReason": "League value: +29.9 points above replacement.",
+          "warningCodes": [
+            "SINGLE_SEASON_OFFENSIVE_BASELINE",
+            "Superflex mismatch: snapshot=false, league=true — QB tiers differ",
+            "Team count difference (12 vs 18) — positional scarcity shifts",
+            "Team count difference: snapshot=12, league=18"
+          ],
+          "reasonCodes": [
+            "ESTABLISHED_FULL_SEASON",
+            "FIRST_DOWN_PROJECTED_FROM_HISTORY",
+            "FUMBLE_PENALTY_IMPACT",
+            "LEAGUE_SCORING_APPLIED",
+            "LONG_PLAY_BONUS_PROJECTED_REGRESSED",
+            "LONG_TD_VOLATILITY",
+            "MARKET_ALIGNED",
+            "MARKET_FORMAT_WARNING",
+            "MARKET_SINGLE_PROVIDER",
+            "PPR_SCORING_IMPACT",
+            "ROLE_STABILITY_HIGH",
+            "SCORING_UNSUPPORTED_KEY",
+            "SINGLE_SEASON_ONLY",
+            "STARTER_NEED",
+            "THRESHOLD_BONUS_PROJECTED_FROM_ROLE_WEEKS",
+            "TIER_CLIFF_VISIBLE",
+            "TWO_POINT_NOT_PROJECTED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 17.5,
+            "rosterNeed": 20,
+            "scarcity": 6.4,
+            "tierCliff": 8,
+            "marketValue": 6,
+            "availabilityRisk": 2,
+            "confidencePenalty": -18,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 8,
+          "displayName": "De'Von Achane",
+          "position": "RB",
+          "team": "MIA",
+          "recommendationTier": "avoid_for_now",
+          "recommendationScore": 41.7,
+          "status": "watch_only",
+          "primaryReason": "League value: +0 points above replacement.",
+          "warningCodes": [
+            "SINGLE_SEASON_OFFENSIVE_BASELINE",
+            "Superflex mismatch: snapshot=false, league=true — QB tiers differ",
+            "Team count difference (12 vs 18) — positional scarcity shifts",
+            "Team count difference: snapshot=12, league=18"
+          ],
+          "reasonCodes": [
+            "ESTABLISHED_FULL_SEASON",
+            "FIRST_DOWN_PROJECTED_FROM_HISTORY",
+            "FUMBLE_PENALTY_IMPACT",
+            "FUMBLE_RATE_REGRESSION_UP",
+            "LEAGUE_SCORING_APPLIED",
+            "LONG_PLAY_BONUS_PROJECTED_REGRESSED",
+            "LONG_TD_VOLATILITY",
+            "MARKET_ALIGNED",
+            "MARKET_FORMAT_WARNING",
+            "MARKET_SINGLE_PROVIDER",
+            "PPR_SCORING_IMPACT",
+            "ROLE_STABILITY_HIGH",
+            "SCORING_UNSUPPORTED_KEY",
+            "SINGLE_SEASON_ONLY",
+            "STARTER_NEED",
+            "THRESHOLD_BONUS_PROJECTED_FROM_ROLE_WEEKS",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 11.3,
+            "rosterNeed": 20,
+            "scarcity": 6.4,
+            "tierCliff": 12,
+            "marketValue": 6,
+            "availabilityRisk": 4,
+            "confidencePenalty": -18,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 9,
+          "displayName": "Jahmyr Gibbs",
+          "position": "RB",
+          "team": "DET",
+          "recommendationTier": "avoid_for_now",
+          "recommendationScore": 39.1,
+          "status": "watch_only",
+          "primaryReason": "League value: +16.6 points above replacement.",
+          "warningCodes": [
+            "SINGLE_SEASON_OFFENSIVE_BASELINE",
+            "Superflex mismatch: snapshot=false, league=true — QB tiers differ",
+            "Team count difference (12 vs 18) — positional scarcity shifts",
+            "Team count difference: snapshot=12, league=18"
+          ],
+          "reasonCodes": [
+            "ESTABLISHED_FULL_SEASON",
+            "FIRST_DOWN_PROJECTED_FROM_HISTORY",
+            "FUMBLE_PENALTY_IMPACT",
+            "LEAGUE_SCORING_APPLIED",
+            "LONG_PLAY_BONUS_PROJECTED_REGRESSED",
+            "LONG_TD_VOLATILITY",
+            "MARKET_ALIGNED",
+            "MARKET_FORMAT_WARNING",
+            "MARKET_SINGLE_PROVIDER",
+            "PPR_SCORING_IMPACT",
+            "ROLE_STABILITY_HIGH",
+            "SCORING_UNSUPPORTED_KEY",
+            "SINGLE_SEASON_ONLY",
+            "STARTER_NEED",
+            "THRESHOLD_BONUS_PROJECTED_FROM_ROLE_WEEKS",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 14.7,
+            "rosterNeed": 20,
+            "scarcity": 6.4,
+            "tierCliff": 8,
+            "marketValue": 6,
+            "availabilityRisk": 2,
+            "confidencePenalty": -18,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 10,
+          "displayName": "Travis Kelce",
+          "position": "TE",
+          "team": "KC",
+          "recommendationTier": "avoid_for_now",
+          "recommendationScore": 38.3,
+          "status": "watch_only",
+          "primaryReason": "League value: -21 points above replacement.",
+          "warningCodes": [
+            "SINGLE_SEASON_OFFENSIVE_BASELINE",
+            "Superflex mismatch: snapshot=false, league=true — QB tiers differ",
+            "Team count difference (12 vs 18) — positional scarcity shifts",
+            "Team count difference: snapshot=12, league=18"
+          ],
+          "reasonCodes": [
+            "EFFICIENCY_REFERENCE_POOL_SMALL",
+            "EFFICIENCY_REGRESSION_UP",
+            "ESTABLISHED_FULL_SEASON",
+            "FIRST_DOWN_PROJECTED_FROM_HISTORY",
+            "FUMBLE_PENALTY_IMPACT",
+            "FUMBLE_RATE_REGRESSION_UP",
+            "INCIDENTAL_RUSHING_NOT_PROJECTED",
+            "LEAGUE_SCORING_APPLIED",
+            "LOW_SAMPLE_EFFICIENCY_REGRESSION",
+            "LOW_SAMPLE_TD_REGRESSION",
+            "MARKET_ALIGNED",
+            "MARKET_FORMAT_WARNING",
+            "MARKET_SINGLE_PROVIDER",
+            "PPR_SCORING_IMPACT",
+            "ROLE_STABILITY_HIGH",
+            "SCORING_UNSUPPORTED_KEY",
+            "SINGLE_SEASON_ONLY",
+            "STARTER_NEED",
+            "TD_RATE_REGRESSION_UP",
+            "TD_REFERENCE_POOL_SMALL",
+            "TE_PREMIUM_SCORING_IMPACT",
+            "TIER_CLIFF_VISIBLE",
+            "TWO_POINT_NOT_PROJECTED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 4.3,
+            "rosterNeed": 20,
+            "scarcity": 11,
+            "tierCliff": 12,
+            "marketValue": 6,
+            "availabilityRisk": 3,
+            "confidencePenalty": -18,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 11,
+          "displayName": "Dallas Goedert",
+          "position": "TE",
+          "team": "PHI",
+          "recommendationTier": "avoid_for_now",
+          "recommendationScore": 38,
+          "status": "watch_only",
+          "primaryReason": "League value: -22.1 points above replacement.",
+          "warningCodes": [
+            "SINGLE_SEASON_OFFENSIVE_BASELINE",
+            "Superflex mismatch: snapshot=false, league=true — QB tiers differ",
+            "Team count difference (12 vs 18) — positional scarcity shifts",
+            "Team count difference: snapshot=12, league=18"
+          ],
+          "reasonCodes": [
+            "ESTABLISHED_FULL_SEASON",
+            "FIRST_DOWN_PROJECTED_FROM_HISTORY",
+            "FUMBLE_PENALTY_IMPACT",
+            "FUMBLE_RATE_REGRESSION_UP",
+            "LEAGUE_SCORING_APPLIED",
+            "MARKET_ALIGNED",
+            "MARKET_FORMAT_WARNING",
+            "MARKET_SINGLE_PROVIDER",
+            "PPR_SCORING_IMPACT",
+            "ROLE_STABILITY_HIGH",
+            "SCORING_UNSUPPORTED_KEY",
+            "SINGLE_SEASON_ONLY",
+            "STARTER_NEED",
+            "TD_RATE_REGRESSION_DOWN",
+            "TE_PREMIUM_SCORING_IMPACT",
+            "THRESHOLD_BONUS_PROJECTED_FROM_ROLE_WEEKS",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 4,
+            "rosterNeed": 20,
+            "scarcity": 11,
+            "tierCliff": 12,
+            "marketValue": 6,
+            "availabilityRisk": 3,
+            "confidencePenalty": -18,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 12,
+          "displayName": "Jaxon Smith-Njigba",
+          "position": "WR",
+          "team": "SEA",
+          "recommendationTier": "avoid_for_now",
+          "recommendationScore": 32.9,
+          "status": "watch_only",
+          "primaryReason": "League value: +11.5 points above replacement.",
+          "warningCodes": [
+            "SINGLE_SEASON_OFFENSIVE_BASELINE",
+            "Superflex mismatch: snapshot=false, league=true — QB tiers differ",
+            "Team count difference (12 vs 18) — positional scarcity shifts",
+            "Team count difference: snapshot=12, league=18"
+          ],
+          "reasonCodes": [
+            "ESTABLISHED_FULL_SEASON",
+            "FIRST_DOWN_PROJECTED_FROM_HISTORY",
+            "FUMBLE_PENALTY_IMPACT",
+            "INCIDENTAL_RUSHING_NOT_PROJECTED",
+            "LEAGUE_SCORING_APPLIED",
+            "LONG_PLAY_BONUS_PROJECTED_REGRESSED",
+            "LONG_TD_VOLATILITY",
+            "LOW_SAMPLE_EFFICIENCY_REGRESSION",
+            "LOW_SAMPLE_TD_REGRESSION",
+            "MARKET_ALIGNED",
+            "MARKET_FORMAT_WARNING",
+            "MARKET_SINGLE_PROVIDER",
+            "PPR_SCORING_IMPACT",
+            "ROLE_STABILITY_HIGH",
+            "SCORING_UNSUPPORTED_KEY",
+            "SINGLE_SEASON_ONLY",
+            "STARTER_NEED",
+            "TD_RATE_REGRESSION_UP",
+            "THRESHOLD_BONUS_PROJECTED_FROM_ROLE_WEEKS",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 13.9,
+            "rosterNeed": 20,
+            "scarcity": 1,
+            "tierCliff": 8,
+            "marketValue": 6,
+            "availabilityRisk": 2,
+            "confidencePenalty": -18,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 13,
+          "displayName": "Josh Allen",
+          "position": "QB",
+          "team": "BUF",
+          "recommendationTier": "avoid_for_now",
+          "recommendationScore": 32.5,
+          "status": "watch_only",
+          "primaryReason": "League value: +22.7 points above replacement.",
+          "warningCodes": [
+            "SINGLE_SEASON_OFFENSIVE_BASELINE",
+            "Superflex mismatch — QB tier values diverge (snapshot=false, league=true)",
+            "Superflex mismatch: snapshot=false, league=true — QB tiers differ",
+            "Team count difference (12 vs 18) — positional scarcity shifts",
+            "Team count difference: snapshot=12, league=18"
+          ],
+          "reasonCodes": [
+            "ESTABLISHED_FULL_SEASON",
+            "FIRST_DOWN_PROJECTED_FROM_HISTORY",
+            "FUMBLE_PENALTY_IMPACT",
+            "FUMBLE_RATE_REGRESSION_UP",
+            "INTERCEPTION_PENALTY_IMPACT",
+            "LEAGUE_SCORING_APPLIED",
+            "LONG_PLAY_BONUS_APPROXIMATED",
+            "LONG_PLAY_BONUS_PROJECTED_REGRESSED",
+            "LONG_TD_VOLATILITY",
+            "MARKET_ALIGNED",
+            "MARKET_FORMAT_WARNING",
+            "MARKET_SINGLE_PROVIDER",
+            "ROLE_STABILITY_HIGH",
+            "SACKS_PROJECTED_FROM_HISTORY",
+            "SCORING_UNSUPPORTED_KEY",
+            "SINGLE_SEASON_ONLY",
+            "STARTER_NEED",
+            "THRESHOLD_BONUS_PROJECTED_FROM_ROLE_WEEKS",
+            "TWO_POINT_NOT_PROJECTED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 16.5,
+            "rosterNeed": 18,
+            "scarcity": 1,
+            "tierCliff": 5,
+            "marketValue": 6,
+            "availabilityRisk": 4,
+            "confidencePenalty": -18,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 14,
+          "displayName": "Amon-Ra St. Brown",
+          "position": "WR",
+          "team": "DET",
+          "recommendationTier": "avoid_for_now",
+          "recommendationScore": 30.5,
+          "status": "watch_only",
+          "primaryReason": "League value: +0 points above replacement.",
+          "warningCodes": [
+            "SINGLE_SEASON_OFFENSIVE_BASELINE",
+            "Superflex mismatch: snapshot=false, league=true — QB tiers differ",
+            "Team count difference (12 vs 18) — positional scarcity shifts",
+            "Team count difference: snapshot=12, league=18"
+          ],
+          "reasonCodes": [
+            "EFFICIENCY_REGRESSION_UP",
+            "ESTABLISHED_FULL_SEASON",
+            "FIRST_DOWN_PROJECTED_FROM_HISTORY",
+            "FUMBLE_PENALTY_IMPACT",
+            "FUMBLE_RATE_REGRESSION_UP",
+            "INCIDENTAL_RUSHING_NOT_PROJECTED",
+            "LEAGUE_SCORING_APPLIED",
+            "LOW_SAMPLE_EFFICIENCY_REGRESSION",
+            "LOW_SAMPLE_TD_REGRESSION",
+            "MARKET_ALIGNED",
+            "MARKET_FORMAT_WARNING",
+            "MARKET_SINGLE_PROVIDER",
+            "PPR_SCORING_IMPACT",
+            "ROLE_STABILITY_HIGH",
+            "SCORING_UNSUPPORTED_KEY",
+            "SINGLE_SEASON_ONLY",
+            "STARTER_NEED",
+            "TD_RATE_REGRESSION_UP",
+            "THRESHOLD_BONUS_PROJECTED_FROM_ROLE_WEEKS",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 11.5,
+            "rosterNeed": 20,
+            "scarcity": 1,
+            "tierCliff": 8,
+            "marketValue": 6,
+            "availabilityRisk": 2,
+            "confidencePenalty": -18,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 15,
+          "displayName": "Ja'Marr Chase",
+          "position": "WR",
+          "team": "CIN",
+          "recommendationTier": "avoid_for_now",
+          "recommendationScore": 28.6,
+          "status": "watch_only",
+          "primaryReason": "League value: -4.3 points above replacement.",
+          "warningCodes": [
+            "SINGLE_SEASON_OFFENSIVE_BASELINE",
+            "Superflex mismatch: snapshot=false, league=true — QB tiers differ",
+            "Team count difference (12 vs 18) — positional scarcity shifts",
+            "Team count difference: snapshot=12, league=18"
+          ],
+          "reasonCodes": [
+            "EFFICIENCY_REGRESSION_UP",
+            "ESTABLISHED_FULL_SEASON",
+            "FIRST_DOWN_PROJECTED_FROM_HISTORY",
+            "FUMBLE_PENALTY_IMPACT",
+            "INCIDENTAL_RUSHING_NOT_PROJECTED",
+            "LEAGUE_SCORING_APPLIED",
+            "LONG_PLAY_BONUS_PROJECTED_REGRESSED",
+            "LONG_TD_VOLATILITY",
+            "LOW_SAMPLE_EFFICIENCY_REGRESSION",
+            "LOW_SAMPLE_TD_REGRESSION",
+            "MARKET_ALIGNED",
+            "MARKET_FORMAT_WARNING",
+            "MARKET_SINGLE_PROVIDER",
+            "PPR_SCORING_IMPACT",
+            "ROLE_STABILITY_HIGH",
+            "SCORING_UNSUPPORTED_KEY",
+            "SINGLE_SEASON_ONLY",
+            "STARTER_NEED",
+            "TD_RATE_REGRESSION_UP",
+            "THRESHOLD_BONUS_PROJECTED_FROM_ROLE_WEEKS",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 10.6,
+            "rosterNeed": 20,
+            "scarcity": 1,
+            "tierCliff": 8,
+            "marketValue": 6,
+            "availabilityRisk": 1,
+            "confidencePenalty": -18,
+            "formatPenalty": 0
+          }
+        }
+      ],
+      "watchlistExamples": [
+        {
+          "recommendationRank": 3,
+          "displayName": "Puka Nacua",
+          "position": "WR",
+          "team": "LAR",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 48,
+          "status": "watch_only",
+          "primaryReason": "High league value: +41.3 points above replacement.",
+          "warningCodes": [
+            "SINGLE_SEASON_OFFENSIVE_BASELINE",
+            "Superflex mismatch: snapshot=false, league=true — QB tiers differ",
+            "Team count difference (12 vs 18) — positional scarcity shifts",
+            "Team count difference: snapshot=12, league=18"
+          ],
+          "reasonCodes": [
+            "EFFICIENCY_REGRESSION_DOWN",
+            "ESTABLISHED_FULL_SEASON",
+            "FIRST_DOWN_PROJECTED_FROM_HISTORY",
+            "FUMBLE_PENALTY_IMPACT",
+            "LEAGUE_SCORING_APPLIED",
+            "LONG_PLAY_BONUS_PROJECTED_REGRESSED",
+            "LONG_TD_VOLATILITY",
+            "LOW_SAMPLE_EFFICIENCY_REGRESSION",
+            "LOW_SAMPLE_TD_REGRESSION",
+            "MARKET_ALIGNED",
+            "MARKET_FORMAT_WARNING",
+            "MARKET_SINGLE_PROVIDER",
+            "PPR_SCORING_IMPACT",
+            "ROLE_STABILITY_HIGH",
+            "SCORING_UNSUPPORTED_KEY",
+            "SINGLE_SEASON_ONLY",
+            "STARTER_NEED",
+            "TD_RATE_REGRESSION_DOWN",
+            "THRESHOLD_BONUS_PROJECTED_FROM_ROLE_WEEKS",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 20,
+            "rosterNeed": 20,
+            "scarcity": 1,
+            "tierCliff": 15,
+            "marketValue": 6,
+            "availabilityRisk": 4,
+            "confidencePenalty": -18,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 4,
+          "displayName": "Kyle Pitts",
+          "position": "TE",
+          "team": "ATL",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 45.6,
+          "status": "watch_only",
+          "primaryReason": "League value: +0 points above replacement.",
+          "warningCodes": [
+            "SINGLE_SEASON_OFFENSIVE_BASELINE",
+            "Superflex mismatch: snapshot=false, league=true — QB tiers differ",
+            "Team count difference (12 vs 18) — positional scarcity shifts",
+            "Team count difference: snapshot=12, league=18"
+          ],
+          "reasonCodes": [
+            "ESTABLISHED_FULL_SEASON",
+            "FIRST_DOWN_PROJECTED_FROM_HISTORY",
+            "FUMBLE_PENALTY_IMPACT",
+            "FUMBLE_RATE_REGRESSION_UP",
+            "LEAGUE_SCORING_APPLIED",
+            "MARKET_ALIGNED",
+            "MARKET_FORMAT_WARNING",
+            "MARKET_SINGLE_PROVIDER",
+            "PPR_SCORING_IMPACT",
+            "ROLE_STABILITY_HIGH",
+            "SCORING_UNSUPPORTED_KEY",
+            "SINGLE_SEASON_ONLY",
+            "STARTER_NEED",
+            "TE_PREMIUM_SCORING_IMPACT",
+            "THRESHOLD_BONUS_PROJECTED_FROM_ROLE_WEEKS",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 8.6,
+            "rosterNeed": 20,
+            "scarcity": 11,
+            "tierCliff": 15,
+            "marketValue": 6,
+            "availabilityRisk": 3,
+            "confidencePenalty": -18,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 5,
+          "displayName": "Jonathan Taylor",
+          "position": "RB",
+          "team": "IND",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 42.6,
+          "status": "watch_only",
+          "primaryReason": "League value: +33.2 points above replacement.",
+          "warningCodes": [
+            "SINGLE_SEASON_OFFENSIVE_BASELINE",
+            "Superflex mismatch: snapshot=false, league=true — QB tiers differ",
+            "Team count difference (12 vs 18) — positional scarcity shifts",
+            "Team count difference: snapshot=12, league=18"
+          ],
+          "reasonCodes": [
+            "ESTABLISHED_FULL_SEASON",
+            "FIRST_DOWN_PROJECTED_FROM_HISTORY",
+            "FUMBLE_PENALTY_IMPACT",
+            "LEAGUE_SCORING_APPLIED",
+            "LONG_PLAY_BONUS_PROJECTED_REGRESSED",
+            "LONG_TD_VOLATILITY",
+            "MARKET_ALIGNED",
+            "MARKET_FORMAT_WARNING",
+            "MARKET_SINGLE_PROVIDER",
+            "PPR_SCORING_IMPACT",
+            "ROLE_STABILITY_HIGH",
+            "SCORING_UNSUPPORTED_KEY",
+            "SINGLE_SEASON_ONLY",
+            "STARTER_NEED",
+            "THRESHOLD_BONUS_PROJECTED_FROM_ROLE_WEEKS",
+            "TIER_CLIFF_VISIBLE",
+            "TWO_POINT_NOT_PROJECTED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 18.2,
+            "rosterNeed": 20,
+            "scarcity": 6.4,
+            "tierCliff": 8,
+            "marketValue": 6,
+            "availabilityRisk": 2,
+            "confidencePenalty": -18,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 6,
+          "displayName": "James Cook",
+          "position": "RB",
+          "team": "BUF",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 42.1,
+          "status": "watch_only",
+          "primaryReason": "League value: -2.8 points above replacement.",
+          "warningCodes": [
+            "SINGLE_SEASON_OFFENSIVE_BASELINE",
+            "Superflex mismatch: snapshot=false, league=true — QB tiers differ",
+            "Team count difference (12 vs 18) — positional scarcity shifts",
+            "Team count difference: snapshot=12, league=18"
+          ],
+          "reasonCodes": [
+            "ESTABLISHED_FULL_SEASON",
+            "FIRST_DOWN_PROJECTED_FROM_HISTORY",
+            "FUMBLE_PENALTY_IMPACT",
+            "LEAGUE_SCORING_APPLIED",
+            "LONG_PLAY_BONUS_PROJECTED_REGRESSED",
+            "LONG_TD_VOLATILITY",
+            "MARKET_ALIGNED",
+            "MARKET_FORMAT_WARNING",
+            "MARKET_SINGLE_PROVIDER",
+            "PPR_SCORING_IMPACT",
+            "ROLE_STABILITY_HIGH",
+            "SCORING_UNSUPPORTED_KEY",
+            "SINGLE_SEASON_ONLY",
+            "STARTER_NEED",
+            "THRESHOLD_BONUS_PROJECTED_FROM_ROLE_WEEKS",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 10.7,
+            "rosterNeed": 20,
+            "scarcity": 6.4,
+            "tierCliff": 12,
+            "marketValue": 7,
+            "availabilityRisk": 4,
+            "confidencePenalty": -18,
+            "formatPenalty": 0
+          }
+        }
+      ],
+      "insufficientDataExamples": [],
+      "legacyRecommendationCount": 0,
+      "legacyRecommendationTopRows": [],
+      "legacyRowsChanged": false,
+      "remainingPlayersOrderChanged": false,
+      "thresholdResults": {
+        "matchRatePass": true,
+        "insufficientDataPass": true,
+        "invariantPass": true,
+        "legacyUnchangedPass": true,
+        "remainingOrderUnchangedPass": true,
+        "forbiddenLanguagePass": true,
+        "offensiveTargetTierPass": true,
+        "superflexQbUrgencyPass": false,
+        "kEarlySuppressionPass": null,
+        "dstEarlySuppressionPass": null
+      },
+      "formatDiagnostics": {
+        "superflexQbUrgencyApplied": false,
+        "qbAverageRosterNeed": 18,
+        "nonQbAverageRosterNeed": 20,
+        "idpRows": 0,
+        "kickerRows": 0,
+        "dstRows": 0
+      }
+    },
+    {
+      "source": "validation_seed",
+      "draftRoomId": "2f62d6e3-d309-4d50-8e7e-2ef05a83771c",
+      "leagueId": "fde3c4a0-3cb6-4fac-890d-b43c5c2f0c1a",
+      "leagueName": "Legacy League",
+      "formats": [
+        "1QB offense",
+        "Kicker",
+        "DST",
+        "Shallow roster",
+        "Uploaded rankings"
+      ],
+      "remainingPlayersLoaded": 6,
+      "overlayRowsLoaded": 6,
+      "recommendationsGenerated": 6,
+      "matchRate": 1,
+      "rowsByTier": {
+        "avoid_for_now": 6
+      },
+      "rowsByStatus": {
+        "watch_only": 6
+      },
+      "rowsByPosition": {
+        "DEF": 6
+      },
+      "warningCounts": {
+        "DST_DRY_RUN_ONLY": 6,
+        "DST_EARLY_ROUND_SUPPRESSION": 6,
+        "MARKET_NOT_IMPLEMENTED": 6
+      },
+      "contextLimitations": [],
+      "invariantFailures": [],
+      "topRecommendations": [
+        {
+          "recommendationRank": 1,
+          "displayName": "Pittsburgh Steelers",
+          "position": "DEF",
+          "team": "PIT",
+          "recommendationTier": "avoid_for_now",
+          "recommendationScore": 11,
+          "status": "watch_only",
+          "primaryReason": "High league value: +8 points above replacement.",
+          "warningCodes": [
+            "DST_DRY_RUN_ONLY",
+            "DST_EARLY_ROUND_SUPPRESSION",
+            "MARKET_NOT_IMPLEMENTED"
+          ],
+          "reasonCodes": [
+            "H10_VALIDATION_SYNTHETIC_DST_OVERLAY",
+            "STARTER_NEED",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 30,
+            "rosterNeed": 10,
+            "scarcity": 13,
+            "tierCliff": 8,
+            "marketValue": 4,
+            "availabilityRisk": 2,
+            "confidencePenalty": -32,
+            "formatPenalty": -24
+          }
+        },
+        {
+          "recommendationRank": 2,
+          "displayName": "Baltimore Ravens",
+          "position": "DEF",
+          "team": "BAL",
+          "recommendationTier": "avoid_for_now",
+          "recommendationScore": 3,
+          "status": "watch_only",
+          "primaryReason": "High league value: +7.5 points above replacement.",
+          "warningCodes": [
+            "DST_DRY_RUN_ONLY",
+            "DST_EARLY_ROUND_SUPPRESSION",
+            "MARKET_NOT_IMPLEMENTED"
+          ],
+          "reasonCodes": [
+            "H10_VALIDATION_SYNTHETIC_DST_OVERLAY",
+            "STARTER_NEED",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 24,
+            "rosterNeed": 10,
+            "scarcity": 11,
+            "tierCliff": 8,
+            "marketValue": 4,
+            "availabilityRisk": 2,
+            "confidencePenalty": -32,
+            "formatPenalty": -24
+          }
+        },
+        {
+          "recommendationRank": 3,
+          "displayName": "New York Jets",
+          "position": "DEF",
+          "team": "NYJ",
+          "recommendationTier": "avoid_for_now",
+          "recommendationScore": 0,
+          "status": "watch_only",
+          "primaryReason": "League value: +7 points above replacement.",
+          "warningCodes": [
+            "DST_DRY_RUN_ONLY",
+            "DST_EARLY_ROUND_SUPPRESSION",
+            "MARKET_NOT_IMPLEMENTED"
+          ],
+          "reasonCodes": [
+            "H10_VALIDATION_SYNTHETIC_DST_OVERLAY",
+            "STARTER_NEED",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 18,
+            "rosterNeed": 10,
+            "scarcity": 9,
+            "tierCliff": 8,
+            "marketValue": 4,
+            "availabilityRisk": 2,
+            "confidencePenalty": -32,
+            "formatPenalty": -24
+          }
+        },
+        {
+          "recommendationRank": 4,
+          "displayName": "Buffalo Bills",
+          "position": "DEF",
+          "team": "BUF",
+          "recommendationTier": "avoid_for_now",
+          "recommendationScore": 0,
+          "status": "watch_only",
+          "primaryReason": "League value: +5.5 points above replacement.",
+          "warningCodes": [
+            "DST_DRY_RUN_ONLY",
+            "DST_EARLY_ROUND_SUPPRESSION",
+            "MARKET_NOT_IMPLEMENTED"
+          ],
+          "reasonCodes": [
+            "H10_VALIDATION_SYNTHETIC_DST_OVERLAY",
+            "STARTER_NEED",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 0,
+            "rosterNeed": 10,
+            "scarcity": 3,
+            "tierCliff": 8,
+            "marketValue": 4,
+            "availabilityRisk": 2,
+            "confidencePenalty": -32,
+            "formatPenalty": -24
+          }
+        },
+        {
+          "recommendationRank": 5,
+          "displayName": "Cleveland Browns",
+          "position": "DEF",
+          "team": "CLE",
+          "recommendationTier": "avoid_for_now",
+          "recommendationScore": 0,
+          "status": "watch_only",
+          "primaryReason": "League value: +6 points above replacement.",
+          "warningCodes": [
+            "DST_DRY_RUN_ONLY",
+            "DST_EARLY_ROUND_SUPPRESSION",
+            "MARKET_NOT_IMPLEMENTED"
+          ],
+          "reasonCodes": [
+            "H10_VALIDATION_SYNTHETIC_DST_OVERLAY",
+            "STARTER_NEED",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 6,
+            "rosterNeed": 10,
+            "scarcity": 5,
+            "tierCliff": 8,
+            "marketValue": 4,
+            "availabilityRisk": 2,
+            "confidencePenalty": -32,
+            "formatPenalty": -24
+          }
+        },
+        {
+          "recommendationRank": 6,
+          "displayName": "Dallas Cowboys",
+          "position": "DEF",
+          "team": "DAL",
+          "recommendationTier": "avoid_for_now",
+          "recommendationScore": 0,
+          "status": "watch_only",
+          "primaryReason": "League value: +6.5 points above replacement.",
+          "warningCodes": [
+            "DST_DRY_RUN_ONLY",
+            "DST_EARLY_ROUND_SUPPRESSION",
+            "MARKET_NOT_IMPLEMENTED"
+          ],
+          "reasonCodes": [
+            "H10_VALIDATION_SYNTHETIC_DST_OVERLAY",
+            "STARTER_NEED",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 12,
+            "rosterNeed": 10,
+            "scarcity": 7,
+            "tierCliff": 8,
+            "marketValue": 4,
+            "availabilityRisk": 2,
+            "confidencePenalty": -32,
+            "formatPenalty": -24
+          }
+        }
+      ],
+      "watchlistExamples": [],
+      "insufficientDataExamples": [],
+      "legacyRecommendationCount": 0,
+      "legacyRecommendationTopRows": [],
+      "legacyRowsChanged": false,
+      "remainingPlayersOrderChanged": false,
+      "thresholdResults": {
+        "matchRatePass": true,
+        "insufficientDataPass": true,
+        "invariantPass": true,
+        "legacyUnchangedPass": true,
+        "remainingOrderUnchangedPass": true,
+        "forbiddenLanguagePass": true,
+        "offensiveTargetTierPass": null,
+        "superflexQbUrgencyPass": null,
+        "kEarlySuppressionPass": null,
+        "dstEarlySuppressionPass": true
+      },
+      "formatDiagnostics": {
+        "superflexQbUrgencyApplied": null,
+        "qbAverageRosterNeed": 0,
+        "nonQbAverageRosterNeed": 0,
+        "idpRows": 0,
+        "kickerRows": 0,
+        "dstRows": 6
+      }
+    },
+    {
+      "source": "validation_seed",
+      "draftRoomId": "2a5c27ce-1a26-4473-95cc-9da9ed78520a",
+      "leagueId": "fde3c4a0-3cb6-4fac-890d-b43c5c2f0c1a",
+      "leagueName": "Legacy League",
+      "formats": [
+        "1QB offense",
+        "Kicker",
+        "DST",
+        "Shallow roster",
+        "Uploaded rankings"
+      ],
+      "remainingPlayersLoaded": 22,
+      "overlayRowsLoaded": 22,
+      "recommendationsGenerated": 22,
+      "matchRate": 1,
+      "rowsByTier": {
+        "solid_target": 2,
+        "watchlist": 4,
+        "avoid_for_now": 16
+      },
+      "rowsByStatus": {
+        "watch_only": 22
+      },
+      "rowsByPosition": {
+        "TE": 3,
+        "RB": 4,
+        "WR": 4,
+        "QB": 3,
+        "K": 8
+      },
+      "warningCounts": {
+        "SINGLE_SEASON_OFFENSIVE_BASELINE": 14,
+        "K_EARLY_ROUND_SUPPRESSION": 8,
+        "LOW_PROJECTION_CONFIDENCE": 8,
+        "MARKET_NOT_IMPLEMENTED": 8
+      },
+      "contextLimitations": [],
+      "invariantFailures": [],
+      "topRecommendations": [
+        {
+          "recommendationRank": 1,
+          "displayName": "Trey McBride",
+          "position": "TE",
+          "team": "ARI",
+          "recommendationTier": "solid_target",
+          "recommendationScore": 64.3,
+          "status": "watch_only",
+          "primaryReason": "High league value: +73.1 points above replacement.",
+          "warningCodes": [
+            "SINGLE_SEASON_OFFENSIVE_BASELINE"
+          ],
+          "reasonCodes": [
+            "ESTABLISHED_FULL_SEASON",
+            "FIRST_DOWN_PROJECTED_FROM_HISTORY",
+            "FUMBLE_PENALTY_IMPACT",
+            "FUMBLE_RATE_REGRESSION_UP",
+            "LEAGUE_SCORING_APPLIED",
+            "MARKET_ALIGNED",
+            "MARKET_SINGLE_PROVIDER",
+            "PPR_SCORING_IMPACT",
+            "ROLE_STABILITY_HIGH",
+            "SCORING_UNSUPPORTED_KEY",
+            "SINGLE_SEASON_ONLY",
+            "STARTER_NEED",
+            "TE_PREMIUM_SCORING_IMPACT",
+            "THRESHOLD_BONUS_PROJECTED_FROM_ROLE_WEEKS",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 28.3,
+            "rosterNeed": 18,
+            "scarcity": 11,
+            "tierCliff": 15,
+            "marketValue": 6,
+            "availabilityRisk": 4,
+            "confidencePenalty": -18,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 2,
+          "displayName": "Christian McCaffrey",
+          "position": "RB",
+          "team": "SF",
+          "recommendationTier": "solid_target",
+          "recommendationScore": 62.8,
+          "status": "watch_only",
+          "primaryReason": "High league value: +60.7 points above replacement.",
+          "warningCodes": [
+            "SINGLE_SEASON_OFFENSIVE_BASELINE"
+          ],
+          "reasonCodes": [
+            "ESTABLISHED_FULL_SEASON",
+            "FIRST_DOWN_PROJECTED_FROM_HISTORY",
+            "FUMBLE_PENALTY_IMPACT",
+            "FUMBLE_RATE_REGRESSION_UP",
+            "LEAGUE_SCORING_APPLIED",
+            "MARKET_ALIGNED",
+            "MARKET_SINGLE_PROVIDER",
+            "PPR_SCORING_IMPACT",
+            "ROLE_STABILITY_HIGH",
+            "SCORING_UNSUPPORTED_KEY",
+            "SINGLE_SEASON_ONLY",
+            "STARTER_NEED",
+            "THRESHOLD_BONUS_PROJECTED_FROM_ROLE_WEEKS",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 26.9,
+            "rosterNeed": 20,
+            "scarcity": 7.9,
+            "tierCliff": 15,
+            "marketValue": 6,
+            "availabilityRisk": 5,
+            "confidencePenalty": -18,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 3,
+          "displayName": "Puka Nacua",
+          "position": "WR",
+          "team": "LAR",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 56.1,
+          "status": "watch_only",
+          "primaryReason": "High league value: +64.7 points above replacement.",
+          "warningCodes": [
+            "SINGLE_SEASON_OFFENSIVE_BASELINE"
+          ],
+          "reasonCodes": [
+            "EFFICIENCY_REGRESSION_DOWN",
+            "ESTABLISHED_FULL_SEASON",
+            "FIRST_DOWN_PROJECTED_FROM_HISTORY",
+            "FUMBLE_PENALTY_IMPACT",
+            "LEAGUE_SCORING_APPLIED",
+            "LONG_PLAY_BONUS_PROJECTED_REGRESSED",
+            "LONG_TD_VOLATILITY",
+            "LOW_SAMPLE_EFFICIENCY_REGRESSION",
+            "LOW_SAMPLE_TD_REGRESSION",
+            "MARKET_ALIGNED",
+            "MARKET_SINGLE_PROVIDER",
+            "PPR_SCORING_IMPACT",
+            "ROLE_STABILITY_HIGH",
+            "SCORING_UNSUPPORTED_KEY",
+            "SINGLE_SEASON_ONLY",
+            "STARTER_NEED",
+            "TD_RATE_REGRESSION_DOWN",
+            "THRESHOLD_BONUS_PROJECTED_FROM_ROLE_WEEKS",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 27.3,
+            "rosterNeed": 20,
+            "scarcity": 1.8,
+            "tierCliff": 15,
+            "marketValue": 6,
+            "availabilityRisk": 4,
+            "confidencePenalty": -18,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 4,
+          "displayName": "Bijan Robinson",
+          "position": "RB",
+          "team": "ATL",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 45.9,
+          "status": "watch_only",
+          "primaryReason": "League value: +31.1 points above replacement.",
+          "warningCodes": [
+            "SINGLE_SEASON_OFFENSIVE_BASELINE"
+          ],
+          "reasonCodes": [
+            "ESTABLISHED_FULL_SEASON",
+            "FIRST_DOWN_PROJECTED_FROM_HISTORY",
+            "FUMBLE_PENALTY_IMPACT",
+            "LEAGUE_SCORING_APPLIED",
+            "LONG_PLAY_BONUS_PROJECTED_REGRESSED",
+            "LONG_TD_VOLATILITY",
+            "MARKET_ALIGNED",
+            "MARKET_SINGLE_PROVIDER",
+            "PPR_SCORING_IMPACT",
+            "ROLE_STABILITY_HIGH",
+            "SCORING_UNSUPPORTED_KEY",
+            "SINGLE_SEASON_ONLY",
+            "STARTER_NEED",
+            "THRESHOLD_BONUS_PROJECTED_FROM_ROLE_WEEKS",
+            "TIER_CLIFF_VISIBLE",
+            "TWO_POINT_NOT_PROJECTED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 18,
+            "rosterNeed": 20,
+            "scarcity": 7.9,
+            "tierCliff": 8,
+            "marketValue": 6,
+            "availabilityRisk": 4,
+            "confidencePenalty": -18,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 5,
+          "displayName": "Jahmyr Gibbs",
+          "position": "RB",
+          "team": "DET",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 43.7,
+          "status": "watch_only",
+          "primaryReason": "League value: +30.5 points above replacement.",
+          "warningCodes": [
+            "SINGLE_SEASON_OFFENSIVE_BASELINE"
+          ],
+          "reasonCodes": [
+            "ESTABLISHED_FULL_SEASON",
+            "FIRST_DOWN_PROJECTED_FROM_HISTORY",
+            "FUMBLE_PENALTY_IMPACT",
+            "LEAGUE_SCORING_APPLIED",
+            "LONG_PLAY_BONUS_PROJECTED_REGRESSED",
+            "LONG_TD_VOLATILITY",
+            "MARKET_ALIGNED",
+            "MARKET_SINGLE_PROVIDER",
+            "PPR_SCORING_IMPACT",
+            "ROLE_STABILITY_HIGH",
+            "SCORING_UNSUPPORTED_KEY",
+            "SINGLE_SEASON_ONLY",
+            "STARTER_NEED",
+            "THRESHOLD_BONUS_PROJECTED_FROM_ROLE_WEEKS",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 17.8,
+            "rosterNeed": 20,
+            "scarcity": 7.9,
+            "tierCliff": 8,
+            "marketValue": 6,
+            "availabilityRisk": 2,
+            "confidencePenalty": -18,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 6,
+          "displayName": "Jonathan Taylor",
+          "position": "RB",
+          "team": "IND",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 43.1,
+          "status": "watch_only",
+          "primaryReason": "League value: +28.5 points above replacement.",
+          "warningCodes": [
+            "SINGLE_SEASON_OFFENSIVE_BASELINE"
+          ],
+          "reasonCodes": [
+            "ESTABLISHED_FULL_SEASON",
+            "FIRST_DOWN_PROJECTED_FROM_HISTORY",
+            "FUMBLE_PENALTY_IMPACT",
+            "LEAGUE_SCORING_APPLIED",
+            "LONG_PLAY_BONUS_PROJECTED_REGRESSED",
+            "LONG_TD_VOLATILITY",
+            "MARKET_ALIGNED",
+            "MARKET_SINGLE_PROVIDER",
+            "PPR_SCORING_IMPACT",
+            "ROLE_STABILITY_HIGH",
+            "SCORING_UNSUPPORTED_KEY",
+            "SINGLE_SEASON_ONLY",
+            "STARTER_NEED",
+            "THRESHOLD_BONUS_PROJECTED_FROM_ROLE_WEEKS",
+            "TIER_CLIFF_VISIBLE",
+            "TWO_POINT_NOT_PROJECTED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 17.2,
+            "rosterNeed": 20,
+            "scarcity": 7.9,
+            "tierCliff": 8,
+            "marketValue": 6,
+            "availabilityRisk": 2,
+            "confidencePenalty": -18,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 7,
+          "displayName": "Jaxon Smith-Njigba",
+          "position": "WR",
+          "team": "SEA",
+          "recommendationTier": "avoid_for_now",
+          "recommendationScore": 40.7,
+          "status": "watch_only",
+          "primaryReason": "High league value: +43.5 points above replacement.",
+          "warningCodes": [
+            "SINGLE_SEASON_OFFENSIVE_BASELINE"
+          ],
+          "reasonCodes": [
+            "ESTABLISHED_FULL_SEASON",
+            "FIRST_DOWN_PROJECTED_FROM_HISTORY",
+            "FUMBLE_PENALTY_IMPACT",
+            "INCIDENTAL_RUSHING_NOT_PROJECTED",
+            "LEAGUE_SCORING_APPLIED",
+            "LONG_PLAY_BONUS_PROJECTED_REGRESSED",
+            "LONG_TD_VOLATILITY",
+            "LOW_SAMPLE_EFFICIENCY_REGRESSION",
+            "LOW_SAMPLE_TD_REGRESSION",
+            "MARKET_ALIGNED",
+            "MARKET_SINGLE_PROVIDER",
+            "PPR_SCORING_IMPACT",
+            "ROLE_STABILITY_HIGH",
+            "SCORING_UNSUPPORTED_KEY",
+            "SINGLE_SEASON_ONLY",
+            "STARTER_NEED",
+            "TD_RATE_REGRESSION_UP",
+            "THRESHOLD_BONUS_PROJECTED_FROM_ROLE_WEEKS",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 20.9,
+            "rosterNeed": 20,
+            "scarcity": 1.8,
+            "tierCliff": 8,
+            "marketValue": 6,
+            "availabilityRisk": 2,
+            "confidencePenalty": -18,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 8,
+          "displayName": "Kyle Pitts",
+          "position": "TE",
+          "team": "ATL",
+          "recommendationTier": "avoid_for_now",
+          "recommendationScore": 39.2,
+          "status": "watch_only",
+          "primaryReason": "League value: +0 points above replacement.",
+          "warningCodes": [
+            "SINGLE_SEASON_OFFENSIVE_BASELINE"
+          ],
+          "reasonCodes": [
+            "ESTABLISHED_FULL_SEASON",
+            "FIRST_DOWN_PROJECTED_FROM_HISTORY",
+            "FUMBLE_PENALTY_IMPACT",
+            "FUMBLE_RATE_REGRESSION_UP",
+            "LEAGUE_SCORING_APPLIED",
+            "MARKET_ALIGNED",
+            "MARKET_SINGLE_PROVIDER",
+            "PPR_SCORING_IMPACT",
+            "ROLE_STABILITY_HIGH",
+            "SCORING_UNSUPPORTED_KEY",
+            "SINGLE_SEASON_ONLY",
+            "STARTER_NEED",
+            "TE_PREMIUM_SCORING_IMPACT",
+            "THRESHOLD_BONUS_PROJECTED_FROM_ROLE_WEEKS",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 6.2,
+            "rosterNeed": 18,
+            "scarcity": 11,
+            "tierCliff": 12,
+            "marketValue": 6,
+            "availabilityRisk": 4,
+            "confidencePenalty": -18,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 9,
+          "displayName": "Amon-Ra St. Brown",
+          "position": "WR",
+          "team": "DET",
+          "recommendationTier": "avoid_for_now",
+          "recommendationScore": 37.6,
+          "status": "watch_only",
+          "primaryReason": "League value: +33.4 points above replacement.",
+          "warningCodes": [
+            "SINGLE_SEASON_OFFENSIVE_BASELINE"
+          ],
+          "reasonCodes": [
+            "EFFICIENCY_REGRESSION_UP",
+            "ESTABLISHED_FULL_SEASON",
+            "FIRST_DOWN_PROJECTED_FROM_HISTORY",
+            "FUMBLE_PENALTY_IMPACT",
+            "FUMBLE_RATE_REGRESSION_UP",
+            "INCIDENTAL_RUSHING_NOT_PROJECTED",
+            "LEAGUE_SCORING_APPLIED",
+            "LOW_SAMPLE_EFFICIENCY_REGRESSION",
+            "LOW_SAMPLE_TD_REGRESSION",
+            "MARKET_ALIGNED",
+            "MARKET_SINGLE_PROVIDER",
+            "PPR_SCORING_IMPACT",
+            "ROLE_STABILITY_HIGH",
+            "SCORING_UNSUPPORTED_KEY",
+            "SINGLE_SEASON_ONLY",
+            "STARTER_NEED",
+            "TD_RATE_REGRESSION_UP",
+            "THRESHOLD_BONUS_PROJECTED_FROM_ROLE_WEEKS",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 17.9,
+            "rosterNeed": 20,
+            "scarcity": 1.8,
+            "tierCliff": 8,
+            "marketValue": 6,
+            "availabilityRisk": 2,
+            "confidencePenalty": -18,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 10,
+          "displayName": "Ja'Marr Chase",
+          "position": "WR",
+          "team": "CIN",
+          "recommendationTier": "avoid_for_now",
+          "recommendationScore": 36.5,
+          "status": "watch_only",
+          "primaryReason": "League value: +29.5 points above replacement.",
+          "warningCodes": [
+            "SINGLE_SEASON_OFFENSIVE_BASELINE"
+          ],
+          "reasonCodes": [
+            "EFFICIENCY_REGRESSION_UP",
+            "ESTABLISHED_FULL_SEASON",
+            "FIRST_DOWN_PROJECTED_FROM_HISTORY",
+            "FUMBLE_PENALTY_IMPACT",
+            "INCIDENTAL_RUSHING_NOT_PROJECTED",
+            "LEAGUE_SCORING_APPLIED",
+            "LONG_PLAY_BONUS_PROJECTED_REGRESSED",
+            "LONG_TD_VOLATILITY",
+            "LOW_SAMPLE_EFFICIENCY_REGRESSION",
+            "LOW_SAMPLE_TD_REGRESSION",
+            "MARKET_ALIGNED",
+            "MARKET_SINGLE_PROVIDER",
+            "PPR_SCORING_IMPACT",
+            "ROLE_STABILITY_HIGH",
+            "SCORING_UNSUPPORTED_KEY",
+            "SINGLE_SEASON_ONLY",
+            "STARTER_NEED",
+            "TD_RATE_REGRESSION_UP",
+            "THRESHOLD_BONUS_PROJECTED_FROM_ROLE_WEEKS",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 16.7,
+            "rosterNeed": 20,
+            "scarcity": 1.8,
+            "tierCliff": 8,
+            "marketValue": 6,
+            "availabilityRisk": 2,
+            "confidencePenalty": -18,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 11,
+          "displayName": "Dallas Goedert",
+          "position": "TE",
+          "team": "PHI",
+          "recommendationTier": "avoid_for_now",
+          "recommendationScore": 36.2,
+          "status": "watch_only",
+          "primaryReason": "League value: -6.4 points above replacement.",
+          "warningCodes": [
+            "SINGLE_SEASON_OFFENSIVE_BASELINE"
+          ],
+          "reasonCodes": [
+            "ESTABLISHED_FULL_SEASON",
+            "FIRST_DOWN_PROJECTED_FROM_HISTORY",
+            "FUMBLE_PENALTY_IMPACT",
+            "FUMBLE_RATE_REGRESSION_UP",
+            "LEAGUE_SCORING_APPLIED",
+            "MARKET_ALIGNED",
+            "MARKET_SINGLE_PROVIDER",
+            "PPR_SCORING_IMPACT",
+            "ROLE_STABILITY_HIGH",
+            "SCORING_UNSUPPORTED_KEY",
+            "SINGLE_SEASON_ONLY",
+            "STARTER_NEED",
+            "TD_RATE_REGRESSION_DOWN",
+            "TE_PREMIUM_SCORING_IMPACT",
+            "THRESHOLD_BONUS_PROJECTED_FROM_ROLE_WEEKS",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 4.2,
+            "rosterNeed": 18,
+            "scarcity": 11,
+            "tierCliff": 12,
+            "marketValue": 6,
+            "availabilityRisk": 3,
+            "confidencePenalty": -18,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 12,
+          "displayName": "Josh Allen",
+          "position": "QB",
+          "team": "BUF",
+          "recommendationTier": "avoid_for_now",
+          "recommendationScore": 31,
+          "status": "watch_only",
+          "primaryReason": "League value: +7.8 points above replacement.",
+          "warningCodes": [
+            "SINGLE_SEASON_OFFENSIVE_BASELINE"
+          ],
+          "reasonCodes": [
+            "ESTABLISHED_FULL_SEASON",
+            "FIRST_DOWN_PROJECTED_FROM_HISTORY",
+            "FUMBLE_PENALTY_IMPACT",
+            "FUMBLE_RATE_REGRESSION_UP",
+            "INTERCEPTION_PENALTY_IMPACT",
+            "LEAGUE_SCORING_APPLIED",
+            "LONG_PLAY_BONUS_APPROXIMATED",
+            "LONG_PLAY_BONUS_PROJECTED_REGRESSED",
+            "LONG_TD_VOLATILITY",
+            "MARKET_ALIGNED",
+            "MARKET_SINGLE_PROVIDER",
+            "ROLE_STABILITY_HIGH",
+            "SACKS_PROJECTED_FROM_HISTORY",
+            "SCORING_UNSUPPORTED_KEY",
+            "SINGLE_SEASON_ONLY",
+            "STARTER_NEED",
+            "THRESHOLD_BONUS_PROJECTED_FROM_ROLE_WEEKS",
+            "TIER_CLIFF_VISIBLE",
+            "TWO_POINT_NOT_PROJECTED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 12,
+            "rosterNeed": 18,
+            "scarcity": 1,
+            "tierCliff": 8,
+            "marketValue": 6,
+            "availabilityRisk": 4,
+            "confidencePenalty": -18,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 13,
+          "displayName": "Matthew Stafford",
+          "position": "QB",
+          "team": "LAR",
+          "recommendationTier": "avoid_for_now",
+          "recommendationScore": 28.7,
+          "status": "watch_only",
+          "primaryReason": "League value: +0 points above replacement.",
+          "warningCodes": [
+            "SINGLE_SEASON_OFFENSIVE_BASELINE"
+          ],
+          "reasonCodes": [
+            "EFFICIENCY_REGRESSION_UP",
+            "ESTABLISHED_FULL_SEASON",
+            "FIRST_DOWN_PROJECTED_FROM_HISTORY",
+            "FUMBLE_PENALTY_IMPACT",
+            "FUMBLE_RATE_REGRESSION_DOWN",
+            "INTERCEPTION_PENALTY_IMPACT",
+            "LEAGUE_SCORING_APPLIED",
+            "LOW_SAMPLE_EFFICIENCY_REGRESSION",
+            "MARKET_ALIGNED",
+            "MARKET_SINGLE_PROVIDER",
+            "PICK_SIX_PROJECTED_REGRESSED",
+            "ROLE_STABILITY_HIGH",
+            "SACKS_PROJECTED_FROM_HISTORY",
+            "SCORING_UNSUPPORTED_KEY",
+            "SINGLE_SEASON_ONLY",
+            "STARTER_NEED",
+            "TD_RATE_REGRESSION_UP",
+            "THRESHOLD_BONUS_PROJECTED_FROM_ROLE_WEEKS",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 9.7,
+            "rosterNeed": 18,
+            "scarcity": 1,
+            "tierCliff": 8,
+            "marketValue": 6,
+            "availabilityRisk": 4,
+            "confidencePenalty": -18,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 14,
+          "displayName": "Drake Maye",
+          "position": "QB",
+          "team": "NE",
+          "recommendationTier": "avoid_for_now",
+          "recommendationScore": 25.7,
+          "status": "watch_only",
+          "primaryReason": "League value: -9.9 points above replacement.",
+          "warningCodes": [
+            "SINGLE_SEASON_OFFENSIVE_BASELINE"
+          ],
+          "reasonCodes": [
+            "ESTABLISHED_FULL_SEASON",
+            "FIRST_DOWN_PROJECTED_FROM_HISTORY",
+            "FUMBLE_PENALTY_IMPACT",
+            "FUMBLE_RATE_REGRESSION_UP",
+            "INTERCEPTION_PENALTY_IMPACT",
+            "LEAGUE_SCORING_APPLIED",
+            "MARKET_ALIGNED",
+            "MARKET_SINGLE_PROVIDER",
+            "PICK_SIX_PROJECTED_REGRESSED",
+            "ROLE_STABILITY_HIGH",
+            "SACKS_PROJECTED_FROM_HISTORY",
+            "SCORING_UNSUPPORTED_KEY",
+            "SINGLE_SEASON_ONLY",
+            "STARTER_NEED",
+            "THRESHOLD_BONUS_PROJECTED_FROM_ROLE_WEEKS",
+            "TIER_CLIFF_VISIBLE",
+            "TWO_POINT_NOT_PROJECTED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 6.7,
+            "rosterNeed": 18,
+            "scarcity": 1,
+            "tierCliff": 8,
+            "marketValue": 6,
+            "availabilityRisk": 4,
+            "confidencePenalty": -18,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 15,
+          "displayName": "Ka'imi Fairbairn",
+          "position": "K",
+          "team": "HOU",
+          "recommendationTier": "avoid_for_now",
+          "recommendationScore": 0,
+          "status": "watch_only",
+          "primaryReason": "League value: +13.6 points above replacement.",
+          "warningCodes": [
+            "K_EARLY_ROUND_SUPPRESSION",
+            "LOW_PROJECTION_CONFIDENCE",
+            "MARKET_NOT_IMPLEMENTED"
+          ],
+          "reasonCodes": [
+            "K_DISTANCE_BUCKET_LIMITED",
+            "K_MAKE_RATE_REGRESSION",
+            "K_TEAM_ENVIRONMENT_NOT_MODELED",
+            "K_VOLUME_PROJECTED_FROM_HISTORY",
+            "STARTER_NEED",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 13.2,
+            "rosterNeed": 10,
+            "scarcity": 1,
+            "tierCliff": 15,
+            "marketValue": 3,
+            "availabilityRisk": 3,
+            "confidencePenalty": -36,
+            "formatPenalty": -24
+          }
+        }
+      ],
+      "watchlistExamples": [
+        {
+          "recommendationRank": 3,
+          "displayName": "Puka Nacua",
+          "position": "WR",
+          "team": "LAR",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 56.1,
+          "status": "watch_only",
+          "primaryReason": "High league value: +64.7 points above replacement.",
+          "warningCodes": [
+            "SINGLE_SEASON_OFFENSIVE_BASELINE"
+          ],
+          "reasonCodes": [
+            "EFFICIENCY_REGRESSION_DOWN",
+            "ESTABLISHED_FULL_SEASON",
+            "FIRST_DOWN_PROJECTED_FROM_HISTORY",
+            "FUMBLE_PENALTY_IMPACT",
+            "LEAGUE_SCORING_APPLIED",
+            "LONG_PLAY_BONUS_PROJECTED_REGRESSED",
+            "LONG_TD_VOLATILITY",
+            "LOW_SAMPLE_EFFICIENCY_REGRESSION",
+            "LOW_SAMPLE_TD_REGRESSION",
+            "MARKET_ALIGNED",
+            "MARKET_SINGLE_PROVIDER",
+            "PPR_SCORING_IMPACT",
+            "ROLE_STABILITY_HIGH",
+            "SCORING_UNSUPPORTED_KEY",
+            "SINGLE_SEASON_ONLY",
+            "STARTER_NEED",
+            "TD_RATE_REGRESSION_DOWN",
+            "THRESHOLD_BONUS_PROJECTED_FROM_ROLE_WEEKS",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 27.3,
+            "rosterNeed": 20,
+            "scarcity": 1.8,
+            "tierCliff": 15,
+            "marketValue": 6,
+            "availabilityRisk": 4,
+            "confidencePenalty": -18,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 4,
+          "displayName": "Bijan Robinson",
+          "position": "RB",
+          "team": "ATL",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 45.9,
+          "status": "watch_only",
+          "primaryReason": "League value: +31.1 points above replacement.",
+          "warningCodes": [
+            "SINGLE_SEASON_OFFENSIVE_BASELINE"
+          ],
+          "reasonCodes": [
+            "ESTABLISHED_FULL_SEASON",
+            "FIRST_DOWN_PROJECTED_FROM_HISTORY",
+            "FUMBLE_PENALTY_IMPACT",
+            "LEAGUE_SCORING_APPLIED",
+            "LONG_PLAY_BONUS_PROJECTED_REGRESSED",
+            "LONG_TD_VOLATILITY",
+            "MARKET_ALIGNED",
+            "MARKET_SINGLE_PROVIDER",
+            "PPR_SCORING_IMPACT",
+            "ROLE_STABILITY_HIGH",
+            "SCORING_UNSUPPORTED_KEY",
+            "SINGLE_SEASON_ONLY",
+            "STARTER_NEED",
+            "THRESHOLD_BONUS_PROJECTED_FROM_ROLE_WEEKS",
+            "TIER_CLIFF_VISIBLE",
+            "TWO_POINT_NOT_PROJECTED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 18,
+            "rosterNeed": 20,
+            "scarcity": 7.9,
+            "tierCliff": 8,
+            "marketValue": 6,
+            "availabilityRisk": 4,
+            "confidencePenalty": -18,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 5,
+          "displayName": "Jahmyr Gibbs",
+          "position": "RB",
+          "team": "DET",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 43.7,
+          "status": "watch_only",
+          "primaryReason": "League value: +30.5 points above replacement.",
+          "warningCodes": [
+            "SINGLE_SEASON_OFFENSIVE_BASELINE"
+          ],
+          "reasonCodes": [
+            "ESTABLISHED_FULL_SEASON",
+            "FIRST_DOWN_PROJECTED_FROM_HISTORY",
+            "FUMBLE_PENALTY_IMPACT",
+            "LEAGUE_SCORING_APPLIED",
+            "LONG_PLAY_BONUS_PROJECTED_REGRESSED",
+            "LONG_TD_VOLATILITY",
+            "MARKET_ALIGNED",
+            "MARKET_SINGLE_PROVIDER",
+            "PPR_SCORING_IMPACT",
+            "ROLE_STABILITY_HIGH",
+            "SCORING_UNSUPPORTED_KEY",
+            "SINGLE_SEASON_ONLY",
+            "STARTER_NEED",
+            "THRESHOLD_BONUS_PROJECTED_FROM_ROLE_WEEKS",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 17.8,
+            "rosterNeed": 20,
+            "scarcity": 7.9,
+            "tierCliff": 8,
+            "marketValue": 6,
+            "availabilityRisk": 2,
+            "confidencePenalty": -18,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 6,
+          "displayName": "Jonathan Taylor",
+          "position": "RB",
+          "team": "IND",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 43.1,
+          "status": "watch_only",
+          "primaryReason": "League value: +28.5 points above replacement.",
+          "warningCodes": [
+            "SINGLE_SEASON_OFFENSIVE_BASELINE"
+          ],
+          "reasonCodes": [
+            "ESTABLISHED_FULL_SEASON",
+            "FIRST_DOWN_PROJECTED_FROM_HISTORY",
+            "FUMBLE_PENALTY_IMPACT",
+            "LEAGUE_SCORING_APPLIED",
+            "LONG_PLAY_BONUS_PROJECTED_REGRESSED",
+            "LONG_TD_VOLATILITY",
+            "MARKET_ALIGNED",
+            "MARKET_SINGLE_PROVIDER",
+            "PPR_SCORING_IMPACT",
+            "ROLE_STABILITY_HIGH",
+            "SCORING_UNSUPPORTED_KEY",
+            "SINGLE_SEASON_ONLY",
+            "STARTER_NEED",
+            "THRESHOLD_BONUS_PROJECTED_FROM_ROLE_WEEKS",
+            "TIER_CLIFF_VISIBLE",
+            "TWO_POINT_NOT_PROJECTED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 17.2,
+            "rosterNeed": 20,
+            "scarcity": 7.9,
+            "tierCliff": 8,
+            "marketValue": 6,
+            "availabilityRisk": 2,
+            "confidencePenalty": -18,
+            "formatPenalty": 0
+          }
+        }
+      ],
+      "insufficientDataExamples": [],
+      "legacyRecommendationCount": 0,
+      "legacyRecommendationTopRows": [],
+      "legacyRowsChanged": false,
+      "remainingPlayersOrderChanged": false,
+      "thresholdResults": {
+        "matchRatePass": true,
+        "insufficientDataPass": true,
+        "invariantPass": true,
+        "legacyUnchangedPass": true,
+        "remainingOrderUnchangedPass": true,
+        "forbiddenLanguagePass": true,
+        "offensiveTargetTierPass": true,
+        "superflexQbUrgencyPass": null,
+        "kEarlySuppressionPass": true,
+        "dstEarlySuppressionPass": null
+      },
+      "formatDiagnostics": {
+        "superflexQbUrgencyApplied": null,
+        "qbAverageRosterNeed": 18,
+        "nonQbAverageRosterNeed": 19.5,
+        "idpRows": 0,
+        "kickerRows": 8,
+        "dstRows": 0
+      }
+    },
+    {
+      "source": "validation_seed",
+      "draftRoomId": "f131b67c-c646-4e01-a925-c7d9f3eab4b0",
+      "leagueId": "8d1a3d47-0b1d-494c-bdab-1590fa630d7d",
+      "leagueName": "🪓 Chopped",
+      "formats": [
+        "Superflex",
+        "Shallow roster",
+        "Uploaded rankings"
+      ],
+      "remainingPlayersLoaded": 26,
+      "overlayRowsLoaded": 26,
+      "recommendationsGenerated": 26,
+      "matchRate": 1,
+      "rowsByTier": {
+        "solid_target": 2,
+        "watchlist": 4,
+        "avoid_for_now": 20
+      },
+      "rowsByStatus": {
+        "watch_only": 26
+      },
+      "rowsByPosition": {
+        "TE": 4,
+        "RB": 6,
+        "WR": 6,
+        "QB": 10
+      },
+      "warningCounts": {
+        "SINGLE_SEASON_OFFENSIVE_BASELINE": 26,
+        "Superflex mismatch: snapshot=false, league=true — QB tiers differ": 26,
+        "Team count difference (12 vs 18) — positional scarcity shifts": 26,
+        "Team count difference: snapshot=12, league=18": 26,
+        "Superflex mismatch — QB tier values diverge (snapshot=false, league=true)": 10
+      },
+      "contextLimitations": [],
+      "invariantFailures": [],
+      "topRecommendations": [
+        {
+          "recommendationRank": 1,
+          "displayName": "Trey McBride",
+          "position": "TE",
+          "team": "ARI",
+          "recommendationTier": "solid_target",
+          "recommendationScore": 63,
+          "status": "watch_only",
+          "primaryReason": "High league value: +94 points above replacement.",
+          "warningCodes": [
+            "SINGLE_SEASON_OFFENSIVE_BASELINE",
+            "Superflex mismatch: snapshot=false, league=true — QB tiers differ",
+            "Team count difference (12 vs 18) — positional scarcity shifts",
+            "Team count difference: snapshot=12, league=18"
+          ],
+          "reasonCodes": [
+            "ESTABLISHED_FULL_SEASON",
+            "FIRST_DOWN_PROJECTED_FROM_HISTORY",
+            "FUMBLE_PENALTY_IMPACT",
+            "FUMBLE_RATE_REGRESSION_UP",
+            "LEAGUE_SCORING_APPLIED",
+            "MARKET_ALIGNED",
+            "MARKET_FORMAT_WARNING",
+            "MARKET_SINGLE_PROVIDER",
+            "PPR_SCORING_IMPACT",
+            "ROLE_STABILITY_HIGH",
+            "SCORING_UNSUPPORTED_KEY",
+            "SINGLE_SEASON_ONLY",
+            "STARTER_NEED",
+            "TE_PREMIUM_SCORING_IMPACT",
+            "THRESHOLD_BONUS_PROJECTED_FROM_ROLE_WEEKS",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 28,
+            "rosterNeed": 18,
+            "scarcity": 11,
+            "tierCliff": 15,
+            "marketValue": 6,
+            "availabilityRisk": 3,
+            "confidencePenalty": -18,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 2,
+          "displayName": "Christian McCaffrey",
+          "position": "RB",
+          "team": "SF",
+          "recommendationTier": "solid_target",
+          "recommendationScore": 59.9,
+          "status": "watch_only",
+          "primaryReason": "High league value: +72.8 points above replacement.",
+          "warningCodes": [
+            "SINGLE_SEASON_OFFENSIVE_BASELINE",
+            "Superflex mismatch: snapshot=false, league=true — QB tiers differ",
+            "Team count difference (12 vs 18) — positional scarcity shifts",
+            "Team count difference: snapshot=12, league=18"
+          ],
+          "reasonCodes": [
+            "ESTABLISHED_FULL_SEASON",
+            "FIRST_DOWN_PROJECTED_FROM_HISTORY",
+            "FUMBLE_PENALTY_IMPACT",
+            "FUMBLE_RATE_REGRESSION_UP",
+            "LEAGUE_SCORING_APPLIED",
+            "MARKET_ALIGNED",
+            "MARKET_FORMAT_WARNING",
+            "MARKET_SINGLE_PROVIDER",
+            "PPR_SCORING_IMPACT",
+            "ROLE_STABILITY_HIGH",
+            "SCORING_UNSUPPORTED_KEY",
+            "SINGLE_SEASON_ONLY",
+            "STARTER_NEED",
+            "THRESHOLD_BONUS_PROJECTED_FROM_ROLE_WEEKS",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 26.5,
+            "rosterNeed": 20,
+            "scarcity": 6.4,
+            "tierCliff": 15,
+            "marketValue": 6,
+            "availabilityRisk": 4,
+            "confidencePenalty": -18,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 3,
+          "displayName": "Puka Nacua",
+          "position": "WR",
+          "team": "LAR",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 47.3,
+          "status": "watch_only",
+          "primaryReason": "High league value: +41.3 points above replacement.",
+          "warningCodes": [
+            "SINGLE_SEASON_OFFENSIVE_BASELINE",
+            "Superflex mismatch: snapshot=false, league=true — QB tiers differ",
+            "Team count difference (12 vs 18) — positional scarcity shifts",
+            "Team count difference: snapshot=12, league=18"
+          ],
+          "reasonCodes": [
+            "EFFICIENCY_REGRESSION_DOWN",
+            "ESTABLISHED_FULL_SEASON",
+            "FIRST_DOWN_PROJECTED_FROM_HISTORY",
+            "FUMBLE_PENALTY_IMPACT",
+            "LEAGUE_SCORING_APPLIED",
+            "LONG_PLAY_BONUS_PROJECTED_REGRESSED",
+            "LONG_TD_VOLATILITY",
+            "LOW_SAMPLE_EFFICIENCY_REGRESSION",
+            "LOW_SAMPLE_TD_REGRESSION",
+            "MARKET_ALIGNED",
+            "MARKET_FORMAT_WARNING",
+            "MARKET_SINGLE_PROVIDER",
+            "PPR_SCORING_IMPACT",
+            "ROLE_STABILITY_HIGH",
+            "SCORING_UNSUPPORTED_KEY",
+            "SINGLE_SEASON_ONLY",
+            "STARTER_NEED",
+            "TD_RATE_REGRESSION_DOWN",
+            "THRESHOLD_BONUS_PROJECTED_FROM_ROLE_WEEKS",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 20.3,
+            "rosterNeed": 20,
+            "scarcity": 1,
+            "tierCliff": 15,
+            "marketValue": 6,
+            "availabilityRisk": 3,
+            "confidencePenalty": -18,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 4,
+          "displayName": "Kyle Pitts",
+          "position": "TE",
+          "team": "ATL",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 44.1,
+          "status": "watch_only",
+          "primaryReason": "League value: +0 points above replacement.",
+          "warningCodes": [
+            "SINGLE_SEASON_OFFENSIVE_BASELINE",
+            "Superflex mismatch: snapshot=false, league=true — QB tiers differ",
+            "Team count difference (12 vs 18) — positional scarcity shifts",
+            "Team count difference: snapshot=12, league=18"
+          ],
+          "reasonCodes": [
+            "ESTABLISHED_FULL_SEASON",
+            "FIRST_DOWN_PROJECTED_FROM_HISTORY",
+            "FUMBLE_PENALTY_IMPACT",
+            "FUMBLE_RATE_REGRESSION_UP",
+            "LEAGUE_SCORING_APPLIED",
+            "MARKET_ALIGNED",
+            "MARKET_FORMAT_WARNING",
+            "MARKET_SINGLE_PROVIDER",
+            "PPR_SCORING_IMPACT",
+            "ROLE_STABILITY_HIGH",
+            "SCORING_UNSUPPORTED_KEY",
+            "SINGLE_SEASON_ONLY",
+            "STARTER_NEED",
+            "TE_PREMIUM_SCORING_IMPACT",
+            "THRESHOLD_BONUS_PROJECTED_FROM_ROLE_WEEKS",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 9.1,
+            "rosterNeed": 18,
+            "scarcity": 11,
+            "tierCliff": 15,
+            "marketValue": 6,
+            "availabilityRisk": 3,
+            "confidencePenalty": -18,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 5,
+          "displayName": "Jonathan Taylor",
+          "position": "RB",
+          "team": "IND",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 42.9,
+          "status": "watch_only",
+          "primaryReason": "League value: +33.2 points above replacement.",
+          "warningCodes": [
+            "SINGLE_SEASON_OFFENSIVE_BASELINE",
+            "Superflex mismatch: snapshot=false, league=true — QB tiers differ",
+            "Team count difference (12 vs 18) — positional scarcity shifts",
+            "Team count difference: snapshot=12, league=18"
+          ],
+          "reasonCodes": [
+            "ESTABLISHED_FULL_SEASON",
+            "FIRST_DOWN_PROJECTED_FROM_HISTORY",
+            "FUMBLE_PENALTY_IMPACT",
+            "LEAGUE_SCORING_APPLIED",
+            "LONG_PLAY_BONUS_PROJECTED_REGRESSED",
+            "LONG_TD_VOLATILITY",
+            "MARKET_ALIGNED",
+            "MARKET_FORMAT_WARNING",
+            "MARKET_SINGLE_PROVIDER",
+            "PPR_SCORING_IMPACT",
+            "ROLE_STABILITY_HIGH",
+            "SCORING_UNSUPPORTED_KEY",
+            "SINGLE_SEASON_ONLY",
+            "STARTER_NEED",
+            "THRESHOLD_BONUS_PROJECTED_FROM_ROLE_WEEKS",
+            "TIER_CLIFF_VISIBLE",
+            "TWO_POINT_NOT_PROJECTED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 18.5,
+            "rosterNeed": 20,
+            "scarcity": 6.4,
+            "tierCliff": 8,
+            "marketValue": 6,
+            "availabilityRisk": 2,
+            "confidencePenalty": -18,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 6,
+          "displayName": "Bijan Robinson",
+          "position": "RB",
+          "team": "ATL",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 42.2,
+          "status": "watch_only",
+          "primaryReason": "League value: +29.9 points above replacement.",
+          "warningCodes": [
+            "SINGLE_SEASON_OFFENSIVE_BASELINE",
+            "Superflex mismatch: snapshot=false, league=true — QB tiers differ",
+            "Team count difference (12 vs 18) — positional scarcity shifts",
+            "Team count difference: snapshot=12, league=18"
+          ],
+          "reasonCodes": [
+            "ESTABLISHED_FULL_SEASON",
+            "FIRST_DOWN_PROJECTED_FROM_HISTORY",
+            "FUMBLE_PENALTY_IMPACT",
+            "LEAGUE_SCORING_APPLIED",
+            "LONG_PLAY_BONUS_PROJECTED_REGRESSED",
+            "LONG_TD_VOLATILITY",
+            "MARKET_ALIGNED",
+            "MARKET_FORMAT_WARNING",
+            "MARKET_SINGLE_PROVIDER",
+            "PPR_SCORING_IMPACT",
+            "ROLE_STABILITY_HIGH",
+            "SCORING_UNSUPPORTED_KEY",
+            "SINGLE_SEASON_ONLY",
+            "STARTER_NEED",
+            "THRESHOLD_BONUS_PROJECTED_FROM_ROLE_WEEKS",
+            "TIER_CLIFF_VISIBLE",
+            "TWO_POINT_NOT_PROJECTED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 17.8,
+            "rosterNeed": 20,
+            "scarcity": 6.4,
+            "tierCliff": 8,
+            "marketValue": 6,
+            "availabilityRisk": 2,
+            "confidencePenalty": -18,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 7,
+          "displayName": "James Cook",
+          "position": "RB",
+          "team": "BUF",
+          "recommendationTier": "avoid_for_now",
+          "recommendationScore": 41.6,
+          "status": "watch_only",
+          "primaryReason": "League value: -2.8 points above replacement.",
+          "warningCodes": [
+            "SINGLE_SEASON_OFFENSIVE_BASELINE",
+            "Superflex mismatch: snapshot=false, league=true — QB tiers differ",
+            "Team count difference (12 vs 18) — positional scarcity shifts",
+            "Team count difference: snapshot=12, league=18"
+          ],
+          "reasonCodes": [
+            "ESTABLISHED_FULL_SEASON",
+            "FIRST_DOWN_PROJECTED_FROM_HISTORY",
+            "FUMBLE_PENALTY_IMPACT",
+            "LEAGUE_SCORING_APPLIED",
+            "LONG_PLAY_BONUS_PROJECTED_REGRESSED",
+            "LONG_TD_VOLATILITY",
+            "MARKET_ALIGNED",
+            "MARKET_FORMAT_WARNING",
+            "MARKET_SINGLE_PROVIDER",
+            "PPR_SCORING_IMPACT",
+            "ROLE_STABILITY_HIGH",
+            "SCORING_UNSUPPORTED_KEY",
+            "SINGLE_SEASON_ONLY",
+            "STARTER_NEED",
+            "THRESHOLD_BONUS_PROJECTED_FROM_ROLE_WEEKS",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 11.2,
+            "rosterNeed": 20,
+            "scarcity": 6.4,
+            "tierCliff": 12,
+            "marketValue": 7,
+            "availabilityRisk": 3,
+            "confidencePenalty": -18,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 8,
+          "displayName": "De'Von Achane",
+          "position": "RB",
+          "team": "MIA",
+          "recommendationTier": "avoid_for_now",
+          "recommendationScore": 41.2,
+          "status": "watch_only",
+          "primaryReason": "League value: +0 points above replacement.",
+          "warningCodes": [
+            "SINGLE_SEASON_OFFENSIVE_BASELINE",
+            "Superflex mismatch: snapshot=false, league=true — QB tiers differ",
+            "Team count difference (12 vs 18) — positional scarcity shifts",
+            "Team count difference: snapshot=12, league=18"
+          ],
+          "reasonCodes": [
+            "ESTABLISHED_FULL_SEASON",
+            "FIRST_DOWN_PROJECTED_FROM_HISTORY",
+            "FUMBLE_PENALTY_IMPACT",
+            "FUMBLE_RATE_REGRESSION_UP",
+            "LEAGUE_SCORING_APPLIED",
+            "LONG_PLAY_BONUS_PROJECTED_REGRESSED",
+            "LONG_TD_VOLATILITY",
+            "MARKET_ALIGNED",
+            "MARKET_FORMAT_WARNING",
+            "MARKET_SINGLE_PROVIDER",
+            "PPR_SCORING_IMPACT",
+            "ROLE_STABILITY_HIGH",
+            "SCORING_UNSUPPORTED_KEY",
+            "SINGLE_SEASON_ONLY",
+            "STARTER_NEED",
+            "THRESHOLD_BONUS_PROJECTED_FROM_ROLE_WEEKS",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 11.8,
+            "rosterNeed": 20,
+            "scarcity": 6.4,
+            "tierCliff": 12,
+            "marketValue": 6,
+            "availabilityRisk": 3,
+            "confidencePenalty": -18,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 9,
+          "displayName": "Jahmyr Gibbs",
+          "position": "RB",
+          "team": "DET",
+          "recommendationTier": "avoid_for_now",
+          "recommendationScore": 38.5,
+          "status": "watch_only",
+          "primaryReason": "League value: +16.6 points above replacement.",
+          "warningCodes": [
+            "SINGLE_SEASON_OFFENSIVE_BASELINE",
+            "Superflex mismatch: snapshot=false, league=true — QB tiers differ",
+            "Team count difference (12 vs 18) — positional scarcity shifts",
+            "Team count difference: snapshot=12, league=18"
+          ],
+          "reasonCodes": [
+            "ESTABLISHED_FULL_SEASON",
+            "FIRST_DOWN_PROJECTED_FROM_HISTORY",
+            "FUMBLE_PENALTY_IMPACT",
+            "LEAGUE_SCORING_APPLIED",
+            "LONG_PLAY_BONUS_PROJECTED_REGRESSED",
+            "LONG_TD_VOLATILITY",
+            "MARKET_ALIGNED",
+            "MARKET_FORMAT_WARNING",
+            "MARKET_SINGLE_PROVIDER",
+            "PPR_SCORING_IMPACT",
+            "ROLE_STABILITY_HIGH",
+            "SCORING_UNSUPPORTED_KEY",
+            "SINGLE_SEASON_ONLY",
+            "STARTER_NEED",
+            "THRESHOLD_BONUS_PROJECTED_FROM_ROLE_WEEKS",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 15.2,
+            "rosterNeed": 20,
+            "scarcity": 6.4,
+            "tierCliff": 8,
+            "marketValue": 6,
+            "availabilityRisk": 1,
+            "confidencePenalty": -18,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 10,
+          "displayName": "Travis Kelce",
+          "position": "TE",
+          "team": "KC",
+          "recommendationTier": "avoid_for_now",
+          "recommendationScore": 36.9,
+          "status": "watch_only",
+          "primaryReason": "League value: -21 points above replacement.",
+          "warningCodes": [
+            "SINGLE_SEASON_OFFENSIVE_BASELINE",
+            "Superflex mismatch: snapshot=false, league=true — QB tiers differ",
+            "Team count difference (12 vs 18) — positional scarcity shifts",
+            "Team count difference: snapshot=12, league=18"
+          ],
+          "reasonCodes": [
+            "EFFICIENCY_REFERENCE_POOL_SMALL",
+            "EFFICIENCY_REGRESSION_UP",
+            "ESTABLISHED_FULL_SEASON",
+            "FIRST_DOWN_PROJECTED_FROM_HISTORY",
+            "FUMBLE_PENALTY_IMPACT",
+            "FUMBLE_RATE_REGRESSION_UP",
+            "INCIDENTAL_RUSHING_NOT_PROJECTED",
+            "LEAGUE_SCORING_APPLIED",
+            "LOW_SAMPLE_EFFICIENCY_REGRESSION",
+            "LOW_SAMPLE_TD_REGRESSION",
+            "MARKET_ALIGNED",
+            "MARKET_FORMAT_WARNING",
+            "MARKET_SINGLE_PROVIDER",
+            "PPR_SCORING_IMPACT",
+            "ROLE_STABILITY_HIGH",
+            "SCORING_UNSUPPORTED_KEY",
+            "SINGLE_SEASON_ONLY",
+            "STARTER_NEED",
+            "TD_RATE_REGRESSION_UP",
+            "TD_REFERENCE_POOL_SMALL",
+            "TE_PREMIUM_SCORING_IMPACT",
+            "TIER_CLIFF_VISIBLE",
+            "TWO_POINT_NOT_PROJECTED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 4.9,
+            "rosterNeed": 18,
+            "scarcity": 11,
+            "tierCliff": 12,
+            "marketValue": 6,
+            "availabilityRisk": 3,
+            "confidencePenalty": -18,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 11,
+          "displayName": "Dallas Goedert",
+          "position": "TE",
+          "team": "PHI",
+          "recommendationTier": "avoid_for_now",
+          "recommendationScore": 36.7,
+          "status": "watch_only",
+          "primaryReason": "League value: -22.1 points above replacement.",
+          "warningCodes": [
+            "SINGLE_SEASON_OFFENSIVE_BASELINE",
+            "Superflex mismatch: snapshot=false, league=true — QB tiers differ",
+            "Team count difference (12 vs 18) — positional scarcity shifts",
+            "Team count difference: snapshot=12, league=18"
+          ],
+          "reasonCodes": [
+            "ESTABLISHED_FULL_SEASON",
+            "FIRST_DOWN_PROJECTED_FROM_HISTORY",
+            "FUMBLE_PENALTY_IMPACT",
+            "FUMBLE_RATE_REGRESSION_UP",
+            "LEAGUE_SCORING_APPLIED",
+            "MARKET_ALIGNED",
+            "MARKET_FORMAT_WARNING",
+            "MARKET_SINGLE_PROVIDER",
+            "PPR_SCORING_IMPACT",
+            "ROLE_STABILITY_HIGH",
+            "SCORING_UNSUPPORTED_KEY",
+            "SINGLE_SEASON_ONLY",
+            "STARTER_NEED",
+            "TD_RATE_REGRESSION_DOWN",
+            "TE_PREMIUM_SCORING_IMPACT",
+            "THRESHOLD_BONUS_PROJECTED_FROM_ROLE_WEEKS",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 4.7,
+            "rosterNeed": 18,
+            "scarcity": 11,
+            "tierCliff": 12,
+            "marketValue": 6,
+            "availabilityRisk": 3,
+            "confidencePenalty": -18,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 12,
+          "displayName": "Jaxon Smith-Njigba",
+          "position": "WR",
+          "team": "SEA",
+          "recommendationTier": "avoid_for_now",
+          "recommendationScore": 32.3,
+          "status": "watch_only",
+          "primaryReason": "League value: +11.5 points above replacement.",
+          "warningCodes": [
+            "SINGLE_SEASON_OFFENSIVE_BASELINE",
+            "Superflex mismatch: snapshot=false, league=true — QB tiers differ",
+            "Team count difference (12 vs 18) — positional scarcity shifts",
+            "Team count difference: snapshot=12, league=18"
+          ],
+          "reasonCodes": [
+            "ESTABLISHED_FULL_SEASON",
+            "FIRST_DOWN_PROJECTED_FROM_HISTORY",
+            "FUMBLE_PENALTY_IMPACT",
+            "INCIDENTAL_RUSHING_NOT_PROJECTED",
+            "LEAGUE_SCORING_APPLIED",
+            "LONG_PLAY_BONUS_PROJECTED_REGRESSED",
+            "LONG_TD_VOLATILITY",
+            "LOW_SAMPLE_EFFICIENCY_REGRESSION",
+            "LOW_SAMPLE_TD_REGRESSION",
+            "MARKET_ALIGNED",
+            "MARKET_FORMAT_WARNING",
+            "MARKET_SINGLE_PROVIDER",
+            "PPR_SCORING_IMPACT",
+            "ROLE_STABILITY_HIGH",
+            "SCORING_UNSUPPORTED_KEY",
+            "SINGLE_SEASON_ONLY",
+            "STARTER_NEED",
+            "TD_RATE_REGRESSION_UP",
+            "THRESHOLD_BONUS_PROJECTED_FROM_ROLE_WEEKS",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 14.3,
+            "rosterNeed": 20,
+            "scarcity": 1,
+            "tierCliff": 8,
+            "marketValue": 6,
+            "availabilityRisk": 1,
+            "confidencePenalty": -18,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 13,
+          "displayName": "Josh Allen",
+          "position": "QB",
+          "team": "BUF",
+          "recommendationTier": "avoid_for_now",
+          "recommendationScore": 31.9,
+          "status": "watch_only",
+          "primaryReason": "League value: +22.7 points above replacement.",
+          "warningCodes": [
+            "SINGLE_SEASON_OFFENSIVE_BASELINE",
+            "Superflex mismatch — QB tier values diverge (snapshot=false, league=true)",
+            "Superflex mismatch: snapshot=false, league=true — QB tiers differ",
+            "Team count difference (12 vs 18) — positional scarcity shifts",
+            "Team count difference: snapshot=12, league=18"
+          ],
+          "reasonCodes": [
+            "ESTABLISHED_FULL_SEASON",
+            "FIRST_DOWN_PROJECTED_FROM_HISTORY",
+            "FUMBLE_PENALTY_IMPACT",
+            "FUMBLE_RATE_REGRESSION_UP",
+            "INTERCEPTION_PENALTY_IMPACT",
+            "LEAGUE_SCORING_APPLIED",
+            "LONG_PLAY_BONUS_APPROXIMATED",
+            "LONG_PLAY_BONUS_PROJECTED_REGRESSED",
+            "LONG_TD_VOLATILITY",
+            "MARKET_ALIGNED",
+            "MARKET_FORMAT_WARNING",
+            "MARKET_SINGLE_PROVIDER",
+            "ROLE_STABILITY_HIGH",
+            "SACKS_PROJECTED_FROM_HISTORY",
+            "SCORING_UNSUPPORTED_KEY",
+            "SINGLE_SEASON_ONLY",
+            "STARTER_NEED",
+            "THRESHOLD_BONUS_PROJECTED_FROM_ROLE_WEEKS",
+            "TWO_POINT_NOT_PROJECTED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 16.9,
+            "rosterNeed": 20,
+            "scarcity": 1,
+            "tierCliff": 2,
+            "marketValue": 6,
+            "availabilityRisk": 4,
+            "confidencePenalty": -18,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 14,
+          "displayName": "Amon-Ra St. Brown",
+          "position": "WR",
+          "team": "DET",
+          "recommendationTier": "avoid_for_now",
+          "recommendationScore": 30,
+          "status": "watch_only",
+          "primaryReason": "League value: +0 points above replacement.",
+          "warningCodes": [
+            "SINGLE_SEASON_OFFENSIVE_BASELINE",
+            "Superflex mismatch: snapshot=false, league=true — QB tiers differ",
+            "Team count difference (12 vs 18) — positional scarcity shifts",
+            "Team count difference: snapshot=12, league=18"
+          ],
+          "reasonCodes": [
+            "EFFICIENCY_REGRESSION_UP",
+            "ESTABLISHED_FULL_SEASON",
+            "FIRST_DOWN_PROJECTED_FROM_HISTORY",
+            "FUMBLE_PENALTY_IMPACT",
+            "FUMBLE_RATE_REGRESSION_UP",
+            "INCIDENTAL_RUSHING_NOT_PROJECTED",
+            "LEAGUE_SCORING_APPLIED",
+            "LOW_SAMPLE_EFFICIENCY_REGRESSION",
+            "LOW_SAMPLE_TD_REGRESSION",
+            "MARKET_ALIGNED",
+            "MARKET_FORMAT_WARNING",
+            "MARKET_SINGLE_PROVIDER",
+            "PPR_SCORING_IMPACT",
+            "ROLE_STABILITY_HIGH",
+            "SCORING_UNSUPPORTED_KEY",
+            "SINGLE_SEASON_ONLY",
+            "STARTER_NEED",
+            "TD_RATE_REGRESSION_UP",
+            "THRESHOLD_BONUS_PROJECTED_FROM_ROLE_WEEKS",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 12,
+            "rosterNeed": 20,
+            "scarcity": 1,
+            "tierCliff": 8,
+            "marketValue": 6,
+            "availabilityRisk": 1,
+            "confidencePenalty": -18,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 15,
+          "displayName": "Ja'Marr Chase",
+          "position": "WR",
+          "team": "CIN",
+          "recommendationTier": "avoid_for_now",
+          "recommendationScore": 29.1,
+          "status": "watch_only",
+          "primaryReason": "League value: -4.3 points above replacement.",
+          "warningCodes": [
+            "SINGLE_SEASON_OFFENSIVE_BASELINE",
+            "Superflex mismatch: snapshot=false, league=true — QB tiers differ",
+            "Team count difference (12 vs 18) — positional scarcity shifts",
+            "Team count difference: snapshot=12, league=18"
+          ],
+          "reasonCodes": [
+            "EFFICIENCY_REGRESSION_UP",
+            "ESTABLISHED_FULL_SEASON",
+            "FIRST_DOWN_PROJECTED_FROM_HISTORY",
+            "FUMBLE_PENALTY_IMPACT",
+            "INCIDENTAL_RUSHING_NOT_PROJECTED",
+            "LEAGUE_SCORING_APPLIED",
+            "LONG_PLAY_BONUS_PROJECTED_REGRESSED",
+            "LONG_TD_VOLATILITY",
+            "LOW_SAMPLE_EFFICIENCY_REGRESSION",
+            "LOW_SAMPLE_TD_REGRESSION",
+            "MARKET_ALIGNED",
+            "MARKET_FORMAT_WARNING",
+            "MARKET_SINGLE_PROVIDER",
+            "PPR_SCORING_IMPACT",
+            "ROLE_STABILITY_HIGH",
+            "SCORING_UNSUPPORTED_KEY",
+            "SINGLE_SEASON_ONLY",
+            "STARTER_NEED",
+            "TD_RATE_REGRESSION_UP",
+            "THRESHOLD_BONUS_PROJECTED_FROM_ROLE_WEEKS",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 11.1,
+            "rosterNeed": 20,
+            "scarcity": 1,
+            "tierCliff": 8,
+            "marketValue": 6,
+            "availabilityRisk": 1,
+            "confidencePenalty": -18,
+            "formatPenalty": 0
+          }
+        }
+      ],
+      "watchlistExamples": [
+        {
+          "recommendationRank": 3,
+          "displayName": "Puka Nacua",
+          "position": "WR",
+          "team": "LAR",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 47.3,
+          "status": "watch_only",
+          "primaryReason": "High league value: +41.3 points above replacement.",
+          "warningCodes": [
+            "SINGLE_SEASON_OFFENSIVE_BASELINE",
+            "Superflex mismatch: snapshot=false, league=true — QB tiers differ",
+            "Team count difference (12 vs 18) — positional scarcity shifts",
+            "Team count difference: snapshot=12, league=18"
+          ],
+          "reasonCodes": [
+            "EFFICIENCY_REGRESSION_DOWN",
+            "ESTABLISHED_FULL_SEASON",
+            "FIRST_DOWN_PROJECTED_FROM_HISTORY",
+            "FUMBLE_PENALTY_IMPACT",
+            "LEAGUE_SCORING_APPLIED",
+            "LONG_PLAY_BONUS_PROJECTED_REGRESSED",
+            "LONG_TD_VOLATILITY",
+            "LOW_SAMPLE_EFFICIENCY_REGRESSION",
+            "LOW_SAMPLE_TD_REGRESSION",
+            "MARKET_ALIGNED",
+            "MARKET_FORMAT_WARNING",
+            "MARKET_SINGLE_PROVIDER",
+            "PPR_SCORING_IMPACT",
+            "ROLE_STABILITY_HIGH",
+            "SCORING_UNSUPPORTED_KEY",
+            "SINGLE_SEASON_ONLY",
+            "STARTER_NEED",
+            "TD_RATE_REGRESSION_DOWN",
+            "THRESHOLD_BONUS_PROJECTED_FROM_ROLE_WEEKS",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 20.3,
+            "rosterNeed": 20,
+            "scarcity": 1,
+            "tierCliff": 15,
+            "marketValue": 6,
+            "availabilityRisk": 3,
+            "confidencePenalty": -18,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 4,
+          "displayName": "Kyle Pitts",
+          "position": "TE",
+          "team": "ATL",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 44.1,
+          "status": "watch_only",
+          "primaryReason": "League value: +0 points above replacement.",
+          "warningCodes": [
+            "SINGLE_SEASON_OFFENSIVE_BASELINE",
+            "Superflex mismatch: snapshot=false, league=true — QB tiers differ",
+            "Team count difference (12 vs 18) — positional scarcity shifts",
+            "Team count difference: snapshot=12, league=18"
+          ],
+          "reasonCodes": [
+            "ESTABLISHED_FULL_SEASON",
+            "FIRST_DOWN_PROJECTED_FROM_HISTORY",
+            "FUMBLE_PENALTY_IMPACT",
+            "FUMBLE_RATE_REGRESSION_UP",
+            "LEAGUE_SCORING_APPLIED",
+            "MARKET_ALIGNED",
+            "MARKET_FORMAT_WARNING",
+            "MARKET_SINGLE_PROVIDER",
+            "PPR_SCORING_IMPACT",
+            "ROLE_STABILITY_HIGH",
+            "SCORING_UNSUPPORTED_KEY",
+            "SINGLE_SEASON_ONLY",
+            "STARTER_NEED",
+            "TE_PREMIUM_SCORING_IMPACT",
+            "THRESHOLD_BONUS_PROJECTED_FROM_ROLE_WEEKS",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 9.1,
+            "rosterNeed": 18,
+            "scarcity": 11,
+            "tierCliff": 15,
+            "marketValue": 6,
+            "availabilityRisk": 3,
+            "confidencePenalty": -18,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 5,
+          "displayName": "Jonathan Taylor",
+          "position": "RB",
+          "team": "IND",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 42.9,
+          "status": "watch_only",
+          "primaryReason": "League value: +33.2 points above replacement.",
+          "warningCodes": [
+            "SINGLE_SEASON_OFFENSIVE_BASELINE",
+            "Superflex mismatch: snapshot=false, league=true — QB tiers differ",
+            "Team count difference (12 vs 18) — positional scarcity shifts",
+            "Team count difference: snapshot=12, league=18"
+          ],
+          "reasonCodes": [
+            "ESTABLISHED_FULL_SEASON",
+            "FIRST_DOWN_PROJECTED_FROM_HISTORY",
+            "FUMBLE_PENALTY_IMPACT",
+            "LEAGUE_SCORING_APPLIED",
+            "LONG_PLAY_BONUS_PROJECTED_REGRESSED",
+            "LONG_TD_VOLATILITY",
+            "MARKET_ALIGNED",
+            "MARKET_FORMAT_WARNING",
+            "MARKET_SINGLE_PROVIDER",
+            "PPR_SCORING_IMPACT",
+            "ROLE_STABILITY_HIGH",
+            "SCORING_UNSUPPORTED_KEY",
+            "SINGLE_SEASON_ONLY",
+            "STARTER_NEED",
+            "THRESHOLD_BONUS_PROJECTED_FROM_ROLE_WEEKS",
+            "TIER_CLIFF_VISIBLE",
+            "TWO_POINT_NOT_PROJECTED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 18.5,
+            "rosterNeed": 20,
+            "scarcity": 6.4,
+            "tierCliff": 8,
+            "marketValue": 6,
+            "availabilityRisk": 2,
+            "confidencePenalty": -18,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 6,
+          "displayName": "Bijan Robinson",
+          "position": "RB",
+          "team": "ATL",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 42.2,
+          "status": "watch_only",
+          "primaryReason": "League value: +29.9 points above replacement.",
+          "warningCodes": [
+            "SINGLE_SEASON_OFFENSIVE_BASELINE",
+            "Superflex mismatch: snapshot=false, league=true — QB tiers differ",
+            "Team count difference (12 vs 18) — positional scarcity shifts",
+            "Team count difference: snapshot=12, league=18"
+          ],
+          "reasonCodes": [
+            "ESTABLISHED_FULL_SEASON",
+            "FIRST_DOWN_PROJECTED_FROM_HISTORY",
+            "FUMBLE_PENALTY_IMPACT",
+            "LEAGUE_SCORING_APPLIED",
+            "LONG_PLAY_BONUS_PROJECTED_REGRESSED",
+            "LONG_TD_VOLATILITY",
+            "MARKET_ALIGNED",
+            "MARKET_FORMAT_WARNING",
+            "MARKET_SINGLE_PROVIDER",
+            "PPR_SCORING_IMPACT",
+            "ROLE_STABILITY_HIGH",
+            "SCORING_UNSUPPORTED_KEY",
+            "SINGLE_SEASON_ONLY",
+            "STARTER_NEED",
+            "THRESHOLD_BONUS_PROJECTED_FROM_ROLE_WEEKS",
+            "TIER_CLIFF_VISIBLE",
+            "TWO_POINT_NOT_PROJECTED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 17.8,
+            "rosterNeed": 20,
+            "scarcity": 6.4,
+            "tierCliff": 8,
+            "marketValue": 6,
+            "availabilityRisk": 2,
+            "confidencePenalty": -18,
+            "formatPenalty": 0
+          }
+        }
+      ],
+      "insufficientDataExamples": [],
+      "legacyRecommendationCount": 0,
+      "legacyRecommendationTopRows": [],
+      "legacyRowsChanged": false,
+      "remainingPlayersOrderChanged": false,
+      "thresholdResults": {
+        "matchRatePass": true,
+        "insufficientDataPass": true,
+        "invariantPass": true,
+        "legacyUnchangedPass": true,
+        "remainingOrderUnchangedPass": true,
+        "forbiddenLanguagePass": true,
+        "offensiveTargetTierPass": true,
+        "superflexQbUrgencyPass": true,
+        "kEarlySuppressionPass": null,
+        "dstEarlySuppressionPass": null
+      },
+      "formatDiagnostics": {
+        "superflexQbUrgencyApplied": true,
+        "qbAverageRosterNeed": 20,
+        "nonQbAverageRosterNeed": 19.5,
+        "idpRows": 0,
+        "kickerRows": 0,
+        "dstRows": 0
+      }
+    },
+    {
+      "source": "live",
+      "draftRoomId": "f85238ff-b2ee-4053-8493-e38c4cb63bd3",
+      "leagueId": "95c929b9-cc55-411e-8493-06fd85308c1c",
+      "leagueName": "BestBalls in Hand IDP Dynasty ",
+      "formats": [
+        "Superflex",
+        "IDP",
+        "Deep roster",
+        "Fallback pool"
+      ],
+      "remainingPlayersLoaded": 150,
+      "overlayRowsLoaded": 150,
+      "recommendationsGenerated": 150,
+      "matchRate": 1,
+      "rowsByTier": {
+        "watchlist": 7,
+        "avoid_for_now": 143
+      },
+      "rowsByStatus": {
+        "watch_only": 150
+      },
+      "rowsByPosition": {
+        "DB": 150
+      },
+      "warningCounts": {
+        "LOW_PROJECTION_CONFIDENCE": 150,
+        "MARKET_NOT_IMPLEMENTED": 150
+      },
+      "contextLimitations": [],
+      "invariantFailures": [],
+      "topRecommendations": [
+        {
+          "recommendationRank": 1,
+          "displayName": "Jamel Dean",
+          "position": "DB",
+          "team": "PIT",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 48,
+          "status": "watch_only",
+          "primaryReason": "High league value: +0.5 points above replacement.",
+          "warningCodes": [
+            "LOW_PROJECTION_CONFIDENCE",
+            "MARKET_NOT_IMPLEMENTED"
+          ],
+          "reasonCodes": [
+            "DRAFT_CONTEXT_PRESSURE",
+            "IDP_BIG_PLAY_REGRESSION",
+            "IDP_DEFENSIVE_TD_VOLATILITY",
+            "IDP_POSITION_GROUP_COMPATIBLE",
+            "IDP_TACKLE_VOLUME_PROJECTED",
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 30,
+            "rosterNeed": 20,
+            "scarcity": 6,
+            "tierCliff": 2,
+            "marketValue": 3,
+            "availabilityRisk": 1,
+            "confidencePenalty": -14,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 2,
+          "displayName": "Kevin Byard",
+          "position": "DB",
+          "team": "NE",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 46.3,
+          "status": "watch_only",
+          "primaryReason": "High league value: +0.2 points above replacement.",
+          "warningCodes": [
+            "LOW_PROJECTION_CONFIDENCE",
+            "MARKET_NOT_IMPLEMENTED"
+          ],
+          "reasonCodes": [
+            "DRAFT_CONTEXT_PRESSURE",
+            "IDP_BIG_PLAY_REGRESSION",
+            "IDP_DEFENSIVE_TD_VOLATILITY",
+            "IDP_POSITION_GROUP_COMPATIBLE",
+            "IDP_TACKLE_VOLUME_PROJECTED",
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 28.3,
+            "rosterNeed": 20,
+            "scarcity": 6,
+            "tierCliff": 2,
+            "marketValue": 3,
+            "availabilityRisk": 1,
+            "confidencePenalty": -14,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 3,
+          "displayName": "Derek Stingley",
+          "position": "DB",
+          "team": "HOU",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 45.3,
+          "status": "watch_only",
+          "primaryReason": "League value: -0.1 points above replacement.",
+          "warningCodes": [
+            "LOW_PROJECTION_CONFIDENCE",
+            "MARKET_NOT_IMPLEMENTED"
+          ],
+          "reasonCodes": [
+            "DRAFT_CONTEXT_PRESSURE",
+            "IDP_BIG_PLAY_REGRESSION",
+            "IDP_DEFENSIVE_TD_VOLATILITY",
+            "IDP_POSITION_GROUP_COMPATIBLE",
+            "IDP_TACKLE_VOLUME_PROJECTED",
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 27.3,
+            "rosterNeed": 20,
+            "scarcity": 6,
+            "tierCliff": 2,
+            "marketValue": 3,
+            "availabilityRisk": 1,
+            "confidencePenalty": -14,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 4,
+          "displayName": "Marlon Humphrey",
+          "position": "DB",
+          "team": "BAL",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 44.3,
+          "status": "watch_only",
+          "primaryReason": "League value: -0.3 points above replacement.",
+          "warningCodes": [
+            "LOW_PROJECTION_CONFIDENCE",
+            "MARKET_NOT_IMPLEMENTED"
+          ],
+          "reasonCodes": [
+            "DRAFT_CONTEXT_PRESSURE",
+            "IDP_BIG_PLAY_REGRESSION",
+            "IDP_DEFENSIVE_TD_VOLATILITY",
+            "IDP_POSITION_GROUP_COMPATIBLE",
+            "IDP_TACKLE_VOLUME_PROJECTED",
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 26.3,
+            "rosterNeed": 20,
+            "scarcity": 6,
+            "tierCliff": 2,
+            "marketValue": 3,
+            "availabilityRisk": 1,
+            "confidencePenalty": -14,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 5,
+          "displayName": "Jaylinn Hawkins",
+          "position": "DB",
+          "team": "BAL",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 43.6,
+          "status": "watch_only",
+          "primaryReason": "League value: -0.5 points above replacement.",
+          "warningCodes": [
+            "LOW_PROJECTION_CONFIDENCE",
+            "MARKET_NOT_IMPLEMENTED"
+          ],
+          "reasonCodes": [
+            "DRAFT_CONTEXT_PRESSURE",
+            "IDP_BIG_PLAY_REGRESSION",
+            "IDP_DEFENSIVE_TD_VOLATILITY",
+            "IDP_POSITION_GROUP_COMPATIBLE",
+            "IDP_TACKLE_VOLUME_PROJECTED",
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 25.6,
+            "rosterNeed": 20,
+            "scarcity": 6,
+            "tierCliff": 2,
+            "marketValue": 3,
+            "availabilityRisk": 1,
+            "confidencePenalty": -14,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 6,
+          "displayName": "Mike Jackson",
+          "position": "DB",
+          "team": "CAR",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 43.3,
+          "status": "watch_only",
+          "primaryReason": "League value: -0.5 points above replacement.",
+          "warningCodes": [
+            "LOW_PROJECTION_CONFIDENCE",
+            "MARKET_NOT_IMPLEMENTED"
+          ],
+          "reasonCodes": [
+            "DRAFT_CONTEXT_PRESSURE",
+            "IDP_BIG_PLAY_REGRESSION",
+            "IDP_DEFENSIVE_TD_VOLATILITY",
+            "IDP_POSITION_GROUP_COMPATIBLE",
+            "IDP_TACKLE_VOLUME_PROJECTED",
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 25.3,
+            "rosterNeed": 20,
+            "scarcity": 6,
+            "tierCliff": 2,
+            "marketValue": 3,
+            "availabilityRisk": 1,
+            "confidencePenalty": -14,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 7,
+          "displayName": "Jaycee Horn",
+          "position": "DB",
+          "team": "CAR",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 42.2,
+          "status": "watch_only",
+          "primaryReason": "League value: -0.8 points above replacement.",
+          "warningCodes": [
+            "LOW_PROJECTION_CONFIDENCE",
+            "MARKET_NOT_IMPLEMENTED"
+          ],
+          "reasonCodes": [
+            "DRAFT_CONTEXT_PRESSURE",
+            "IDP_BIG_PLAY_REGRESSION",
+            "IDP_DEFENSIVE_TD_VOLATILITY",
+            "IDP_POSITION_GROUP_COMPATIBLE",
+            "IDP_TACKLE_VOLUME_PROJECTED",
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 24.2,
+            "rosterNeed": 20,
+            "scarcity": 6,
+            "tierCliff": 2,
+            "marketValue": 3,
+            "availabilityRisk": 1,
+            "confidencePenalty": -14,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 8,
+          "displayName": "C.J. Gardner-Johnson",
+          "position": "DB",
+          "team": "BUF",
+          "recommendationTier": "avoid_for_now",
+          "recommendationScore": 41.7,
+          "status": "watch_only",
+          "primaryReason": "League value: -0.9 points above replacement.",
+          "warningCodes": [
+            "LOW_PROJECTION_CONFIDENCE",
+            "MARKET_NOT_IMPLEMENTED"
+          ],
+          "reasonCodes": [
+            "DRAFT_CONTEXT_PRESSURE",
+            "IDP_BIG_PLAY_REGRESSION",
+            "IDP_DEFENSIVE_TD_VOLATILITY",
+            "IDP_POSITION_GROUP_COMPATIBLE",
+            "IDP_TACKLE_VOLUME_PROJECTED",
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 23.7,
+            "rosterNeed": 20,
+            "scarcity": 6,
+            "tierCliff": 2,
+            "marketValue": 3,
+            "availabilityRisk": 1,
+            "confidencePenalty": -14,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 9,
+          "displayName": "Derwin James",
+          "position": "DB",
+          "team": "LAC",
+          "recommendationTier": "avoid_for_now",
+          "recommendationScore": 41.4,
+          "status": "watch_only",
+          "primaryReason": "League value: -1 points above replacement.",
+          "warningCodes": [
+            "LOW_PROJECTION_CONFIDENCE",
+            "MARKET_NOT_IMPLEMENTED"
+          ],
+          "reasonCodes": [
+            "DRAFT_CONTEXT_PRESSURE",
+            "IDP_BIG_PLAY_REGRESSION",
+            "IDP_DEFENSIVE_TD_VOLATILITY",
+            "IDP_POSITION_GROUP_COMPATIBLE",
+            "IDP_TACKLE_VOLUME_PROJECTED",
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 23.4,
+            "rosterNeed": 20,
+            "scarcity": 6,
+            "tierCliff": 2,
+            "marketValue": 3,
+            "availabilityRisk": 1,
+            "confidencePenalty": -14,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 10,
+          "displayName": "Marcus Jones",
+          "position": "DB",
+          "team": "NE",
+          "recommendationTier": "avoid_for_now",
+          "recommendationScore": 41.4,
+          "status": "watch_only",
+          "primaryReason": "League value: -1 points above replacement.",
+          "warningCodes": [
+            "LOW_PROJECTION_CONFIDENCE",
+            "MARKET_NOT_IMPLEMENTED"
+          ],
+          "reasonCodes": [
+            "DRAFT_CONTEXT_PRESSURE",
+            "IDP_BIG_PLAY_REGRESSION",
+            "IDP_DEFENSIVE_TD_VOLATILITY",
+            "IDP_POSITION_GROUP_COMPATIBLE",
+            "IDP_TACKLE_VOLUME_PROJECTED",
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 23.4,
+            "rosterNeed": 20,
+            "scarcity": 6,
+            "tierCliff": 2,
+            "marketValue": 3,
+            "availabilityRisk": 1,
+            "confidencePenalty": -14,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 11,
+          "displayName": "Kenny Moore",
+          "position": "DB",
+          "team": null,
+          "recommendationTier": "avoid_for_now",
+          "recommendationScore": 41,
+          "status": "watch_only",
+          "primaryReason": "League value: -1 points above replacement.",
+          "warningCodes": [
+            "LOW_PROJECTION_CONFIDENCE",
+            "MARKET_NOT_IMPLEMENTED"
+          ],
+          "reasonCodes": [
+            "DRAFT_CONTEXT_PRESSURE",
+            "IDP_BIG_PLAY_REGRESSION",
+            "IDP_DEFENSIVE_TD_VOLATILITY",
+            "IDP_POSITION_GROUP_COMPATIBLE",
+            "IDP_TACKLE_VOLUME_PROJECTED",
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 23,
+            "rosterNeed": 20,
+            "scarcity": 6,
+            "tierCliff": 2,
+            "marketValue": 3,
+            "availabilityRisk": 1,
+            "confidencePenalty": -14,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 12,
+          "displayName": "Jalen Pitre",
+          "position": "DB",
+          "team": "HOU",
+          "recommendationTier": "avoid_for_now",
+          "recommendationScore": 40.7,
+          "status": "watch_only",
+          "primaryReason": "League value: -1.1 points above replacement.",
+          "warningCodes": [
+            "LOW_PROJECTION_CONFIDENCE",
+            "MARKET_NOT_IMPLEMENTED"
+          ],
+          "reasonCodes": [
+            "DRAFT_CONTEXT_PRESSURE",
+            "IDP_BIG_PLAY_REGRESSION",
+            "IDP_DEFENSIVE_TD_VOLATILITY",
+            "IDP_POSITION_GROUP_COMPATIBLE",
+            "IDP_TACKLE_VOLUME_PROJECTED",
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 22.7,
+            "rosterNeed": 20,
+            "scarcity": 6,
+            "tierCliff": 2,
+            "marketValue": 3,
+            "availabilityRisk": 1,
+            "confidencePenalty": -14,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 13,
+          "displayName": "Jessie Bates",
+          "position": "DB",
+          "team": "ATL",
+          "recommendationTier": "avoid_for_now",
+          "recommendationScore": 40.6,
+          "status": "watch_only",
+          "primaryReason": "League value: -1.1 points above replacement.",
+          "warningCodes": [
+            "LOW_PROJECTION_CONFIDENCE",
+            "MARKET_NOT_IMPLEMENTED"
+          ],
+          "reasonCodes": [
+            "DRAFT_CONTEXT_PRESSURE",
+            "IDP_BIG_PLAY_REGRESSION",
+            "IDP_DEFENSIVE_TD_VOLATILITY",
+            "IDP_POSITION_GROUP_COMPATIBLE",
+            "IDP_TACKLE_VOLUME_PROJECTED",
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 22.6,
+            "rosterNeed": 20,
+            "scarcity": 6,
+            "tierCliff": 2,
+            "marketValue": 3,
+            "availabilityRisk": 1,
+            "confidencePenalty": -14,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 14,
+          "displayName": "Geno Stone",
+          "position": "DB",
+          "team": "BUF",
+          "recommendationTier": "avoid_for_now",
+          "recommendationScore": 40.1,
+          "status": "watch_only",
+          "primaryReason": "League value: -1.3 points above replacement.",
+          "warningCodes": [
+            "LOW_PROJECTION_CONFIDENCE",
+            "MARKET_NOT_IMPLEMENTED"
+          ],
+          "reasonCodes": [
+            "DRAFT_CONTEXT_PRESSURE",
+            "IDP_BIG_PLAY_REGRESSION",
+            "IDP_DEFENSIVE_TD_VOLATILITY",
+            "IDP_POSITION_GROUP_COMPATIBLE",
+            "IDP_TACKLE_VOLUME_PROJECTED",
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 22.1,
+            "rosterNeed": 20,
+            "scarcity": 6,
+            "tierCliff": 2,
+            "marketValue": 3,
+            "availabilityRisk": 1,
+            "confidencePenalty": -14,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 15,
+          "displayName": "Donte Jackson",
+          "position": "DB",
+          "team": "LAC",
+          "recommendationTier": "avoid_for_now",
+          "recommendationScore": 39.9,
+          "status": "watch_only",
+          "primaryReason": "League value: -1.3 points above replacement.",
+          "warningCodes": [
+            "LOW_PROJECTION_CONFIDENCE",
+            "MARKET_NOT_IMPLEMENTED"
+          ],
+          "reasonCodes": [
+            "DRAFT_CONTEXT_PRESSURE",
+            "IDP_BIG_PLAY_REGRESSION",
+            "IDP_DEFENSIVE_TD_VOLATILITY",
+            "IDP_POSITION_GROUP_COMPATIBLE",
+            "IDP_TACKLE_VOLUME_PROJECTED",
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 21.9,
+            "rosterNeed": 20,
+            "scarcity": 6,
+            "tierCliff": 2,
+            "marketValue": 3,
+            "availabilityRisk": 1,
+            "confidencePenalty": -14,
+            "formatPenalty": 0
+          }
+        }
+      ],
+      "watchlistExamples": [
+        {
+          "recommendationRank": 1,
+          "displayName": "Jamel Dean",
+          "position": "DB",
+          "team": "PIT",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 48,
+          "status": "watch_only",
+          "primaryReason": "High league value: +0.5 points above replacement.",
+          "warningCodes": [
+            "LOW_PROJECTION_CONFIDENCE",
+            "MARKET_NOT_IMPLEMENTED"
+          ],
+          "reasonCodes": [
+            "DRAFT_CONTEXT_PRESSURE",
+            "IDP_BIG_PLAY_REGRESSION",
+            "IDP_DEFENSIVE_TD_VOLATILITY",
+            "IDP_POSITION_GROUP_COMPATIBLE",
+            "IDP_TACKLE_VOLUME_PROJECTED",
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 30,
+            "rosterNeed": 20,
+            "scarcity": 6,
+            "tierCliff": 2,
+            "marketValue": 3,
+            "availabilityRisk": 1,
+            "confidencePenalty": -14,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 2,
+          "displayName": "Kevin Byard",
+          "position": "DB",
+          "team": "NE",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 46.3,
+          "status": "watch_only",
+          "primaryReason": "High league value: +0.2 points above replacement.",
+          "warningCodes": [
+            "LOW_PROJECTION_CONFIDENCE",
+            "MARKET_NOT_IMPLEMENTED"
+          ],
+          "reasonCodes": [
+            "DRAFT_CONTEXT_PRESSURE",
+            "IDP_BIG_PLAY_REGRESSION",
+            "IDP_DEFENSIVE_TD_VOLATILITY",
+            "IDP_POSITION_GROUP_COMPATIBLE",
+            "IDP_TACKLE_VOLUME_PROJECTED",
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 28.3,
+            "rosterNeed": 20,
+            "scarcity": 6,
+            "tierCliff": 2,
+            "marketValue": 3,
+            "availabilityRisk": 1,
+            "confidencePenalty": -14,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 3,
+          "displayName": "Derek Stingley",
+          "position": "DB",
+          "team": "HOU",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 45.3,
+          "status": "watch_only",
+          "primaryReason": "League value: -0.1 points above replacement.",
+          "warningCodes": [
+            "LOW_PROJECTION_CONFIDENCE",
+            "MARKET_NOT_IMPLEMENTED"
+          ],
+          "reasonCodes": [
+            "DRAFT_CONTEXT_PRESSURE",
+            "IDP_BIG_PLAY_REGRESSION",
+            "IDP_DEFENSIVE_TD_VOLATILITY",
+            "IDP_POSITION_GROUP_COMPATIBLE",
+            "IDP_TACKLE_VOLUME_PROJECTED",
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 27.3,
+            "rosterNeed": 20,
+            "scarcity": 6,
+            "tierCliff": 2,
+            "marketValue": 3,
+            "availabilityRisk": 1,
+            "confidencePenalty": -14,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 4,
+          "displayName": "Marlon Humphrey",
+          "position": "DB",
+          "team": "BAL",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 44.3,
+          "status": "watch_only",
+          "primaryReason": "League value: -0.3 points above replacement.",
+          "warningCodes": [
+            "LOW_PROJECTION_CONFIDENCE",
+            "MARKET_NOT_IMPLEMENTED"
+          ],
+          "reasonCodes": [
+            "DRAFT_CONTEXT_PRESSURE",
+            "IDP_BIG_PLAY_REGRESSION",
+            "IDP_DEFENSIVE_TD_VOLATILITY",
+            "IDP_POSITION_GROUP_COMPATIBLE",
+            "IDP_TACKLE_VOLUME_PROJECTED",
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 26.3,
+            "rosterNeed": 20,
+            "scarcity": 6,
+            "tierCliff": 2,
+            "marketValue": 3,
+            "availabilityRisk": 1,
+            "confidencePenalty": -14,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 5,
+          "displayName": "Jaylinn Hawkins",
+          "position": "DB",
+          "team": "BAL",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 43.6,
+          "status": "watch_only",
+          "primaryReason": "League value: -0.5 points above replacement.",
+          "warningCodes": [
+            "LOW_PROJECTION_CONFIDENCE",
+            "MARKET_NOT_IMPLEMENTED"
+          ],
+          "reasonCodes": [
+            "DRAFT_CONTEXT_PRESSURE",
+            "IDP_BIG_PLAY_REGRESSION",
+            "IDP_DEFENSIVE_TD_VOLATILITY",
+            "IDP_POSITION_GROUP_COMPATIBLE",
+            "IDP_TACKLE_VOLUME_PROJECTED",
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 25.6,
+            "rosterNeed": 20,
+            "scarcity": 6,
+            "tierCliff": 2,
+            "marketValue": 3,
+            "availabilityRisk": 1,
+            "confidencePenalty": -14,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 6,
+          "displayName": "Mike Jackson",
+          "position": "DB",
+          "team": "CAR",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 43.3,
+          "status": "watch_only",
+          "primaryReason": "League value: -0.5 points above replacement.",
+          "warningCodes": [
+            "LOW_PROJECTION_CONFIDENCE",
+            "MARKET_NOT_IMPLEMENTED"
+          ],
+          "reasonCodes": [
+            "DRAFT_CONTEXT_PRESSURE",
+            "IDP_BIG_PLAY_REGRESSION",
+            "IDP_DEFENSIVE_TD_VOLATILITY",
+            "IDP_POSITION_GROUP_COMPATIBLE",
+            "IDP_TACKLE_VOLUME_PROJECTED",
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 25.3,
+            "rosterNeed": 20,
+            "scarcity": 6,
+            "tierCliff": 2,
+            "marketValue": 3,
+            "availabilityRisk": 1,
+            "confidencePenalty": -14,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 7,
+          "displayName": "Jaycee Horn",
+          "position": "DB",
+          "team": "CAR",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 42.2,
+          "status": "watch_only",
+          "primaryReason": "League value: -0.8 points above replacement.",
+          "warningCodes": [
+            "LOW_PROJECTION_CONFIDENCE",
+            "MARKET_NOT_IMPLEMENTED"
+          ],
+          "reasonCodes": [
+            "DRAFT_CONTEXT_PRESSURE",
+            "IDP_BIG_PLAY_REGRESSION",
+            "IDP_DEFENSIVE_TD_VOLATILITY",
+            "IDP_POSITION_GROUP_COMPATIBLE",
+            "IDP_TACKLE_VOLUME_PROJECTED",
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 24.2,
+            "rosterNeed": 20,
+            "scarcity": 6,
+            "tierCliff": 2,
+            "marketValue": 3,
+            "availabilityRisk": 1,
+            "confidencePenalty": -14,
+            "formatPenalty": 0
+          }
+        }
+      ],
+      "insufficientDataExamples": [],
+      "legacyRecommendationCount": 0,
+      "legacyRecommendationTopRows": [],
+      "legacyRowsChanged": false,
+      "remainingPlayersOrderChanged": false,
+      "thresholdResults": {
+        "matchRatePass": true,
+        "insufficientDataPass": true,
+        "invariantPass": true,
+        "legacyUnchangedPass": true,
+        "remainingOrderUnchangedPass": true,
+        "forbiddenLanguagePass": true,
+        "offensiveTargetTierPass": null,
+        "superflexQbUrgencyPass": null,
+        "kEarlySuppressionPass": null,
+        "dstEarlySuppressionPass": null
+      },
+      "formatDiagnostics": {
+        "superflexQbUrgencyApplied": null,
+        "qbAverageRosterNeed": 0,
+        "nonQbAverageRosterNeed": 0,
+        "idpRows": 150,
+        "kickerRows": 0,
+        "dstRows": 0
+      }
+    },
+    {
+      "source": "fixture",
+      "draftRoomId": "fixture-one-qb-offense",
+      "leagueId": "fixture-one-qb-offense",
+      "leagueName": "[Fixture] 1QB Offense",
+      "formats": [
+        "1QB offense",
+        "Shallow roster",
+        "Uploaded rankings"
+      ],
+      "remainingPlayersLoaded": 4,
+      "overlayRowsLoaded": 4,
+      "recommendationsGenerated": 4,
+      "matchRate": 1,
+      "rowsByTier": {
+        "priority_target": 1,
+        "watchlist": 3
+      },
+      "rowsByStatus": {
+        "recommendable": 4
+      },
+      "rowsByPosition": {
+        "RB": 1,
+        "WR": 1,
+        "TE": 1,
+        "QB": 1
+      },
+      "warningCounts": {},
+      "contextLimitations": [],
+      "invariantFailures": [],
+      "topRecommendations": [
+        {
+          "recommendationRank": 1,
+          "displayName": "Fixture RB",
+          "position": "RB",
+          "team": "FA",
+          "recommendationTier": "priority_target",
+          "recommendationScore": 91,
+          "status": "recommendable",
+          "primaryReason": "High league value: +70 points above replacement.",
+          "warningCodes": [],
+          "reasonCodes": [
+            "STARTER_NEED",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 30,
+            "rosterNeed": 20,
+            "scarcity": 15,
+            "tierCliff": 15,
+            "marketValue": 6,
+            "availabilityRisk": 5,
+            "confidencePenalty": 0,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 2,
+          "displayName": "Fixture WR",
+          "position": "WR",
+          "team": "FA",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 57.9,
+          "status": "recommendable",
+          "primaryReason": "League value: +42 points above replacement.",
+          "warningCodes": [],
+          "reasonCodes": [
+            "STARTER_NEED",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 6.7,
+            "rosterNeed": 20,
+            "scarcity": 5.2,
+            "tierCliff": 15,
+            "marketValue": 6,
+            "availabilityRisk": 5,
+            "confidencePenalty": 0,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 3,
+          "displayName": "Fixture TE",
+          "position": "TE",
+          "team": "FA",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 49,
+          "status": "recommendable",
+          "primaryReason": "League value: +34 points above replacement.",
+          "warningCodes": [],
+          "reasonCodes": [
+            "STARTER_NEED",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 0,
+            "rosterNeed": 20,
+            "scarcity": 3,
+            "tierCliff": 15,
+            "marketValue": 6,
+            "availabilityRisk": 5,
+            "confidencePenalty": 0,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 4,
+          "displayName": "Fixture QB",
+          "position": "QB",
+          "team": "FA",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 48.1,
+          "status": "recommendable",
+          "primaryReason": "League value: +35 points above replacement.",
+          "warningCodes": [],
+          "reasonCodes": [
+            "STARTER_NEED",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 0.8,
+            "rosterNeed": 18,
+            "scarcity": 3.3,
+            "tierCliff": 15,
+            "marketValue": 6,
+            "availabilityRisk": 5,
+            "confidencePenalty": 0,
+            "formatPenalty": 0
+          }
+        }
+      ],
+      "watchlistExamples": [
+        {
+          "recommendationRank": 2,
+          "displayName": "Fixture WR",
+          "position": "WR",
+          "team": "FA",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 57.9,
+          "status": "recommendable",
+          "primaryReason": "League value: +42 points above replacement.",
+          "warningCodes": [],
+          "reasonCodes": [
+            "STARTER_NEED",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 6.7,
+            "rosterNeed": 20,
+            "scarcity": 5.2,
+            "tierCliff": 15,
+            "marketValue": 6,
+            "availabilityRisk": 5,
+            "confidencePenalty": 0,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 3,
+          "displayName": "Fixture TE",
+          "position": "TE",
+          "team": "FA",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 49,
+          "status": "recommendable",
+          "primaryReason": "League value: +34 points above replacement.",
+          "warningCodes": [],
+          "reasonCodes": [
+            "STARTER_NEED",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 0,
+            "rosterNeed": 20,
+            "scarcity": 3,
+            "tierCliff": 15,
+            "marketValue": 6,
+            "availabilityRisk": 5,
+            "confidencePenalty": 0,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 4,
+          "displayName": "Fixture QB",
+          "position": "QB",
+          "team": "FA",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 48.1,
+          "status": "recommendable",
+          "primaryReason": "League value: +35 points above replacement.",
+          "warningCodes": [],
+          "reasonCodes": [
+            "STARTER_NEED",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 0.8,
+            "rosterNeed": 18,
+            "scarcity": 3.3,
+            "tierCliff": 15,
+            "marketValue": 6,
+            "availabilityRisk": 5,
+            "confidencePenalty": 0,
+            "formatPenalty": 0
+          }
+        }
+      ],
+      "insufficientDataExamples": [],
+      "legacyRecommendationCount": 0,
+      "legacyRecommendationTopRows": [],
+      "legacyRowsChanged": false,
+      "remainingPlayersOrderChanged": false,
+      "thresholdResults": {
+        "matchRatePass": true,
+        "insufficientDataPass": true,
+        "invariantPass": true,
+        "legacyUnchangedPass": true,
+        "remainingOrderUnchangedPass": true,
+        "forbiddenLanguagePass": true,
+        "offensiveTargetTierPass": true,
+        "superflexQbUrgencyPass": null,
+        "kEarlySuppressionPass": null,
+        "dstEarlySuppressionPass": null
+      },
+      "formatDiagnostics": {
+        "superflexQbUrgencyApplied": null,
+        "qbAverageRosterNeed": 18,
+        "nonQbAverageRosterNeed": 20,
+        "idpRows": 0,
+        "kickerRows": 0,
+        "dstRows": 0
+      }
+    },
+    {
+      "source": "fixture",
+      "draftRoomId": "fixture-superflex-qb",
+      "leagueId": "fixture-superflex-qb",
+      "leagueName": "[Fixture] Superflex QB",
+      "formats": [
+        "Superflex",
+        "Shallow roster",
+        "Uploaded rankings"
+      ],
+      "remainingPlayersLoaded": 3,
+      "overlayRowsLoaded": 3,
+      "recommendationsGenerated": 3,
+      "matchRate": 1,
+      "rowsByTier": {
+        "strong_target": 2,
+        "avoid_for_now": 1
+      },
+      "rowsByStatus": {
+        "recommendable": 3
+      },
+      "rowsByPosition": {
+        "RB": 1,
+        "QB": 1,
+        "WR": 1
+      },
+      "warningCounts": {},
+      "contextLimitations": [],
+      "invariantFailures": [],
+      "topRecommendations": [
+        {
+          "recommendationRank": 1,
+          "displayName": "Fixture SF RB",
+          "position": "RB",
+          "team": "FA",
+          "recommendationTier": "strong_target",
+          "recommendationScore": 82,
+          "status": "recommendable",
+          "primaryReason": "High league value: +62 points above replacement.",
+          "warningCodes": [],
+          "reasonCodes": [
+            "BENCH_DEPTH_NEED",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 30,
+            "rosterNeed": 11,
+            "scarcity": 15,
+            "tierCliff": 15,
+            "marketValue": 6,
+            "availabilityRisk": 5,
+            "confidencePenalty": 0,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 2,
+          "displayName": "Fixture SF QB",
+          "position": "QB",
+          "team": "FA",
+          "recommendationTier": "strong_target",
+          "recommendationScore": 77.6,
+          "status": "recommendable",
+          "primaryReason": "High league value: +58 points above replacement.",
+          "warningCodes": [],
+          "reasonCodes": [
+            "STARTER_NEED",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 21.4,
+            "rosterNeed": 20,
+            "scarcity": 10.1,
+            "tierCliff": 15,
+            "marketValue": 6,
+            "availabilityRisk": 5,
+            "confidencePenalty": 0,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 3,
+          "displayName": "Fixture SF WR",
+          "position": "WR",
+          "team": "FA",
+          "recommendationTier": "avoid_for_now",
+          "recommendationScore": 40,
+          "status": "recommendable",
+          "primaryReason": "League value: +48 points above replacement.",
+          "warningCodes": [],
+          "reasonCodes": [
+            "BENCH_DEPTH_NEED",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 0,
+            "rosterNeed": 11,
+            "scarcity": 3,
+            "tierCliff": 15,
+            "marketValue": 6,
+            "availabilityRisk": 5,
+            "confidencePenalty": 0,
+            "formatPenalty": 0
+          }
+        }
+      ],
+      "watchlistExamples": [],
+      "insufficientDataExamples": [],
+      "legacyRecommendationCount": 0,
+      "legacyRecommendationTopRows": [],
+      "legacyRowsChanged": false,
+      "remainingPlayersOrderChanged": false,
+      "thresholdResults": {
+        "matchRatePass": true,
+        "insufficientDataPass": true,
+        "invariantPass": true,
+        "legacyUnchangedPass": true,
+        "remainingOrderUnchangedPass": true,
+        "forbiddenLanguagePass": true,
+        "offensiveTargetTierPass": true,
+        "superflexQbUrgencyPass": true,
+        "kEarlySuppressionPass": null,
+        "dstEarlySuppressionPass": null
+      },
+      "formatDiagnostics": {
+        "superflexQbUrgencyApplied": true,
+        "qbAverageRosterNeed": 20,
+        "nonQbAverageRosterNeed": 11,
+        "idpRows": 0,
+        "kickerRows": 0,
+        "dstRows": 0
+      }
+    },
+    {
+      "source": "fixture",
+      "draftRoomId": "fixture-te-premium",
+      "leagueId": "fixture-te-premium",
+      "leagueName": "[Fixture] TE Premium",
+      "formats": [
+        "TE premium",
+        "Shallow roster",
+        "Uploaded rankings"
+      ],
+      "remainingPlayersLoaded": 2,
+      "overlayRowsLoaded": 2,
+      "recommendationsGenerated": 2,
+      "matchRate": 1,
+      "rowsByTier": {
+        "priority_target": 1,
+        "watchlist": 1
+      },
+      "rowsByStatus": {
+        "recommendable": 2
+      },
+      "rowsByPosition": {
+        "TE": 1,
+        "WR": 1
+      },
+      "warningCounts": {},
+      "contextLimitations": [],
+      "invariantFailures": [],
+      "topRecommendations": [
+        {
+          "recommendationRank": 1,
+          "displayName": "Fixture Premium TE",
+          "position": "TE",
+          "team": "FA",
+          "recommendationTier": "priority_target",
+          "recommendationScore": 91,
+          "status": "recommendable",
+          "primaryReason": "High league value: +75 points above replacement.",
+          "warningCodes": [],
+          "reasonCodes": [
+            "STARTER_NEED",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 30,
+            "rosterNeed": 20,
+            "scarcity": 15,
+            "tierCliff": 15,
+            "marketValue": 6,
+            "availabilityRisk": 5,
+            "confidencePenalty": 0,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 2,
+          "displayName": "Fixture WR",
+          "position": "WR",
+          "team": "FA",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 49,
+          "status": "recommendable",
+          "primaryReason": "League value: +40 points above replacement.",
+          "warningCodes": [],
+          "reasonCodes": [
+            "STARTER_NEED",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 0,
+            "rosterNeed": 20,
+            "scarcity": 3,
+            "tierCliff": 15,
+            "marketValue": 6,
+            "availabilityRisk": 5,
+            "confidencePenalty": 0,
+            "formatPenalty": 0
+          }
+        }
+      ],
+      "watchlistExamples": [
+        {
+          "recommendationRank": 2,
+          "displayName": "Fixture WR",
+          "position": "WR",
+          "team": "FA",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 49,
+          "status": "recommendable",
+          "primaryReason": "League value: +40 points above replacement.",
+          "warningCodes": [],
+          "reasonCodes": [
+            "STARTER_NEED",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 0,
+            "rosterNeed": 20,
+            "scarcity": 3,
+            "tierCliff": 15,
+            "marketValue": 6,
+            "availabilityRisk": 5,
+            "confidencePenalty": 0,
+            "formatPenalty": 0
+          }
+        }
+      ],
+      "insufficientDataExamples": [],
+      "legacyRecommendationCount": 0,
+      "legacyRecommendationTopRows": [],
+      "legacyRowsChanged": false,
+      "remainingPlayersOrderChanged": false,
+      "thresholdResults": {
+        "matchRatePass": true,
+        "insufficientDataPass": true,
+        "invariantPass": true,
+        "legacyUnchangedPass": true,
+        "remainingOrderUnchangedPass": true,
+        "forbiddenLanguagePass": true,
+        "offensiveTargetTierPass": true,
+        "superflexQbUrgencyPass": null,
+        "kEarlySuppressionPass": null,
+        "dstEarlySuppressionPass": null
+      },
+      "formatDiagnostics": {
+        "superflexQbUrgencyApplied": null,
+        "qbAverageRosterNeed": 0,
+        "nonQbAverageRosterNeed": 20,
+        "idpRows": 0,
+        "kickerRows": 0,
+        "dstRows": 0
+      }
+    },
+    {
+      "source": "fixture",
+      "draftRoomId": "fixture-kicker-dst",
+      "leagueId": "fixture-kicker-dst",
+      "leagueName": "[Fixture] Kicker DST",
+      "formats": [
+        "1QB offense",
+        "Kicker",
+        "DST",
+        "Shallow roster",
+        "Uploaded rankings"
+      ],
+      "remainingPlayersLoaded": 2,
+      "overlayRowsLoaded": 2,
+      "recommendationsGenerated": 2,
+      "matchRate": 1,
+      "rowsByTier": {
+        "avoid_for_now": 2
+      },
+      "rowsByStatus": {
+        "recommendable": 1,
+        "watch_only": 1
+      },
+      "rowsByPosition": {
+        "K": 1,
+        "DEF": 1
+      },
+      "warningCounts": {
+        "K_EARLY_ROUND_SUPPRESSION": 1,
+        "DST_DRY_RUN_ONLY": 1,
+        "DST_EARLY_ROUND_SUPPRESSION": 1
+      },
+      "contextLimitations": [],
+      "invariantFailures": [],
+      "topRecommendations": [
+        {
+          "recommendationRank": 1,
+          "displayName": "Fixture K",
+          "position": "K",
+          "team": "FA",
+          "recommendationTier": "avoid_for_now",
+          "recommendationScore": 10,
+          "status": "recommendable",
+          "primaryReason": "League value: +40 points above replacement.",
+          "warningCodes": [
+            "K_EARLY_ROUND_SUPPRESSION"
+          ],
+          "reasonCodes": [
+            "STARTER_NEED",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 0,
+            "rosterNeed": 10,
+            "scarcity": 3,
+            "tierCliff": 15,
+            "marketValue": 6,
+            "availabilityRisk": 5,
+            "confidencePenalty": -5,
+            "formatPenalty": -24
+          }
+        },
+        {
+          "recommendationRank": 2,
+          "displayName": "Fixture DST",
+          "position": "DEF",
+          "team": "FA",
+          "recommendationTier": "avoid_for_now",
+          "recommendationScore": 33,
+          "status": "watch_only",
+          "primaryReason": "High league value: +45 points above replacement.",
+          "warningCodes": [
+            "DST_DRY_RUN_ONLY",
+            "DST_EARLY_ROUND_SUPPRESSION"
+          ],
+          "reasonCodes": [
+            "STARTER_NEED",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 30,
+            "rosterNeed": 10,
+            "scarcity": 13,
+            "tierCliff": 15,
+            "marketValue": 6,
+            "availabilityRisk": 5,
+            "confidencePenalty": -22,
+            "formatPenalty": -24
+          }
+        }
+      ],
+      "watchlistExamples": [],
+      "insufficientDataExamples": [],
+      "legacyRecommendationCount": 0,
+      "legacyRecommendationTopRows": [],
+      "legacyRowsChanged": false,
+      "remainingPlayersOrderChanged": false,
+      "thresholdResults": {
+        "matchRatePass": true,
+        "insufficientDataPass": true,
+        "invariantPass": true,
+        "legacyUnchangedPass": true,
+        "remainingOrderUnchangedPass": true,
+        "forbiddenLanguagePass": true,
+        "offensiveTargetTierPass": null,
+        "superflexQbUrgencyPass": null,
+        "kEarlySuppressionPass": true,
+        "dstEarlySuppressionPass": true
+      },
+      "formatDiagnostics": {
+        "superflexQbUrgencyApplied": null,
+        "qbAverageRosterNeed": 0,
+        "nonQbAverageRosterNeed": 0,
+        "idpRows": 0,
+        "kickerRows": 1,
+        "dstRows": 1
+      }
+    },
+    {
+      "source": "fixture",
+      "draftRoomId": "fixture-idp-mixed",
+      "leagueId": "fixture-idp-mixed",
+      "leagueName": "[Fixture] Mixed IDP",
+      "formats": [
+        "IDP",
+        "Shallow roster",
+        "Uploaded rankings"
+      ],
+      "remainingPlayersLoaded": 3,
+      "overlayRowsLoaded": 3,
+      "recommendationsGenerated": 3,
+      "matchRate": 1,
+      "rowsByTier": {
+        "priority_target": 1,
+        "strong_target": 1,
+        "watchlist": 1
+      },
+      "rowsByStatus": {
+        "recommendable": 3
+      },
+      "rowsByPosition": {
+        "LB": 1,
+        "DL": 1,
+        "DB": 1
+      },
+      "warningCounts": {},
+      "contextLimitations": [],
+      "invariantFailures": [],
+      "topRecommendations": [
+        {
+          "recommendationRank": 1,
+          "displayName": "Fixture LB",
+          "position": "LB",
+          "team": "FA",
+          "recommendationTier": "priority_target",
+          "recommendationScore": 91,
+          "status": "recommendable",
+          "primaryReason": "High league value: +72 points above replacement.",
+          "warningCodes": [],
+          "reasonCodes": [
+            "STARTER_NEED",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 30,
+            "rosterNeed": 20,
+            "scarcity": 15,
+            "tierCliff": 15,
+            "marketValue": 6,
+            "availabilityRisk": 5,
+            "confidencePenalty": 0,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 2,
+          "displayName": "Fixture DL",
+          "position": "DL",
+          "team": "FA",
+          "recommendationTier": "strong_target",
+          "recommendationScore": 76.5,
+          "status": "recommendable",
+          "primaryReason": "League value: +64 points above replacement.",
+          "warningCodes": [],
+          "reasonCodes": [
+            "STARTER_NEED",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 19.1,
+            "rosterNeed": 20,
+            "scarcity": 11.4,
+            "tierCliff": 15,
+            "marketValue": 6,
+            "availabilityRisk": 5,
+            "confidencePenalty": 0,
+            "formatPenalty": 0
+          }
+        },
+        {
+          "recommendationRank": 3,
+          "displayName": "Fixture DB",
+          "position": "DB",
+          "team": "FA",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 49,
+          "status": "recommendable",
+          "primaryReason": "League value: +50 points above replacement.",
+          "warningCodes": [],
+          "reasonCodes": [
+            "STARTER_NEED",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 0,
+            "rosterNeed": 20,
+            "scarcity": 3,
+            "tierCliff": 15,
+            "marketValue": 6,
+            "availabilityRisk": 5,
+            "confidencePenalty": 0,
+            "formatPenalty": 0
+          }
+        }
+      ],
+      "watchlistExamples": [
+        {
+          "recommendationRank": 3,
+          "displayName": "Fixture DB",
+          "position": "DB",
+          "team": "FA",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 49,
+          "status": "recommendable",
+          "primaryReason": "League value: +50 points above replacement.",
+          "warningCodes": [],
+          "reasonCodes": [
+            "STARTER_NEED",
+            "TIER_CLIFF_VISIBLE"
+          ],
+          "scoreComponents": {
+            "leagueValue": 0,
+            "rosterNeed": 20,
+            "scarcity": 3,
+            "tierCliff": 15,
+            "marketValue": 6,
+            "availabilityRisk": 5,
+            "confidencePenalty": 0,
+            "formatPenalty": 0
+          }
+        }
+      ],
+      "insufficientDataExamples": [],
+      "legacyRecommendationCount": 0,
+      "legacyRecommendationTopRows": [],
+      "legacyRowsChanged": false,
+      "remainingPlayersOrderChanged": false,
+      "thresholdResults": {
+        "matchRatePass": true,
+        "insufficientDataPass": true,
+        "invariantPass": true,
+        "legacyUnchangedPass": true,
+        "remainingOrderUnchangedPass": true,
+        "forbiddenLanguagePass": true,
+        "offensiveTargetTierPass": null,
+        "superflexQbUrgencyPass": null,
+        "kEarlySuppressionPass": null,
+        "dstEarlySuppressionPass": null
+      },
+      "formatDiagnostics": {
+        "superflexQbUrgencyApplied": null,
+        "qbAverageRosterNeed": 0,
+        "nonQbAverageRosterNeed": 0,
+        "idpRows": 3,
+        "kickerRows": 0,
+        "dstRows": 0
+      }
+    }
+  ],
+  "readiness": {
+    "verdict": "ready",
+    "thresholdResults": {
+      "allMatchRatesPass": true,
+      "allInsufficientDataPass": true,
+      "allInvariantPass": true,
+      "allLegacyUnchangedPass": true,
+      "allRemainingOrderUnchangedPass": true,
+      "allForbiddenLanguagePass": true,
+      "atLeastOneOffensiveRoomProducesTargetTiers": true,
+      "superflexRoomShowsQbUrgency": true
+    },
+    "failures": [],
+    "formatCoverage": {
+      "1QB offense": true,
+      "Superflex / 2QB": true,
+      "TE premium": true,
+      "IDP": true,
+      "Kicker": true,
+      "DST": true,
+      "Deep rosters": true,
+      "Shallow rosters": true,
+      "Uploaded rankings": true,
+      "Fallback pools": true
+    }
+  },
+  "limitations": []
+}

@@ -3,6 +3,9 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { ChevronDown, RefreshCw, Search } from "lucide-react";
 
+import type { WarRoomValueOverlayRow, WarRoomValueOverlayResult } from "@/lib/draft/h10-war-room-overlay";
+import type { WarRoomRecommendationResult, WarRoomRecommendationRow, WarRoomRecommendationTier } from "@/lib/draft/war-room-recommendations";
+
 type RecommendationTier = "elite_target" | "strong_target" | "good_value" | "depth_option" | "avoid_for_now";
 type InputCompleteness = "full" | "partial" | "rankings_only" | "fallback_only";
 type PositionScoringMode =
@@ -69,6 +72,32 @@ type DraftState = {
   positionCounts: Record<string, number>;
   remainingPlayers: AvailablePlayer[];
   recommendations: AvailablePlayer[];
+  h10ValueOverlay?: WarRoomValueOverlayRow[];
+  h10ValueOverlayDiagnostics?: WarRoomValueOverlayResult["diagnostics"];
+  h10RecommendationPreview?: WarRoomRecommendationRow[];
+  h10RecommendationDiagnostics?: WarRoomRecommendationResult["diagnostics"];
+  fallbackRelevanceDiagnostics?: {
+    fallbackRowsTotal: number;
+    fallbackRowsIncluded: number;
+    fallbackRowsExcluded: number;
+    fallbackRelevanceDistribution: Record<string, number>;
+    projectionlessFallbackRows: number;
+    historicalOnlyRows: number;
+    diagnosticFallbackRows: number;
+    draftRelevantFallbackRows: number;
+    formatExcludedFallbackRows: number;
+    includeDiagnosticFallbacks: boolean;
+    topExcludedFallbackExamples: Array<{
+      player_name: string | null;
+      position: string | null;
+      team: string | null;
+      reasonExcluded: string;
+      rank: number | null;
+      adp: number | null;
+      hasH10Value: boolean;
+      isFallback: boolean;
+    }>;
+  };
   topNeeds: Array<{
     position: string;
     current: number;
@@ -136,6 +165,11 @@ type DraftState = {
   warning: string | null;
 };
 
+type AvailablePlayerTableRow = {
+  player: AvailablePlayer;
+  h10Overlay: WarRoomValueOverlayRow | null;
+};
+
 const POSITIONS = ["All", "QB", "RB", "WR", "TE", "K", "DEF", "DL", "LB", "DB"];
 const MATCH_FILTERS = ["All", "Matched", "Issues"];
 
@@ -178,15 +212,19 @@ export function DraftWarRoom({ draftRoomId }: { draftRoomId: string }) {
   const availablePlayers = useMemo(() => {
     const needle = search.trim().toLowerCase();
     return (state?.remainingPlayers ?? [])
-      .filter((player) => positionFilter === "All" || player.position === positionFilter)
-      .filter((player) => !needle || (player.player_name ?? "").toLowerCase().includes(needle))
-      .filter((player) => {
+      .map((player, index) => ({
+        player,
+        h10Overlay: state?.h10ValueOverlay?.[index] ?? null,
+      }))
+      .filter(({ player }) => positionFilter === "All" || player.position === positionFilter)
+      .filter(({ player }) => !needle || (player.player_name ?? "").toLowerCase().includes(needle))
+      .filter(({ player }) => {
         if (matchFilter === "Matched") return Boolean(player.matched_player_id || player.sleeper_player_id);
         if (matchFilter === "Issues") return player.match_status === "unmatched" || player.match_status === "ambiguous";
         return true;
       })
       .slice(0, 25);
-  }, [matchFilter, positionFilter, search, state?.remainingPlayers]);
+  }, [matchFilter, positionFilter, search, state?.h10ValueOverlay, state?.remainingPlayers]);
 
   if (error && !state) {
     return <div className="rf-panel p-6 text-red-300">{error}</div>;
@@ -224,6 +262,11 @@ export function DraftWarRoom({ draftRoomId }: { draftRoomId: string }) {
               </p>
             ))}
           </div>
+        ) : null}
+        {state.fallbackRelevanceDiagnostics && state.fallbackRelevanceDiagnostics.fallbackRowsExcluded > 0 ? (
+          <p className="mt-3 rounded-md border border-line bg-panel2 px-3 py-2 text-xs text-slate-400">
+            Some diagnostic fallback players are hidden because they lack rankings, ADP, and Blackbird projections.
+          </p>
         ) : null}
         <div className="mt-5 grid gap-3 md:grid-cols-5">
           <Metric label="Current pick" value={state.currentPickNumber} />
@@ -326,16 +369,25 @@ export function DraftWarRoom({ draftRoomId }: { draftRoomId: string }) {
             <NeedsList needs={state.topNeeds} compact />
             <ScoringMetadata metadata={state.scoringMetadata} />
           </SidePanel>
+
+          {state.h10RecommendationPreview || state.h10RecommendationDiagnostics ? (
+            <SidePanel title="Blackbird Value Preview">
+              <H10RecommendationPreview
+                rows={state.h10RecommendationPreview ?? []}
+                diagnostics={state.h10RecommendationDiagnostics ?? null}
+              />
+            </SidePanel>
+          ) : null}
         </aside>
       </div>
     </div>
   );
 }
 
-function AvailablePlayersTable({ players }: { players: AvailablePlayer[] }) {
+function AvailablePlayersTable({ players }: { players: AvailablePlayerTableRow[] }) {
   return (
     <div className="overflow-x-auto">
-      <table className="w-full min-w-[1240px] text-left text-sm">
+      <table className="w-full min-w-[1760px] text-left text-sm">
         <thead className="bg-panel2 text-xs uppercase text-slate-400">
           <tr>
             <th className="px-3 py-3">Rank</th>
@@ -345,6 +397,13 @@ function AvailablePlayersTable({ players }: { players: AvailablePlayer[] }) {
             <th className="px-3 py-3">Pos</th>
             <th className="px-3 py-3">Team</th>
             <th className="px-3 py-3">Proj</th>
+            <th className="px-3 py-3">H10 PAR</th>
+            <th className="px-3 py-3">H10 Risk</th>
+            <th className="px-3 py-3">H10 Tier</th>
+            <th className="px-3 py-3">Scarcity</th>
+            <th className="px-3 py-3">Market</th>
+            <th className="px-3 py-3">Confidence</th>
+            <th className="px-3 py-3">H10 Warnings</th>
             <th className="px-3 py-3">ADP</th>
             <th className="px-3 py-3">Dynasty</th>
             <th className="px-3 py-3">Best Ball</th>
@@ -354,7 +413,7 @@ function AvailablePlayersTable({ players }: { players: AvailablePlayer[] }) {
           </tr>
         </thead>
         <tbody>
-          {players.map((player, index) => (
+          {players.map(({ player, h10Overlay }, index) => (
             <tr key={`${player.sleeper_player_id ?? player.player_name}-${index}`} className="border-t border-line/70">
               <td className="px-3 py-3 font-bold">{player.rank ?? (player.is_fallback ? "-" : index + 1)}</td>
               <td className="px-3 py-3">
@@ -381,6 +440,19 @@ function AvailablePlayersTable({ players }: { players: AvailablePlayer[] }) {
               <td className="px-3 py-3">{player.position || "-"}</td>
               <td className="px-3 py-3">{player.team || "-"}</td>
               <td className="px-3 py-3">{formatNumber(player.projected_points)}</td>
+              <td className="px-3 py-3">{formatOverlayNumber(h10Overlay, h10Overlay?.pointsAboveReplacement)}</td>
+              <td className="px-3 py-3">{formatOverlayNumber(h10Overlay, h10Overlay?.riskAdjustedValue)}</td>
+              <td className="px-3 py-3">
+                <H10ValueBadge overlay={h10Overlay} />
+              </td>
+              <td className="px-3 py-3">{formatOverlayText(h10Overlay, h10Overlay?.scarcityLabel)}</td>
+              <td className="px-3 py-3">{formatMarketSignal(h10Overlay)}</td>
+              <td className="px-3 py-3">
+                <H10StatusBadge overlay={h10Overlay} />
+              </td>
+              <td className="px-3 py-3">
+                <H10WarningList overlay={h10Overlay} />
+              </td>
               <td className="px-3 py-3">{formatNumber(player.adp)}</td>
               <td className="px-3 py-3">{formatNumber(player.dynasty_value)}</td>
               <td className="px-3 py-3">{formatNumber(player.best_ball_value)}</td>
@@ -392,9 +464,54 @@ function AvailablePlayersTable({ players }: { players: AvailablePlayer[] }) {
               </td>
             </tr>
           ))}
-          {players.length === 0 ? <EmptyTable colSpan={13} text="No available players match these filters." /> : null}
+          {players.length === 0 ? <EmptyTable colSpan={20} text="No available players match these filters." /> : null}
         </tbody>
       </table>
+    </div>
+  );
+}
+
+function H10ValueBadge({ overlay }: { overlay: WarRoomValueOverlayRow | null }) {
+  if (!overlay || overlay.overlayStatus === "missing_projection") return <span className="text-slate-500">No projection</span>;
+  if (overlay.overlayStatus === "format_excluded") return <span className="text-slate-500">Format excluded</span>;
+  const label = overlay.tierLabel ?? (overlay.tier === null ? "-" : `Tier ${overlay.tier}`);
+  return (
+    <span className="inline-flex max-w-[8rem] rounded-full border border-line bg-background px-2 py-1 text-[11px] uppercase tracking-wide text-slate-300">
+      <span className="truncate">{label}</span>
+    </span>
+  );
+}
+
+function H10StatusBadge({ overlay }: { overlay: WarRoomValueOverlayRow | null }) {
+  if (!overlay || overlay.overlayStatus === "missing_projection") return <span className="text-slate-500">No projection</span>;
+  const label =
+    overlay.overlayStatus === "dst_dry_run"
+      ? "DST dry-run"
+      : overlay.overlayStatus === "low_confidence"
+        ? "Low confidence"
+        : overlay.overlayStatus === "format_excluded"
+          ? "Format excluded"
+          : overlay.confidenceLabel ?? "Available";
+  const className =
+    overlay.overlayStatus === "available"
+      ? "border-emerald-400/25 bg-emerald-500/10 text-emerald-200"
+      : overlay.overlayStatus === "low_confidence"
+        ? "border-gold/30 bg-gold/10 text-gold"
+        : "border-line bg-background text-slate-400";
+  return <span className={`rounded-full border px-2 py-1 text-[11px] uppercase tracking-wide ${className}`}>{label}</span>;
+}
+
+function H10WarningList({ overlay }: { overlay: WarRoomValueOverlayRow | null }) {
+  if (!overlay) return <span className="text-slate-500">-</span>;
+  if (!overlay.warningCodes.length) return <span className="text-slate-500">None</span>;
+  return (
+    <div className="flex max-w-[14rem] flex-wrap gap-1">
+      {overlay.warningCodes.slice(0, 2).map((warning) => (
+        <span key={warning} className="rounded-full border border-gold/20 bg-gold/10 px-2 py-1 text-[11px] text-gold">
+          {warning}
+        </span>
+      ))}
+      {overlay.warningCodes.length > 2 ? <span className="text-[11px] text-slate-500">+{overlay.warningCodes.length - 2}</span> : null}
     </div>
   );
 }
@@ -555,6 +672,170 @@ function RecommendationList({
           <ScoreBreakdown player={player} />
         </div>
       ))}
+    </div>
+  );
+}
+
+function H10RecommendationPreview({
+  rows,
+  diagnostics
+}: {
+  rows: WarRoomRecommendationRow[];
+  diagnostics: WarRoomRecommendationResult["diagnostics"] | null;
+}) {
+  const visibleRows = rows
+    .filter((row) => row.status === "recommendable" || row.status === "watch_only" || row.recommendationTier === "insufficient_data")
+    .slice(0, 8);
+  const insufficientCount = diagnostics?.rowsByTier.insufficient_data ?? rows.filter((row) => row.recommendationTier === "insufficient_data").length;
+  const mostlyInsufficient = rows.length > 0 && insufficientCount / rows.length >= 0.5;
+
+  return (
+    <div className="space-y-3">
+      <div className="rounded-md border border-brand/20 bg-brand/10 px-3 py-2 text-xs text-brand">
+        Experimental, read-only. Uses Blackbird projections, league value, roster context, scarcity, tiers, and market signals. Does not replace current recommendations.
+      </div>
+      {mostlyInsufficient ? (
+        <p className="rounded-md border border-gold/25 bg-gold/10 px-3 py-2 text-xs text-gold">
+          Blackbird has value data for some players, but many available players are missing deterministic projection matches in this room.
+        </p>
+      ) : null}
+      {visibleRows.length ? (
+        <div className="space-y-3">
+          {visibleRows.map((row) => (
+            <H10RecommendationCard key={`${row.entityId ?? row.displayName}-${row.recommendationRank}`} row={row} />
+          ))}
+        </div>
+      ) : (
+        <div className="rounded-xl border border-dashed border-line bg-panel2/60 px-4 py-4 text-sm">
+          <p className="font-semibold text-slate-100">No H10 preview rows available.</p>
+          <p className="mt-2 text-slate-400">The preview needs a synced draft room plus deterministic H10 value overlay rows.</p>
+        </div>
+      )}
+      {diagnostics ? <H10RecommendationDiagnostics diagnostics={diagnostics} /> : null}
+    </div>
+  );
+}
+
+function H10RecommendationCard({ row }: { row: WarRoomRecommendationRow }) {
+  return (
+    <div className="rounded-lg border border-line bg-panel2 px-3 py-3 text-sm">
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-center gap-2">
+            <H10RecommendationTierBadge tier={row.recommendationTier} />
+            <PositionBadge position={row.position} />
+          </div>
+          <div className="mt-2 truncate font-bold text-slate-50">{row.displayName}</div>
+          <div className="mt-1 text-xs text-slate-400">
+            {row.position ?? "-"} · {row.team ?? "-"}
+          </div>
+        </div>
+        <div className="shrink-0 rounded-md border border-line bg-background px-2 py-1 text-sm font-black text-slate-100">
+          {row.recommendationScore.toFixed(1)}
+        </div>
+      </div>
+      <p className="mt-3 text-xs text-slate-200">{row.primaryReason}</p>
+      {row.explanationFragments.length > 1 ? (
+        <div className="mt-2 grid gap-1">
+          {row.explanationFragments.slice(1, 4).map((fragment) => (
+            <p key={fragment} className="rounded-md border border-line/70 bg-background/50 px-2 py-1 text-[11px] text-slate-400">
+              {fragment}
+            </p>
+          ))}
+        </div>
+      ) : null}
+      <div className="mt-3 grid grid-cols-2 gap-2 text-[11px] text-slate-400">
+        <H10MiniStat label="PAR" value={formatNumber(row.h10.pointsAboveReplacement)} />
+        <H10MiniStat label="Risk value" value={formatNumber(row.h10.riskAdjustedValue)} />
+        <H10MiniStat label="Tier" value={row.h10.tier === null ? "-" : String(row.h10.tier)} />
+        <H10MiniStat label="Market" value={row.h10.marketValueSignal ?? "-"} />
+        <H10MiniStat label="Scarcity" value={String(row.scoreComponents.scarcity.toFixed(1))} />
+        <H10MiniStat label="Confidence" value={row.h10.confidenceLabel ?? row.status} />
+      </div>
+      {row.warningCodes.length ? (
+        <div className="mt-3 flex flex-wrap gap-1">
+          {row.warningCodes.slice(0, 3).map((warning) => (
+            <span key={warning} className="rounded-full border border-gold/20 bg-gold/10 px-2 py-1 text-[11px] text-gold">
+              {warning}
+            </span>
+          ))}
+          {row.warningCodes.length > 3 ? <span className="text-[11px] text-slate-500">+{row.warningCodes.length - 3}</span> : null}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function H10MiniStat({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-md border border-line/70 bg-background/50 px-2 py-1">
+      <div className="uppercase tracking-wide text-slate-500">{label}</div>
+      <div className="mt-0.5 truncate text-slate-200">{value}</div>
+    </div>
+  );
+}
+
+function H10RecommendationTierBadge({ tier }: { tier: WarRoomRecommendationTier }) {
+  const label =
+    tier === "priority_target"
+      ? "Priority Target"
+      : tier === "strong_target"
+        ? "Strong Target"
+        : tier === "solid_target"
+          ? "Solid Target"
+          : tier === "watchlist"
+            ? "Watchlist"
+            : tier === "insufficient_data"
+              ? "Insufficient Data"
+              : "Avoid for Now";
+  const className =
+    tier === "priority_target"
+      ? "border-emerald-400/30 bg-emerald-500/10 text-emerald-200"
+      : tier === "strong_target"
+        ? "border-brand/35 bg-brand/10 text-brand"
+        : tier === "solid_target"
+          ? "border-slate-300/30 bg-slate-300/10 text-slate-200"
+          : tier === "watchlist"
+            ? "border-gold/30 bg-gold/10 text-gold"
+            : tier === "insufficient_data"
+              ? "border-line bg-background text-slate-400"
+              : "border-red-400/30 bg-red-500/10 text-red-200";
+  return <span className={`rounded-full border px-2 py-1 text-[11px] uppercase tracking-wide ${className}`}>{label}</span>;
+}
+
+function H10RecommendationDiagnostics({ diagnostics }: { diagnostics: WarRoomRecommendationResult["diagnostics"] }) {
+  return (
+    <details className="group rounded-lg border border-line bg-background/40 px-3 py-2 text-xs">
+      <summary className="flex cursor-pointer list-none items-center justify-between text-slate-300">
+        <span>Preview diagnostics</span>
+        <ChevronDown className="h-4 w-4 transition group-open:rotate-180" />
+      </summary>
+      <div className="mt-3 space-y-2 text-slate-400">
+        <DiagnosticsLine label="Rows generated" value={String(diagnostics.recommendationsGenerated)} />
+        <DiagnosticsLine label="Rows by tier" value={formatCounts(diagnostics.rowsByTier)} />
+        <DiagnosticsLine label="Rows by status" value={formatCounts(diagnostics.rowsByStatus)} />
+        <DiagnosticsLine label="Rows by position" value={formatCounts(diagnostics.rowsByPosition)} />
+        <DiagnosticsLine label="Warning counts" value={formatCounts(diagnostics.warningCounts)} />
+        <DiagnosticsLine label="IDP rows evaluated" value={String(diagnostics.idpRowsEvaluated)} />
+        <DiagnosticsLine label="IDP rows by tier" value={formatCounts(diagnostics.idpRowsByTier)} />
+        <DiagnosticsLine label="IDP avg components" value={formatScoreComponents(diagnostics.idpAverageScoreComponents)} />
+        <DiagnosticsLine label="IDP suppression" value={formatCounts(diagnostics.idpSuppressionReasons)} />
+        <DiagnosticsLine label="Context limitations" value={diagnostics.contextLimitations.join(", ") || "None"} />
+        <DiagnosticsLine
+          label="Invariant failures"
+          value={diagnostics.invariantFailures.join(", ") || "None"}
+          warning={diagnostics.invariantFailures.length > 0}
+        />
+      </div>
+    </details>
+  );
+}
+
+function DiagnosticsLine({ label, value, warning = false }: { label: string; value: string; warning?: boolean }) {
+  return (
+    <div className="grid gap-1">
+      <div className="uppercase tracking-wide text-slate-500">{label}</div>
+      <div className={warning ? "text-red-200" : "text-slate-300"}>{value}</div>
     </div>
   );
 }
@@ -821,6 +1102,39 @@ function EmptyTable({ colSpan, text }: { colSpan: number; text: string }) {
 function formatNumber(value: number | null | undefined) {
   if (value === null || value === undefined) return "-";
   return Number(value).toLocaleString(undefined, { maximumFractionDigits: 1 });
+}
+
+function formatOverlayNumber(overlay: WarRoomValueOverlayRow | null, value: number | null | undefined) {
+  if (!overlay) return "-";
+  if (overlay.overlayStatus === "missing_projection") return "No projection";
+  if (overlay.overlayStatus === "format_excluded") return "Format excluded";
+  return formatNumber(value);
+}
+
+function formatOverlayText(overlay: WarRoomValueOverlayRow | null, value: string | null | undefined) {
+  if (!overlay) return "-";
+  if (overlay.overlayStatus === "missing_projection") return "No projection";
+  if (overlay.overlayStatus === "format_excluded") return "Format excluded";
+  return value ?? "-";
+}
+
+function formatMarketSignal(overlay: WarRoomValueOverlayRow | null) {
+  if (!overlay) return "-";
+  if (overlay.overlayStatus === "missing_projection") return "No projection";
+  if (overlay.overlayStatus === "format_excluded") return "Format excluded";
+  const delta = overlay.marketRankDelta === null || overlay.marketRankDelta === undefined ? "" : ` (${formatNumber(overlay.marketRankDelta)})`;
+  return `${overlay.marketValueSignal ?? "-"}${delta}`;
+}
+
+function formatCounts(counts: Record<string, number>) {
+  const entries = Object.entries(counts);
+  if (!entries.length) return "None";
+  return entries.map(([key, value]) => `${key}: ${value}`).join(", ");
+}
+
+function formatScoreComponents(components: WarRoomRecommendationResult["diagnostics"]["idpAverageScoreComponents"]) {
+  if (!components) return "None";
+  return Object.entries(components).map(([key, value]) => `${key}: ${formatNumber(value)}`).join(", ");
 }
 
 // TODO: Extend War Room display logic for IDP roster slots and defensive positions.

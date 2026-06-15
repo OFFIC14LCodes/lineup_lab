@@ -1,5 +1,6 @@
 "use client";
 
+import type { FormEvent } from "react";
 import { useState } from "react";
 import { LogIn } from "lucide-react";
 
@@ -7,23 +8,37 @@ import { BrandLockup } from "@/components/brand";
 import { PageShell, Panel } from "@/components/ui";
 import { createClient } from "@/lib/supabase/client";
 
+const MAGIC_LINK_TIMEOUT_MS = 15000;
+
 export function LoginForm({ authErrorMessage }: { authErrorMessage: string | null }) {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  async function signIn() {
+  async function signIn(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const normalizedEmail = email.trim();
+    if (!normalizedEmail || loading) return;
+
     setLoading(true);
     setStatus(null);
-    const supabase = createClient();
-    const origin = window.location.origin;
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: { emailRedirectTo: `${origin}/auth/callback` }
-    });
+    try {
+      const supabase = createClient();
+      const redirectOrigin = process.env.NEXT_PUBLIC_SITE_URL?.trim() || window.location.origin;
+      const { error } = await withTimeout(
+        supabase.auth.signInWithOtp({
+          email: normalizedEmail,
+          options: { emailRedirectTo: `${redirectOrigin}/auth/callback` }
+        }),
+        MAGIC_LINK_TIMEOUT_MS
+      );
 
-    setLoading(false);
-    setStatus(error ? error.message : "Check your email for a magic link.");
+      setStatus(error ? error.message : "Check your email for a magic link.");
+    } catch (error) {
+      setStatus(error instanceof Error ? error.message : "Unable to send magic link. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -39,21 +54,36 @@ export function LoginForm({ authErrorMessage }: { authErrorMessage: string | nul
             {authErrorMessage}
           </p>
         ) : null}
-        <div className="mt-6 space-y-3">
+        <form className="mt-6 space-y-3" onSubmit={signIn}>
           <input
             className="rf-input"
             type="email"
             placeholder="you@example.com"
+            autoComplete="email"
             value={email}
             onChange={(event) => setEmail(event.target.value)}
           />
-          <button className="rf-button w-full" onClick={signIn} disabled={loading || !email}>
+          <button className="rf-button w-full" type="submit" disabled={loading || !email.trim()}>
             <LogIn className="h-4 w-4" />
             {loading ? "Sending..." : "Send magic link"}
           </button>
           {status ? <p className="text-sm text-slate-300">{status}</p> : null}
-        </div>
+        </form>
       </Panel>
     </PageShell>
   );
+}
+
+async function withTimeout<T>(promise: Promise<T>, timeoutMs: number): Promise<T> {
+  let timeout: ReturnType<typeof setTimeout> | null = null;
+  try {
+    return await Promise.race([
+      promise,
+      new Promise<never>((_, reject) => {
+        timeout = setTimeout(() => reject(new Error("Magic link request timed out. Check Supabase email settings and try again.")), timeoutMs);
+      }),
+    ]);
+  } finally {
+    if (timeout) clearTimeout(timeout);
+  }
 }

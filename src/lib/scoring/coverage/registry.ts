@@ -61,7 +61,7 @@ export const H2_VERIFIED_KEYS = [
 ] as const;
 
 // ---------------------------------------------------------------------------
-// Registry — 115 unique scoring keys
+// Registry — 119 unique scoring keys
 // ---------------------------------------------------------------------------
 
 export const SCORING_COVERAGE_REGISTRY: ScoringCoverageRecord[] = [
@@ -148,8 +148,9 @@ export const SCORING_COVERAGE_REGISTRY: ScoringCoverageRecord[] = [
   entry("fum_ret_td", "Fumble return touchdowns", "miscellaneous_skill", "miscellaneous", OFF, IMPL_VER, PBP_DER,
     { implementationPhase: "H4B",
       notes: "Derived from nflverse PBP only when the recovery player and touchdown scorer match unambiguously in structured fields." }),
-  entry("fum_rec", "Offensive fumble recovery", "miscellaneous_skill", "miscellaneous", OFF, NOT_IMPL, "nflverse_pbp_derivable",
-    { notes: "Points for an offensive player recovering any fumble; not exposed in nflverse weekly CSV — requires PBP recovery attribution. No engine rule implemented." }),
+  entry("fum_rec", "Offensive fumble recovery", "miscellaneous_skill", "miscellaneous", OFF, IMPL_VER, "nflverse_pbp_derivable",
+    { implementationPhase: "H9.4",
+      notes: "Engine rule implemented; H9.4 offensive projection uses an explicit known-zero/non-repeatable policy unless a future PBP recovery projection model is added." }),
 
   // ─── Special teams skill ───────────────────────────────────────────────────
   entry("kick_ret_yd", "Kick return yards", "special_teams_skill", "returns", OFF, IMPL_VER, NW_VER,
@@ -193,12 +194,27 @@ export const SCORING_COVERAGE_REGISTRY: ScoringCoverageRecord[] = [
     { implementationPhase: "H2" }),
   entry("rush_td_50p", "Rushing TD of 50+ yards bonus", "long_td_bonuses", "bonuses", OFF, IMPL_VER, PBP_DER,
     { implementationPhase: "H2" }),
-  entry("pass_td_40p", "Passing TD of 40+ yards bonus", "long_td_bonuses", "bonuses", QB, NOT_IMPL, "nflverse_pbp_derivable",
-    { notes: "PBP-derivable equivalent of rec_td_40p/rush_td_40p for the passer; H2 pipeline not yet extended to passing long TDs. No engine rule implemented." }),
-  entry("pass_td_50p", "Passing TD of 50+ yards bonus", "long_td_bonuses", "bonuses", QB, NOT_IMPL, "nflverse_pbp_derivable",
-    { notes: "50p is a subset of 40p; engine rule not yet implemented." }),
-  entry("pass_cmp_40p", "Passing completion of 40+ yards bonus", "long_td_bonuses", "bonuses", QB, NOT_IMPL, "nflverse_pbp_derivable",
-    { notes: "Bonus for a reception that travels 40+ air yards to the passer's credit; requires PBP air-yards data." }),
+  entry("pass_td_40p", "Passing TD of 40+ yards bonus", "long_td_bonuses", "bonuses", QB, IMPL_VER, "nflverse_pbp_derivable",
+    { implementationPhase: "H9.4",
+      notes: "Engine rule implemented; projection uses bounded long-TD approximation because direct passer long-TD weekly component is not currently present." }),
+  entry("pass_td_50p", "Passing TD of 50+ yards bonus", "long_td_bonuses", "bonuses", QB, IMPL_VER, "nflverse_pbp_derivable",
+    { implementationPhase: "H9.4",
+      notes: "50p is a subset of 40p; projection uses a more conservative bounded approximation." }),
+  entry("pass_cmp_40p", "Passing completion of 40+ yards bonus", "long_td_bonuses", "bonuses", QB, IMPL_VER, "nflverse_pbp_derivable",
+    { implementationPhase: "H9.4",
+      notes: "Engine rule implemented; projection uses bounded proxy from sparse long-play evidence." }),
+  entry("rec_20_29", "Reception of 20-29 yards bonus", "long_td_bonuses", "bonuses", OFF, IMPL_VER, NW_VER,
+    { implementationPhase: "H9.4",
+      notes: "Projection estimates expected weekly hit counts from role-week receiving-yard distribution." }),
+  entry("rec_30_39", "Reception of 30-39 yards bonus", "long_td_bonuses", "bonuses", OFF, IMPL_VER, NW_VER,
+    { implementationPhase: "H9.4",
+      notes: "Projection estimates expected weekly hit counts from role-week receiving-yard distribution." }),
+  entry("rec_40p", "Reception of 40+ yards bonus", "long_td_bonuses", "bonuses", OFF, IMPL_VER, "nflverse_pbp_derivable",
+    { implementationPhase: "H9.4",
+      notes: "Engine rule implemented; projection uses bounded proxy from sparse long-play receiving evidence." }),
+  entry("rush_40p", "Rush of 40+ yards bonus", "long_td_bonuses", "bonuses", OFF, IMPL_VER, "nflverse_pbp_derivable",
+    { implementationPhase: "H9.4",
+      notes: "Engine rule implemented; projection uses bounded proxy from sparse long-play rushing evidence." }),
 
   // ─── Yardage threshold bonuses ─────────────────────────────────────────────
   entry("bonus_pass_yd_300", "300-399 passing-yard bonus", "yardage_threshold_bonuses", "bonuses", QB, IMPL_VER, NW_VER,
@@ -264,8 +280,9 @@ export const SCORING_COVERAGE_REGISTRY: ScoringCoverageRecord[] = [
       notes: "Forced fumble credited to a kicking/coverage-unit player; separate from field-player ff. No engine rule implemented." }),
   entry("def_st_fum_rec", "Special-teams fumble recovery", "team_defense", "team_defense", DEF_IDP, NOT_IMPL, OOS,
     { notes: "Fumble recovery credited to a kicking/coverage-unit player; no engine rule implemented." }),
-  entry("fum_rec_td", "Fumble recovery touchdown", "team_defense", "team_defense", DEF_IDP, NOT_IMPL, OOS,
-    { notes: "Sleeper key for scoring a TD after recovering a fumble; primarily a DEF/IDP key. Offensive equivalent is fum_ret_td." }),
+  entry("fum_rec_td", "Offensive fumble recovery touchdown", "miscellaneous_skill", "miscellaneous", OFF, IMPL_VER, "nflverse_pbp_derivable",
+    { implementationPhase: "H9.4",
+      notes: "Engine rule implemented; H9.4 offensive projection treats this as a non-repeatable known-zero event unless a future recovery-TD model is added." }),
   entry("def_2pt_ret", "Defensive two-point return", "team_defense", "team_defense", DEF, IMPL_VER, OOS, {}),
   entry("fourth_down_stop", "Fourth-down stops", "team_defense", "team_defense", DEF, IMPL_VER, OOS,
     { notes: "Requires play-by-play or team game-log data; not in standard player_stats CSV." }),
@@ -334,8 +351,8 @@ export const SCORING_COVERAGE_REGISTRY: ScoringCoverageRecord[] = [
       notes: "Bonus for a defensive fumble return touchdown of 50+ yards; no engine rule implemented." }),
   entry("bonus_def_int_td_50p", "Defensive INT-return TD 50+ yards bonus", "team_defense", "team_defense", DEF_IDP, NOT_IMPL, OOS,
     { notes: "Bonus for an interception return touchdown of 50+ yards; no engine rule implemented." }),
-  entry("bonus_sack_2p", "2+ sack game bonus (IDP)", "idp", "idp", IDP, NOT_IMPL, OOS,
-    { notes: "Bonus points for recording 2 or more sacks in a single game; no engine rule implemented." })
+  entry("bonus_sack_2p", "2+ sack game bonus (IDP)", "idp", "idp", IDP, IMPL_VER, OOS,
+    { notes: "Projection mode uses an explicit low-confidence season approximation emitted by H9.10." })
 ];
 
 // ---------------------------------------------------------------------------

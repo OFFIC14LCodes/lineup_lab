@@ -23,15 +23,19 @@ const PASS_YD_KEY = "pass_yd";
 const PASS_TD_KEY = "pass_td";
 const PASS_INT_KEY = "pass_int";
 const PASS_2PT_KEY = "pass_2pt";
+const PASS_FD_KEY = "pass_fd";
+const PASS_SACK_KEY = "pass_sack";
 const RUSH_ATT_KEY = "rush_att";
 const RUSH_YD_KEY = "rush_yd";
 const RUSH_TD_KEY = "rush_td";
 const RUSH_2PT_KEY = "rush_2pt";
+const RUSH_FD_KEY = "rush_fd";
 const REC_TGT_KEY = "rec_tgt";
 const REC_KEY = "rec";
 const REC_YD_KEY = "rec_yd";
 const REC_TD_KEY = "rec_td";
 const REC_2PT_KEY = "rec_2pt";
+const REC_FD_KEY = "rec_fd";
 const FUM_LOST_KEY = "fum_lost";
 
 // --------------------------------------------------------------------------
@@ -61,7 +65,8 @@ export type NormalizeRowResult =
 export function normalizeStatsRow(
   statsJson: Record<string, unknown>,
   week: number,
-  fumRetTd = 0
+  fumRetTd = 0,
+  derivedStatsJson: Record<string, unknown> = {}
 ): NormalizeRowResult {
   const errors: string[] = [];
 
@@ -71,20 +76,31 @@ export function normalizeStatsRow(
   const passingTds = extractNumber(statsJson, PASS_TD_KEY);
   const interceptions = extractNumber(statsJson, PASS_INT_KEY);
   const pass2pt = extractNumber(statsJson, PASS_2PT_KEY);
+  const passFirstDowns = extractNumber(statsJson, PASS_FD_KEY);
+  const sacksTaken = extractNumber(statsJson, PASS_SACK_KEY);
   const carries = extractNumber(statsJson, RUSH_ATT_KEY);
   const rushingYards = extractNumber(statsJson, RUSH_YD_KEY);
   const rushingTds = extractNumber(statsJson, RUSH_TD_KEY);
   const rush2pt = extractNumber(statsJson, RUSH_2PT_KEY);
+  const rushingFirstDowns = extractNumber(statsJson, RUSH_FD_KEY);
   const targets = extractNumber(statsJson, REC_TGT_KEY);
   const receptions = extractNumber(statsJson, REC_KEY);
   const receivingYards = extractNumber(statsJson, REC_YD_KEY);
   const receivingTds = extractNumber(statsJson, REC_TD_KEY);
   const rec2pt = extractNumber(statsJson, REC_2PT_KEY);
+  const receivingFirstDowns = extractNumber(statsJson, REC_FD_KEY);
   const fumblesLost = extractNumber(statsJson, FUM_LOST_KEY);
+  const passPick6 = extractNumber(derivedStatsJson, "pass_pick6");
+  const recTd40p = extractNumber(derivedStatsJson, "rec_td_40p");
+  const recTd50p = extractNumber(derivedStatsJson, "rec_td_50p");
+  const rushTd40p = extractNumber(derivedStatsJson, "rush_td_40p");
+  const rushTd50p = extractNumber(derivedStatsJson, "rush_td_50p");
 
   for (const r of [passAttempts, completions, passingYards, passingTds, interceptions,
-    pass2pt, carries, rushingYards, rushingTds, rush2pt, targets, receptions,
-    receivingYards, receivingTds, rec2pt, fumblesLost]) {
+    pass2pt, passFirstDowns, sacksTaken, carries, rushingYards, rushingTds,
+    rush2pt, rushingFirstDowns, targets, receptions, receivingYards,
+    receivingTds, rec2pt, receivingFirstDowns, fumblesLost, passPick6,
+    recTd40p, recTd50p, rushTd40p, rushTd50p]) {
     if (r.error) errors.push(r.error);
   }
 
@@ -98,6 +114,19 @@ export function normalizeStatsRow(
       errors.push(`targets (${targets.value}) must be >= 0`);
     if ((fumblesLost.value as number) < 0)
       errors.push(`fumblesLost (${fumblesLost.value}) must be >= 0`);
+    for (const [name, value] of [
+      ["passingFirstDowns", passFirstDowns.value],
+      ["sacksTaken", sacksTaken.value],
+      ["rushingFirstDowns", rushingFirstDowns.value],
+      ["receivingFirstDowns", receivingFirstDowns.value],
+      ["passPick6", passPick6.value],
+      ["recTd40p", recTd40p.value],
+      ["recTd50p", recTd50p.value],
+      ["rushTd40p", rushTd40p.value],
+      ["rushTd50p", rushTd50p.value],
+    ] as const) {
+      if ((value as number) < 0) errors.push(`${name} (${value}) must be >= 0`);
+    }
   }
 
   if (errors.length > 0) return { ok: false, errors };
@@ -121,6 +150,15 @@ export function normalizeStatsRow(
       receptions: receptions.value as number,
       receivingYards: receivingYards.value as number,
       receivingTds: receivingTds.value as number,
+      passingFirstDowns: passFirstDowns.value as number,
+      rushingFirstDowns: rushingFirstDowns.value as number,
+      receivingFirstDowns: receivingFirstDowns.value as number,
+      sacksTaken: sacksTaken.value as number,
+      passPick6: passPick6.value as number,
+      recTd40p: recTd40p.value as number,
+      recTd50p: recTd50p.value as number,
+      rushTd40p: rushTd40p.value as number,
+      rushTd50p: rushTd50p.value as number,
       fumblesLost: fumblesLost.value as number,
       fumRetTd,
       twoPointConversions,
@@ -136,6 +174,7 @@ export type RawStatRow = {
   week: number;
   statsJson: Record<string, unknown>;
   fumRetTd?: number;
+  derivedStatsJson?: Record<string, unknown>;
 };
 
 export type DuplicateWeekReport = {
@@ -157,7 +196,7 @@ export function normalizePlayerStats(rawRows: RawStatRow[]): NormalizePlayerResu
   const normalized: WeeklyStatRow[] = [];
 
   for (const raw of rawRows) {
-    const result = normalizeStatsRow(raw.statsJson, raw.week, raw.fumRetTd ?? 0);
+    const result = normalizeStatsRow(raw.statsJson, raw.week, raw.fumRetTd ?? 0, raw.derivedStatsJson ?? {});
     if (!result.ok) {
       errors.push(...result.errors.map(e => `week ${raw.week}: ${e}`));
     } else {

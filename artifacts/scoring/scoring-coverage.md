@@ -1,7 +1,7 @@
 # Scoring Coverage Audit Report
 
-**Audited:** 2026-06-14T22:11:44.869Z
-**Registry keys:** 115  |  **Engine keys:** 105
+**Audited:** 2026-06-15T05:53:14.794Z
+**Registry keys:** 119  |  **Engine keys:** 115
 **Findings:** 0 errors, 0 warnings
 
 ## Coverage Status Overview
@@ -13,48 +13,48 @@ Correction: the stale H3 report undercounted H2/H2.1 PBP support because `pass_p
 
 | Engine status | Keys |
 |---------------|------|
-| implemented_verified | 105 |
+| implemented_verified | 115 |
 | implemented_unverified | 0 |
-| not_implemented | 10 |
+| not_implemented | 4 |
 
 ### Data Availability Status
 
 | Data status | Keys |
 |-------------|------|
-| nflverse_weekly_verified | 45 |
+| nflverse_weekly_verified | 47 |
 | nflverse_weekly_available | 0 |
 | nflverse_weekly_derivable | 0 |
 | nflverse_weekly_unwired | 0 |
 | nflverse_pbp_derived | 7 |
-| nflverse_pbp_derivable | 4 |
+| nflverse_pbp_derivable | 7 |
 | requires_team_game_context | 16 |
 | requires_new_source | 1 |
 | not_safely_derivable | 0 |
-| out_of_scope | 42 |
+| out_of_scope | 41 |
 
 ### Scope Classification
 
 | Scope classification | Keys |
 |----------------------|------|
-| operational_now | 52 |
-| current_scope_backlog | 21 |
-| deferred_current_phase | 42 |
+| operational_now | 54 |
+| current_scope_backlog | 24 |
+| deferred_current_phase | 41 |
 
 ### Source Classification
 
 | Source classification | Keys |
 |-----------------------|------|
-| nflverse_weekly_player_stats | 45 |
-| nflverse_pbp_derived_stats | 11 |
+| nflverse_weekly_player_stats | 47 |
+| nflverse_pbp_derived_stats | 14 |
 | team_game_context | 16 |
-| deferred_position_source | 43 |
+| deferred_position_source | 42 |
 
 ### Verification Level
 
 | Verification level | Keys |
 |--------------------|------|
 | real_play_verified | 5 |
-| repository_test_verified | 110 |
+| repository_test_verified | 114 |
 
 ## Keys by Stat Family
 
@@ -63,15 +63,15 @@ Correction: the stale H3 report undercounted H2/H2.1 PBP support because `pass_p
 | first_down_bonuses | 5 |
 | idp | 10 |
 | kicking | 16 |
-| long_td_bonuses | 7 |
-| miscellaneous_skill | 4 |
+| long_td_bonuses | 11 |
+| miscellaneous_skill | 5 |
 | passing_outcomes | 5 |
 | passing_volume | 5 |
 | position_rec_bonuses | 6 |
 | receiving | 6 |
 | rushing | 5 |
 | special_teams_skill | 4 |
-| team_defense | 32 |
+| team_defense | 31 |
 | yardage_threshold_bonuses | 10 |
 
 ## H2 / H2.1 Verification Table
@@ -94,6 +94,13 @@ Keys ordered by implementation effort (lowest to highest):
 
 | Key | Data status | Blocker |
 |-----|-------------|---------|
+| `fum_rec` | nflverse_pbp_derivable | — |
+| `pass_td_40p` | nflverse_pbp_derivable | — |
+| `pass_td_50p` | nflverse_pbp_derivable | — |
+| `pass_cmp_40p` | nflverse_pbp_derivable | — |
+| `rec_40p` | nflverse_pbp_derivable | — |
+| `rush_40p` | nflverse_pbp_derivable | — |
+| `fum_rec_td` | nflverse_pbp_derivable | — |
 | `pts_allow_0` | requires_team_game_context | Requires team-level game aggregate (points allowed per game), not per-player stats |
 | `pts_allow_1_6` | requires_team_game_context | — |
 | `pts_allow_7_13` | requires_team_game_context | — |
@@ -146,7 +153,7 @@ Current key count: **1**
 
 Keys that still require more play-by-play-derived canonical stats beyond the H2/H2.1 set now in production.
 
-Current key count: **4**
+Current key count: **7**
 
 | Key | Family | Data status | Recommended path | Primary blocker |
 |-----|--------|-------------|------------------|-----------------|
@@ -154,6 +161,9 @@ Current key count: **4**
 | `pass_td_40p` | long_td_bonuses | nflverse_pbp_derivable | Extend the PBP derivation pipeline with a new derived canonical stat. | — |
 | `pass_td_50p` | long_td_bonuses | nflverse_pbp_derivable | Extend the PBP derivation pipeline with a new derived canonical stat. | — |
 | `pass_cmp_40p` | long_td_bonuses | nflverse_pbp_derivable | Extend the PBP derivation pipeline with a new derived canonical stat. | — |
+| `rec_40p` | long_td_bonuses | nflverse_pbp_derivable | Extend the PBP derivation pipeline with a new derived canonical stat. | — |
+| `rush_40p` | long_td_bonuses | nflverse_pbp_derivable | Extend the PBP derivation pipeline with a new derived canonical stat. | — |
+| `fum_rec_td` | miscellaneous_skill | nflverse_pbp_derivable | Extend the PBP derivation pipeline with a new derived canonical stat. | — |
 
 ### Group D — team-context dependent
 
@@ -182,7 +192,7 @@ Current key count: **16**
 
 ## Operational Keys
 
-`bonus_fd_qb`, `bonus_fd_rb`, `bonus_fd_te`, `bonus_fd_wr`, `bonus_pass_cmp_25`, `bonus_pass_yd_300`, `bonus_pass_yd_400`, `bonus_rec_rb`, `bonus_rec_te`, `bonus_rec_wr`, `bonus_rec_yd_100`, `bonus_rec_yd_200`, `bonus_rush_att_20`, `bonus_rush_rec_yd_100`, `bonus_rush_rec_yd_200`, `bonus_rush_yd_100`, `bonus_rush_yd_200`, `fum`, `fum_lost`, `fum_ret_td`, `kick_ret_yd`, `pass_2pt`, `pass_att`, `pass_cmp`, `pass_fd`, `pass_inc`, `pass_int`, `pass_int_td`, `pass_pick6`, `pass_sack`, `pass_td`, `pass_yd`, `punt_ret_yd`, `rec`, `rec_2pt`, `rec_fd`, `rec_rb_bonus`, `rec_td`, `rec_td_40p`, `rec_td_50p`, `rec_te_bonus`, `rec_tgt`, `rec_wr_bonus`, `rec_yd`, `return_td`, `rush_2pt`, `rush_att`, `rush_fd`, `rush_td`, `rush_td_40p`, `rush_td_50p`, `rush_yd`
+`bonus_fd_qb`, `bonus_fd_rb`, `bonus_fd_te`, `bonus_fd_wr`, `bonus_pass_cmp_25`, `bonus_pass_yd_300`, `bonus_pass_yd_400`, `bonus_rec_rb`, `bonus_rec_te`, `bonus_rec_wr`, `bonus_rec_yd_100`, `bonus_rec_yd_200`, `bonus_rush_att_20`, `bonus_rush_rec_yd_100`, `bonus_rush_rec_yd_200`, `bonus_rush_yd_100`, `bonus_rush_yd_200`, `fum`, `fum_lost`, `fum_ret_td`, `kick_ret_yd`, `pass_2pt`, `pass_att`, `pass_cmp`, `pass_fd`, `pass_inc`, `pass_int`, `pass_int_td`, `pass_pick6`, `pass_sack`, `pass_td`, `pass_yd`, `punt_ret_yd`, `rec`, `rec_20_29`, `rec_2pt`, `rec_30_39`, `rec_fd`, `rec_rb_bonus`, `rec_td`, `rec_td_40p`, `rec_td_50p`, `rec_te_bonus`, `rec_tgt`, `rec_wr_bonus`, `rec_yd`, `return_td`, `rush_2pt`, `rush_att`, `rush_fd`, `rush_td`, `rush_td_40p`, `rush_td_50p`, `rush_yd`
 
 ## Full Registry
 
@@ -218,7 +228,7 @@ Current key count: **16**
 | `fum_lost` | Fumbles lost | miscellaneous_skill | implemented_verified | nflverse_weekly_verified | H1 |
 | `fum` | Total fumbles (lost + recovered) | miscellaneous_skill | implemented_verified | nflverse_weekly_verified | H4A |
 | `fum_ret_td` | Fumble return touchdowns | miscellaneous_skill | implemented_verified | nflverse_pbp_derived | H4B |
-| `fum_rec` | Offensive fumble recovery | miscellaneous_skill | not_implemented | nflverse_pbp_derivable | — |
+| `fum_rec` | Offensive fumble recovery | miscellaneous_skill | implemented_verified | nflverse_pbp_derivable | H9.4 |
 | `kick_ret_yd` | Kick return yards | special_teams_skill | implemented_verified | nflverse_weekly_verified | H4A |
 | `punt_ret_yd` | Punt return yards | special_teams_skill | implemented_verified | nflverse_weekly_verified | H4A |
 | `return_td` | Return touchdowns (kick or punt) | special_teams_skill | implemented_verified | nflverse_weekly_verified | H4A |
@@ -232,9 +242,13 @@ Current key count: **16**
 | `rec_td_50p` | Receiving TD of 50+ yards bonus | long_td_bonuses | implemented_verified | nflverse_pbp_derived | H2 |
 | `rush_td_40p` | Rushing TD of 40+ yards bonus | long_td_bonuses | implemented_verified | nflverse_pbp_derived | H2 |
 | `rush_td_50p` | Rushing TD of 50+ yards bonus | long_td_bonuses | implemented_verified | nflverse_pbp_derived | H2 |
-| `pass_td_40p` | Passing TD of 40+ yards bonus | long_td_bonuses | not_implemented | nflverse_pbp_derivable | — |
-| `pass_td_50p` | Passing TD of 50+ yards bonus | long_td_bonuses | not_implemented | nflverse_pbp_derivable | — |
-| `pass_cmp_40p` | Passing completion of 40+ yards bonus | long_td_bonuses | not_implemented | nflverse_pbp_derivable | — |
+| `pass_td_40p` | Passing TD of 40+ yards bonus | long_td_bonuses | implemented_verified | nflverse_pbp_derivable | H9.4 |
+| `pass_td_50p` | Passing TD of 50+ yards bonus | long_td_bonuses | implemented_verified | nflverse_pbp_derivable | H9.4 |
+| `pass_cmp_40p` | Passing completion of 40+ yards bonus | long_td_bonuses | implemented_verified | nflverse_pbp_derivable | H9.4 |
+| `rec_20_29` | Reception of 20-29 yards bonus | long_td_bonuses | implemented_verified | nflverse_weekly_verified | H9.4 |
+| `rec_30_39` | Reception of 30-39 yards bonus | long_td_bonuses | implemented_verified | nflverse_weekly_verified | H9.4 |
+| `rec_40p` | Reception of 40+ yards bonus | long_td_bonuses | implemented_verified | nflverse_pbp_derivable | H9.4 |
+| `rush_40p` | Rush of 40+ yards bonus | long_td_bonuses | implemented_verified | nflverse_pbp_derivable | H9.4 |
 | `bonus_pass_yd_300` | 300-399 passing-yard bonus | yardage_threshold_bonuses | implemented_verified | nflverse_weekly_verified | H1 |
 | `bonus_pass_yd_400` | 400+ passing-yard bonus | yardage_threshold_bonuses | implemented_verified | nflverse_weekly_verified | H1 |
 | `bonus_pass_cmp_25` | 25+ completions bonus | yardage_threshold_bonuses | implemented_verified | nflverse_weekly_verified | H1 |
@@ -271,7 +285,7 @@ Current key count: **16**
 | `def_st_td` | Defensive/special-teams touchdowns | team_defense | implemented_verified | out_of_scope | — |
 | `def_st_ff` | Special-teams forced fumble | team_defense | not_implemented | out_of_scope | — |
 | `def_st_fum_rec` | Special-teams fumble recovery | team_defense | not_implemented | out_of_scope | — |
-| `fum_rec_td` | Fumble recovery touchdown | team_defense | not_implemented | out_of_scope | — |
+| `fum_rec_td` | Offensive fumble recovery touchdown | miscellaneous_skill | implemented_verified | nflverse_pbp_derivable | H9.4 |
 | `def_2pt_ret` | Defensive two-point return | team_defense | implemented_verified | out_of_scope | — |
 | `fourth_down_stop` | Fourth-down stops | team_defense | implemented_verified | out_of_scope | — |
 | `three_and_out` | Three-and-outs forced | team_defense | implemented_verified | out_of_scope | — |
@@ -302,4 +316,4 @@ Current key count: **16**
 | `fr_ret_yd` | Fumble return yards | idp | implemented_verified | out_of_scope | — |
 | `bonus_def_fum_td_50p` | Defensive fumble-return TD 50+ yards bonus | team_defense | not_implemented | out_of_scope | — |
 | `bonus_def_int_td_50p` | Defensive INT-return TD 50+ yards bonus | team_defense | not_implemented | out_of_scope | — |
-| `bonus_sack_2p` | 2+ sack game bonus (IDP) | idp | not_implemented | out_of_scope | — |
+| `bonus_sack_2p` | 2+ sack game bonus (IDP) | idp | implemented_verified | out_of_scope | — |

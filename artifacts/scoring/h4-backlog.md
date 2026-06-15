@@ -32,7 +32,7 @@ Current key count: **1**
 
 Keys that still require more play-by-play-derived canonical stats beyond the H2/H2.1 set now in production.
 
-Current key count: **4**
+Current key count: **7**
 
 | Key | Family | Data status | Recommended path | Primary blocker |
 |-----|--------|-------------|------------------|-----------------|
@@ -40,6 +40,9 @@ Current key count: **4**
 | `pass_td_40p` | long_td_bonuses | nflverse_pbp_derivable | Extend the PBP derivation pipeline with a new derived canonical stat. | — |
 | `pass_td_50p` | long_td_bonuses | nflverse_pbp_derivable | Extend the PBP derivation pipeline with a new derived canonical stat. | — |
 | `pass_cmp_40p` | long_td_bonuses | nflverse_pbp_derivable | Extend the PBP derivation pipeline with a new derived canonical stat. | — |
+| `rec_40p` | long_td_bonuses | nflverse_pbp_derivable | Extend the PBP derivation pipeline with a new derived canonical stat. | — |
+| `rush_40p` | long_td_bonuses | nflverse_pbp_derivable | Extend the PBP derivation pipeline with a new derived canonical stat. | — |
+| `fum_rec_td` | miscellaneous_skill | nflverse_pbp_derivable | Extend the PBP derivation pipeline with a new derived canonical stat. | — |
 
 ## Group D — team-context dependent
 

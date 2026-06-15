@@ -3,6 +3,7 @@ import { LogoutButton } from "@/components/logout-button";
 import { SyncPlayersButton } from "@/components/sync-players-button";
 import { isAdpBoardEnabled } from "@/lib/adp/server/access";
 import { isProviderDataImportEnabled } from "@/lib/providers/import/access";
+import { isBaselineProjectionsEnabled } from "@/lib/projections/server/access";
 import { isScoringInspectorEnabled } from "@/lib/scoring/server";
 import { isPlayerContextEnabled } from "@/lib/context/server/access";
 import { requireUser } from "@/lib/supabase/auth";
@@ -14,6 +15,7 @@ export default async function SettingsPage() {
   const providerImportEnabled = isProviderDataImportEnabled();
   const scoringInspectorEnabled = isScoringInspectorEnabled();
   const playerContextEnabled = isPlayerContextEnabled();
+  const baselineProjectionsEnabled = isBaselineProjectionsEnabled();
 
   return (
     <PageShell className="grid gap-6 lg:grid-cols-[1fr_320px]">
@@ -45,6 +47,11 @@ export default async function SettingsPage() {
           {playerContextEnabled ? (
             <Link href="/settings/player-context" className="rf-button secondary">
               Open player context
+            </Link>
+          ) : null}
+          {baselineProjectionsEnabled ? (
+            <Link href="/settings/projections" className="rf-button secondary">
+              Open projection preview
             </Link>
           ) : null}
         </div>

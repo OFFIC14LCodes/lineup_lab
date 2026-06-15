@@ -26,6 +26,35 @@ export type ReasonCode =
   | "TD_RATE_REGRESSION_DOWN"
   | "LOW_SAMPLE_TD_REGRESSION"
   | "TD_REFERENCE_POOL_SMALL"
+  | "EFFICIENCY_REGRESSION_UP"
+  | "EFFICIENCY_REGRESSION_DOWN"
+  | "LOW_SAMPLE_EFFICIENCY_REGRESSION"
+  | "EFFICIENCY_REFERENCE_POOL_SMALL"
+  | "OPPORTUNITY_RATE_REGRESSION"
+  | "OPPORTUNITY_RATE_CAPPED"
+  | "ROLE_WEEK_RATE_UNAVAILABLE"
+  | "INCIDENTAL_RUSHING_NOT_PROJECTED"
+  | "FUMBLE_RATE_REGRESSION_UP"
+  | "FUMBLE_RATE_REGRESSION_DOWN"
+  | "FUMBLE_RATE_NOT_PROJECTED"
+  | "FIRST_DOWN_PROJECTED_FROM_HISTORY"
+  | "FIRST_DOWN_APPROXIMATED"
+  | "FIRST_DOWN_UNSUPPORTED"
+  | "SACKS_PROJECTED_FROM_HISTORY"
+  | "SACKS_APPROXIMATED"
+  | "SACKS_UNSUPPORTED"
+  | "LONG_PLAY_BONUS_PROJECTED_REGRESSED"
+  | "LONG_PLAY_BONUS_APPROXIMATED"
+  | "LONG_PLAY_BONUS_UNSUPPORTED"
+  | "THRESHOLD_BONUS_PROJECTED_FROM_ROLE_WEEKS"
+  | "THRESHOLD_BONUS_APPROXIMATED"
+  | "THRESHOLD_BONUS_UNSUPPORTED"
+  | "FUMBLE_RECOVERY_UNSUPPORTED"
+  | "FUMBLE_RETURN_TD_NON_REPEATABLE"
+  | "RETURN_ROLE_PROJECTED"
+  | "RETURN_ROLE_UNSUPPORTED"
+  | "RETURN_SCORING_EXCLUDED_FROM_OFFENSIVE_PROJECTION"
+  | "PICK_SIX_PROJECTED_REGRESSED"
   // Volatility signals
   | "LONG_TD_VOLATILITY"
   | "NON_REPEATABLE_MISC_TD"
@@ -43,6 +72,13 @@ export type ReasonCode =
   | "MARKET_DATA_UNAVAILABLE"
   | "MARKET_DATA_LOW_CONFIDENCE"
   // Scoring edge cases
+  | "LEAGUE_SCORING_APPLIED"
+  | "PPR_SCORING_IMPACT"
+  | "TE_PREMIUM_SCORING_IMPACT"
+  | "FUMBLE_PENALTY_IMPACT"
+  | "INTERCEPTION_PENALTY_IMPACT"
+  | "SCORING_PARTIAL_COVERAGE"
+  | "SCORING_UNSUPPORTED_KEY"
   | "NEGATIVE_FLOOR_VALID";
 
 export type ReasonCategory =
@@ -53,15 +89,24 @@ export type ReasonCategory =
   | "stability"
   | "evidence"
   | "market"
-  | "scoring";
+  | "scoring"
+  | "validation";
 
 export type ReasonScope =
   | "games"
   | "passing_td"
   | "rushing_td"
   | "receiving_td"
+  | "opportunity"
+  | "fumbles"
+  | "first_downs"
+  | "sacks"
+  | "long_play"
+  | "threshold_bonus"
+  | "returns"
   | "efficiency"
   | "market"
+  | "league_scoring"
   | "projection"
   | "h8_priorTargetShare"
   | "h8_priorCarryShare"
@@ -241,6 +286,281 @@ export const REASON_CODES: Record<ReasonCode, ReasonCodeDefinition> = {
       "Reference rate may be less stable.",
   },
 
+  EFFICIENCY_REGRESSION_UP: {
+    category: "regression",
+    allowedScopes: ["efficiency"],
+    defaultDirection: "up",
+    isLeagueSpecific: false,
+    explanationTemplate:
+      "Efficiency rate regressed upward toward the position reference rate. " +
+      "Player rate: {playerRate}/opp, reference rate: {referenceRate}/opp, " +
+      "sample weight: {sampleWeight:.2f}, regressed rate: {regressedRate}/opp.",
+  },
+
+  EFFICIENCY_REGRESSION_DOWN: {
+    category: "regression",
+    allowedScopes: ["efficiency"],
+    defaultDirection: "down",
+    isLeagueSpecific: false,
+    explanationTemplate:
+      "Efficiency rate regressed downward toward the position reference rate. " +
+      "Player rate: {playerRate}/opp, reference rate: {referenceRate}/opp, " +
+      "sample weight: {sampleWeight:.2f}, regressed rate: {regressedRate}/opp.",
+  },
+
+  LOW_SAMPLE_EFFICIENCY_REGRESSION: {
+    category: "regression",
+    allowedScopes: ["efficiency"],
+    defaultDirection: "neutral",
+    isLeagueSpecific: false,
+    explanationTemplate:
+      "Efficiency sample is small (opportunity: {opportunity}, K: {kConstant}); " +
+      "sample weight is {sampleWeight:.2f}. Rate is weighted primarily toward " +
+      "the position reference ({referenceRate}/opp).",
+  },
+
+  EFFICIENCY_REFERENCE_POOL_SMALL: {
+    category: "regression",
+    allowedScopes: ["efficiency"],
+    defaultDirection: "neutral",
+    isLeagueSpecific: false,
+    explanationTemplate:
+      "Reference population for {metricName} had fewer than {minPlayers} qualifying " +
+      "players; fallback threshold was used (pool size: {poolSize}).",
+  },
+
+  OPPORTUNITY_RATE_REGRESSION: {
+    category: "regression",
+    allowedScopes: ["opportunity"],
+    defaultDirection: "neutral",
+    isLeagueSpecific: false,
+    explanationTemplate:
+      "Opportunity per role game was regressed toward the position reference because " +
+      "the historical sample was limited.",
+  },
+
+  OPPORTUNITY_RATE_CAPPED: {
+    category: "regression",
+    allowedScopes: ["opportunity"],
+    defaultDirection: "down",
+    isLeagueSpecific: false,
+    explanationTemplate:
+      "Opportunity per role game was capped at a percentile-derived population bound.",
+  },
+
+  ROLE_WEEK_RATE_UNAVAILABLE: {
+    category: "sample",
+    allowedScopes: ["projection", "opportunity", "efficiency"],
+    defaultDirection: "neutral",
+    isLeagueSpecific: false,
+    explanationTemplate:
+      "Player had zero historical role weeks for this component. The rate remains null " +
+      "unless an explicit projection fallback is available.",
+  },
+
+  INCIDENTAL_RUSHING_NOT_PROJECTED: {
+    category: "sample",
+    allowedScopes: ["opportunity"],
+    defaultDirection: "excluded",
+    isLeagueSpecific: false,
+    explanationTemplate:
+      "WR/TE rushing usage was below the materiality threshold and is not projected.",
+  },
+
+  FUMBLE_RATE_NOT_PROJECTED: {
+    category: "sample",
+    allowedScopes: ["fumbles"],
+    defaultDirection: "excluded",
+    isLeagueSpecific: false,
+    explanationTemplate:
+      "Only fumbles lost are available in normalized weekly data, so fumbles are not " +
+      "projected in H9.2 component projections.",
+  },
+
+  FUMBLE_RATE_REGRESSION_UP: {
+    category: "regression",
+    allowedScopes: ["fumbles"],
+    defaultDirection: "down",
+    isLeagueSpecific: false,
+    explanationTemplate:
+      "Fumbles lost per touch regressed upward toward the position reference rate. " +
+      "Player rate: {playerRate}/touch, reference rate: {referenceRate}/touch, " +
+      "sample weight: {sampleWeight:.2f}, regressed rate: {regressedRate}/touch.",
+  },
+
+  FUMBLE_RATE_REGRESSION_DOWN: {
+    category: "regression",
+    allowedScopes: ["fumbles"],
+    defaultDirection: "up",
+    isLeagueSpecific: false,
+    explanationTemplate:
+      "Fumbles lost per touch regressed downward toward the position reference rate. " +
+      "Player rate: {playerRate}/touch, reference rate: {referenceRate}/touch, " +
+      "sample weight: {sampleWeight:.2f}, regressed rate: {regressedRate}/touch.",
+  },
+
+  FIRST_DOWN_PROJECTED_FROM_HISTORY: {
+    category: "regression",
+    allowedScopes: ["first_downs"],
+    defaultDirection: "neutral",
+    isLeagueSpecific: false,
+    explanationTemplate:
+      "First-down components were projected from historical weekly first-down rates.",
+  },
+
+  FIRST_DOWN_APPROXIMATED: {
+    category: "regression",
+    allowedScopes: ["first_downs"],
+    defaultDirection: "neutral",
+    isLeagueSpecific: false,
+    explanationTemplate:
+      "First-down components were approximated from available opportunity and bounded reference rates.",
+  },
+
+  FIRST_DOWN_UNSUPPORTED: {
+    category: "scoring",
+    allowedScopes: ["first_downs"],
+    defaultDirection: "excluded",
+    isLeagueSpecific: true,
+    explanationTemplate:
+      "First-down scoring is unsupported for this projection because required inputs are unavailable.",
+  },
+
+  SACKS_PROJECTED_FROM_HISTORY: {
+    category: "regression",
+    allowedScopes: ["sacks"],
+    defaultDirection: "down",
+    isLeagueSpecific: false,
+    explanationTemplate:
+      "QB sacks were projected from historical weekly sack rates.",
+  },
+
+  SACKS_APPROXIMATED: {
+    category: "regression",
+    allowedScopes: ["sacks"],
+    defaultDirection: "down",
+    isLeagueSpecific: false,
+    explanationTemplate:
+      "QB sacks were approximated from projected pass attempts and bounded reference sack rates.",
+  },
+
+  SACKS_UNSUPPORTED: {
+    category: "scoring",
+    allowedScopes: ["sacks"],
+    defaultDirection: "excluded",
+    isLeagueSpecific: true,
+    explanationTemplate:
+      "Sack scoring is unsupported for this projection because required inputs are unavailable.",
+  },
+
+  LONG_PLAY_BONUS_PROJECTED_REGRESSED: {
+    category: "regression",
+    allowedScopes: ["long_play"],
+    defaultDirection: "neutral",
+    isLeagueSpecific: true,
+    explanationTemplate:
+      "Long-play bonus counts were heavily regressed from sparse historical long-play evidence.",
+  },
+
+  LONG_PLAY_BONUS_APPROXIMATED: {
+    category: "regression",
+    allowedScopes: ["long_play"],
+    defaultDirection: "neutral",
+    isLeagueSpecific: true,
+    explanationTemplate:
+      "Long-play bonus counts were approximated from a documented proxy.",
+  },
+
+  LONG_PLAY_BONUS_UNSUPPORTED: {
+    category: "scoring",
+    allowedScopes: ["long_play"],
+    defaultDirection: "excluded",
+    isLeagueSpecific: true,
+    explanationTemplate:
+      "Long-play bonus scoring is unsupported because no reliable projected component exists.",
+  },
+
+  THRESHOLD_BONUS_PROJECTED_FROM_ROLE_WEEKS: {
+    category: "regression",
+    allowedScopes: ["threshold_bonus"],
+    defaultDirection: "neutral",
+    isLeagueSpecific: true,
+    explanationTemplate:
+      "Weekly yardage or volume threshold bonus hits were projected from historical role-week hit rates.",
+  },
+
+  THRESHOLD_BONUS_APPROXIMATED: {
+    category: "regression",
+    allowedScopes: ["threshold_bonus"],
+    defaultDirection: "neutral",
+    isLeagueSpecific: true,
+    explanationTemplate:
+      "Weekly threshold bonus hits were approximated with bounded historical role-week rates.",
+  },
+
+  THRESHOLD_BONUS_UNSUPPORTED: {
+    category: "scoring",
+    allowedScopes: ["threshold_bonus"],
+    defaultDirection: "excluded",
+    isLeagueSpecific: true,
+    explanationTemplate:
+      "Weekly threshold bonus scoring is unsupported because weekly distribution inputs are unavailable.",
+  },
+
+  FUMBLE_RECOVERY_UNSUPPORTED: {
+    category: "scoring",
+    allowedScopes: ["fumbles"],
+    defaultDirection: "excluded",
+    isLeagueSpecific: true,
+    explanationTemplate:
+      "Offensive fumble recovery scoring is not projected from the current offensive component model.",
+  },
+
+  FUMBLE_RETURN_TD_NON_REPEATABLE: {
+    category: "volatility",
+    allowedScopes: ["fumbles"],
+    defaultDirection: "excluded",
+    isLeagueSpecific: true,
+    explanationTemplate:
+      "Fumble-return touchdowns are treated as non-repeatable miscellaneous events and excluded from median projection.",
+  },
+
+  RETURN_ROLE_PROJECTED: {
+    category: "regression",
+    allowedScopes: ["returns"],
+    defaultDirection: "neutral",
+    isLeagueSpecific: true,
+    explanationTemplate:
+      "Return-role scoring was projected from a separate return role.",
+  },
+
+  RETURN_ROLE_UNSUPPORTED: {
+    category: "scoring",
+    allowedScopes: ["returns"],
+    defaultDirection: "excluded",
+    isLeagueSpecific: true,
+    explanationTemplate:
+      "Return-role scoring requires a separate return model and is unsupported by offensive projections.",
+  },
+
+  RETURN_SCORING_EXCLUDED_FROM_OFFENSIVE_PROJECTION: {
+    category: "scoring",
+    allowedScopes: ["returns"],
+    defaultDirection: "excluded",
+    isLeagueSpecific: true,
+    explanationTemplate:
+      "Return scoring was excluded from the offensive QB/RB/WR/TE projection model.",
+  },
+
+  PICK_SIX_PROJECTED_REGRESSED: {
+    category: "regression",
+    allowedScopes: ["long_play"],
+    defaultDirection: "down",
+    isLeagueSpecific: true,
+    explanationTemplate:
+      "Pick-six penalties were projected with heavy regression toward the position reference rate.",
+  },
+
   // ---- Volatility signals --------------------------------------------------
 
   LONG_TD_VOLATILITY: {
@@ -387,6 +707,69 @@ export const REASON_CODES: Record<ReasonCode, ReasonCodeDefinition> = {
   },
 
   // ---- Scoring edge cases --------------------------------------------------
+
+  LEAGUE_SCORING_APPLIED: {
+    category: "scoring",
+    allowedScopes: ["league_scoring"],
+    defaultDirection: "neutral",
+    isLeagueSpecific: true,
+    explanationTemplate:
+      "League scoring settings were applied to H9.2 stat components for this projection.",
+  },
+
+  PPR_SCORING_IMPACT: {
+    category: "scoring",
+    allowedScopes: ["league_scoring"],
+    defaultDirection: "up",
+    isLeagueSpecific: true,
+    explanationTemplate:
+      "Reception scoring affects this player's projection in this league.",
+  },
+
+  TE_PREMIUM_SCORING_IMPACT: {
+    category: "scoring",
+    allowedScopes: ["league_scoring"],
+    defaultDirection: "up",
+    isLeagueSpecific: true,
+    explanationTemplate:
+      "Tight end premium scoring affects this player's projection in this league.",
+  },
+
+  FUMBLE_PENALTY_IMPACT: {
+    category: "scoring",
+    allowedScopes: ["league_scoring"],
+    defaultDirection: "down",
+    isLeagueSpecific: true,
+    explanationTemplate:
+      "Projected fumbles lost reduce this player's fantasy projection in this league.",
+  },
+
+  INTERCEPTION_PENALTY_IMPACT: {
+    category: "scoring",
+    allowedScopes: ["league_scoring"],
+    defaultDirection: "down",
+    isLeagueSpecific: true,
+    explanationTemplate:
+      "Projected interceptions reduce this player's fantasy projection in this league.",
+  },
+
+  SCORING_PARTIAL_COVERAGE: {
+    category: "scoring",
+    allowedScopes: ["league_scoring"],
+    defaultDirection: "neutral",
+    isLeagueSpecific: true,
+    explanationTemplate:
+      "At least one active league scoring key was not fully evaluated for this projection.",
+  },
+
+  SCORING_UNSUPPORTED_KEY: {
+    category: "scoring",
+    allowedScopes: ["league_scoring"],
+    defaultDirection: "neutral",
+    isLeagueSpecific: true,
+    explanationTemplate:
+      "This league contains at least one active scoring key unsupported by H9.3 projection scoring.",
+  },
 
   NEGATIVE_FLOOR_VALID: {
     category: "scoring",

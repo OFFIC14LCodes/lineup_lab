@@ -101,6 +101,43 @@ export const QB_INT_RATE_K = 150;
 export const RUSH_YPC_K = 50;
 export const CATCH_RATE_K = 40;
 export const YPT_K = 40;
+export const FUMBLES_LOST_RATE_K = 60;
+
+// --------------------------------------------------------------------------
+// H9.2 component projection reference and scenario constants
+// --------------------------------------------------------------------------
+
+export const EFFICIENCY_REFERENCE_POOL_MIN_PLAYERS = 5;
+export const OPPORTUNITY_REFERENCE_POOL_MIN_PLAYERS = 5;
+
+export const QB_EFFICIENCY_REF_MIN_ATTEMPTS = 100;
+export const QB_EFFICIENCY_REF_FALLBACK_ATTEMPTS = 50;
+export const QB_RUSH_EFFICIENCY_REF_MIN_CARRIES = 15;
+
+export const RB_RUSH_EFFICIENCY_REF_MIN_CARRIES = 40;
+export const RB_RUSH_EFFICIENCY_REF_FALLBACK_CARRIES = 20;
+export const RB_RECEIVING_EFFICIENCY_REF_MIN_TARGETS = 15;
+export const RB_RECEIVING_EFFICIENCY_REF_FALLBACK_TARGETS = 8;
+
+export const WR_RECEIVING_EFFICIENCY_REF_MIN_TARGETS = 25;
+export const WR_RECEIVING_EFFICIENCY_REF_FALLBACK_TARGETS = 12;
+export const TE_RECEIVING_EFFICIENCY_REF_MIN_TARGETS = 15;
+export const TE_RECEIVING_EFFICIENCY_REF_FALLBACK_TARGETS = 8;
+
+export const WR_TE_RUSHING_MATERIAL_CARRIES = 8;
+export const WR_TE_RUSHING_MATERIAL_CARRIES_PER_ROLE_WEEK = 0.5;
+
+export const MATERIAL_REGRESSION_PCT_DIFF = 0.15;
+export const LOW_SAMPLE_WEIGHT_THRESHOLD = 0.35;
+
+export const OPPORTUNITY_CAP_PERCENTILE = 0.95;
+export const OPPORTUNITY_TINY_SAMPLE_ROLE_WEEKS = 4;
+export const OPPORTUNITY_TINY_SAMPLE_CAP_MULTIPLIER = 1.15;
+export const OPPORTUNITY_REGRESSION_ROLE_WEEK_K = 6;
+
+export const SCENARIO_OPPORTUNITY_RANGE_SHARE = 0.35;
+export const SCENARIO_EFFICIENCY_RANGE_SHARE = 0.45;
+export const SCENARIO_TD_RANGE_SHARE = 0.75;
 
 // --------------------------------------------------------------------------
 // Reference population minimums (for TD regression pools)
@@ -297,6 +334,33 @@ export const MODEL_CONFIG = {
   rushYpcK: RUSH_YPC_K,
   catchRateK: CATCH_RATE_K,
   yptK: YPT_K,
+  fumblesLostRateK: FUMBLES_LOST_RATE_K,
+
+  // H9.2 component references and scenarios
+  efficiencyReferencePoolMinPlayers: EFFICIENCY_REFERENCE_POOL_MIN_PLAYERS,
+  opportunityReferencePoolMinPlayers: OPPORTUNITY_REFERENCE_POOL_MIN_PLAYERS,
+  qbEfficiencyRefMinAttempts: QB_EFFICIENCY_REF_MIN_ATTEMPTS,
+  qbEfficiencyRefFallbackAttempts: QB_EFFICIENCY_REF_FALLBACK_ATTEMPTS,
+  qbRushEfficiencyRefMinCarries: QB_RUSH_EFFICIENCY_REF_MIN_CARRIES,
+  rbRushEfficiencyRefMinCarries: RB_RUSH_EFFICIENCY_REF_MIN_CARRIES,
+  rbRushEfficiencyRefFallbackCarries: RB_RUSH_EFFICIENCY_REF_FALLBACK_CARRIES,
+  rbReceivingEfficiencyRefMinTargets: RB_RECEIVING_EFFICIENCY_REF_MIN_TARGETS,
+  rbReceivingEfficiencyRefFallbackTargets: RB_RECEIVING_EFFICIENCY_REF_FALLBACK_TARGETS,
+  wrReceivingEfficiencyRefMinTargets: WR_RECEIVING_EFFICIENCY_REF_MIN_TARGETS,
+  wrReceivingEfficiencyRefFallbackTargets: WR_RECEIVING_EFFICIENCY_REF_FALLBACK_TARGETS,
+  teReceivingEfficiencyRefMinTargets: TE_RECEIVING_EFFICIENCY_REF_MIN_TARGETS,
+  teReceivingEfficiencyRefFallbackTargets: TE_RECEIVING_EFFICIENCY_REF_FALLBACK_TARGETS,
+  wrTeRushingMaterialCarries: WR_TE_RUSHING_MATERIAL_CARRIES,
+  wrTeRushingMaterialCarriesPerRoleWeek: WR_TE_RUSHING_MATERIAL_CARRIES_PER_ROLE_WEEK,
+  materialRegressionPctDiff: MATERIAL_REGRESSION_PCT_DIFF,
+  lowSampleWeightThreshold: LOW_SAMPLE_WEIGHT_THRESHOLD,
+  opportunityCapPercentile: OPPORTUNITY_CAP_PERCENTILE,
+  opportunityTinySampleRoleWeeks: OPPORTUNITY_TINY_SAMPLE_ROLE_WEEKS,
+  opportunityTinySampleCapMultiplier: OPPORTUNITY_TINY_SAMPLE_CAP_MULTIPLIER,
+  opportunityRegressionRoleWeekK: OPPORTUNITY_REGRESSION_ROLE_WEEK_K,
+  scenarioOpportunityRangeShare: SCENARIO_OPPORTUNITY_RANGE_SHARE,
+  scenarioEfficiencyRangeShare: SCENARIO_EFFICIENCY_RANGE_SHARE,
+  scenarioTdRangeShare: SCENARIO_TD_RANGE_SHARE,
 
   // Reference pool
   refPoolMinPlayers: REF_POOL_MIN_PLAYERS,

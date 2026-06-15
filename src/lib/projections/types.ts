@@ -95,8 +95,24 @@ export type WeeklyStatRow = {
   receptions: number;
   receivingYards: number;
   receivingTds: number;
+  passingFirstDowns?: number;
+  rushingFirstDowns?: number;
+  receivingFirstDowns?: number;
+  sacksTaken?: number;
+  passPick6?: number;
+  recTd40p?: number;
+  recTd50p?: number;
+  rushTd40p?: number;
+  rushTd50p?: number;
+  passCmp40p?: number;
+  rec40p?: number;
+  rec20_29?: number;
+  rec30_39?: number;
+  rush40p?: number;
   // Non-repeatable; excluded from projection but preserved for canonical hash
   fumRetTd: number;
+  // H2 long-TD evidence; used only to widen H9.2 component ranges.
+  longTds?: number;
   twoPointConversions: number;
   fumblesLost: number;
 };
@@ -229,8 +245,37 @@ export type StatComponents = {
   receptions: number;
   receivingYards: number;
   receivingTds: number;
+  fumblesLost: number;
   twoPointConversions: number; // always 0 in H9-lite baseline
   miscTds: number;             // always 0 in H9-lite baseline (NON_REPEATABLE_MISC_TD)
+  passingFirstDowns?: number;
+  rushingFirstDowns?: number;
+  receivingFirstDowns?: number;
+  sacksTaken?: number;
+  passPick6?: number;
+  passTd40p?: number;
+  passTd50p?: number;
+  recTd40p?: number;
+  recTd50p?: number;
+  rushTd40p?: number;
+  rushTd50p?: number;
+  passCmp40p?: number;
+  rec40p?: number;
+  rec20_29?: number;
+  rec30_39?: number;
+  rush40p?: number;
+  bonusPassCmp25?: number;
+  bonusPassYd300?: number;
+  bonusPassYd400?: number;
+  bonusRushAtt20?: number;
+  bonusRushYd100?: number;
+  bonusRushYd200?: number;
+  bonusRecYd100?: number;
+  bonusRecYd200?: number;
+  bonusRushRecYd100?: number;
+  bonusRushRecYd200?: number;
+  fumbleRecoveries?: number;
+  fumbleRecoveryTds?: number;
 };
 
 // --------------------------------------------------------------------------

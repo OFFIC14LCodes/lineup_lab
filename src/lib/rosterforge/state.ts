@@ -1,3 +1,9 @@
+import { existsSync, readFileSync } from "node:fs";
+import path from "node:path";
+
+import { buildWarRoomValueOverlay } from "@/lib/draft/h10-war-room-overlay";
+import { filterFallbackPlayers, type FallbackRelevanceDiagnostics } from "@/lib/draft/fallback-relevance";
+import { buildH10RecommendationPreviewPayload } from "@/lib/draft/war-room-recommendation-preview-state";
 import { normalizePlayerName, normalizePrimaryPosition } from "@/lib/players/normalize";
 import { buildDraftTargetScore, type DraftTargetScorePlayer } from "@/lib/draft/scoring";
 import {
@@ -7,6 +13,8 @@ import {
   POSITION_GROUPS,
   type PositionGroup
 } from "@/lib/draft/roster-slots";
+import { getBooleanEnv } from "@/lib/env";
+import type { H10LeagueValueRow } from "@/lib/projections/h10-league-value";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 type DraftPickRow = {
@@ -73,12 +81,18 @@ const WARNING_MESSAGES: Record<string, string> = {
   unmatched_rankings_present: "Some rankings are unmatched and may not disappear when drafted until matched.",
   using_fallback_pool: "Unranked Sleeper player pool - upload rankings for real recommendations.",
   no_players_synced: "Sync Sleeper players for an unranked fallback pool.",
+  no_draft_relevant_available_rows: "No draft-relevant fallback players are available with rankings, ADP, or Blackbird projections.",
+  diagnostic_fallback_rows_hidden: "Some diagnostic fallback players are hidden because they lack rankings, ADP, and Blackbird projections.",
   draft_not_synced: "Draft picks have not synced yet.",
   unknown_roster_slots: "Some roster slots could not be normalized yet.",
   no_idp_players_synced: "League uses IDP slots, but no active defensive players are available in the synced pool.",
   no_kicker_players_synced: "League uses kicker slots, but no active kickers are available in the synced pool.",
   no_team_defense_players_synced: "League uses team defense slots, but no active DEF players are available in the synced pool."
 };
+
+const H10_WAR_ROOM_OVERLAY_FEATURE_FLAG = "ENABLE_H10_WAR_ROOM_OVERLAY";
+const H10_WAR_ROOM_RECOMMENDATIONS_PREVIEW_FEATURE_FLAG = "ENABLE_H10_WAR_ROOM_RECOMMENDATIONS_PREVIEW";
+const WAR_ROOM_DIAGNOSTIC_FALLBACKS_FEATURE_FLAG = "ENABLE_WAR_ROOM_DIAGNOSTIC_FALLBACKS";
 
 export async function getDraftRoomState(userId: string, draftRoomId: string) {
   const supabase = createAdminClient();
@@ -92,6 +106,24 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
 
   if (roomError || !room) {
     throw roomError ?? new Error("Draft room not found.");
+  }
+
+  const validationMetadata = room.metadata_json && typeof room.metadata_json === "object" ? (room.metadata_json as Record<string, unknown>) : {};
+  const isValidationRoom = validationMetadata.validation_room === true || validationMetadata.purpose === "h10_recommendation_validation";
+  const validationProfile = typeof validationMetadata.h10_validation_profile === "string" ? validationMetadata.h10_validation_profile : null;
+  let rankingsQuery = supabase
+    .from("draft_rankings")
+    .select("*")
+    .eq("user_id", userId)
+    .or(`league_id.eq.${room.league_id},league_id.is.null`)
+    .order("rank", { ascending: true, nullsFirst: false })
+    .limit(1000);
+
+  if (isValidationRoom) {
+    rankingsQuery = rankingsQuery.eq("source", "h10_validation");
+    if (validationProfile) rankingsQuery = rankingsQuery.eq("format", validationProfile);
+  } else {
+    rankingsQuery = rankingsQuery.neq("source", "h10_validation");
   }
 
   const [{ data: picks }, { data: account }, { data: rosters }, { data: rankings }, { data: players }] =
@@ -108,13 +140,7 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
         .eq("platform", "sleeper")
         .maybeSingle(),
       supabase.from("league_rosters").select("*").eq("league_id", room.league_id),
-      supabase
-        .from("draft_rankings")
-        .select("*")
-        .eq("user_id", userId)
-        .or(`league_id.eq.${room.league_id},league_id.is.null`)
-        .order("rank", { ascending: true, nullsFirst: false })
-        .limit(1000),
+      rankingsQuery,
       supabase
         .from("players")
         .select(
@@ -160,6 +186,47 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
       .map((player) => [player.sleeper_player_id as string, player])
   );
   const hasRankings = rankingRows.length > 0;
+  const rosterRequirements = buildNormalizedRosterRequirements(
+    Array.isArray(room.leagues?.roster_positions_json) ? room.leagues.roster_positions_json : []
+  );
+  const fallbackValueRows = loadH10ValueRowsFromArtifact(room.league_id as string);
+  const includeDiagnosticFallbacks = getBooleanEnv(WAR_ROOM_DIAGNOSTIC_FALLBACKS_FEATURE_FLAG, false);
+  const unfilteredFallbackPlayers = fallbackPlayers
+    .filter((player) => {
+      const byId = player.sleeper_player_id && draftedIds.has(player.sleeper_player_id);
+      const byName = draftedNames.has(player.normalized_name ?? normalizePlayerName(player.full_name ?? ""));
+      return !byId && !byName;
+    })
+    .map((player) => ({
+      source: "sleeper_pool" as const,
+      sleeper_player_id: player.sleeper_player_id,
+      matched_player_id: player.id,
+      player_name: player.full_name,
+      position: player.position_group ?? player.primary_position ?? player.position,
+      team: player.team,
+      rank: null,
+      adp: null,
+      projected_points: null,
+      dynasty_value: null,
+      best_ball_value: null,
+      superflex_value: null,
+      te_premium_value: null,
+      match_status: null,
+      match_confidence: null,
+      is_ranked: false,
+      is_fallback: true
+    }))
+    .sort((a, b) => {
+      const pos = (POSITION_ORDER[a.position ?? ""] ?? 99) - (POSITION_ORDER[b.position ?? ""] ?? 99);
+      return pos || (a.player_name ?? "").localeCompare(b.player_name ?? "");
+    }) as DraftTargetScorePlayer[];
+  const fallbackRelevance = filterFallbackPlayers({
+    leagueId: room.league_id as string,
+    players: unfilteredFallbackPlayers,
+    valueRows: fallbackValueRows,
+    rosterRequirements,
+    includeDiagnosticFallbacks,
+  });
 
   const remainingPlayers = hasRankings
     ? rankingRows
@@ -189,40 +256,7 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
         }))
         .sort((a, b) => (a.rank ?? 99999) - (b.rank ?? 99999))
         .slice(0, 150)
-    : fallbackPlayers
-        .filter((player) => {
-          const byId = player.sleeper_player_id && draftedIds.has(player.sleeper_player_id);
-          const byName = draftedNames.has(player.normalized_name ?? normalizePlayerName(player.full_name ?? ""));
-          return !byId && !byName;
-        })
-        .map((player) => ({
-          source: "sleeper_pool" as const,
-          sleeper_player_id: player.sleeper_player_id,
-          matched_player_id: player.id,
-          player_name: player.full_name,
-          position: player.position_group ?? player.primary_position ?? player.position,
-          team: player.team,
-          rank: null,
-          adp: null,
-          projected_points: null,
-          dynasty_value: null,
-          best_ball_value: null,
-          superflex_value: null,
-          te_premium_value: null,
-          match_status: null,
-          match_confidence: null,
-          is_ranked: false,
-          is_fallback: true
-        }))
-        .sort((a, b) => {
-          const pos = (POSITION_ORDER[a.position ?? ""] ?? 99) - (POSITION_ORDER[b.position ?? ""] ?? 99);
-          return pos || (a.player_name ?? "").localeCompare(b.player_name ?? "");
-        })
-        .slice(0, 150);
-
-  const rosterRequirements = buildNormalizedRosterRequirements(
-    Array.isArray(room.leagues?.roster_positions_json) ? room.leagues.roster_positions_json : []
-  );
+    : fallbackRelevance.players.slice(0, 150);
   const counts = countPositions(myPicks, playerRowsBySleeperId);
   const positionNeeds = buildPositionNeeds(counts, rosterRequirements);
   const topNeeds = buildTopNeeds(positionNeeds);
@@ -239,6 +273,8 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
     !hasRankings ? "no_rankings_uploaded" : null,
     issueCount > 0 ? "unmatched_rankings_present" : null,
     !hasRankings && fallbackPlayers.length > 0 ? "using_fallback_pool" : null,
+    !hasRankings && fallbackRelevance.diagnostics.fallbackRowsExcluded > 0 ? "diagnostic_fallback_rows_hidden" : null,
+    !hasRankings && fallbackRelevance.diagnostics.fallbackRowsIncluded === 0 && fallbackRelevance.diagnostics.fallbackRowsTotal > 0 ? "no_draft_relevant_available_rows" : null,
     !hasRankings && fallbackPlayers.length === 0 ? "no_players_synced" : null,
     !room.last_synced_at && draftPicks.length === 0 ? "draft_not_synced" : null,
     rosterRequirements.unknownSlots.length > 0 ? "unknown_roster_slots" : null,
@@ -266,6 +302,32 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
   });
 
   const idpDetected = rosterRequirements.hasIDP;
+  const overlayPayload = getBooleanEnv(H10_WAR_ROOM_OVERLAY_FEATURE_FLAG, false)
+    ? buildOptionalH10Overlay({
+        leagueId: room.league_id as string,
+        players: scoring.scoredPlayers,
+        rosterRequirements,
+        fallbackPlayers,
+      })
+    : {};
+  const recommendationPreviewPayload = getBooleanEnv(H10_WAR_ROOM_RECOMMENDATIONS_PREVIEW_FEATURE_FLAG, false)
+    ? buildOptionalH10RecommendationPreview({
+        leagueId: room.league_id as string,
+        draftRoomId,
+        players: scoring.scoredPlayers,
+        rosterRequirements,
+        fallbackPlayers,
+        positionNeeds,
+        topNeeds,
+        myRoster: myPicks,
+        picks: draftPicks,
+        currentPickNumber,
+        currentRound: lastPick?.round ?? 1,
+        picksUntilMyNextPick,
+        draftedPlayerIds: Array.from(draftedIds).filter((id): id is string => Boolean(id)),
+        positionCounts: counts,
+      })
+    : {};
 
   return {
     room,
@@ -293,7 +355,142 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
     scoringMetadata: scoring.scoringMetadata,
     warnings,
     warningMessages: warnings.map((warning) => WARNING_MESSAGES[warning] ?? warning),
-    warning: warnings.map((warning) => WARNING_MESSAGES[warning] ?? warning).join(" ") || null
+    warning: warnings.map((warning) => WARNING_MESSAGES[warning] ?? warning).join(" ") || null,
+    fallbackRelevanceDiagnostics: hasRankings ? emptyFallbackDiagnostics(includeDiagnosticFallbacks) : fallbackRelevance.diagnostics,
+    ...overlayPayload,
+    ...recommendationPreviewPayload
+  };
+}
+
+function buildOptionalH10Overlay(input: {
+  leagueId: string;
+  players: DraftTargetScorePlayer[];
+  rosterRequirements: ReturnType<typeof buildNormalizedRosterRequirements>;
+  fallbackPlayers: PlayerRow[];
+}) {
+  const valueRows = loadH10ValueRowsFromArtifact(input.leagueId);
+  const sleeperToCanonicalId = Object.fromEntries(
+    input.fallbackPlayers
+      .filter((player) => player.sleeper_player_id)
+      .map((player) => [player.sleeper_player_id as string, player.id])
+  );
+  const overlay = buildWarRoomValueOverlay({
+    leagueId: input.leagueId,
+    players: input.players,
+    valueRows,
+    rosterRequirements: input.rosterRequirements,
+    includeDstDryRun: false,
+    includeAllPositions: false,
+    sleeperToCanonicalId,
+  });
+  return {
+    h10ValueOverlay: overlay.rows,
+    h10ValueOverlayDiagnostics: overlay.diagnostics,
+  };
+}
+
+function buildOptionalH10RecommendationPreview(input: {
+  leagueId: string;
+  draftRoomId: string;
+  players: DraftTargetScorePlayer[];
+  rosterRequirements: ReturnType<typeof buildNormalizedRosterRequirements>;
+  fallbackPlayers: PlayerRow[];
+  positionNeeds: ReturnType<typeof buildPositionNeeds>;
+  topNeeds: ReturnType<typeof buildTopNeeds>;
+  myRoster: DraftPickRow[];
+  picks: DraftPickRow[];
+  currentPickNumber: number;
+  currentRound: number;
+  picksUntilMyNextPick: number | null;
+  draftedPlayerIds: string[];
+  positionCounts: Record<PositionGroup, number>;
+}) {
+  try {
+    const valueRows = loadH10ValueRowsFromArtifact(input.leagueId);
+    const sleeperToCanonicalId = Object.fromEntries(
+      input.fallbackPlayers
+        .filter((player) => player.sleeper_player_id)
+        .map((player) => [player.sleeper_player_id as string, player.id])
+    );
+    const overlay = buildWarRoomValueOverlay({
+      leagueId: input.leagueId,
+      players: input.players,
+      valueRows,
+      rosterRequirements: input.rosterRequirements,
+      includeDstDryRun: false,
+      includeAllPositions: false,
+      sleeperToCanonicalId,
+    });
+    return buildH10RecommendationPreviewPayload({
+      enabled: true,
+      leagueId: input.leagueId,
+      draftRoomId: input.draftRoomId,
+      remainingPlayers: input.players,
+      h10ValueOverlay: overlay.rows,
+      rosterRequirements: input.rosterRequirements,
+      positionNeeds: input.positionNeeds,
+      topNeeds: input.topNeeds,
+      myRoster: input.myRoster,
+      picks: input.picks,
+      currentPickNumber: input.currentPickNumber,
+      currentRound: input.currentRound,
+      picksUntilMyNextPick: input.picksUntilMyNextPick,
+      draftedPlayerIds: input.draftedPlayerIds,
+      positionCounts: input.positionCounts,
+      includeDstDryRun: false,
+      matchCoverageSummary: overlay.diagnostics.matchCoverageSummary,
+    });
+  } catch (error) {
+    return {
+      h10RecommendationPreview: [],
+      h10RecommendationDiagnostics: {
+        leagueId: input.leagueId,
+        draftRoomId: input.draftRoomId,
+        remainingPlayersLoaded: input.players.length,
+        overlayRowsLoaded: 0,
+        recommendationsGenerated: 0,
+        rowsByTier: {},
+        rowsByStatus: {},
+        rowsByPosition: {},
+        warningCounts: {},
+        idpRowsEvaluated: 0,
+        idpRowsByTier: {},
+        idpAverageScoreComponents: null,
+        idpTopLeagueValueRows: [],
+        idpTopRosterNeedRows: [],
+        idpTopTierCliffRows: [],
+        idpSuppressionReasons: {},
+        invariantFailures: [error instanceof Error ? error.message : "Unable to build H10 recommendation preview."],
+        contextLimitations: ["H10_RECOMMENDATION_PREVIEW_UNAVAILABLE"],
+      },
+    };
+  }
+}
+
+function loadH10ValueRowsFromArtifact(leagueId: string): H10LeagueValueRow[] {
+  const artifactPath = path.join(process.cwd(), "artifacts", "projections", "h10-league-value.json");
+  if (!existsSync(artifactPath)) return [];
+  try {
+    const artifact = JSON.parse(readFileSync(artifactPath, "utf8")) as { rows?: H10LeagueValueRow[] };
+    return (artifact.rows ?? []).filter((row) => row.leagueId === leagueId);
+  } catch {
+    return [];
+  }
+}
+
+function emptyFallbackDiagnostics(includeDiagnosticFallbacks: boolean): FallbackRelevanceDiagnostics {
+  return {
+    fallbackRowsTotal: 0,
+    fallbackRowsIncluded: 0,
+    fallbackRowsExcluded: 0,
+    fallbackRelevanceDistribution: {},
+    projectionlessFallbackRows: 0,
+    historicalOnlyRows: 0,
+    diagnosticFallbackRows: 0,
+    draftRelevantFallbackRows: 0,
+    formatExcludedFallbackRows: 0,
+    includeDiagnosticFallbacks,
+    topExcludedFallbackExamples: [],
   };
 }
 

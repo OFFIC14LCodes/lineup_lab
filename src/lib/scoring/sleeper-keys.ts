@@ -26,6 +26,9 @@ export const SLEEPER_SCORING_RULES: SleeperScoringRule[] = [
   statRule("pass_fd", "pass_fd", "first_downs", "Passing first downs", ["QB"]),
   statRule("pass_pick6", "pass_pick6", "passing", "Pick-sixes thrown", ["QB"]),
   statRule("pass_int_td", "pass_pick6", "passing", "Interception returned for touchdown (pick-six thrown)", ["QB"]),
+  statRule("pass_td_40p", "pass_td_40p", "bonuses", "Passing TD of 40+ yards bonus", ["QB"]),
+  statRule("pass_td_50p", "pass_td_50p", "bonuses", "Passing TD of 50+ yards bonus", ["QB"]),
+  statRule("pass_cmp_40p", "pass_cmp_40p", "bonuses", "Passing completion of 40+ yards bonus", ["QB"]),
   statRule("rush_yd", "rush_yd", "rushing", "Rushing yards", OFFENSE),
   statRule("rush_td", "rush_td", "rushing", "Rushing touchdowns", OFFENSE),
   statRule("rush_att", "rush_att", "rushing", "Rushing attempts", OFFENSE),
@@ -45,6 +48,8 @@ export const SLEEPER_SCORING_RULES: SleeperScoringRule[] = [
   statRule("bonus_rec_wr", "rec", "receiving", "Wide receiver reception bonus", ["WR"]),
   statRule("fum", "fum", "miscellaneous", "Fumbles", OFFENSE),
   statRule("fum_lost", "fum_lost", "miscellaneous", "Fumbles lost", OFFENSE),
+  statRule("fum_rec", "fum_rec", "miscellaneous", "Offensive fumble recoveries", OFFENSE),
+  statRule("fum_rec_td", "fum_rec_td", "miscellaneous", "Offensive fumble recovery touchdowns", OFFENSE),
   statRule("fum_ret_td", "fum_ret_td", "miscellaneous", "Fumble return touchdowns", OFFENSE),
   statRule("kick_ret_yd", "kick_ret_yd", "returns", "Kick return yards", OFFENSE),
   statRule("punt_ret_yd", "punt_ret_yd", "returns", "Punt return yards", OFFENSE),
@@ -62,8 +67,12 @@ export const SLEEPER_SCORING_RULES: SleeperScoringRule[] = [
   // Long-TD bonuses — stat values come from player_weekly_derived_stats (nflverse PBP derivation).
   statRule("rec_td_40p", "rec_td_40p", "bonuses", "Receiving TD of 40+ yards bonus", OFFENSE),
   statRule("rec_td_50p", "rec_td_50p", "bonuses", "Receiving TD of 50+ yards bonus", OFFENSE),
+  statRule("rec_20_29", "rec_20_29", "bonuses", "Reception of 20-29 yards bonus", OFFENSE),
+  statRule("rec_30_39", "rec_30_39", "bonuses", "Reception of 30-39 yards bonus", OFFENSE),
+  statRule("rec_40p", "rec_40p", "bonuses", "Reception of 40+ yards bonus", OFFENSE),
   statRule("rush_td_40p", "rush_td_40p", "bonuses", "Rushing TD of 40+ yards bonus", OFFENSE),
   statRule("rush_td_50p", "rush_td_50p", "bonuses", "Rushing TD of 50+ yards bonus", OFFENSE),
+  statRule("rush_40p", "rush_40p", "bonuses", "Rush of 40+ yards bonus", OFFENSE),
   thresholdRangeRule("bonus_pass_yd_300", "pass_yd", 300, 400, "bonuses", "300-399 passing-yard bonus", ["QB"]),
   thresholdRule("bonus_pass_yd_400", "pass_yd", 400, "bonuses", "400+ passing-yard bonus", ["QB"]),
   thresholdRule("bonus_pass_cmp_25", "pass_cmp", 25, "bonuses", "25+ pass completions bonus", ["QB"]),
@@ -148,7 +157,8 @@ export const SLEEPER_SCORING_RULES: SleeperScoringRule[] = [
   statRule("blk_kick", "blk_kick", "idp", "Blocked kicks", IDP),
   statRule("def_td", "def_td", "idp", "Defensive touchdowns", IDP),
   statRule("def_st_td", "def_st_td", "idp", "Special-teams touchdowns", IDP),
-  statRule("st_tkl", "st_tkl", "idp", "Special-teams tackles", IDP)
+  statRule("st_tkl", "st_tkl", "idp", "Special-teams tackles", IDP),
+  statRule("bonus_sack_2p", "bonus_sack_2p", "idp", "Projected 2+ sack game bonus approximation", IDP)
 ];
 
 export const SLEEPER_RULES_BY_KEY = new Map<string, SleeperScoringRule[]>();
@@ -248,6 +258,26 @@ function thresholdRule(
         };
       }
 
+      if (context.statSource === "projection") {
+        const projectedHits = context.getStat(scoringKey);
+        if (projectedHits.statValue !== null && projectedHits.statKey) {
+          return {
+            state: "evaluated",
+            requiredStats: [scoringKey],
+            components: projectedHits.statValue > 0
+              ? [component({
+                  scoringKey,
+                  statKey: projectedHits.statKey,
+                  statValue: projectedHits.statValue,
+                  scoringValue: context.scoringValue,
+                  category,
+                  description
+                })]
+              : []
+          };
+        }
+      }
+
       const resolved = context.getStat(canonicalStatKey);
       if (resolved.statValue === null || !resolved.statKey) {
         return {
@@ -298,6 +328,26 @@ function thresholdRangeRule(
           state: "not_applicable",
           requiredStats: [canonicalStatKey]
         };
+      }
+
+      if (context.statSource === "projection") {
+        const projectedHits = context.getStat(scoringKey);
+        if (projectedHits.statValue !== null && projectedHits.statKey) {
+          return {
+            state: "evaluated",
+            requiredStats: [scoringKey],
+            components: projectedHits.statValue > 0
+              ? [component({
+                  scoringKey,
+                  statKey: projectedHits.statKey,
+                  statValue: projectedHits.statValue,
+                  scoringValue: context.scoringValue,
+                  category,
+                  description
+                })]
+              : []
+          };
+        }
       }
 
       const resolved = context.getStat(canonicalStatKey);
@@ -461,6 +511,26 @@ function combinedThresholdRule(
         };
       }
 
+      if (context.statSource === "projection") {
+        const projectedHits = context.getStat(scoringKey);
+        if (projectedHits.statValue !== null && projectedHits.statKey) {
+          return {
+            state: "evaluated",
+            requiredStats: [scoringKey],
+            components: projectedHits.statValue > 0
+              ? [component({
+                  scoringKey,
+                  statKey: projectedHits.statKey,
+                  statValue: projectedHits.statValue,
+                  scoringValue: context.scoringValue,
+                  category,
+                  description
+                })]
+              : []
+          };
+        }
+      }
+
       const [firstKey, secondKey] = canonicalStatKeys;
       const first = context.getStat(firstKey);
       const second = context.getStat(secondKey);
@@ -573,6 +643,26 @@ function combinedThresholdRangeRule(
           state: "not_applicable",
           requiredStats: canonicalStatKeys
         };
+      }
+
+      if (context.statSource === "projection") {
+        const projectedHits = context.getStat(scoringKey);
+        if (projectedHits.statValue !== null && projectedHits.statKey) {
+          return {
+            state: "evaluated",
+            requiredStats: [scoringKey],
+            components: projectedHits.statValue > 0
+              ? [component({
+                  scoringKey,
+                  statKey: projectedHits.statKey,
+                  statValue: projectedHits.statValue,
+                  scoringValue: context.scoringValue,
+                  category,
+                  description
+                })]
+              : []
+          };
+        }
       }
 
       const [firstKey, secondKey] = canonicalStatKeys;

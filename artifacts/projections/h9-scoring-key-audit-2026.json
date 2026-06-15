@@ -1,0 +1,1433 @@
+{
+  "dryRunId": "h9.3-2025-to-2026-2026-06-15T01:37:43.056Z",
+  "projectionSeason": 2026,
+  "leagueCount": 13,
+  "sourceDataAvailability": {
+    "weeklyPlayerStats": [
+      "pass_fd",
+      "rush_fd",
+      "rec_fd",
+      "pass_sack"
+    ],
+    "weeklyDerivedStats": [
+      "pass_pick6",
+      "fum_ret_td",
+      "rec_td_40p",
+      "rec_td_50p",
+      "rush_td_40p",
+      "rush_td_50p"
+    ],
+    "absentOrUnsupportedForOffensiveProjection": [
+      "kr_yd",
+      "pr_yd",
+      "return_td",
+      "return_fd"
+    ]
+  },
+  "scoringKeys": [
+    {
+      "scoringKey": "blk_kick",
+      "numberOfLeaguesUsingIt": 8,
+      "positionsApplicable": [
+        "DEF",
+        "DL",
+        "LB",
+        "DB"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "non_offensive",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "bonus_def_fum_td_50p",
+      "numberOfLeaguesUsingIt": 1,
+      "positionsApplicable": [
+        "UNKNOWN_OR_NON_OFFENSIVE"
+      ],
+      "currentScoringEngineSupport": "unknown",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "can_change_offensive_projection",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "bonus_def_int_td_50p",
+      "numberOfLeaguesUsingIt": 1,
+      "positionsApplicable": [
+        "UNKNOWN_OR_NON_OFFENSIVE"
+      ],
+      "currentScoringEngineSupport": "unknown",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "can_change_offensive_projection",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "bonus_fd_qb",
+      "numberOfLeaguesUsingIt": 4,
+      "positionsApplicable": [
+        "QB"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "can_change_offensive_projection",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "bonus_fd_rb",
+      "numberOfLeaguesUsingIt": 8,
+      "positionsApplicable": [
+        "RB"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "can_change_offensive_projection",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "bonus_fd_te",
+      "numberOfLeaguesUsingIt": 8,
+      "positionsApplicable": [
+        "TE"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "can_change_offensive_projection",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "bonus_fd_wr",
+      "numberOfLeaguesUsingIt": 8,
+      "positionsApplicable": [
+        "WR"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "can_change_offensive_projection",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "bonus_pass_cmp_25",
+      "numberOfLeaguesUsingIt": 3,
+      "positionsApplicable": [
+        "QB"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "supported_projected",
+      "materiality": "can_change_offensive_projection",
+      "classification": "PROJECTABLE_NOW",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "bonus_pass_yd_300",
+      "numberOfLeaguesUsingIt": 6,
+      "positionsApplicable": [
+        "QB"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "supported_projected",
+      "materiality": "can_change_offensive_projection",
+      "classification": "PROJECTABLE_NOW",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "bonus_pass_yd_400",
+      "numberOfLeaguesUsingIt": 6,
+      "positionsApplicable": [
+        "QB"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "supported_projected",
+      "materiality": "can_change_offensive_projection",
+      "classification": "PROJECTABLE_APPROXIMATION",
+      "recommendedAction": "Use bounded approximation and reason-code diagnostics."
+    },
+    {
+      "scoringKey": "bonus_rec_rb",
+      "numberOfLeaguesUsingIt": 4,
+      "positionsApplicable": [
+        "RB"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "can_change_offensive_projection",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "bonus_rec_te",
+      "numberOfLeaguesUsingIt": 12,
+      "positionsApplicable": [
+        "TE"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "can_change_offensive_projection",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "bonus_rec_wr",
+      "numberOfLeaguesUsingIt": 5,
+      "positionsApplicable": [
+        "WR"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "can_change_offensive_projection",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "bonus_rec_yd_100",
+      "numberOfLeaguesUsingIt": 5,
+      "positionsApplicable": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "supported_projected",
+      "materiality": "can_change_offensive_projection",
+      "classification": "PROJECTABLE_NOW",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "bonus_rec_yd_200",
+      "numberOfLeaguesUsingIt": 7,
+      "positionsApplicable": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "supported_projected",
+      "materiality": "can_change_offensive_projection",
+      "classification": "PROJECTABLE_NOW",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "bonus_rush_att_20",
+      "numberOfLeaguesUsingIt": 5,
+      "positionsApplicable": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "supported_projected",
+      "materiality": "can_change_offensive_projection",
+      "classification": "PROJECTABLE_NOW",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "bonus_rush_rec_yd_100",
+      "numberOfLeaguesUsingIt": 2,
+      "positionsApplicable": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "supported_projected",
+      "materiality": "can_change_offensive_projection",
+      "classification": "PROJECTABLE_NOW",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "bonus_rush_rec_yd_200",
+      "numberOfLeaguesUsingIt": 5,
+      "positionsApplicable": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "supported_projected",
+      "materiality": "can_change_offensive_projection",
+      "classification": "PROJECTABLE_NOW",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "bonus_rush_yd_100",
+      "numberOfLeaguesUsingIt": 5,
+      "positionsApplicable": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "supported_projected",
+      "materiality": "can_change_offensive_projection",
+      "classification": "PROJECTABLE_NOW",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "bonus_rush_yd_200",
+      "numberOfLeaguesUsingIt": 8,
+      "positionsApplicable": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "supported_projected",
+      "materiality": "can_change_offensive_projection",
+      "classification": "PROJECTABLE_NOW",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "bonus_sack_2p",
+      "numberOfLeaguesUsingIt": 1,
+      "positionsApplicable": [
+        "UNKNOWN_OR_NON_OFFENSIVE"
+      ],
+      "currentScoringEngineSupport": "unknown",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "can_change_offensive_projection",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "bonus_tkl_10p",
+      "numberOfLeaguesUsingIt": 1,
+      "positionsApplicable": [
+        "UNKNOWN_OR_NON_OFFENSIVE"
+      ],
+      "currentScoringEngineSupport": "unknown",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "can_change_offensive_projection",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "def_st_ff",
+      "numberOfLeaguesUsingIt": 7,
+      "positionsApplicable": [
+        "UNKNOWN_OR_NON_OFFENSIVE"
+      ],
+      "currentScoringEngineSupport": "unknown",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "can_change_offensive_projection",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "def_st_fum_rec",
+      "numberOfLeaguesUsingIt": 7,
+      "positionsApplicable": [
+        "UNKNOWN_OR_NON_OFFENSIVE"
+      ],
+      "currentScoringEngineSupport": "unknown",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "can_change_offensive_projection",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "def_st_td",
+      "numberOfLeaguesUsingIt": 7,
+      "positionsApplicable": [
+        "DEF",
+        "DL",
+        "LB",
+        "DB"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "non_offensive",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "def_td",
+      "numberOfLeaguesUsingIt": 7,
+      "positionsApplicable": [
+        "DEF",
+        "DL",
+        "LB",
+        "DB"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "non_offensive",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "ff",
+      "numberOfLeaguesUsingIt": 7,
+      "positionsApplicable": [
+        "DEF",
+        "DL",
+        "LB",
+        "DB"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "non_offensive",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "fgm_0_19",
+      "numberOfLeaguesUsingIt": 9,
+      "positionsApplicable": [
+        "K"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "non_offensive",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "fgm_20_29",
+      "numberOfLeaguesUsingIt": 9,
+      "positionsApplicable": [
+        "K"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "non_offensive",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "fgm_30_39",
+      "numberOfLeaguesUsingIt": 9,
+      "positionsApplicable": [
+        "K"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "non_offensive",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "fgm_40_49",
+      "numberOfLeaguesUsingIt": 9,
+      "positionsApplicable": [
+        "K"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "non_offensive",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "fgm_50_59",
+      "numberOfLeaguesUsingIt": 5,
+      "positionsApplicable": [
+        "K"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "non_offensive",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "fgm_50p",
+      "numberOfLeaguesUsingIt": 4,
+      "positionsApplicable": [
+        "K"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "non_offensive",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "fgm_60p",
+      "numberOfLeaguesUsingIt": 5,
+      "positionsApplicable": [
+        "K"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "non_offensive",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "fgmiss",
+      "numberOfLeaguesUsingIt": 9,
+      "positionsApplicable": [
+        "K"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "non_offensive",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "fum",
+      "numberOfLeaguesUsingIt": 2,
+      "positionsApplicable": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "supported_projected",
+      "materiality": "can_change_offensive_projection",
+      "classification": "PROJECTABLE_NOW",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "fum_lost",
+      "numberOfLeaguesUsingIt": 13,
+      "positionsApplicable": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "supported_projected",
+      "materiality": "can_change_offensive_projection",
+      "classification": "PROJECTABLE_NOW",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "fum_rec",
+      "numberOfLeaguesUsingIt": 7,
+      "positionsApplicable": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "supported_projected",
+      "materiality": "can_change_offensive_projection",
+      "classification": "PROJECTABLE_NOW",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "fum_rec_td",
+      "numberOfLeaguesUsingIt": 9,
+      "positionsApplicable": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "supported_projected",
+      "materiality": "can_change_offensive_projection",
+      "classification": "PROJECTABLE_NOW",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "idp_blk_kick",
+      "numberOfLeaguesUsingIt": 2,
+      "positionsApplicable": [
+        "UNKNOWN_OR_NON_OFFENSIVE"
+      ],
+      "currentScoringEngineSupport": "unknown",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "can_change_offensive_projection",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "idp_def_td",
+      "numberOfLeaguesUsingIt": 2,
+      "positionsApplicable": [
+        "UNKNOWN_OR_NON_OFFENSIVE"
+      ],
+      "currentScoringEngineSupport": "unknown",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "can_change_offensive_projection",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "idp_ff",
+      "numberOfLeaguesUsingIt": 2,
+      "positionsApplicable": [
+        "UNKNOWN_OR_NON_OFFENSIVE"
+      ],
+      "currentScoringEngineSupport": "unknown",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "can_change_offensive_projection",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "idp_fum_rec",
+      "numberOfLeaguesUsingIt": 2,
+      "positionsApplicable": [
+        "UNKNOWN_OR_NON_OFFENSIVE"
+      ],
+      "currentScoringEngineSupport": "unknown",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "can_change_offensive_projection",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "idp_fum_ret_yd",
+      "numberOfLeaguesUsingIt": 1,
+      "positionsApplicable": [
+        "UNKNOWN_OR_NON_OFFENSIVE"
+      ],
+      "currentScoringEngineSupport": "unknown",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "can_change_offensive_projection",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "idp_int",
+      "numberOfLeaguesUsingIt": 2,
+      "positionsApplicable": [
+        "UNKNOWN_OR_NON_OFFENSIVE"
+      ],
+      "currentScoringEngineSupport": "unknown",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "can_change_offensive_projection",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "idp_int_ret_yd",
+      "numberOfLeaguesUsingIt": 1,
+      "positionsApplicable": [
+        "UNKNOWN_OR_NON_OFFENSIVE"
+      ],
+      "currentScoringEngineSupport": "unknown",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "can_change_offensive_projection",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "idp_pass_def",
+      "numberOfLeaguesUsingIt": 2,
+      "positionsApplicable": [
+        "UNKNOWN_OR_NON_OFFENSIVE"
+      ],
+      "currentScoringEngineSupport": "unknown",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "can_change_offensive_projection",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "idp_pass_def_3p",
+      "numberOfLeaguesUsingIt": 1,
+      "positionsApplicable": [
+        "UNKNOWN_OR_NON_OFFENSIVE"
+      ],
+      "currentScoringEngineSupport": "unknown",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "can_change_offensive_projection",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "idp_qb_hit",
+      "numberOfLeaguesUsingIt": 2,
+      "positionsApplicable": [
+        "UNKNOWN_OR_NON_OFFENSIVE"
+      ],
+      "currentScoringEngineSupport": "unknown",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "can_change_offensive_projection",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "idp_sack",
+      "numberOfLeaguesUsingIt": 2,
+      "positionsApplicable": [
+        "UNKNOWN_OR_NON_OFFENSIVE"
+      ],
+      "currentScoringEngineSupport": "unknown",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "can_change_offensive_projection",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "idp_sack_yd",
+      "numberOfLeaguesUsingIt": 1,
+      "positionsApplicable": [
+        "UNKNOWN_OR_NON_OFFENSIVE"
+      ],
+      "currentScoringEngineSupport": "unknown",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "can_change_offensive_projection",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "idp_safe",
+      "numberOfLeaguesUsingIt": 2,
+      "positionsApplicable": [
+        "UNKNOWN_OR_NON_OFFENSIVE"
+      ],
+      "currentScoringEngineSupport": "unknown",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "can_change_offensive_projection",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "idp_tkl",
+      "numberOfLeaguesUsingIt": 1,
+      "positionsApplicable": [
+        "UNKNOWN_OR_NON_OFFENSIVE"
+      ],
+      "currentScoringEngineSupport": "unknown",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "can_change_offensive_projection",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "idp_tkl_ast",
+      "numberOfLeaguesUsingIt": 2,
+      "positionsApplicable": [
+        "UNKNOWN_OR_NON_OFFENSIVE"
+      ],
+      "currentScoringEngineSupport": "unknown",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "can_change_offensive_projection",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "idp_tkl_loss",
+      "numberOfLeaguesUsingIt": 2,
+      "positionsApplicable": [
+        "UNKNOWN_OR_NON_OFFENSIVE"
+      ],
+      "currentScoringEngineSupport": "unknown",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "can_change_offensive_projection",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "idp_tkl_solo",
+      "numberOfLeaguesUsingIt": 2,
+      "positionsApplicable": [
+        "UNKNOWN_OR_NON_OFFENSIVE"
+      ],
+      "currentScoringEngineSupport": "unknown",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "can_change_offensive_projection",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "int",
+      "numberOfLeaguesUsingIt": 7,
+      "positionsApplicable": [
+        "DEF",
+        "DL",
+        "LB",
+        "DB"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "non_offensive",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "kr_yd",
+      "numberOfLeaguesUsingIt": 1,
+      "positionsApplicable": [
+        "UNKNOWN_OR_NON_OFFENSIVE"
+      ],
+      "currentScoringEngineSupport": "unknown",
+      "currentProjectionComponentSupport": "supported_known_zero_or_excluded",
+      "materiality": "can_change_offensive_projection",
+      "classification": "KNOWN_ZERO_OR_NOT_APPLICABLE",
+      "recommendedAction": "Keep explicit zero/exclusion policy visible in diagnostics."
+    },
+    {
+      "scoringKey": "pass_2pt",
+      "numberOfLeaguesUsingIt": 13,
+      "positionsApplicable": [
+        "QB"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "supported_projected",
+      "materiality": "can_change_offensive_projection",
+      "classification": "PROJECTABLE_NOW",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "pass_cmp_40p",
+      "numberOfLeaguesUsingIt": 1,
+      "positionsApplicable": [
+        "QB"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "supported_projected",
+      "materiality": "can_change_offensive_projection",
+      "classification": "PROJECTABLE_APPROXIMATION",
+      "recommendedAction": "Use bounded approximation and reason-code diagnostics."
+    },
+    {
+      "scoringKey": "pass_fd",
+      "numberOfLeaguesUsingIt": 1,
+      "positionsApplicable": [
+        "QB"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "supported_projected",
+      "materiality": "can_change_offensive_projection",
+      "classification": "PROJECTABLE_NOW",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "pass_int",
+      "numberOfLeaguesUsingIt": 13,
+      "positionsApplicable": [
+        "QB"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "supported_projected",
+      "materiality": "can_change_offensive_projection",
+      "classification": "PROJECTABLE_NOW",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "pass_int_td",
+      "numberOfLeaguesUsingIt": 8,
+      "positionsApplicable": [
+        "QB"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "supported_projected",
+      "materiality": "can_change_offensive_projection",
+      "classification": "PROJECTABLE_NOW",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "pass_sack",
+      "numberOfLeaguesUsingIt": 1,
+      "positionsApplicable": [
+        "QB"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "supported_projected",
+      "materiality": "can_change_offensive_projection",
+      "classification": "PROJECTABLE_NOW",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "pass_td",
+      "numberOfLeaguesUsingIt": 13,
+      "positionsApplicable": [
+        "QB"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "supported_projected",
+      "materiality": "can_change_offensive_projection",
+      "classification": "PROJECTABLE_NOW",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "pass_td_40p",
+      "numberOfLeaguesUsingIt": 3,
+      "positionsApplicable": [
+        "QB"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "supported_projected",
+      "materiality": "can_change_offensive_projection",
+      "classification": "PROJECTABLE_APPROXIMATION",
+      "recommendedAction": "Use bounded approximation and reason-code diagnostics."
+    },
+    {
+      "scoringKey": "pass_td_50p",
+      "numberOfLeaguesUsingIt": 7,
+      "positionsApplicable": [
+        "QB"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "supported_projected",
+      "materiality": "can_change_offensive_projection",
+      "classification": "PROJECTABLE_APPROXIMATION",
+      "recommendedAction": "Use bounded approximation and reason-code diagnostics."
+    },
+    {
+      "scoringKey": "pass_yd",
+      "numberOfLeaguesUsingIt": 13,
+      "positionsApplicable": [
+        "QB"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "supported_projected",
+      "materiality": "can_change_offensive_projection",
+      "classification": "PROJECTABLE_NOW",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "pr_yd",
+      "numberOfLeaguesUsingIt": 1,
+      "positionsApplicable": [
+        "UNKNOWN_OR_NON_OFFENSIVE"
+      ],
+      "currentScoringEngineSupport": "unknown",
+      "currentProjectionComponentSupport": "supported_known_zero_or_excluded",
+      "materiality": "can_change_offensive_projection",
+      "classification": "KNOWN_ZERO_OR_NOT_APPLICABLE",
+      "recommendedAction": "Keep explicit zero/exclusion policy visible in diagnostics."
+    },
+    {
+      "scoringKey": "pts_allow_0",
+      "numberOfLeaguesUsingIt": 8,
+      "positionsApplicable": [
+        "DEF"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "non_offensive",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "pts_allow_1_6",
+      "numberOfLeaguesUsingIt": 8,
+      "positionsApplicable": [
+        "DEF"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "non_offensive",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "pts_allow_14_20",
+      "numberOfLeaguesUsingIt": 8,
+      "positionsApplicable": [
+        "DEF"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "non_offensive",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "pts_allow_28_34",
+      "numberOfLeaguesUsingIt": 8,
+      "positionsApplicable": [
+        "DEF"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "non_offensive",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "pts_allow_35p",
+      "numberOfLeaguesUsingIt": 8,
+      "positionsApplicable": [
+        "DEF"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "non_offensive",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "pts_allow_7_13",
+      "numberOfLeaguesUsingIt": 8,
+      "positionsApplicable": [
+        "DEF"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "non_offensive",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "rec",
+      "numberOfLeaguesUsingIt": 13,
+      "positionsApplicable": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "supported_projected",
+      "materiality": "can_change_offensive_projection",
+      "classification": "PROJECTABLE_NOW",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "rec_20_29",
+      "numberOfLeaguesUsingIt": 1,
+      "positionsApplicable": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "supported_projected",
+      "materiality": "can_change_offensive_projection",
+      "classification": "PROJECTABLE_NOW",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "rec_2pt",
+      "numberOfLeaguesUsingIt": 13,
+      "positionsApplicable": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "supported_projected",
+      "materiality": "can_change_offensive_projection",
+      "classification": "PROJECTABLE_NOW",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "rec_30_39",
+      "numberOfLeaguesUsingIt": 1,
+      "positionsApplicable": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "supported_projected",
+      "materiality": "can_change_offensive_projection",
+      "classification": "PROJECTABLE_NOW",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "rec_40p",
+      "numberOfLeaguesUsingIt": 2,
+      "positionsApplicable": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "supported_projected",
+      "materiality": "can_change_offensive_projection",
+      "classification": "PROJECTABLE_APPROXIMATION",
+      "recommendedAction": "Use bounded approximation and reason-code diagnostics."
+    },
+    {
+      "scoringKey": "rec_fd",
+      "numberOfLeaguesUsingIt": 6,
+      "positionsApplicable": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "supported_projected",
+      "materiality": "can_change_offensive_projection",
+      "classification": "PROJECTABLE_NOW",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "rec_td",
+      "numberOfLeaguesUsingIt": 13,
+      "positionsApplicable": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "supported_projected",
+      "materiality": "can_change_offensive_projection",
+      "classification": "PROJECTABLE_NOW",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "rec_td_40p",
+      "numberOfLeaguesUsingIt": 5,
+      "positionsApplicable": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "supported_projected",
+      "materiality": "can_change_offensive_projection",
+      "classification": "PROJECTABLE_APPROXIMATION",
+      "recommendedAction": "Use bounded approximation and reason-code diagnostics."
+    },
+    {
+      "scoringKey": "rec_td_50p",
+      "numberOfLeaguesUsingIt": 7,
+      "positionsApplicable": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "supported_projected",
+      "materiality": "can_change_offensive_projection",
+      "classification": "PROJECTABLE_APPROXIMATION",
+      "recommendedAction": "Use bounded approximation and reason-code diagnostics."
+    },
+    {
+      "scoringKey": "rec_yd",
+      "numberOfLeaguesUsingIt": 13,
+      "positionsApplicable": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "supported_projected",
+      "materiality": "can_change_offensive_projection",
+      "classification": "PROJECTABLE_NOW",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "rush_2pt",
+      "numberOfLeaguesUsingIt": 13,
+      "positionsApplicable": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "supported_projected",
+      "materiality": "can_change_offensive_projection",
+      "classification": "PROJECTABLE_NOW",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "rush_40p",
+      "numberOfLeaguesUsingIt": 1,
+      "positionsApplicable": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "supported_projected",
+      "materiality": "can_change_offensive_projection",
+      "classification": "PROJECTABLE_APPROXIMATION",
+      "recommendedAction": "Use bounded approximation and reason-code diagnostics."
+    },
+    {
+      "scoringKey": "rush_att",
+      "numberOfLeaguesUsingIt": 7,
+      "positionsApplicable": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "supported_projected",
+      "materiality": "can_change_offensive_projection",
+      "classification": "PROJECTABLE_NOW",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "rush_fd",
+      "numberOfLeaguesUsingIt": 6,
+      "positionsApplicable": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "supported_projected",
+      "materiality": "can_change_offensive_projection",
+      "classification": "PROJECTABLE_NOW",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "rush_td",
+      "numberOfLeaguesUsingIt": 13,
+      "positionsApplicable": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "supported_projected",
+      "materiality": "can_change_offensive_projection",
+      "classification": "PROJECTABLE_NOW",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "rush_td_40p",
+      "numberOfLeaguesUsingIt": 5,
+      "positionsApplicable": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "supported_projected",
+      "materiality": "can_change_offensive_projection",
+      "classification": "PROJECTABLE_APPROXIMATION",
+      "recommendedAction": "Use bounded approximation and reason-code diagnostics."
+    },
+    {
+      "scoringKey": "rush_td_50p",
+      "numberOfLeaguesUsingIt": 8,
+      "positionsApplicable": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "supported_projected",
+      "materiality": "can_change_offensive_projection",
+      "classification": "PROJECTABLE_APPROXIMATION",
+      "recommendedAction": "Use bounded approximation and reason-code diagnostics."
+    },
+    {
+      "scoringKey": "rush_yd",
+      "numberOfLeaguesUsingIt": 13,
+      "positionsApplicable": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "supported_projected",
+      "materiality": "can_change_offensive_projection",
+      "classification": "PROJECTABLE_NOW",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "sack",
+      "numberOfLeaguesUsingIt": 7,
+      "positionsApplicable": [
+        "DEF",
+        "DL",
+        "LB",
+        "DB"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "non_offensive",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "safe",
+      "numberOfLeaguesUsingIt": 7,
+      "positionsApplicable": [
+        "DEF",
+        "DL",
+        "LB",
+        "DB"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "non_offensive",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "st_ff",
+      "numberOfLeaguesUsingIt": 8,
+      "positionsApplicable": [
+        "UNKNOWN_OR_NON_OFFENSIVE"
+      ],
+      "currentScoringEngineSupport": "unknown",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "can_change_offensive_projection",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "st_fum_rec",
+      "numberOfLeaguesUsingIt": 8,
+      "positionsApplicable": [
+        "UNKNOWN_OR_NON_OFFENSIVE"
+      ],
+      "currentScoringEngineSupport": "unknown",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "can_change_offensive_projection",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "st_td",
+      "numberOfLeaguesUsingIt": 8,
+      "positionsApplicable": [
+        "UNKNOWN_OR_NON_OFFENSIVE"
+      ],
+      "currentScoringEngineSupport": "unknown",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "can_change_offensive_projection",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "xpm",
+      "numberOfLeaguesUsingIt": 9,
+      "positionsApplicable": [
+        "K"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "non_offensive",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "xpmiss",
+      "numberOfLeaguesUsingIt": 9,
+      "positionsApplicable": [
+        "K"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "non_offensive",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "yds_allow_0_100",
+      "numberOfLeaguesUsingIt": 1,
+      "positionsApplicable": [
+        "DEF"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "non_offensive",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "yds_allow_100_199",
+      "numberOfLeaguesUsingIt": 1,
+      "positionsApplicable": [
+        "UNKNOWN_OR_NON_OFFENSIVE"
+      ],
+      "currentScoringEngineSupport": "unknown",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "can_change_offensive_projection",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "yds_allow_200_299",
+      "numberOfLeaguesUsingIt": 1,
+      "positionsApplicable": [
+        "DEF"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "non_offensive",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "yds_allow_350_399",
+      "numberOfLeaguesUsingIt": 1,
+      "positionsApplicable": [
+        "DEF"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "non_offensive",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "yds_allow_400_449",
+      "numberOfLeaguesUsingIt": 1,
+      "positionsApplicable": [
+        "DEF"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "non_offensive",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "yds_allow_450_499",
+      "numberOfLeaguesUsingIt": 1,
+      "positionsApplicable": [
+        "DEF"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "non_offensive",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "yds_allow_500_549",
+      "numberOfLeaguesUsingIt": 1,
+      "positionsApplicable": [
+        "DEF"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "non_offensive",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    },
+    {
+      "scoringKey": "yds_allow_550p",
+      "numberOfLeaguesUsingIt": 1,
+      "positionsApplicable": [
+        "DEF"
+      ],
+      "currentScoringEngineSupport": "supported_or_known",
+      "currentProjectionComponentSupport": "excluded_non_offensive_or_not_applicable",
+      "materiality": "non_offensive",
+      "classification": "EXCLUDED_NON_OFFENSIVE",
+      "recommendedAction": "No H9.4 action required for offensive projection readiness."
+    }
+  ]
+}

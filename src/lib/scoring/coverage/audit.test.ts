@@ -142,8 +142,8 @@ describe("scoring coverage registry — structural invariants", () => {
     }
   });
 
-  it("registry contains exactly 115 unique keys", () => {
-    expect(SCORING_COVERAGE_REGISTRY).toHaveLength(115);
+  it("registry contains exactly 119 unique keys", () => {
+    expect(SCORING_COVERAGE_REGISTRY).toHaveLength(119);
   });
 });
 
@@ -169,16 +169,16 @@ describe("scoring coverage audit — contradiction detection", () => {
     }
   });
 
-  it("each independent summary dimension reconciles to 115 keys", () => {
+  it("each independent summary dimension reconciles to 119 keys", () => {
     const result = runCoverageAudit();
     const sum = (values: Record<string, number>) => Object.values(values).reduce((total, count) => total + count, 0);
 
-    expect(sum(result.engineStatusSummary)).toBe(115);
-    expect(sum(result.dataStatusSummary)).toBe(115);
-    expect(sum(result.familySummary)).toBe(115);
-    expect(sum(result.sourceSummary)).toBe(115);
-    expect(sum(result.scopeSummary)).toBe(115);
-    expect(sum(result.verificationSummary)).toBe(115);
+    expect(sum(result.engineStatusSummary)).toBe(119);
+    expect(sum(result.dataStatusSummary)).toBe(119);
+    expect(sum(result.familySummary)).toBe(119);
+    expect(sum(result.sourceSummary)).toBe(119);
+    expect(sum(result.scopeSummary)).toBe(119);
+    expect(sum(result.verificationSummary)).toBe(119);
   });
 
   it("summary dimensions only use expected classification values", () => {
@@ -211,7 +211,7 @@ describe("scoring coverage audit — contradiction detection", () => {
     expect(counts.group_a_weekly_derivable).toBe(0);
     expect(counts.group_b_weekly_unwired).toBe(0);
     expect(counts.group_ab_blocked_candidates).toBe(1);
-    expect(counts.group_c_additional_pbp_derivations).toBe(4);
+    expect(counts.group_c_additional_pbp_derivations).toBe(7);
     expect(counts.group_d_team_context_dependent).toBe(16);
   });
 

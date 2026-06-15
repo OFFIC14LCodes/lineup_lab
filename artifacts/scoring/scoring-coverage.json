@@ -1,62 +1,62 @@
 {
   "meta": {
-    "auditedAt": "2026-06-14T22:11:44.869Z",
-    "totalRegistryKeys": 115,
-    "totalEngineKeys": 105,
-    "operationalNowKeyCount": 52,
-    "currentScopeBacklogKeyCount": 17,
-    "deferredCurrentPhaseKeyCount": 42,
+    "auditedAt": "2026-06-15T05:53:14.794Z",
+    "totalRegistryKeys": 119,
+    "totalEngineKeys": 115,
+    "operationalNowKeyCount": 54,
+    "currentScopeBacklogKeyCount": 24,
+    "deferredCurrentPhaseKeyCount": 41,
     "findingCount": 0,
     "errorCount": 0,
     "warningCount": 0
   },
   "summary": {
     "engineStatus": {
-      "implemented_verified": 105,
+      "implemented_verified": 115,
       "implemented_unverified": 0,
-      "not_implemented": 10
+      "not_implemented": 4
     },
     "dataAvailabilityStatus": {
-      "nflverse_weekly_verified": 45,
+      "nflverse_weekly_verified": 47,
       "nflverse_weekly_available": 0,
       "nflverse_weekly_derivable": 0,
       "nflverse_weekly_unwired": 0,
       "nflverse_pbp_derived": 7,
-      "nflverse_pbp_derivable": 4,
+      "nflverse_pbp_derivable": 7,
       "requires_team_game_context": 16,
       "requires_new_source": 1,
       "not_safely_derivable": 0,
-      "out_of_scope": 42
+      "out_of_scope": 41
     },
     "statFamily": {
       "passing_volume": 5,
       "passing_outcomes": 5,
       "rushing": 5,
       "receiving": 6,
-      "miscellaneous_skill": 4,
+      "miscellaneous_skill": 5,
       "special_teams_skill": 4,
       "first_down_bonuses": 5,
       "yardage_threshold_bonuses": 10,
-      "long_td_bonuses": 7,
+      "long_td_bonuses": 11,
       "position_rec_bonuses": 6,
       "kicking": 16,
-      "team_defense": 32,
+      "team_defense": 31,
       "idp": 10
     },
     "sourceClassification": {
-      "nflverse_weekly_player_stats": 45,
-      "nflverse_pbp_derived_stats": 11,
+      "nflverse_weekly_player_stats": 47,
+      "nflverse_pbp_derived_stats": 14,
       "team_game_context": 16,
-      "deferred_position_source": 43
+      "deferred_position_source": 42
     },
     "scopeClassification": {
-      "operational_now": 52,
-      "current_scope_backlog": 21,
-      "deferred_current_phase": 42
+      "operational_now": 54,
+      "current_scope_backlog": 24,
+      "deferred_current_phase": 41
     },
     "verificationLevel": {
       "real_play_verified": 5,
-      "repository_test_verified": 110
+      "repository_test_verified": 114
     }
   },
   "summaryNotes": [
@@ -100,7 +100,9 @@
     "pass_yd",
     "punt_ret_yd",
     "rec",
+    "rec_20_29",
     "rec_2pt",
+    "rec_30_39",
     "rec_fd",
     "rec_rb_bonus",
     "rec_td",
@@ -120,6 +122,11 @@
     "rush_yd"
   ],
   "currentScopeBacklogKeys": [
+    "fum_rec",
+    "fum_rec_td",
+    "pass_cmp_40p",
+    "pass_td_40p",
+    "pass_td_50p",
     "pts_allow_0",
     "pts_allow_14_20",
     "pts_allow_1_6",
@@ -127,7 +134,9 @@
     "pts_allow_28_34",
     "pts_allow_35p",
     "pts_allow_7_13",
+    "rec_40p",
     "return_fd",
+    "rush_40p",
     "yds_allow_0_100",
     "yds_allow_101_199",
     "yds_allow_200_299",
@@ -167,7 +176,6 @@
     "fourth_down_stop",
     "fr",
     "fr_ret_yd",
-    "fum_rec_td",
     "int",
     "int_ret_yd",
     "pd",
@@ -276,7 +284,7 @@
       "id": "group_c_additional_pbp_derivations",
       "title": "Group C — additional PBP derivations",
       "description": "Keys that still require more play-by-play-derived canonical stats beyond the H2/H2.1 set now in production.",
-      "currentKeyCount": 4,
+      "currentKeyCount": 7,
       "keys": [
         {
           "key": "fum_rec",
@@ -306,6 +314,30 @@
           "key": "pass_cmp_40p",
           "label": "Passing completion of 40+ yards bonus",
           "family": "long_td_bonuses",
+          "dataStatus": "nflverse_pbp_derivable",
+          "recommendedPath": "Extend the PBP derivation pipeline with a new derived canonical stat.",
+          "blockers": []
+        },
+        {
+          "key": "rec_40p",
+          "label": "Reception of 40+ yards bonus",
+          "family": "long_td_bonuses",
+          "dataStatus": "nflverse_pbp_derivable",
+          "recommendedPath": "Extend the PBP derivation pipeline with a new derived canonical stat.",
+          "blockers": []
+        },
+        {
+          "key": "rush_40p",
+          "label": "Rush of 40+ yards bonus",
+          "family": "long_td_bonuses",
+          "dataStatus": "nflverse_pbp_derivable",
+          "recommendedPath": "Extend the PBP derivation pipeline with a new derived canonical stat.",
+          "blockers": []
+        },
+        {
+          "key": "fum_rec_td",
+          "label": "Offensive fumble recovery touchdown",
+          "family": "miscellaneous_skill",
           "dataStatus": "nflverse_pbp_derivable",
           "recommendedPath": "Extend the PBP derivation pipeline with a new derived canonical stat.",
           "blockers": []
@@ -453,6 +485,62 @@
   ],
   "findings": [],
   "implementationRoadmap": [
+    {
+      "key": "fum_rec",
+      "label": "Offensive fumble recovery",
+      "family": "miscellaneous_skill",
+      "dataStatus": "nflverse_pbp_derivable",
+      "blockers": [],
+      "notes": "Engine rule implemented; H9.4 offensive projection uses an explicit known-zero/non-repeatable policy unless a future PBP recovery projection model is added."
+    },
+    {
+      "key": "pass_td_40p",
+      "label": "Passing TD of 40+ yards bonus",
+      "family": "long_td_bonuses",
+      "dataStatus": "nflverse_pbp_derivable",
+      "blockers": [],
+      "notes": "Engine rule implemented; projection uses bounded long-TD approximation because direct passer long-TD weekly component is not currently present."
+    },
+    {
+      "key": "pass_td_50p",
+      "label": "Passing TD of 50+ yards bonus",
+      "family": "long_td_bonuses",
+      "dataStatus": "nflverse_pbp_derivable",
+      "blockers": [],
+      "notes": "50p is a subset of 40p; projection uses a more conservative bounded approximation."
+    },
+    {
+      "key": "pass_cmp_40p",
+      "label": "Passing completion of 40+ yards bonus",
+      "family": "long_td_bonuses",
+      "dataStatus": "nflverse_pbp_derivable",
+      "blockers": [],
+      "notes": "Engine rule implemented; projection uses bounded proxy from sparse long-play evidence."
+    },
+    {
+      "key": "rec_40p",
+      "label": "Reception of 40+ yards bonus",
+      "family": "long_td_bonuses",
+      "dataStatus": "nflverse_pbp_derivable",
+      "blockers": [],
+      "notes": "Engine rule implemented; projection uses bounded proxy from sparse long-play receiving evidence."
+    },
+    {
+      "key": "rush_40p",
+      "label": "Rush of 40+ yards bonus",
+      "family": "long_td_bonuses",
+      "dataStatus": "nflverse_pbp_derivable",
+      "blockers": [],
+      "notes": "Engine rule implemented; projection uses bounded proxy from sparse long-play rushing evidence."
+    },
+    {
+      "key": "fum_rec_td",
+      "label": "Offensive fumble recovery touchdown",
+      "family": "miscellaneous_skill",
+      "dataStatus": "nflverse_pbp_derivable",
+      "blockers": [],
+      "notes": "Engine rule implemented; H9.4 offensive projection treats this as a non-repeatable known-zero event unless a future recovery-TD model is added."
+    },
     {
       "key": "pts_allow_0",
       "label": "Points allowed: shutout (0)",
@@ -1158,14 +1246,14 @@
         "WR",
         "TE"
       ],
-      "engineStatus": "not_implemented",
+      "engineStatus": "implemented_verified",
       "dataStatus": "nflverse_pbp_derivable",
       "canonicalStatKey": "fum_rec",
       "derivedStatExpression": null,
       "normalizedFrom": null,
-      "implementationPhase": null,
+      "implementationPhase": "H9.4",
       "blockers": [],
-      "notes": "Points for an offensive player recovering any fumble; not exposed in nflverse weekly CSV — requires PBP recovery attribution. No engine rule implemented."
+      "notes": "Engine rule implemented; H9.4 offensive projection uses an explicit known-zero/non-repeatable policy unless a future PBP recovery projection model is added."
     },
     {
       "key": "kick_ret_yd",
@@ -1422,14 +1510,14 @@
       "allowedPositions": [
         "QB"
       ],
-      "engineStatus": "not_implemented",
+      "engineStatus": "implemented_verified",
       "dataStatus": "nflverse_pbp_derivable",
       "canonicalStatKey": "pass_td_40p",
       "derivedStatExpression": null,
       "normalizedFrom": null,
-      "implementationPhase": null,
+      "implementationPhase": "H9.4",
       "blockers": [],
-      "notes": "PBP-derivable equivalent of rec_td_40p/rush_td_40p for the passer; H2 pipeline not yet extended to passing long TDs. No engine rule implemented."
+      "notes": "Engine rule implemented; projection uses bounded long-TD approximation because direct passer long-TD weekly component is not currently present."
     },
     {
       "key": "pass_td_50p",
@@ -1439,14 +1527,14 @@
       "allowedPositions": [
         "QB"
       ],
-      "engineStatus": "not_implemented",
+      "engineStatus": "implemented_verified",
       "dataStatus": "nflverse_pbp_derivable",
       "canonicalStatKey": "pass_td_50p",
       "derivedStatExpression": null,
       "normalizedFrom": null,
-      "implementationPhase": null,
+      "implementationPhase": "H9.4",
       "blockers": [],
-      "notes": "50p is a subset of 40p; engine rule not yet implemented."
+      "notes": "50p is a subset of 40p; projection uses a more conservative bounded approximation."
     },
     {
       "key": "pass_cmp_40p",
@@ -1456,14 +1544,94 @@
       "allowedPositions": [
         "QB"
       ],
-      "engineStatus": "not_implemented",
+      "engineStatus": "implemented_verified",
       "dataStatus": "nflverse_pbp_derivable",
       "canonicalStatKey": "pass_cmp_40p",
       "derivedStatExpression": null,
       "normalizedFrom": null,
-      "implementationPhase": null,
+      "implementationPhase": "H9.4",
       "blockers": [],
-      "notes": "Bonus for a reception that travels 40+ air yards to the passer's credit; requires PBP air-yards data."
+      "notes": "Engine rule implemented; projection uses bounded proxy from sparse long-play evidence."
+    },
+    {
+      "key": "rec_20_29",
+      "label": "Reception of 20-29 yards bonus",
+      "family": "long_td_bonuses",
+      "category": "bonuses",
+      "allowedPositions": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "nflverse_weekly_verified",
+      "canonicalStatKey": "rec_20_29",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": "H9.4",
+      "blockers": [],
+      "notes": "Projection estimates expected weekly hit counts from role-week receiving-yard distribution."
+    },
+    {
+      "key": "rec_30_39",
+      "label": "Reception of 30-39 yards bonus",
+      "family": "long_td_bonuses",
+      "category": "bonuses",
+      "allowedPositions": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "nflverse_weekly_verified",
+      "canonicalStatKey": "rec_30_39",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": "H9.4",
+      "blockers": [],
+      "notes": "Projection estimates expected weekly hit counts from role-week receiving-yard distribution."
+    },
+    {
+      "key": "rec_40p",
+      "label": "Reception of 40+ yards bonus",
+      "family": "long_td_bonuses",
+      "category": "bonuses",
+      "allowedPositions": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "nflverse_pbp_derivable",
+      "canonicalStatKey": "rec_40p",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": "H9.4",
+      "blockers": [],
+      "notes": "Engine rule implemented; projection uses bounded proxy from sparse long-play receiving evidence."
+    },
+    {
+      "key": "rush_40p",
+      "label": "Rush of 40+ yards bonus",
+      "family": "long_td_bonuses",
+      "category": "bonuses",
+      "allowedPositions": [
+        "QB",
+        "RB",
+        "WR",
+        "TE"
+      ],
+      "engineStatus": "implemented_verified",
+      "dataStatus": "nflverse_pbp_derivable",
+      "canonicalStatKey": "rush_40p",
+      "derivedStatExpression": null,
+      "normalizedFrom": null,
+      "implementationPhase": "H9.4",
+      "blockers": [],
+      "notes": "Engine rule implemented; projection uses bounded proxy from sparse long-play rushing evidence."
     },
     {
       "key": "bonus_pass_yd_300",
@@ -2138,23 +2306,23 @@
     },
     {
       "key": "fum_rec_td",
-      "label": "Fumble recovery touchdown",
-      "family": "team_defense",
-      "category": "team_defense",
+      "label": "Offensive fumble recovery touchdown",
+      "family": "miscellaneous_skill",
+      "category": "miscellaneous",
       "allowedPositions": [
-        "DEF",
-        "DL",
-        "LB",
-        "DB"
+        "QB",
+        "RB",
+        "WR",
+        "TE"
       ],
-      "engineStatus": "not_implemented",
-      "dataStatus": "out_of_scope",
+      "engineStatus": "implemented_verified",
+      "dataStatus": "nflverse_pbp_derivable",
       "canonicalStatKey": "fum_rec_td",
       "derivedStatExpression": null,
       "normalizedFrom": null,
-      "implementationPhase": null,
+      "implementationPhase": "H9.4",
       "blockers": [],
-      "notes": "Sleeper key for scoring a TD after recovering a fumble; primarily a DEF/IDP key. Offensive equivalent is fum_ret_td."
+      "notes": "Engine rule implemented; H9.4 offensive projection treats this as a non-repeatable known-zero event unless a future recovery-TD model is added."
     },
     {
       "key": "def_2pt_ret",
@@ -2706,14 +2874,14 @@
         "LB",
         "DB"
       ],
-      "engineStatus": "not_implemented",
+      "engineStatus": "implemented_verified",
       "dataStatus": "out_of_scope",
       "canonicalStatKey": "bonus_sack_2p",
       "derivedStatExpression": null,
       "normalizedFrom": null,
       "implementationPhase": null,
       "blockers": [],
-      "notes": "Bonus points for recording 2 or more sacks in a single game; no engine rule implemented."
+      "notes": "Projection mode uses an explicit low-confidence season approximation emitted by H9.10."
     }
   ]
 }
