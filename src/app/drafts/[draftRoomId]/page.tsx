@@ -9,7 +9,7 @@ export default async function DraftRoomPage({ params }: { params: Promise<{ draf
   const { draftRoomId } = await params;
 
   return (
-    <PageShell>
+    <PageShell className="max-w-[1800px]">
       <Link className="mb-4 inline-block text-sm text-brand" href="/leagues">
         Back to leagues
       </Link>

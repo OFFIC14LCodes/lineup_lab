@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-15T17:46:38.757Z",
+  "generatedAt": "2026-06-15T18:07:05.971Z",
   "artifactVersion": "h10.14-need-timing-survival-calibration-v1",
   "baselineReplayMetrics": {
     "wait_on_need_success_rate": 0.435,

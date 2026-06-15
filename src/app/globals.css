@@ -14,6 +14,8 @@
 
 body {
   margin: 0;
+  max-width: 100%;
+  overflow-x: hidden;
   background:
     radial-gradient(circle at top, rgba(201, 164, 92, 0.12), transparent 32%),
     linear-gradient(180deg, #060708 0%, #0a0d11 38%, #0f1318 100%);
@@ -106,6 +108,7 @@ textarea {
 }
 
 .rf-nav-link {
+  flex-shrink: 0;
   border-radius: 9999px;
   padding: 0.55rem 0.9rem;
   transition:

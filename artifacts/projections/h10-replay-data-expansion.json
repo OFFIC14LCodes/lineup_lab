@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-15T17:46:39.290Z",
+  "generatedAt": "2026-06-15T18:07:07.707Z",
   "artifactVersion": "h10.16-replay-data-expansion-v1",
   "trueHistoricalDraftsAvailable": false,
   "replaySourceType": "synthetic",
@@ -23,7 +23,7 @@
     {
       "table": "draft_room_picks",
       "found": true,
-      "rowCount": 222,
+      "rowCount": 233,
       "fieldsAvailable": [
         "draft_room_id",
         "pick_no",
@@ -75,7 +75,7 @@
   "sourceSummary": {
     "completedDraftRoomsWithPicks": 0,
     "rosterRows": 14,
-    "draftPickRows": 222,
+    "draftPickRows": 233,
     "recommendationSnapshotRows": 0,
     "auditError": null
   },

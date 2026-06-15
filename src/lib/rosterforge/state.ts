@@ -15,6 +15,7 @@ import {
   type PositionGroup
 } from "@/lib/draft/roster-slots";
 import { getBooleanEnv } from "@/lib/env";
+import { buildH10WarRoomModeState } from "@/lib/rosterforge/h10-internal-trusted-mode";
 import type { H10LeagueValueRow } from "@/lib/projections/h10-league-value";
 import { createAdminClient } from "@/lib/supabase/admin";
 
@@ -100,8 +101,6 @@ const WARNING_MESSAGES: Record<string, string> = {
 };
 
 const H10_WAR_ROOM_OVERLAY_FEATURE_FLAG = "ENABLE_H10_WAR_ROOM_OVERLAY";
-const H10_WAR_ROOM_RECOMMENDATIONS_PREVIEW_FEATURE_FLAG = "ENABLE_H10_WAR_ROOM_RECOMMENDATIONS_PREVIEW";
-const H10_WAR_ROOM_RECOMMENDATIONS_EXPERIMENT_FEATURE_FLAG = "ENABLE_H10_WAR_ROOM_RECOMMENDATIONS_EXPERIMENT";
 const WAR_ROOM_DIAGNOSTIC_FALLBACKS_FEATURE_FLAG = "ENABLE_WAR_ROOM_DIAGNOSTIC_FALLBACKS";
 
 export async function getDraftRoomState(userId: string, draftRoomId: string) {
@@ -337,9 +336,11 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
         fallbackPlayers,
       })
     : {};
-  const h10RecommendationPreviewEnabled = getBooleanEnv(H10_WAR_ROOM_RECOMMENDATIONS_PREVIEW_FEATURE_FLAG, true);
-  const h10RecommendationExperimentEnabled = getBooleanEnv(H10_WAR_ROOM_RECOMMENDATIONS_EXPERIMENT_FEATURE_FLAG, false);
-  const recommendationPreviewPayload = h10RecommendationPreviewEnabled || h10RecommendationExperimentEnabled
+  const h10ModeState = buildH10WarRoomModeState({ userId });
+  const recommendationPreviewPayload =
+    h10ModeState.h10RecommendationPreviewEnabled ||
+    h10ModeState.h10RecommendationExperimentEnabled ||
+    h10ModeState.h10InternalTrustedExperimentAllowed
     ? buildOptionalH10RecommendationPreview({
         leagueId: room.league_id as string,
         draftRoomId,
@@ -390,8 +391,7 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
     warningMessages: warnings.map((warning) => WARNING_MESSAGES[warning] ?? warning),
     warning: warnings.map((warning) => WARNING_MESSAGES[warning] ?? warning).join(" ") || null,
     fallbackRelevanceDiagnostics: hasRankings ? emptyFallbackDiagnostics(includeDiagnosticFallbacks) : fallbackRelevance.diagnostics,
-    h10RecommendationPreviewEnabled,
-    h10RecommendationExperimentEnabled,
+    ...h10ModeState,
     ...overlayPayload,
     ...recommendationPreviewPayload
   };

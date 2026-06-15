@@ -57,6 +57,7 @@
     "diagnose:h10-wait-target-planning": "tsx scripts/h10-wait-target-planning.ts",
     "diagnose:h10-replay-data-expansion": "tsx scripts/h10-replay-data-expansion.ts",
     "diagnose:h10-war-room-production-readiness": "tsx scripts/h10-war-room-production-readiness.ts",
+    "diagnose:h10-internal-trusted-experiment": "tsx scripts/h10-internal-trusted-experiment.ts",
     "seed:h10-validation-rooms": "tsx scripts/seed-h10-validation-draft-rooms.ts",
     "repair:sleeper-player-identities": "tsx scripts/repair-sleeper-player-identities.ts",
     "test:watch": "vitest",

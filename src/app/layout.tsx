@@ -20,11 +20,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <div className="absolute bottom-[-12rem] left-[-10rem] h-[30rem] w-[30rem] rounded-full bg-[radial-gradient(circle,_rgba(255,230,162,0.1),_transparent_72%)] blur-3xl" />
         </div>
         <header className="sticky top-0 z-30 border-b border-line/70 bg-background/86 backdrop-blur-xl">
-          <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-4 py-4">
-            <Link href="/" aria-label="Blackbird GM home">
+          <div className="mx-auto flex max-w-[1800px] flex-col gap-3 px-3 py-3 sm:px-4 lg:flex-row lg:items-center lg:justify-between lg:gap-6 lg:py-4">
+            <Link href="/" aria-label="Blackbird GM home" className="min-w-0">
               <BrandLockup />
             </Link>
-            <nav className="flex items-center gap-1 text-sm text-slate-300">
+            <nav className="-mx-1 flex max-w-full items-center gap-1 overflow-x-auto px-1 text-sm text-slate-300">
               <Link href="/dashboard" className="rf-nav-link">
                 Dashboard
               </Link>

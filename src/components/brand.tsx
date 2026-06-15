@@ -20,7 +20,7 @@ export function BrandLockup({
       <div
         className={cn(
           "overflow-hidden rounded-2xl border border-line/80 bg-black/60 shadow-glow",
-          isLarge ? "w-[160px]" : "w-[72px]"
+          isLarge ? "w-[160px]" : "w-[56px] sm:w-[72px]"
         )}
       >
         <Image
@@ -33,7 +33,7 @@ export function BrandLockup({
         />
       </div>
       <div>
-        <div className={cn("brand-display leading-none text-white", isLarge ? "text-5xl md:text-6xl" : "text-2xl")}>
+        <div className={cn("brand-display leading-none text-white", isLarge ? "text-5xl md:text-6xl" : "text-xl sm:text-2xl")}>
           Blackbird <span className="text-gold">GM</span>
         </div>
         {showTagline ? (

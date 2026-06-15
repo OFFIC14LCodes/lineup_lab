@@ -1,6 +1,6 @@
 # H10.15 Wait Target Planning
 
-Generated: 2026-06-15T17:46:38.556Z
+Generated: 2026-06-15T18:07:07.316Z
 Verdict: quality_risks
 
 ## Aggregate

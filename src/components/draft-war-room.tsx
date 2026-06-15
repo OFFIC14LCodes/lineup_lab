@@ -97,6 +97,9 @@ type DraftState = {
   h10RecommendationExperimentDiagnostics?: H10RecommendationExperimentDiagnostics;
   h10RecommendationPreviewEnabled?: boolean;
   h10RecommendationExperimentEnabled?: boolean;
+  h10InternalTrustedExperimentEnabled?: boolean;
+  h10InternalTrustedExperimentAllowed?: boolean;
+  h10InternalTrustedExperimentGating?: "env_only" | "trusted_user_allowlist";
   fallbackRelevanceDiagnostics?: {
     fallbackRowsTotal: number;
     fallbackRowsIncluded: number;
@@ -292,10 +295,10 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
 
   return (
     <div className="space-y-6">
-      <section className="rf-panel p-5">
+      <section className="rf-panel p-4 sm:p-5">
         <div className="flex flex-col justify-between gap-4 md:flex-row md:items-start">
-          <div>
-            <h1 className="text-3xl font-black">{state.league?.name ?? "Draft War Room"}</h1>
+          <div className="min-w-0">
+            <h1 className="break-words text-2xl font-black sm:text-3xl">{state.league?.name ?? "Draft War Room"}</h1>
             <p className="mt-2 text-sm text-slate-400">
               Status {state.room.status ?? "unknown"} · Polling every 5 seconds · Last synced{" "}
               {state.room.last_synced_at ? new Date(state.room.last_synced_at).toLocaleTimeString() : "never"}
@@ -321,6 +324,11 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
             Some diagnostic fallback players are hidden because they lack rankings, ADP, and Blackbird projections.
           </p>
         ) : null}
+        {state.h10InternalTrustedExperimentAllowed ? (
+          <div className="mt-3 rounded-md border border-brand/30 bg-brand/10 px-3 py-2 text-xs text-brand">
+            <span className="font-bold">Internal Blackbird Mode</span> · Read-only trusted preview · Synthetic replay validated; historical outcome validation not yet available.
+          </div>
+        ) : null}
         {state.myDraftSlot === null ? (
           <p className="mt-3 rounded-md border border-gold/25 bg-gold/10 px-3 py-2 text-xs text-gold">
             Your draft slot is not detected yet. Sync league rosters or draft picks to restore exact pick timing.
@@ -331,7 +339,7 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
             No synced draft picks yet. The board will fill as Sleeper picks arrive.
           </p>
         ) : null}
-        <div className="mt-5 grid gap-3 md:grid-cols-5">
+        <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
           <Metric label="Current pick" value={state.currentPickNumber} />
           <Metric label="Round" value={state.currentRound} />
           <Metric label="Until my pick" value={state.picksUntilMyNextPick ?? "N/A"} />
@@ -340,8 +348,8 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
         </div>
       </section>
 
-      <div className="grid gap-6 xl:grid-cols-[1fr_360px]">
-        <section className="space-y-6">
+      <div className="grid min-w-0 gap-5 2xl:grid-cols-[minmax(0,1fr)_380px]">
+        <section className="min-w-0 space-y-5">
           <section className="rf-panel overflow-hidden">
             <div className="border-b border-line p-4">
               <div className="flex flex-col justify-between gap-3 lg:flex-row lg:items-center">
@@ -352,11 +360,11 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
                   </p>
                 </div>
                 {draftBoardTeams.length ? (
-                  <label className="flex items-center gap-2 text-sm text-slate-300">
+                  <label className="grid gap-2 text-sm text-slate-300 sm:flex sm:items-center">
                     <Users className="h-4 w-4 text-slate-500" />
                     <span className="shrink-0 text-xs uppercase tracking-wide text-slate-500">View roster</span>
                     <select
-                      className="rf-input min-w-[220px]"
+                      className="rf-input min-w-0 sm:min-w-[220px]"
                       value={selectedTeam?.rosterId ?? ""}
                       onChange={(event) => setSelectedRosterId(event.target.value)}
                     >
@@ -381,7 +389,7 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
                   <h2 className="text-xl font-bold">Available Players</h2>
                   <p className="mt-1 text-sm text-slate-400">{state.boardLabel}</p>
                 </div>
-                <div className="grid gap-2 sm:grid-cols-[180px_140px_120px]">
+                <div className="grid gap-2 sm:grid-cols-[minmax(180px,1fr)_140px_120px]">
                   <label className="relative block">
                     <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
                     <input
@@ -412,7 +420,7 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
           </section>
         </section>
 
-        <aside className="space-y-6">
+        <aside className="min-w-0 space-y-5">
           <SidePanel title="My Roster Construction">
             <RosterConstructionSummary state={state} />
             <div className="mt-3 rounded-md border border-line bg-panel2 px-3 py-2 text-sm">
@@ -422,7 +430,18 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
           </SidePanel>
 
           <SidePanel title="Recommended Targets">
-            {state.h10RecommendationExperimentEnabled ? (
+            {state.h10InternalTrustedExperimentAllowed ? (
+              <InternalTrustedRecommendationPanel
+                legacyRows={state.recommendations.slice(0, 10)}
+                rankingsUploaded={state.rankingsUploaded}
+                warningMessages={state.warningMessages}
+                usesLimitedDataPositions={state.hasIDP || state.hasKicker || state.hasTeamDefense}
+                blackbirdRows={state.h10RecommendationPreview ?? []}
+                blackbirdDiagnostics={state.h10RecommendationDiagnostics ?? null}
+                experimentDiagnostics={state.h10RecommendationExperimentDiagnostics ?? null}
+                gating={state.h10InternalTrustedExperimentGating ?? "env_only"}
+              />
+            ) : state.h10RecommendationExperimentEnabled ? (
               <RecommendationSourcePanel
                 source={recommendationSource}
                 onSourceChange={setRecommendationSource}
@@ -978,18 +997,73 @@ function RecommendationSourcePanel({
   );
 }
 
+function InternalTrustedRecommendationPanel({
+  legacyRows,
+  rankingsUploaded,
+  warningMessages,
+  usesLimitedDataPositions,
+  blackbirdRows,
+  blackbirdDiagnostics,
+  experimentDiagnostics,
+  gating,
+}: {
+  legacyRows: AvailablePlayer[];
+  rankingsUploaded: boolean;
+  warningMessages: string[];
+  usesLimitedDataPositions: boolean;
+  blackbirdRows: WarRoomRecommendationRow[];
+  blackbirdDiagnostics: WarRoomRecommendationResult["diagnostics"] | null;
+  experimentDiagnostics: H10RecommendationExperimentDiagnostics | null;
+  gating: "env_only" | "trusted_user_allowlist";
+}) {
+  return (
+    <div className="space-y-4">
+      <div className="rounded-lg border border-brand/30 bg-brand/10 px-3 py-3 text-xs text-brand">
+        <div className="font-black uppercase tracking-wide">Blackbird Trusted Preview</div>
+        <p className="mt-1 text-brand/90">
+          Internal experiment · read-only · source switching is not saved · Synthetic replay validated; historical outcome validation not yet available.
+        </p>
+        <p className="mt-1 text-brand/80">Gate: {gating === "trusted_user_allowlist" ? "trusted user allowlist" : "environment flag only"}</p>
+      </div>
+      <H10RecommendationPreview
+        rows={blackbirdRows}
+        diagnostics={blackbirdDiagnostics}
+        experimentDiagnostics={experimentDiagnostics}
+        mode="experiment"
+        internalTrusted
+      />
+      <details className="rounded-lg border border-line bg-background/40 px-3 py-2">
+        <summary className="flex cursor-pointer list-none items-center justify-between text-sm font-semibold text-slate-200">
+          <span>Legacy Draft Target Score</span>
+          <ChevronDown className="h-4 w-4 transition open:rotate-180" />
+        </summary>
+        <div className="mt-3">
+          <RecommendationList
+            players={legacyRows}
+            rankingsUploaded={rankingsUploaded}
+            warningMessages={warningMessages}
+            usesLimitedDataPositions={usesLimitedDataPositions}
+          />
+        </div>
+      </details>
+    </div>
+  );
+}
+
 function H10RecommendationPreview({
   rows,
   diagnostics,
   experimentDiagnostics,
   mode,
   disabled = false,
+  internalTrusted = false,
 }: {
   rows: WarRoomRecommendationRow[];
   diagnostics: WarRoomRecommendationResult["diagnostics"] | null;
   experimentDiagnostics: H10RecommendationExperimentDiagnostics | null;
   mode: "preview" | "experiment";
   disabled?: boolean;
+  internalTrusted?: boolean;
 }) {
   const uiState = buildH10RecommendationExperimentUiState({
     previewEnabled: mode === "preview",
@@ -1007,9 +1081,15 @@ function H10RecommendationPreview({
   return (
     <div className="space-y-3">
       <div className="rounded-md border border-brand/20 bg-brand/10 px-3 py-2 text-xs text-brand">
+        {internalTrusted ? "Internal experiment · Trusted preview · " : ""}
         {H10_RECOMMENDATION_READINESS_LABELS.join(" · ")}. Blackbird preview is a read-only experimental signal based on current projections,
         market value, roster need, and pick timing. It does not replace legacy Draft Target Score rows.
       </div>
+      {internalTrusted ? (
+        <p className="rounded-md border border-gold/25 bg-gold/10 px-3 py-2 text-xs text-gold">
+          Synthetic replay validated; historical outcome validation not yet available.
+        </p>
+      ) : null}
       {mode === "experiment" && disabled ? (
         <p className="rounded-md border border-gold/25 bg-gold/10 px-3 py-2 text-xs text-gold">
           Blackbird experiment panel is diagnostics-only because validation gates did not pass:{" "}
@@ -1049,6 +1129,7 @@ function H10RecommendationPreview({
 }
 
 function H10RecommendationCard({ row }: { row: WarRoomRecommendationRow }) {
+  const driver = getRecommendationDriver(row);
   return (
     <div className="rounded-lg border border-line bg-panel2 px-3 py-3 text-sm">
       <div className="flex items-start justify-between gap-3">
@@ -1067,6 +1148,12 @@ function H10RecommendationCard({ row }: { row: WarRoomRecommendationRow }) {
         </div>
       </div>
       <p className="mt-3 text-xs text-slate-200">{row.primaryReason}</p>
+      <div className="mt-3 grid grid-cols-2 gap-2 text-[11px] text-slate-400">
+        <H10MiniStat label="Signal type" value={driver} />
+        <H10MiniStat label="Wait targets" value={`${row.waitPlanTargetCount ?? 0} (${row.waitPlanStrongTargetCount ?? 0} strong)`} />
+        <H10MiniStat label="Risk" value={row.h10.confidenceLabel ?? row.waitRisk ?? "-"} />
+        <H10MiniStat label="Action" value={row.needTimingAction ?? "-"} />
+      </div>
       {row.explanationFragments.length > 1 ? (
         <div className="mt-2 grid gap-1">
           {row.explanationFragments.slice(1, 4).map((fragment) => (
@@ -1113,6 +1200,16 @@ function H10RecommendationCard({ row }: { row: WarRoomRecommendationRow }) {
       ) : null}
     </div>
   );
+}
+
+function getRecommendationDriver(row: WarRoomRecommendationRow) {
+  const entries = [
+    ["value signal", row.scoreComponents.leagueValue + row.scoreComponents.marketValue],
+    ["roster need acknowledged", row.scoreComponents.rosterNeed],
+    ["scarcity-driven", row.scoreComponents.scarcity + row.scoreComponents.tierCliff],
+    ["timing signal", row.scoreComponents.needTiming + row.scoreComponents.availabilityRisk],
+  ] as const;
+  return entries.reduce((best, current) => current[1] > best[1] ? current : best)[0];
 }
 
 function H10MiniStat({ label, value }: { label: string; value: string }) {

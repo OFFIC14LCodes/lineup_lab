@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-15T17:46:55.108Z",
+  "generatedAt": "2026-06-15T18:07:06.878Z",
   "artifactVersion": "h10.9-war-room-side-by-side-diagnostics-v1",
   "featureFlags": {
     "previewEnabled": false,
@@ -12715,8 +12715,8 @@
             "valueReadiness": "LOW_CONFIDENCE_BASELINE"
           },
           "draftContext": {
-            "currentRound": 19,
-            "currentPick": 223,
+            "currentRound": 20,
+            "currentPick": 234,
             "picksUntilNextUserPick": 0,
             "positionNeedLevel": "moderate",
             "starterSlotNeed": false,
@@ -12804,8 +12804,8 @@
             "valueReadiness": "LOW_CONFIDENCE_BASELINE"
           },
           "draftContext": {
-            "currentRound": 19,
-            "currentPick": 223,
+            "currentRound": 20,
+            "currentPick": 234,
             "picksUntilNextUserPick": 0,
             "positionNeedLevel": "moderate",
             "starterSlotNeed": false,
@@ -12893,8 +12893,8 @@
             "valueReadiness": "LOW_CONFIDENCE_BASELINE"
           },
           "draftContext": {
-            "currentRound": 19,
-            "currentPick": 223,
+            "currentRound": 20,
+            "currentPick": 234,
             "picksUntilNextUserPick": 0,
             "positionNeedLevel": "moderate",
             "starterSlotNeed": false,
@@ -12982,8 +12982,8 @@
             "valueReadiness": "LOW_CONFIDENCE_BASELINE"
           },
           "draftContext": {
-            "currentRound": 19,
-            "currentPick": 223,
+            "currentRound": 20,
+            "currentPick": 234,
             "picksUntilNextUserPick": 0,
             "positionNeedLevel": "moderate",
             "starterSlotNeed": false,
@@ -13071,8 +13071,8 @@
             "valueReadiness": "LOW_CONFIDENCE_BASELINE"
           },
           "draftContext": {
-            "currentRound": 19,
-            "currentPick": 223,
+            "currentRound": 20,
+            "currentPick": 234,
             "picksUntilNextUserPick": 0,
             "positionNeedLevel": "moderate",
             "starterSlotNeed": false,
@@ -13160,8 +13160,8 @@
             "valueReadiness": "LOW_CONFIDENCE_BASELINE"
           },
           "draftContext": {
-            "currentRound": 19,
-            "currentPick": 223,
+            "currentRound": 20,
+            "currentPick": 234,
             "picksUntilNextUserPick": 0,
             "positionNeedLevel": "moderate",
             "starterSlotNeed": false,
@@ -13249,8 +13249,8 @@
             "valueReadiness": "LOW_CONFIDENCE_BASELINE"
           },
           "draftContext": {
-            "currentRound": 19,
-            "currentPick": 223,
+            "currentRound": 20,
+            "currentPick": 234,
             "picksUntilNextUserPick": 0,
             "positionNeedLevel": "moderate",
             "starterSlotNeed": false,
@@ -13338,8 +13338,8 @@
             "valueReadiness": "LOW_CONFIDENCE_BASELINE"
           },
           "draftContext": {
-            "currentRound": 19,
-            "currentPick": 223,
+            "currentRound": 20,
+            "currentPick": 234,
             "picksUntilNextUserPick": 0,
             "positionNeedLevel": "moderate",
             "starterSlotNeed": false,
@@ -13427,8 +13427,8 @@
             "valueReadiness": "LOW_CONFIDENCE_BASELINE"
           },
           "draftContext": {
-            "currentRound": 19,
-            "currentPick": 223,
+            "currentRound": 20,
+            "currentPick": 234,
             "picksUntilNextUserPick": 0,
             "positionNeedLevel": "moderate",
             "starterSlotNeed": false,
@@ -13516,8 +13516,8 @@
             "valueReadiness": "LOW_CONFIDENCE_BASELINE"
           },
           "draftContext": {
-            "currentRound": 19,
-            "currentPick": 223,
+            "currentRound": 20,
+            "currentPick": 234,
             "picksUntilNextUserPick": 0,
             "positionNeedLevel": "moderate",
             "starterSlotNeed": false,
@@ -13610,8 +13610,8 @@
             "valueReadiness": "LOW_CONFIDENCE_BASELINE"
           },
           "draftContext": {
-            "currentRound": 19,
-            "currentPick": 223,
+            "currentRound": 20,
+            "currentPick": 234,
             "picksUntilNextUserPick": 0,
             "positionNeedLevel": "moderate",
             "starterSlotNeed": false,
@@ -13699,8 +13699,8 @@
             "valueReadiness": "LOW_CONFIDENCE_BASELINE"
           },
           "draftContext": {
-            "currentRound": 19,
-            "currentPick": 223,
+            "currentRound": 20,
+            "currentPick": 234,
             "picksUntilNextUserPick": 0,
             "positionNeedLevel": "moderate",
             "starterSlotNeed": false,
@@ -13788,8 +13788,8 @@
             "valueReadiness": "LOW_CONFIDENCE_BASELINE"
           },
           "draftContext": {
-            "currentRound": 19,
-            "currentPick": 223,
+            "currentRound": 20,
+            "currentPick": 234,
             "picksUntilNextUserPick": 0,
             "positionNeedLevel": "moderate",
             "starterSlotNeed": false,
@@ -13877,8 +13877,8 @@
             "valueReadiness": "LOW_CONFIDENCE_BASELINE"
           },
           "draftContext": {
-            "currentRound": 19,
-            "currentPick": 223,
+            "currentRound": 20,
+            "currentPick": 234,
             "picksUntilNextUserPick": 0,
             "positionNeedLevel": "moderate",
             "starterSlotNeed": false,
@@ -13966,8 +13966,8 @@
             "valueReadiness": "LOW_CONFIDENCE_BASELINE"
           },
           "draftContext": {
-            "currentRound": 19,
-            "currentPick": 223,
+            "currentRound": 20,
+            "currentPick": 234,
             "picksUntilNextUserPick": 0,
             "positionNeedLevel": "moderate",
             "starterSlotNeed": false,
@@ -14055,8 +14055,8 @@
             "valueReadiness": "LOW_CONFIDENCE_BASELINE"
           },
           "draftContext": {
-            "currentRound": 19,
-            "currentPick": 223,
+            "currentRound": 20,
+            "currentPick": 234,
             "picksUntilNextUserPick": 0,
             "positionNeedLevel": "moderate",
             "starterSlotNeed": false,
@@ -14144,8 +14144,8 @@
             "valueReadiness": "LOW_CONFIDENCE_BASELINE"
           },
           "draftContext": {
-            "currentRound": 19,
-            "currentPick": 223,
+            "currentRound": 20,
+            "currentPick": 234,
             "picksUntilNextUserPick": 0,
             "positionNeedLevel": "moderate",
             "starterSlotNeed": false,
@@ -14233,8 +14233,8 @@
             "valueReadiness": "LOW_CONFIDENCE_BASELINE"
           },
           "draftContext": {
-            "currentRound": 19,
-            "currentPick": 223,
+            "currentRound": 20,
+            "currentPick": 234,
             "picksUntilNextUserPick": 0,
             "positionNeedLevel": "moderate",
             "starterSlotNeed": false,
@@ -14322,8 +14322,8 @@
             "valueReadiness": "LOW_CONFIDENCE_BASELINE"
           },
           "draftContext": {
-            "currentRound": 19,
-            "currentPick": 223,
+            "currentRound": 20,
+            "currentPick": 234,
             "picksUntilNextUserPick": 0,
             "positionNeedLevel": "moderate",
             "starterSlotNeed": false,
@@ -14411,8 +14411,8 @@
             "valueReadiness": "LOW_CONFIDENCE_BASELINE"
           },
           "draftContext": {
-            "currentRound": 19,
-            "currentPick": 223,
+            "currentRound": 20,
+            "currentPick": 234,
             "picksUntilNextUserPick": 0,
             "positionNeedLevel": "moderate",
             "starterSlotNeed": false,

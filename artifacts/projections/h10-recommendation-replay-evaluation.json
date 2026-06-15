@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-15T17:46:38.518Z",
+  "generatedAt": "2026-06-15T18:07:06.933Z",
   "artifactVersion": "h10.13-recommendation-replay-evaluation-v1",
   "methodology": "Deterministic simulated replay over validation/live recommendation snapshots. Board depletion removes higher-ranked available rows before the next user pick and next two user picks, then evaluates whether timing, tier cliff, value, and caution signals remain supported.",
   "assumptions": [

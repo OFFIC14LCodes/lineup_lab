@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-15T17:48:43.364Z",
+  "generatedAt": "2026-06-15T18:09:00.941Z",
   "verdict": "passed",
   "authMethod": "server-only local e2e auth bypass via signed-in test user id env and http cookie",
   "browserEngine": "chromium",

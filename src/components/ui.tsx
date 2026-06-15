@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 
 export function PageShell({ children, className }: { children: React.ReactNode; className?: string }) {
-  return <main className={cn("mx-auto w-full max-w-7xl px-4 py-8", className)}>{children}</main>;
+  return <main className={cn("mx-auto w-full max-w-7xl px-3 py-5 sm:px-4 sm:py-8", className)}>{children}</main>;
 }
 
 export function Panel({ children, className }: { children: React.ReactNode; className?: string }) {
