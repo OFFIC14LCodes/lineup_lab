@@ -11,6 +11,8 @@ import {
   H10_RECOMMENDATION_READINESS_LABELS,
   type H10RecommendationSource,
 } from "@/lib/draft/war-room-recommendation-experiment-ui";
+import { buildBlackbirdBoard, type BlackbirdBoardRow, type BlackbirdBoardSortKey } from "@/lib/draft/blackbird-board";
+import { buildPreDraftStrategyUiViewModel } from "@/lib/draft/pre-draft-strategy-ui";
 import type { WarRoomRecommendationResult, WarRoomRecommendationRow, WarRoomRecommendationTier } from "@/lib/draft/war-room-recommendations";
 
 type RecommendationTier = "elite_target" | "strong_target" | "good_value" | "depth_option" | "avoid_for_now";
@@ -86,6 +88,7 @@ type DraftState = {
   teamCount: number | null;
   lastPick: PickLine | null;
   myRoster: PickLine[];
+  draftedPlayerIds?: string[];
   draftBoardTeams: DraftBoardTeam[];
   positionCounts: Record<string, number>;
   remainingPlayers: AvailablePlayer[];
@@ -189,13 +192,69 @@ type DraftState = {
   warning: string | null;
 };
 
-type AvailablePlayerTableRow = {
-  player: AvailablePlayer;
-  h10Overlay: WarRoomValueOverlayRow | null;
+type PreDraftStrategyResponse = {
+  strategyPreviewLabel: string;
+  leagueSummary: {
+    leagueName: string | null;
+    teams: number | null;
+    rounds: number | null;
+    scoringType: string;
+    formats: string[];
+    superflexOr2Qb: boolean;
+    tePremium: boolean;
+    idp: boolean;
+    kicker: boolean;
+    teamDefense: boolean;
+    flexStructure: string[];
+  };
+  scoringEmphasis: Array<{ signal: string; position: string; priority: string; reason: string }>;
+  rosterConstructionPlan: Array<{ phase: string; guidance: string; positions: string[] }>;
+  positionalPriorityMap: Record<string, { priority: string; score: number; reasons: string[] }>;
+  draftSlotStrategy: {
+    slot: number | null;
+    teamCount: number | null;
+    archetype: string;
+    expectedLongWaitPicks: number | null;
+    draftSlotBand?: string;
+    isTurnPick?: boolean;
+    isNearTurn?: boolean;
+    averagePicksBetweenTurns?: number | null;
+    maxWaitUntilNextPick?: number | null;
+    turnPairingRisk?: string;
+    slotStrategySummary?: string;
+    projectedUserPicks?: Array<{ round: number; pickInRound: number; overallPick: number; window: string }>;
+    roundPickWindows?: Array<{ label: string; rounds: string; picks: number[]; guidance: string }>;
+    roundWindowPlanBySlot?: Array<{ window: string; rounds: string; picks: number[]; guidance: string }>;
+    timingSignals: string[];
+    positionsAtRiskBeforeNextTurn: string[];
+  };
+  roundWindowPlan: Array<{ window: string; rounds: string; positions: string[]; guidance: string }>;
+  tierCliffWatchlist: Array<{ position: string; label: string; tier: number | null; risk: string; reason: string }>;
+  valuePocketWatchlist: Array<{ position: string; label: string; marketSignal: string | null; reason: string }>;
+  waitPositions: Array<{ position: string; confidence: string; reason: string; targetCount: number }>;
+  doNotForcePositions: Array<{ position: string; reason: string }>;
+  contingencyPlans: Array<{ trigger: string; response: string }>;
+  specialPositionGuidance: Array<{ position: string; guidance: string }>;
+  riskNotes: string[];
+  explanationFragments: string[];
+  dataGaps: string[];
+  safetyLanguageStatus?: { passed: boolean; failures: string[] };
+};
+
+type StrategyLoadState = {
+  status: "loading" | "ready" | "error";
+  strategy: PreDraftStrategyResponse | null;
+  error: string | null;
 };
 
 const POSITIONS = ["All", "QB", "RB", "WR", "TE", "K", "DEF", "DL", "LB", "DB"];
 const MATCH_FILTERS = ["All", "Matched", "Issues"];
+const BOARD_SORTS: Array<{ value: BlackbirdBoardSortKey; label: string }> = [
+  { value: "blackbird", label: "Blackbird rank" },
+  { value: "adp", label: "ADP" },
+  { value: "projection", label: "Projection" },
+  { value: "value", label: "Value" },
+];
 const POSITION_SORT_ORDER: Record<string, number> = {
   QB: 1,
   RB: 2,
@@ -214,9 +273,16 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
   const [syncing, setSyncing] = useState(false);
   const [positionFilter, setPositionFilter] = useState("All");
   const [matchFilter, setMatchFilter] = useState("All");
+  const [boardSort, setBoardSort] = useState<BlackbirdBoardSortKey>("blackbird");
+  const [visibleBoardRows, setVisibleBoardRows] = useState(50);
   const [search, setSearch] = useState("");
   const [selectedRosterId, setSelectedRosterId] = useState<string | null>(null);
   const [recommendationSource, setRecommendationSource] = useState<H10RecommendationSource>(DEFAULT_H10_RECOMMENDATION_SOURCE);
+  const [strategyState, setStrategyState] = useState<StrategyLoadState>({
+    status: "loading",
+    strategy: null,
+    error: null,
+  });
 
   const loadState = useCallback(async () => {
     const response = await fetch(`/api/draft-rooms/${draftRoomId}/state`, { cache: "no-store" });
@@ -229,6 +295,31 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
     setError(null);
   }, [draftRoomId]);
 
+  const loadStrategy = useCallback(async () => {
+    setStrategyState((current) => ({ ...current, status: "loading", error: null }));
+    try {
+      const response = await fetch(`/api/draft-rooms/${draftRoomId}/pre-draft-strategy`, { cache: "no-store" });
+      const payload = await response.json();
+      if (!response.ok) {
+        setStrategyState({
+          status: "error",
+          strategy: null,
+          error: response.status === 401 || response.status === 404
+            ? "Strategy preview is unavailable. War Room remains usable."
+            : payload.error ?? "Unable to load strategy preview. War Room remains usable.",
+        });
+        return;
+      }
+      setStrategyState({ status: "ready", strategy: payload as PreDraftStrategyResponse, error: null });
+    } catch {
+      setStrategyState({
+        status: "error",
+        strategy: null,
+        error: "Unable to load strategy preview. War Room remains usable.",
+      });
+    }
+  }, [draftRoomId]);
+
   const syncNow = useCallback(async () => {
     setSyncing(true);
     const response = await fetch(`/api/draft-rooms/${draftRoomId}/sync`, { method: "POST" });
@@ -238,31 +329,44 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
     }
     setSyncing(false);
     await loadState();
-  }, [draftRoomId, loadState]);
+    await loadStrategy();
+  }, [draftRoomId, loadState, loadStrategy]);
 
   useEffect(() => {
+    void loadStrategy();
     if (disableAutoSync) void loadState();
     else void syncNow();
     const interval = window.setInterval(loadState, 5000);
     return () => window.clearInterval(interval);
-  }, [disableAutoSync, loadState, syncNow]);
+  }, [disableAutoSync, loadState, loadStrategy, syncNow]);
 
-  const availablePlayers = useMemo(() => {
+  useEffect(() => {
+    setVisibleBoardRows(50);
+  }, [boardSort, matchFilter, positionFilter, search]);
+
+  const blackbirdBoard = useMemo(() => {
+    return buildBlackbirdBoard({
+      players: state?.remainingPlayers ?? [],
+      overlays: state?.h10ValueOverlay ?? [],
+      recommendations: state?.h10RecommendationPreview ?? [],
+      draftedPlayerIds: state?.draftedPlayerIds ?? [],
+      sortKey: boardSort,
+    });
+  }, [boardSort, state?.draftedPlayerIds, state?.h10RecommendationPreview, state?.h10ValueOverlay, state?.remainingPlayers]);
+
+  const filteredBoardRows = useMemo(() => {
     const needle = search.trim().toLowerCase();
-    return (state?.remainingPlayers ?? [])
-      .map((player, index) => ({
-        player,
-        h10Overlay: state?.h10ValueOverlay?.[index] ?? null,
-      }))
-      .filter(({ player }) => positionFilter === "All" || player.position === positionFilter)
-      .filter(({ player }) => !needle || (player.player_name ?? "").toLowerCase().includes(needle))
-      .filter(({ player }) => {
-        if (matchFilter === "Matched") return Boolean(player.matched_player_id || player.sleeper_player_id);
-        if (matchFilter === "Issues") return player.match_status === "unmatched" || player.match_status === "ambiguous";
+    return blackbirdBoard.rows
+      .filter((row) => positionFilter === "All" || row.position === positionFilter)
+      .filter((row) => !needle || row.playerName.toLowerCase().includes(needle))
+      .filter((row) => {
+        if (matchFilter === "Matched") return Boolean(row.playerId);
+        if (matchFilter === "Issues") return row.confidence === "low" || row.risk === "high" || row.dataStatus.projection === "unavailable";
         return true;
-      })
-      .slice(0, 25);
-  }, [matchFilter, positionFilter, search, state?.h10ValueOverlay, state?.remainingPlayers]);
+      });
+  }, [blackbirdBoard.rows, matchFilter, positionFilter, search]);
+
+  const visibleBlackbirdRows = filteredBoardRows.slice(0, visibleBoardRows);
 
   if (error && !state) {
     return (
@@ -292,6 +396,7 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
     draftBoardTeams[0] ??
     null;
   const selectedTeamPicks = selectedTeam ? state.picks.filter((pick) => pick.platform_roster_id === selectedTeam.rosterId) : [];
+  const strategyProminent = !state.picks.length || state.currentRound <= 2;
 
   return (
     <div className="space-y-6">
@@ -348,6 +453,8 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
         </div>
       </section>
 
+      {strategyProminent ? <PreDraftStrategyPanel loadState={strategyState} prominent /> : null}
+
       <div className="grid min-w-0 gap-5 2xl:grid-cols-[minmax(0,1fr)_380px]">
         <section className="min-w-0 space-y-5">
           <section className="rf-panel overflow-hidden">
@@ -386,10 +493,16 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
             <div className="border-b border-line p-4">
               <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-center">
                 <div>
-                  <h2 className="text-xl font-bold">Available Players</h2>
-                  <p className="mt-1 text-sm text-slate-400">{state.boardLabel}</p>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h2 className="text-xl font-bold">Blackbird Board</h2>
+                    <span className="rounded-full border border-line bg-background px-2 py-1 text-[11px] uppercase tracking-wide text-slate-400">Read-only</span>
+                    <span className="rounded-full border border-brand/25 bg-brand/10 px-2 py-1 text-[11px] uppercase tracking-wide text-brand">Experimental</span>
+                  </div>
+                  <p className="mt-1 text-sm text-slate-400">
+                    Sorted by Blackbird value/projection/market context · {blackbirdBoard.diagnostics.availableRows} available rows · {state.boardLabel}
+                  </p>
                 </div>
-                <div className="grid gap-2 sm:grid-cols-[minmax(180px,1fr)_140px_120px]">
+                <div className="grid gap-2 sm:grid-cols-[minmax(180px,1fr)_140px_120px_160px]">
                   <label className="relative block">
                     <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
                     <input
@@ -413,14 +526,34 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
                       </option>
                     ))}
                   </select>
+                  <select className="rf-input" value={boardSort} onChange={(event) => setBoardSort(event.target.value as BlackbirdBoardSortKey)}>
+                    {BOARD_SORTS.map((sort) => (
+                      <option key={sort.value} value={sort.value}>
+                        {sort.label}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
+              <BlackbirdBoardStatus diagnostics={blackbirdBoard.diagnostics} filteredCount={filteredBoardRows.length} visibleCount={visibleBlackbirdRows.length} />
             </div>
-            <AvailablePlayersTable players={availablePlayers} />
+            <AvailablePlayersTable rows={visibleBlackbirdRows} />
+            <div className="flex flex-col gap-2 border-t border-line bg-panel2/40 p-4 sm:flex-row sm:items-center sm:justify-between">
+              <p className="text-xs text-slate-400">
+                Showing {visibleBlackbirdRows.length} of {filteredBoardRows.length} filtered players. Filters and sort are local to this browser view.
+              </p>
+              {visibleBlackbirdRows.length < filteredBoardRows.length ? (
+                <button className="rf-button-secondary justify-center" type="button" onClick={() => setVisibleBoardRows((count) => count + 50)}>
+                  Load more
+                </button>
+              ) : null}
+            </div>
           </section>
         </section>
 
         <aside className="min-w-0 space-y-5">
+          {!strategyProminent ? <PreDraftStrategyPanel loadState={strategyState} /> : null}
+
           <SidePanel title="My Roster Construction">
             <RosterConstructionSummary state={state} />
             <div className="mt-3 rounded-md border border-line bg-panel2 px-3 py-2 text-sm">
@@ -635,134 +768,120 @@ function TeamRosterStrip({ team, picks }: { team: DraftBoardTeam; picks: PickLin
   );
 }
 
-function AvailablePlayersTable({ players }: { players: AvailablePlayerTableRow[] }) {
+function BlackbirdBoardStatus({
+  diagnostics,
+  filteredCount,
+  visibleCount,
+}: {
+  diagnostics: ReturnType<typeof buildBlackbirdBoard>["diagnostics"];
+  filteredCount: number;
+  visibleCount: number;
+}) {
+  return (
+    <div className="mt-3 grid gap-2 text-xs sm:grid-cols-2 xl:grid-cols-5">
+      <BoardStatusPill label="H10 rows" value={`${diagnostics.h10RowsMatched}/${diagnostics.availableRows}`} warning={diagnostics.h10RowsMatched === 0} />
+      <BoardStatusPill label="Projection" value={`${diagnostics.projectionRows}/${diagnostics.availableRows}`} warning={diagnostics.projectionRows === 0} />
+      <BoardStatusPill label="ADP" value={`${diagnostics.adpRows}/${diagnostics.availableRows}`} warning={diagnostics.adpRows === 0} />
+      <BoardStatusPill label="Market rank" value={`${diagnostics.marketRows}/${diagnostics.availableRows}`} warning={diagnostics.marketRows === 0} />
+      <BoardStatusPill label="Visible" value={`${visibleCount}/${filteredCount}`} />
+      {diagnostics.fallbackOrderedRows > 0 ? (
+        <p className="rounded-md border border-gold/25 bg-gold/10 px-3 py-2 text-gold sm:col-span-2 xl:col-span-5">
+          Some rows use fallback ordering because Blackbird projection or market context is unavailable.
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
+function BoardStatusPill({ label, value, warning = false }: { label: string; value: string; warning?: boolean }) {
+  return (
+    <div className={`rounded-md border px-3 py-2 ${warning ? "border-gold/25 bg-gold/10 text-gold" : "border-line bg-background/50 text-slate-300"}`}>
+      <div className="uppercase tracking-wide text-slate-500">{label}</div>
+      <div className="mt-1 font-bold">{value}</div>
+    </div>
+  );
+}
+
+function AvailablePlayersTable({ rows }: { rows: BlackbirdBoardRow[] }) {
   return (
     <div className="overflow-x-auto">
-      <table className="w-full min-w-[1760px] text-left text-sm">
+      <table className="w-full min-w-[1180px] text-left text-sm">
         <thead className="bg-panel2 text-xs uppercase text-slate-400">
           <tr>
-            <th className="px-3 py-3">Rank</th>
+            <th className="px-3 py-3">BB Rank</th>
             <th className="px-3 py-3">Player</th>
-            <th className="px-3 py-3">Score</th>
-            <th className="px-3 py-3">Tier</th>
             <th className="px-3 py-3">Pos</th>
             <th className="px-3 py-3">Team</th>
             <th className="px-3 py-3">Proj</th>
-            <th className="px-3 py-3">H10 PAR</th>
-            <th className="px-3 py-3">H10 Risk</th>
-            <th className="px-3 py-3">H10 Tier</th>
-            <th className="px-3 py-3">Scarcity</th>
-            <th className="px-3 py-3">Market</th>
-            <th className="px-3 py-3">Confidence</th>
-            <th className="px-3 py-3">H10 Warnings</th>
+            <th className="px-3 py-3">PAR</th>
             <th className="px-3 py-3">ADP</th>
-            <th className="px-3 py-3">Dynasty</th>
-            <th className="px-3 py-3">Best Ball</th>
-            <th className="px-3 py-3">Superflex</th>
-            <th className="px-3 py-3">TE Prem</th>
-            <th className="px-3 py-3">Match</th>
+            <th className="px-3 py-3">Market</th>
+            <th className="px-3 py-3">Delta</th>
+            <th className="px-3 py-3">Value</th>
+            <th className="px-3 py-3">Timing</th>
+            <th className="px-3 py-3">Confidence / Risk</th>
+            <th className="px-3 py-3">Data</th>
           </tr>
         </thead>
         <tbody>
-          {players.map(({ player, h10Overlay }, index) => (
-            <tr key={`${player.sleeper_player_id ?? player.player_name}-${index}`} className="border-t border-line/70">
-              <td className="px-3 py-3 font-bold">{player.rank ?? (player.is_fallback ? "-" : index + 1)}</td>
+          {rows.map((row) => (
+            <tr key={`${row.playerId ?? row.playerName}-${row.blackbirdBoardRank}`} className="border-t border-line/70">
+              <td className="px-3 py-3 font-black text-brand">#{row.blackbirdBoardRank}</td>
               <td className="px-3 py-3">
-                <div className="font-medium text-slate-100">{player.player_name ?? "Unknown"}</div>
+                <div className="font-medium text-slate-100">{row.playerName}</div>
                 <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-slate-500">
-                  <span>{player.team ?? player.position ?? "Player pool item"}</span>
-                  {player.positionScoringMode && player.positionScoringMode !== "offense_v1_1" ? (
-                    <LimitedDataBadge player={player} compact />
-                  ) : null}
+                  <span>{row.playerId ? "Matched context" : "Fallback context"}</span>
+                  <span>{row.dataStatus.ordering.replace("_", " ")}</span>
                 </div>
               </td>
+              <td className="px-3 py-3"><PositionBadge position={row.position} /></td>
+              <td className="px-3 py-3">{row.team || "-"}</td>
+              <td className="px-3 py-3">{row.dataStatus.projection === "available" ? formatNumber(row.projectionPoints) : "Projection unavailable"}</td>
+              <td className="px-3 py-3">{row.pointsAboveReplacement === null ? "Projection unavailable" : formatNumber(row.pointsAboveReplacement)}</td>
+              <td className="px-3 py-3">{row.dataStatus.adp === "available" ? formatNumber(row.adp) : "ADP unavailable"}</td>
+              <td className="px-3 py-3">{row.dataStatus.marketRank === "available" ? formatNumber(row.marketRank) : "Market rank unavailable"}</td>
+              <td className="px-3 py-3">{row.rankDelta === null ? "Market rank unavailable" : formatSignedNumber(row.rankDelta)}</td>
               <td className="px-3 py-3">
-                {player.draftTargetScore === null ? (
-                  <span className="text-slate-500">{player.position && NON_OFFENSIVE_POSITIONS.has(player.position) ? "Not scored" : "-"}</span>
-                ) : (
+                {row.blackbirdValueScore === null ? "Projection unavailable" : (
                   <span className="inline-flex min-w-[3.75rem] justify-center rounded-md border border-brand/20 bg-brand/10 px-2 py-1 font-black text-brand">
-                    {player.draftTargetScore.toFixed(1)}
+                    {formatNumber(row.blackbirdValueScore)}
                   </span>
                 )}
               </td>
               <td className="px-3 py-3">
-                <TierBadge tier={player.recommendationTier} />
-              </td>
-              <td className="px-3 py-3">{player.position || "-"}</td>
-              <td className="px-3 py-3">{player.team || "-"}</td>
-              <td className="px-3 py-3">{formatNumber(player.projected_points)}</td>
-              <td className="px-3 py-3">{formatOverlayNumber(h10Overlay, h10Overlay?.pointsAboveReplacement)}</td>
-              <td className="px-3 py-3">{formatOverlayNumber(h10Overlay, h10Overlay?.riskAdjustedValue)}</td>
-              <td className="px-3 py-3">
-                <H10ValueBadge overlay={h10Overlay} />
-              </td>
-              <td className="px-3 py-3">{formatOverlayText(h10Overlay, h10Overlay?.scarcityLabel)}</td>
-              <td className="px-3 py-3">{formatMarketSignal(h10Overlay)}</td>
-              <td className="px-3 py-3">
-                <H10StatusBadge overlay={h10Overlay} />
+                <div>{formatTimingAction(row.needTimingAction)}</div>
+                {row.waitPlanTargetCount ? <div className="mt-1 text-[11px] text-slate-500">{row.waitPlanTargetCount} wait targets</div> : null}
               </td>
               <td className="px-3 py-3">
-                <H10WarningList overlay={h10Overlay} />
+                <div>{row.confidence}</div>
+                <div className="mt-1 text-[11px] text-slate-500">Risk: {row.risk}</div>
               </td>
-              <td className="px-3 py-3">{formatNumber(player.adp)}</td>
-              <td className="px-3 py-3">{formatNumber(player.dynasty_value)}</td>
-              <td className="px-3 py-3">{formatNumber(player.best_ball_value)}</td>
-              <td className="px-3 py-3">{formatNumber(player.superflex_value)}</td>
-              <td className="px-3 py-3">{formatNumber(player.te_premium_value)}</td>
               <td className="px-3 py-3">
-                <div>{player.match_status ?? (player.is_fallback ? "fallback" : "-")}</div>
-                {player.warnings[0] ? <div className="mt-1 text-[11px] text-slate-500">{player.warnings[0]}</div> : null}
+                <BoardDataStatus row={row} />
               </td>
             </tr>
           ))}
-          {players.length === 0 ? <EmptyTable colSpan={20} text="No available players match these filters." /> : null}
+          {rows.length === 0 ? <EmptyTable colSpan={13} text="No available players match these filters." /> : null}
         </tbody>
       </table>
     </div>
   );
 }
 
-function H10ValueBadge({ overlay }: { overlay: WarRoomValueOverlayRow | null }) {
-  if (!overlay || overlay.overlayStatus === "missing_projection") return <span className="text-slate-500">No projection</span>;
-  if (overlay.overlayStatus === "format_excluded") return <span className="text-slate-500">Format excluded</span>;
-  const label = overlay.tierLabel ?? (overlay.tier === null ? "-" : `Tier ${overlay.tier}`);
+function BoardDataStatus({ row }: { row: BlackbirdBoardRow }) {
+  const labels = [
+    row.dataStatus.h10 === "available" ? "H10" : "No H10 rows",
+    row.dataStatus.projection === "available" ? "Projection" : "Projection unavailable",
+    row.dataStatus.adp === "available" ? "ADP" : "ADP unavailable",
+    row.dataStatus.marketRank === "available" ? "Market rank" : "Market rank unavailable",
+  ];
   return (
-    <span className="inline-flex max-w-[8rem] rounded-full border border-line bg-background px-2 py-1 text-[11px] uppercase tracking-wide text-slate-300">
-      <span className="truncate">{label}</span>
-    </span>
-  );
-}
-
-function H10StatusBadge({ overlay }: { overlay: WarRoomValueOverlayRow | null }) {
-  if (!overlay || overlay.overlayStatus === "missing_projection") return <span className="text-slate-500">No projection</span>;
-  const label =
-    overlay.overlayStatus === "dst_dry_run"
-      ? "DST dry-run"
-      : overlay.overlayStatus === "low_confidence"
-        ? "Low confidence"
-        : overlay.overlayStatus === "format_excluded"
-          ? "Format excluded"
-          : overlay.confidenceLabel ?? "Available";
-  const className =
-    overlay.overlayStatus === "available"
-      ? "border-emerald-400/25 bg-emerald-500/10 text-emerald-200"
-      : overlay.overlayStatus === "low_confidence"
-        ? "border-gold/30 bg-gold/10 text-gold"
-        : "border-line bg-background text-slate-400";
-  return <span className={`rounded-full border px-2 py-1 text-[11px] uppercase tracking-wide ${className}`}>{label}</span>;
-}
-
-function H10WarningList({ overlay }: { overlay: WarRoomValueOverlayRow | null }) {
-  if (!overlay) return <span className="text-slate-500">-</span>;
-  if (!overlay.warningCodes.length) return <span className="text-slate-500">None</span>;
-  return (
-    <div className="flex max-w-[14rem] flex-wrap gap-1">
-      {overlay.warningCodes.slice(0, 2).map((warning) => (
-        <span key={warning} className="rounded-full border border-gold/20 bg-gold/10 px-2 py-1 text-[11px] text-gold">
-          {warning}
+    <div className="flex max-w-[220px] flex-wrap gap-1">
+      {labels.map((label) => (
+        <span key={label} className={`rounded-full border px-2 py-1 text-[11px] ${label.includes("unavailable") || label.startsWith("No ") ? "border-gold/25 bg-gold/10 text-gold" : "border-line bg-background text-slate-300"}`}>
+          {label}
         </span>
       ))}
-      {overlay.warningCodes.length > 2 ? <span className="text-[11px] text-slate-500">+{overlay.warningCodes.length - 2}</span> : null}
     </div>
   );
 }
@@ -782,6 +901,290 @@ function SidePanel({ title, children }: { title: string; children: React.ReactNo
       <h2 className="text-lg font-bold">{title}</h2>
       <div className="mt-3">{children}</div>
     </section>
+  );
+}
+
+function PreDraftStrategyPanel({
+  loadState,
+  prominent = false,
+}: {
+  loadState: StrategyLoadState;
+  prominent?: boolean;
+}) {
+  const strategy = loadState.strategy;
+  const model = buildPreDraftStrategyUiViewModel({
+    loadState: loadState.status,
+    error: loadState.error,
+    dataGaps: strategy?.dataGaps ?? [],
+    riskNotes: strategy?.riskNotes ?? [],
+    safetyLanguagePassed: strategy?.safetyLanguageStatus?.passed,
+    sectionCounts: strategy
+      ? {
+          scoringEmphasis: strategy.scoringEmphasis.length,
+          rosterConstructionPlan: strategy.rosterConstructionPlan.length,
+          positionalPriorityMap: Object.keys(strategy.positionalPriorityMap).length,
+          roundWindowPlan: strategy.roundWindowPlan.length,
+          tierCliffWatchlist: strategy.tierCliffWatchlist.length,
+          valuePocketWatchlist: strategy.valuePocketWatchlist.length,
+          waitPositions: strategy.waitPositions.length,
+          doNotForcePositions: strategy.doNotForcePositions.length,
+          contingencyPlans: strategy.contingencyPlans.length,
+          specialPositionGuidance: strategy.specialPositionGuidance.length,
+        }
+      : {},
+  });
+
+  return (
+    <section className={`rf-panel p-4 sm:p-5 ${prominent ? "border-brand/30" : ""}`} data-testid="pre-draft-strategy-panel">
+      <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-start">
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-center gap-2">
+            <h2 className="text-lg font-black text-slate-100 sm:text-xl">{model.title}</h2>
+            <StrategyPill>Read-only</StrategyPill>
+            <StrategyPill>Experimental</StrategyPill>
+          </div>
+          <p className="mt-2 text-sm text-slate-400">
+            Blackbird Strategy Preview based on currently available projections, market context, and league context.
+          </p>
+        </div>
+        {strategy?.leagueSummary ? (
+          <div className="grid grid-cols-3 gap-2 text-xs sm:min-w-[220px]">
+            <H11MiniMetric label="Teams" value={strategy.leagueSummary.teams ?? "-"} />
+            <H11MiniMetric label="Rounds" value={strategy.leagueSummary.rounds ?? "-"} />
+            <H11MiniMetric label="Slot" value={strategy.draftSlotStrategy.slot ?? "-"} />
+          </div>
+        ) : null}
+      </div>
+
+      <div className="mt-3 flex flex-wrap gap-2 text-[11px]">
+        {model.caveats.map((caveat) => (
+          <span key={caveat} className="rounded-full border border-line bg-background px-2 py-1 text-slate-300">
+            {caveat}
+          </span>
+        ))}
+      </div>
+
+      {model.loading ? (
+        <div className="mt-4 rounded-md border border-line bg-panel2 px-3 py-3 text-sm text-slate-300">
+          Loading strategy preview...
+        </div>
+      ) : null}
+
+      {model.unavailable ? (
+        <div className="mt-4 rounded-md border border-gold/25 bg-gold/10 px-3 py-3 text-sm text-gold">
+          {model.errorMessage ?? "Unable to load strategy preview. War Room remains usable."}
+        </div>
+      ) : null}
+
+      {model.partial ? (
+        <details className="group mt-4 rounded-md border border-gold/25 bg-gold/10 px-3 py-3 text-sm text-gold" open={prominent}>
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-3">
+            <span>Strategy preview is partial because some draft context is missing.</span>
+            <ChevronDown className="h-4 w-4 shrink-0 transition group-open:rotate-180" />
+          </summary>
+          <div className="mt-3 grid gap-2 sm:grid-cols-2">
+            {model.dataGaps.slice(0, 8).map((gap) => (
+              <div key={gap} className="break-words rounded-md border border-gold/20 bg-background/40 px-2 py-1 text-xs">
+                {gap}
+              </div>
+            ))}
+          </div>
+        </details>
+      ) : null}
+
+      {strategy && !model.empty ? (
+        <div className="mt-4 space-y-4">
+          <H11LeagueSummary strategy={strategy} />
+          <div className={`grid gap-3 ${prominent ? "lg:grid-cols-2" : ""}`}>
+            <H11Section title="Scoring Emphasis">
+              <StrategyList items={strategy.scoringEmphasis.slice(0, prominent ? 5 : 3).map((row) => `${row.position}: ${row.reason}`)} />
+            </H11Section>
+            <H11Section title="Roster Construction Plan">
+              <StrategyList items={strategy.rosterConstructionPlan.slice(0, prominent ? 4 : 2).map((row) => `${row.phase}: ${row.guidance}`)} />
+            </H11Section>
+            <H11Section title="Positional Priority Map">
+              <PriorityMapPreview priorities={strategy.positionalPriorityMap} />
+            </H11Section>
+            <H11Section title="Draft Slot Strategy">
+              <StrategyList
+                items={[
+                  `Draft slot band: ${strategy.draftSlotStrategy.draftSlotBand ?? strategy.draftSlotStrategy.archetype}`,
+                  `Turn pick: ${strategy.draftSlotStrategy.isTurnPick ? "yes" : "no"} · Near turn: ${strategy.draftSlotStrategy.isNearTurn ? "yes" : "no"}`,
+                  `Turn pairing risk: ${strategy.draftSlotStrategy.turnPairingRisk ?? "unknown"}`,
+                  strategy.draftSlotStrategy.maxWaitUntilNextPick === null || strategy.draftSlotStrategy.maxWaitUntilNextPick === undefined
+                    ? "Exact wait length needs more draft context."
+                    : `Max wait until next pick: ${strategy.draftSlotStrategy.maxWaitUntilNextPick} picks`,
+                  strategy.draftSlotStrategy.slotStrategySummary ?? "Strategy preview uses generic slot timing because exact slot context is partial.",
+                  ...strategy.draftSlotStrategy.timingSignals.slice(0, 2),
+                ]}
+              />
+              <H11SlotWindowPreview strategy={strategy} />
+            </H11Section>
+          </div>
+          <details className="group rounded-md border border-line bg-panel2/70 px-3 py-3">
+            <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-bold text-slate-100">
+              <span>Strategy Watchlists</span>
+              <ChevronDown className="h-4 w-4 shrink-0 transition group-open:rotate-180" />
+            </summary>
+            <div className="mt-3 grid gap-3 lg:grid-cols-2">
+              <H11Section title="Round Window Plan">
+                <StrategyList items={strategy.roundWindowPlan.slice(0, 5).map((row) => `${row.window} (${row.rounds}): ${row.positions.join(", ")}`)} />
+              </H11Section>
+              <H11Section title="Tier Cliff Watchlist">
+                <StrategyList items={strategy.tierCliffWatchlist.slice(0, 5).map((row) => `${row.position}: ${row.label} (${row.risk})`)} empty="No tier cliff rows returned." />
+              </H11Section>
+              <H11Section title="Value Pocket Watchlist">
+                <StrategyList items={strategy.valuePocketWatchlist.slice(0, 5).map((row) => `${row.position}: ${row.label}`)} empty="No value pocket rows returned." />
+              </H11Section>
+              <H11Section title="Wait Positions">
+                <StrategyList items={strategy.waitPositions.slice(0, 5).map((row) => `${row.position}: ${row.reason}`)} empty="No wait-position rows returned." />
+              </H11Section>
+              <H11Section title="Do-Not-Force Positions">
+                <StrategyList items={strategy.doNotForcePositions.slice(0, 5).map((row) => `${row.position}: ${row.reason}`)} empty="No do-not-force rows returned." />
+              </H11Section>
+              <H11Section title="Special Position Guidance">
+                <StrategyList items={strategy.specialPositionGuidance.slice(0, 5).map((row) => `${row.position}: ${row.guidance}`)} empty="No special position guidance returned." />
+              </H11Section>
+            </div>
+          </details>
+          <H11Section title="Contingency Plans">
+            <StrategyList items={strategy.contingencyPlans.slice(0, prominent ? 5 : 3).map((row) => `${row.trigger}: ${row.response}`)} />
+          </H11Section>
+          <H11Section title="Risk Notes">
+            <StrategyList items={strategy.riskNotes.slice(0, 5)} />
+          </H11Section>
+        </div>
+      ) : null}
+
+      {strategy && model.empty ? (
+        <div className="mt-4 rounded-md border border-line bg-panel2 px-3 py-3 text-sm text-slate-300">
+          Strategy preview is available, but no populated strategy sections were returned yet.
+        </div>
+      ) : null}
+
+      {model.bannedLanguageFound.length ? (
+        <div className="mt-4 rounded-md border border-red-400/30 bg-red-500/10 px-3 py-2 text-xs text-red-200">
+          Strategy preview safety language check needs review.
+        </div>
+      ) : null}
+    </section>
+  );
+}
+
+function H11SlotWindowPreview({ strategy }: { strategy: PreDraftStrategyResponse }) {
+  const projectedPicks = strategy.draftSlotStrategy.projectedUserPicks ?? [];
+  const windows = strategy.draftSlotStrategy.roundPickWindows ?? [];
+  if (!projectedPicks.length && !windows.length) return null;
+
+  return (
+    <div className="mt-3 space-y-2">
+      {projectedPicks.length ? (
+        <div>
+          <div className="text-[11px] uppercase tracking-wide text-slate-500">Projected User Picks</div>
+          <div className="mt-1 flex flex-wrap gap-1">
+            {projectedPicks.slice(0, 10).map((pick) => (
+              <span key={`${pick.round}-${pick.overallPick}`} className="rounded-full border border-line bg-background px-2 py-1 text-[11px] text-slate-300">
+                R{pick.round} P{pick.overallPick}
+              </span>
+            ))}
+          </div>
+        </div>
+      ) : null}
+      {windows.length ? (
+        <div className="grid gap-2">
+          {windows.slice(0, 3).map((window) => (
+            <div key={window.label} className="rounded-md border border-line/70 bg-background/50 px-2 py-2 text-xs">
+              <div className="font-bold text-slate-200">{window.label}</div>
+              <div className="mt-1 text-slate-500">
+                Rounds {window.rounds} · Picks {window.picks.slice(0, 6).join(", ") || "TBD"}
+              </div>
+              <div className="mt-1 text-slate-300">{window.guidance}</div>
+            </div>
+          ))}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function H11LeagueSummary({ strategy }: { strategy: PreDraftStrategyResponse }) {
+  const summary = strategy.leagueSummary;
+  return (
+    <div className="rounded-md border border-line bg-panel2/70 px-3 py-3">
+      <h3 className="mb-2 text-sm font-bold text-slate-100">League Summary</h3>
+      <div className="flex flex-wrap gap-2">
+        {summary.formats.map((format) => <StrategyPill key={format}>{format}</StrategyPill>)}
+        <StrategyPill>{summary.scoringType}</StrategyPill>
+      </div>
+      <div className="mt-3 grid gap-2 text-xs sm:grid-cols-2 lg:grid-cols-4">
+        <H11MiniMetric label="Superflex/2QB" value={summary.superflexOr2Qb ? "Yes" : "No"} />
+        <H11MiniMetric label="TE premium" value={summary.tePremium ? "Yes" : "No"} />
+        <H11MiniMetric label="IDP" value={summary.idp ? "Yes" : "No"} />
+        <H11MiniMetric label="K/DST" value={summary.kicker || summary.teamDefense ? "Yes" : "No"} />
+      </div>
+    </div>
+  );
+}
+
+function H11Section({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div className="min-w-0 rounded-md border border-line bg-background/45 px-3 py-3">
+      <h3 className="text-sm font-bold text-slate-100">{title}</h3>
+      <div className="mt-2">{children}</div>
+    </div>
+  );
+}
+
+function StrategyList({ items, empty = "No rows returned." }: { items: string[]; empty?: string }) {
+  if (!items.length) return <p className="text-sm text-slate-500">{empty}</p>;
+  return (
+    <div className="grid gap-2">
+      {items.map((item) => (
+        <p key={item} className="break-words rounded-md border border-line/70 bg-panel2 px-2 py-2 text-xs text-slate-300">
+          {item}
+        </p>
+      ))}
+    </div>
+  );
+}
+
+function PriorityMapPreview({ priorities }: { priorities: PreDraftStrategyResponse["positionalPriorityMap"] }) {
+  const rows = Object.entries(priorities)
+    .filter(([, value]) => value.score > 0)
+    .sort((a, b) => b[1].score - a[1].score || a[0].localeCompare(b[0]))
+    .slice(0, 8);
+
+  if (!rows.length) return <p className="text-sm text-slate-500">No positional priority rows returned.</p>;
+
+  return (
+    <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+      {rows.map(([position, value]) => (
+        <div key={position} className="rounded-md border border-line bg-panel2 px-2 py-2">
+          <div className="flex items-center justify-between gap-2">
+            <span className={`rounded-full border px-2 py-1 text-[11px] font-bold ${positionBadgeClass(position)}`}>{position}</span>
+            <span className="text-xs text-slate-400">{value.score}</span>
+          </div>
+          <div className="mt-2 truncate text-xs text-slate-300">{value.priority}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function H11MiniMetric({ label, value }: { label: string; value: string | number }) {
+  return (
+    <div className="rounded-md border border-line bg-background/50 px-2 py-2">
+      <div className="truncate text-[10px] uppercase tracking-wide text-slate-500">{label}</div>
+      <div className="mt-1 truncate text-sm font-bold text-slate-100">{value}</div>
+    </div>
+  );
+}
+
+function StrategyPill({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="rounded-full border border-brand/25 bg-brand/10 px-2 py-1 text-[11px] font-bold uppercase tracking-wide text-brand">
+      {children}
+    </span>
   );
 }
 
@@ -1356,8 +1759,6 @@ function PositionBadge({ position }: { position: string | null }) {
   );
 }
 
-const NON_OFFENSIVE_POSITIONS = new Set(["K", "DEF", "DL", "LB", "DB"]);
-
 function LimitedDataBadge({
   player,
   compact = false
@@ -1575,26 +1976,15 @@ function formatNumber(value: number | null | undefined) {
   return Number(value).toLocaleString(undefined, { maximumFractionDigits: 1 });
 }
 
-function formatOverlayNumber(overlay: WarRoomValueOverlayRow | null, value: number | null | undefined) {
-  if (!overlay) return "-";
-  if (overlay.overlayStatus === "missing_projection") return "No projection";
-  if (overlay.overlayStatus === "format_excluded") return "Format excluded";
-  return formatNumber(value);
+function formatSignedNumber(value: number | null | undefined) {
+  if (value === null || value === undefined) return "-";
+  const rounded = Number(value).toLocaleString(undefined, { maximumFractionDigits: 1 });
+  return value > 0 ? `+${rounded}` : rounded;
 }
 
-function formatOverlayText(overlay: WarRoomValueOverlayRow | null, value: string | null | undefined) {
-  if (!overlay) return "-";
-  if (overlay.overlayStatus === "missing_projection") return "No projection";
-  if (overlay.overlayStatus === "format_excluded") return "Format excluded";
-  return value ?? "-";
-}
-
-function formatMarketSignal(overlay: WarRoomValueOverlayRow | null) {
-  if (!overlay) return "-";
-  if (overlay.overlayStatus === "missing_projection") return "No projection";
-  if (overlay.overlayStatus === "format_excluded") return "Format excluded";
-  const delta = overlay.marketRankDelta === null || overlay.marketRankDelta === undefined ? "" : ` (${formatNumber(overlay.marketRankDelta)})`;
-  return `${overlay.marketValueSignal ?? "-"}${delta}`;
+function formatTimingAction(value: string | null | undefined) {
+  if (!value) return "Timing unavailable";
+  return value.replaceAll("_", " ");
 }
 
 function formatCounts(counts: Record<string, number>) {

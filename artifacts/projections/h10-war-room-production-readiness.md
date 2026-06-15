@@ -1,6 +1,6 @@
 # H10.17 War Room Production Readiness
 
-Generated: 2026-06-15T18:13:26.900Z
+Generated: 2026-06-15T19:55:18.183Z
 Verdict: H10.17 WAR ROOM PRODUCTION READINESS READY
 
 ## Aggregate
@@ -87,7 +87,7 @@ Verdict: H10.17 WAR ROOM PRODUCTION READINESS READY
 - Legacy primary observed: false
 - Blackbird preview observed: false
 - Selector observed: false
-- Labels observed: {"experimental":false,"readOnly":false,"projectionMarketRosterTiming":false,"caveat":false}
+- Labels observed: {"experimental":true,"readOnly":true,"projectionMarketRosterTiming":false,"caveat":false}
 - Empty states observed: Recommendations need uploaded rankings
 - Banned language: None
 - Safety assertions: {"defaultSourceRemainsLegacy":true,"sourceSwitchingDoesNotPersistState":true,"blackbirdDoesNotMutateLegacyRows":true,"blackbirdDoesNotMutateAvailablePlayerOrder":true,"blackbirdDoesNotMutateProjectionPreview":true,"blackbirdDoesNotMutateDraftState":true,"noRecommendationPersistence":true,"noProjectionMutation":true,"noLegacyReplacement":true,"noBannedRecommendationLanguage":true,"productionE2EBypassGuardPresent":true}
@@ -103,7 +103,7 @@ Verdict: H10.17 WAR ROOM PRODUCTION READINESS READY
 - Legacy primary observed: true
 - Blackbird preview observed: false
 - Selector observed: false
-- Labels observed: {"experimental":false,"readOnly":false,"projectionMarketRosterTiming":false,"caveat":false}
+- Labels observed: {"experimental":true,"readOnly":true,"projectionMarketRosterTiming":false,"caveat":false}
 - Empty states observed: No synced draft picks yet
 - Banned language: None
 - Safety assertions: {"defaultSourceRemainsLegacy":true,"sourceSwitchingDoesNotPersistState":true,"blackbirdDoesNotMutateLegacyRows":true,"blackbirdDoesNotMutateAvailablePlayerOrder":true,"blackbirdDoesNotMutateProjectionPreview":true,"blackbirdDoesNotMutateDraftState":true,"noRecommendationPersistence":true,"noProjectionMutation":true,"noLegacyReplacement":true,"noBannedRecommendationLanguage":true,"productionE2EBypassGuardPresent":true}

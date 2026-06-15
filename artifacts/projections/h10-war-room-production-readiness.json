@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-15T18:13:26.900Z",
+  "generatedAt": "2026-06-15T19:55:18.183Z",
   "artifactVersion": "h10.17-war-room-production-readiness-v1",
   "verdict": "H10.17 WAR ROOM PRODUCTION READINESS READY",
   "flagCases": [
@@ -237,8 +237,8 @@
         "Recommendations need uploaded rankings"
       ],
       "labelsObserved": {
-        "experimental": false,
-        "readOnly": false,
+        "experimental": true,
+        "readOnly": true,
         "projectionMarketRosterTiming": false,
         "caveat": false
       },
@@ -279,8 +279,8 @@
         "No synced draft picks yet"
       ],
       "labelsObserved": {
-        "experimental": false,
-        "readOnly": false,
+        "experimental": true,
+        "readOnly": true,
         "projectionMarketRosterTiming": false,
         "caveat": false
       },

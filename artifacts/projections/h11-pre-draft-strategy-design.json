@@ -1,0 +1,2761 @@
+{
+  "generatedAt": "2026-06-15T19:47:51.646Z",
+  "artifactVersion": "h11.0-pre-draft-strategy-design-v1",
+  "sourceArtifact": "artifacts\\projections\\h10-war-room-recommendation-validation.json",
+  "dataAvailabilityAudit": {
+    "aggregate": {
+      "roomsAudited": 11,
+      "roomResultsAudited": 11,
+      "superflexOr2QbRooms": 5,
+      "tePremiumRooms": 1,
+      "idpRooms": 3,
+      "kickerRooms": 3,
+      "dstRooms": 3,
+      "shallowRosterRooms": 7,
+      "roomsWithUploadedRankings": 10,
+      "h10RecommendationRowsAvailable": 95,
+      "h10WaitPlanRowsAvailable": 44,
+      "representativeAudit": {
+        "leagueScoring": "missing",
+        "rosterSlots": "partial",
+        "startingLineupRequirements": "partial",
+        "draftOrder": "partial",
+        "draftSlot": "missing",
+        "teamCount": "missing",
+        "roundCount": "missing",
+        "playerProjections": "available",
+        "marketAdp": "available",
+        "tiers": "available",
+        "scarcity": "available",
+        "h10RecommendationRows": "available",
+        "h10NeedTimingFields": "available",
+        "h10WaitPlanFields": "partial",
+        "idpKDstSupport": "available",
+        "notes": [
+          "Exact pre-draft strategy improves when raw draft slot, team count, round count, and roster slots are loaded.",
+          "H10 validation artifacts provide compact timing and recommendation rows but not every raw league scoring key.",
+          "True historical completed-draft outcome validation remains unavailable."
+        ]
+      }
+    },
+    "representative": {
+      "leagueScoring": "missing",
+      "rosterSlots": "available",
+      "startingLineupRequirements": "computed",
+      "draftOrder": "partial",
+      "draftSlot": "available",
+      "teamCount": "available",
+      "roundCount": "available",
+      "playerProjections": "available",
+      "marketAdp": "available",
+      "tiers": "available",
+      "scarcity": "available",
+      "h10RecommendationRows": "available",
+      "h10NeedTimingFields": "available",
+      "h10WaitPlanFields": "partial",
+      "idpKDstSupport": "available",
+      "notes": [
+        "Exact pre-draft strategy improves when raw draft slot, team count, round count, and roster slots are loaded.",
+        "H10 validation artifacts provide compact timing and recommendation rows but not every raw league scoring key.",
+        "True historical completed-draft outcome validation remains unavailable."
+      ]
+    }
+  },
+  "strategyModelDesign": [
+    {
+      "section": "model",
+      "purpose": "Pure deterministic read model for pre-draft planning.",
+      "deterministicInputs": [
+        "league settings",
+        "roster slots",
+        "draft slot",
+        "team count",
+        "H10 rows"
+      ]
+    },
+    {
+      "section": "leagueSummary",
+      "purpose": "Summarize league format, roster structure, and available timing context.",
+      "deterministicInputs": [
+        "room flags",
+        "roster slots",
+        "draft metadata"
+      ]
+    },
+    {
+      "section": "scoringEmphasis",
+      "purpose": "Convert format signals into positional emphasis.",
+      "deterministicInputs": [
+        "scoring settings",
+        "format flags",
+        "roster requirements"
+      ]
+    },
+    {
+      "section": "positionalPriorityMap",
+      "purpose": "Rank positional planning priority without selecting a player.",
+      "deterministicInputs": [
+        "starter counts",
+        "tier risk",
+        "market signals",
+        "special-position rules"
+      ]
+    },
+    {
+      "section": "draftSlotStrategy",
+      "purpose": "Describe early, middle, or turn timing behavior.",
+      "deterministicInputs": [
+        "draft slot",
+        "team count",
+        "snake timing"
+      ]
+    },
+    {
+      "section": "roundWindowPlan",
+      "purpose": "Define broad windows for anchors, value pockets, depth, IDP, and K/DST.",
+      "deterministicInputs": [
+        "format flags",
+        "roster requirements"
+      ]
+    },
+    {
+      "section": "tierCliffWatchlist",
+      "purpose": "List visible tier risk from compact H10 rows.",
+      "deterministicInputs": [
+        "tierDropRisk",
+        "tierCliff component",
+        "H10 tier"
+      ]
+    },
+    {
+      "section": "valuePocketWatchlist",
+      "purpose": "List market value pockets from H10 market signals.",
+      "deterministicInputs": [
+        "marketValueSignal",
+        "marketValue component"
+      ]
+    },
+    {
+      "section": "waitPositions",
+      "purpose": "Surface H10 wait-plan-backed positions.",
+      "deterministicInputs": [
+        "needTimingAction",
+        "waitPlanBacked",
+        "waitPlanTargetCount"
+      ]
+    },
+    {
+      "section": "doNotForcePositions",
+      "purpose": "Prevent early forcing of low-priority or high-opportunity-cost slots.",
+      "deterministicInputs": [
+        "K/DST flags",
+        "needTimingAction",
+        "opportunityCost"
+      ]
+    },
+    {
+      "section": "contingencyPlans",
+      "purpose": "Generate if/then fallback plans for tier risk and wait uncertainty.",
+      "deterministicInputs": [
+        "tier risk",
+        "format flags",
+        "wait target coverage"
+      ]
+    },
+    {
+      "section": "specialPositionGuidance",
+      "purpose": "Handle IDP, kicker, and team defense with explicit caveats.",
+      "deterministicInputs": [
+        "IDP/K/DST flags",
+        "roster requirements"
+      ]
+    },
+    {
+      "section": "riskNotes",
+      "purpose": "Document missing inputs and validation limits.",
+      "deterministicInputs": [
+        "data audit",
+        "source artifact coverage"
+      ]
+    }
+  ],
+  "examples": [
+    {
+      "label": "superflex/2QB room",
+      "available": true,
+      "draftRoomId": "c82aef89-ce90-40f0-936f-545656045554",
+      "leagueName": "BestBalls in Hand IDP Dynasty ",
+      "strategy": {
+        "strategyPreviewLabel": "read-only strategy preview",
+        "leagueSummary": {
+          "leagueId": "95c929b9-cc55-411e-8493-06fd85308c1c",
+          "draftRoomId": "c82aef89-ce90-40f0-936f-545656045554",
+          "leagueName": "BestBalls in Hand IDP Dynasty ",
+          "teams": 12,
+          "rounds": 20,
+          "scoringType": "unknown",
+          "formats": [
+            "Superflex",
+            "IDP",
+            "Shallow roster"
+          ],
+          "superflexOr2Qb": true,
+          "tePremium": false,
+          "idp": true,
+          "kicker": false,
+          "teamDefense": false,
+          "flexStructure": [
+            "1 offensive flex",
+            "1 superflex"
+          ],
+          "startingRequirements": {
+            "QB": 1,
+            "RB": 2,
+            "WR": 2,
+            "TE": 1,
+            "K": 0,
+            "DEF": 0,
+            "DL": 0,
+            "LB": 0,
+            "DB": 0
+          },
+          "benchDepth": 4
+        },
+        "scoringEmphasis": [
+          {
+            "signal": "format signal",
+            "position": "QB",
+            "priority": "elite",
+            "reason": "Superflex or 2QB structure increases quarterback demand."
+          },
+          {
+            "signal": "format signal",
+            "position": "DL/LB/DB",
+            "priority": "medium",
+            "reason": "IDP slots require defensive position planning instead of a single generic pool."
+          },
+          {
+            "signal": "format signal",
+            "position": "RB/WR",
+            "priority": "high",
+            "reason": "Heavy flex or deep bench settings increase running back and wide receiver depth value."
+          }
+        ],
+        "rosterConstructionPlan": [
+          {
+            "phase": "QB structure",
+            "positions": [
+              "QB"
+            ],
+            "guidance": "Superflex and 2QB formats make quarterback structure a core planning lane."
+          },
+          {
+            "phase": "early anchor",
+            "positions": [
+              "QB",
+              "RB",
+              "WR",
+              "TE"
+            ],
+            "guidance": "Blackbird leans toward capturing format-sensitive value before forcing low-priority slots."
+          },
+          {
+            "phase": "middle value pocket",
+            "positions": [
+              "RB",
+              "WR",
+              "TE"
+            ],
+            "guidance": "Use tier risk and market value pockets to build starters and flexible depth."
+          },
+          {
+            "phase": "late depth and fill",
+            "positions": [
+              "RB",
+              "WR",
+              "K",
+              "DEF"
+            ],
+            "guidance": "Fill special positions late while using remaining bench slots for upside and coverage."
+          },
+          {
+            "phase": "IDP structure",
+            "positions": [
+              "DL",
+              "LB",
+              "DB"
+            ],
+            "guidance": "Build defensive coverage by position group, then react to tier risk."
+          }
+        ],
+        "positionalPriorityMap": {
+          "QB": {
+            "priority": "elite",
+            "score": 95,
+            "reasons": [
+              "QB has direct starter demand.",
+              "Superflex or 2QB format signal elevates QB priority."
+            ]
+          },
+          "RB": {
+            "priority": "high",
+            "score": 80,
+            "reasons": [
+              "RB has direct starter demand.",
+              "Flex or deep roster settings increase depth value."
+            ]
+          },
+          "WR": {
+            "priority": "high",
+            "score": 80,
+            "reasons": [
+              "WR has direct starter demand.",
+              "Flex or deep roster settings increase depth value."
+            ]
+          },
+          "TE": {
+            "priority": "medium",
+            "score": 60,
+            "reasons": [
+              "TE has direct starter demand."
+            ]
+          },
+          "K": {
+            "priority": "defer",
+            "score": 1,
+            "reasons": [
+              "K is generally a late-round fill position."
+            ]
+          },
+          "DEF": {
+            "priority": "defer",
+            "score": 1,
+            "reasons": [
+              "DEF is generally a late-round fill position."
+            ]
+          },
+          "DL": {
+            "priority": "medium",
+            "score": 58,
+            "reasons": [
+              "DL appears in the H10 planning pool.",
+              "IDP format signal requires defensive planning."
+            ]
+          },
+          "LB": {
+            "priority": "medium",
+            "score": 58,
+            "reasons": [
+              "LB appears in the H10 planning pool.",
+              "IDP format signal requires defensive planning."
+            ]
+          },
+          "DB": {
+            "priority": "medium",
+            "score": 58,
+            "reasons": [
+              "DB appears in the H10 planning pool.",
+              "IDP format signal requires defensive planning."
+            ]
+          }
+        },
+        "draftSlotStrategy": {
+          "slot": 3,
+          "teamCount": 12,
+          "archetype": "early",
+          "expectedLongWaitPicks": 18,
+          "draftSlotBand": "early-middle",
+          "isTurnPick": false,
+          "isNearTurn": false,
+          "averagePicksBetweenTurns": 13.3,
+          "maxWaitUntilNextPick": 18,
+          "turnPairingRisk": "medium",
+          "slotStrategySummary": "Strategy preview uses generic slot timing because exact slot context is partial.",
+          "projectedUserPicks": [
+            {
+              "round": 1,
+              "pickInRound": 3,
+              "overallPick": 3,
+              "window": "early anchor"
+            },
+            {
+              "round": 2,
+              "pickInRound": 10,
+              "overallPick": 22,
+              "window": "early anchor"
+            },
+            {
+              "round": 3,
+              "pickInRound": 3,
+              "overallPick": 27,
+              "window": "second/third turn"
+            },
+            {
+              "round": 4,
+              "pickInRound": 10,
+              "overallPick": 46,
+              "window": "second/third turn"
+            },
+            {
+              "round": 5,
+              "pickInRound": 3,
+              "overallPick": 51,
+              "window": "middle value"
+            },
+            {
+              "round": 6,
+              "pickInRound": 10,
+              "overallPick": 70,
+              "window": "middle value"
+            },
+            {
+              "round": 7,
+              "pickInRound": 3,
+              "overallPick": 75,
+              "window": "middle value"
+            },
+            {
+              "round": 8,
+              "pickInRound": 10,
+              "overallPick": 94,
+              "window": "middle value"
+            },
+            {
+              "round": 9,
+              "pickInRound": 3,
+              "overallPick": 99,
+              "window": "middle value"
+            },
+            {
+              "round": 10,
+              "pickInRound": 10,
+              "overallPick": 118,
+              "window": "middle value"
+            },
+            {
+              "round": 11,
+              "pickInRound": 3,
+              "overallPick": 123,
+              "window": "late fill"
+            },
+            {
+              "round": 12,
+              "pickInRound": 10,
+              "overallPick": 142,
+              "window": "late fill"
+            },
+            {
+              "round": 13,
+              "pickInRound": 3,
+              "overallPick": 147,
+              "window": "late fill"
+            },
+            {
+              "round": 14,
+              "pickInRound": 10,
+              "overallPick": 166,
+              "window": "late fill"
+            },
+            {
+              "round": 15,
+              "pickInRound": 3,
+              "overallPick": 171,
+              "window": "late fill"
+            },
+            {
+              "round": 16,
+              "pickInRound": 10,
+              "overallPick": 190,
+              "window": "late fill"
+            },
+            {
+              "round": 17,
+              "pickInRound": 3,
+              "overallPick": 195,
+              "window": "late fill"
+            },
+            {
+              "round": 18,
+              "pickInRound": 10,
+              "overallPick": 214,
+              "window": "late fill"
+            },
+            {
+              "round": 19,
+              "pickInRound": 3,
+              "overallPick": 219,
+              "window": "late fill"
+            },
+            {
+              "round": 20,
+              "pickInRound": 10,
+              "overallPick": 238,
+              "window": "late fill"
+            }
+          ],
+          "roundPickWindows": [
+            {
+              "label": "early anchor window",
+              "rounds": "1-4",
+              "picks": [
+                3,
+                22,
+                27,
+                46
+              ],
+              "guidance": "Blackbird leans toward flexible early value while tracking tier risk before the next window."
+            },
+            {
+              "label": "middle-round value windows",
+              "rounds": "5-10",
+              "picks": [
+                51,
+                70,
+                75,
+                94,
+                99,
+                118
+              ],
+              "guidance": "Timing signal: compare value pockets against a max snake wait near 18 picks."
+            },
+            {
+              "label": "IDP timing window",
+              "rounds": "middle-late",
+              "picks": [
+                99,
+                118,
+                123,
+                142,
+                147
+              ],
+              "guidance": "Use IDP tier risk and named targets before waiting through another full turn."
+            },
+            {
+              "label": "K/DST timing window",
+              "rounds": "late",
+              "picks": [
+                195,
+                214,
+                219,
+                238
+              ],
+              "guidance": "Keep K/DST in late fill windows unless scoring settings create a measurable format signal."
+            }
+          ],
+          "roundWindowPlanBySlot": [
+            {
+              "window": "early anchor window",
+              "rounds": "1-4",
+              "picks": [
+                3,
+                22,
+                27,
+                46
+              ],
+              "guidance": "Blackbird leans toward flexible early value while tracking tier risk before the next window."
+            },
+            {
+              "window": "middle-round value windows",
+              "rounds": "5-10",
+              "picks": [
+                51,
+                70,
+                75,
+                94,
+                99,
+                118
+              ],
+              "guidance": "Timing signal: compare value pockets against a max snake wait near 18 picks."
+            },
+            {
+              "window": "IDP timing window",
+              "rounds": "middle-late",
+              "picks": [
+                99,
+                118,
+                123,
+                142,
+                147
+              ],
+              "guidance": "Use IDP tier risk and named targets before waiting through another full turn."
+            },
+            {
+              "window": "K/DST timing window",
+              "rounds": "late",
+              "picks": [
+                195,
+                214,
+                219,
+                238
+              ],
+              "guidance": "Keep K/DST in late fill windows unless scoring settings create a measurable format signal."
+            }
+          ],
+          "timingSignals": [
+            "Slot timing signal: monitor value pockets and contingency paths.",
+            "Max wait until the next user pick is about 18 picks."
+          ],
+          "positionsAtRiskBeforeNextTurn": [
+            "QB",
+            "RB",
+            "WR"
+          ]
+        },
+        "roundWindowPlan": [
+          {
+            "window": "early anchor targets",
+            "rounds": "1-4",
+            "positions": [
+              "QB",
+              "RB",
+              "WR",
+              "TE"
+            ],
+            "guidance": "Blackbird leans toward flexible early value while tracking tier risk before the next window."
+          },
+          {
+            "window": "QB tier window",
+            "rounds": "1-8",
+            "positions": [
+              "QB"
+            ],
+            "guidance": "Monitor QB tier risk before long snake waits."
+          },
+          {
+            "window": "middle-round value pockets",
+            "rounds": "5-10",
+            "positions": [
+              "RB",
+              "WR",
+              "TE"
+            ],
+            "guidance": "Timing signal: compare value pockets against a max snake wait near 18 picks."
+          },
+          {
+            "window": "late-round depth/fill",
+            "rounds": "11+",
+            "positions": [
+              "RB",
+              "WR"
+            ],
+            "guidance": "Use late windows for depth, contingent value, and remaining roster coverage."
+          },
+          {
+            "window": "IDP timing",
+            "rounds": "middle-late",
+            "positions": [
+              "DL",
+              "LB",
+              "DB"
+            ],
+            "guidance": "Plan IDP starts around tier risk while accounting for lower projection confidence."
+          }
+        ],
+        "tierCliffWatchlist": [],
+        "valuePocketWatchlist": [],
+        "waitPositions": [],
+        "doNotForcePositions": [],
+        "contingencyPlans": [
+          {
+            "trigger": "If a QB tier dries up before the next turn",
+            "response": "pivot to the strongest non-QB value pocket and revisit QB on the next timing signal."
+          },
+          {
+            "trigger": "If an IDP tier becomes thin",
+            "response": "avoid waiting without named targets and compare DL/LB/DB coverage separately."
+          },
+          {
+            "trigger": "If RB/WR value falls below market",
+            "response": "let value pocket evidence compete with roster need before filling a lower-value slot."
+          },
+          {
+            "trigger": "If wait guidance lacks named targets",
+            "response": "treat the position as monitor-only and prefer stronger tier or value signals."
+          }
+        ],
+        "specialPositionGuidance": [
+          {
+            "position": "DL/LB/DB",
+            "guidance": "Plan IDP by position group; low-confidence baselines make tier risk and named targets more important."
+          }
+        ],
+        "riskNotes": [
+          "H11.0 is design/foundation only and read-only.",
+          "True historical completed-draft outcome validation remains unavailable."
+        ],
+        "explanationFragments": [
+          "Read-only strategy preview built from league format, roster settings, H10 timing signals, tiers, and market context.",
+          "Blackbird leans are deterministic and do not mutate draft state, projections, or player ordering.",
+          "Timing signal and tier risk are pre-draft planning aids; live H10 recommendations remain separate."
+        ],
+        "dataAvailabilityAudit": {
+          "leagueScoring": "missing",
+          "rosterSlots": "available",
+          "startingLineupRequirements": "computed",
+          "draftOrder": "partial",
+          "draftSlot": "available",
+          "teamCount": "available",
+          "roundCount": "available",
+          "playerProjections": "available",
+          "marketAdp": "available",
+          "tiers": "available",
+          "scarcity": "available",
+          "h10RecommendationRows": "available",
+          "h10NeedTimingFields": "available",
+          "h10WaitPlanFields": "partial",
+          "idpKDstSupport": "available",
+          "notes": [
+            "Exact pre-draft strategy improves when raw draft slot, team count, round count, and roster slots are loaded.",
+            "H10 validation artifacts provide compact timing and recommendation rows but not every raw league scoring key.",
+            "True historical completed-draft outcome validation remains unavailable."
+          ]
+        }
+      }
+    },
+    {
+      "label": "TE premium room",
+      "available": true,
+      "draftRoomId": "fixture-te-premium",
+      "leagueName": "[Fixture] TE Premium",
+      "strategy": {
+        "strategyPreviewLabel": "read-only strategy preview",
+        "leagueSummary": {
+          "leagueId": "fixture-te-premium",
+          "draftRoomId": "fixture-te-premium",
+          "leagueName": "[Fixture] TE Premium",
+          "teams": 12,
+          "rounds": 18,
+          "scoringType": "PPR",
+          "formats": [
+            "TE premium",
+            "Shallow roster"
+          ],
+          "superflexOr2Qb": false,
+          "tePremium": true,
+          "idp": false,
+          "kicker": false,
+          "teamDefense": false,
+          "flexStructure": [
+            "1 offensive flex"
+          ],
+          "startingRequirements": {
+            "QB": 1,
+            "RB": 2,
+            "WR": 2,
+            "TE": 1,
+            "K": 0,
+            "DEF": 0,
+            "DL": 0,
+            "LB": 0,
+            "DB": 0
+          },
+          "benchDepth": 3
+        },
+        "scoringEmphasis": [
+          {
+            "signal": "format signal",
+            "position": "TE",
+            "priority": "high",
+            "reason": "TE premium increases tier sensitivity at tight end."
+          }
+        ],
+        "rosterConstructionPlan": [
+          {
+            "phase": "early anchor",
+            "positions": [
+              "QB",
+              "RB",
+              "WR",
+              "TE"
+            ],
+            "guidance": "Blackbird leans toward capturing format-sensitive value before forcing low-priority slots."
+          },
+          {
+            "phase": "middle value pocket",
+            "positions": [
+              "RB",
+              "WR",
+              "TE"
+            ],
+            "guidance": "Use tier risk and market value pockets to build starters and flexible depth."
+          },
+          {
+            "phase": "late depth and fill",
+            "positions": [
+              "RB",
+              "WR",
+              "K",
+              "DEF"
+            ],
+            "guidance": "Fill special positions late while using remaining bench slots for upside and coverage."
+          }
+        ],
+        "positionalPriorityMap": {
+          "QB": {
+            "priority": "medium",
+            "score": 60,
+            "reasons": [
+              "QB has direct starter demand."
+            ]
+          },
+          "RB": {
+            "priority": "high",
+            "score": 80,
+            "reasons": [
+              "RB has direct starter demand.",
+              "Flex or deep roster settings increase depth value."
+            ]
+          },
+          "WR": {
+            "priority": "high",
+            "score": 87,
+            "reasons": [
+              "WR has direct starter demand.",
+              "WR appears in the H10 planning pool.",
+              "WR has visible tier risk in H10 rows.",
+              "Flex or deep roster settings increase depth value."
+            ]
+          },
+          "TE": {
+            "priority": "elite",
+            "score": 89,
+            "reasons": [
+              "TE has direct starter demand.",
+              "TE appears in the H10 planning pool.",
+              "TE has visible tier risk in H10 rows.",
+              "TE premium format signal elevates TE tier sensitivity."
+            ]
+          },
+          "K": {
+            "priority": "defer",
+            "score": 1,
+            "reasons": [
+              "K is generally a late-round fill position."
+            ]
+          },
+          "DEF": {
+            "priority": "defer",
+            "score": 1,
+            "reasons": [
+              "DEF is generally a late-round fill position."
+            ]
+          },
+          "DL": {
+            "priority": "defer",
+            "score": 25,
+            "reasons": [
+              "DL has no strong pre-draft format signal."
+            ]
+          },
+          "LB": {
+            "priority": "defer",
+            "score": 25,
+            "reasons": [
+              "LB has no strong pre-draft format signal."
+            ]
+          },
+          "DB": {
+            "priority": "defer",
+            "score": 25,
+            "reasons": [
+              "DB has no strong pre-draft format signal."
+            ]
+          }
+        },
+        "draftSlotStrategy": {
+          "slot": 6,
+          "teamCount": 12,
+          "archetype": "middle",
+          "expectedLongWaitPicks": 12,
+          "draftSlotBand": "middle",
+          "isTurnPick": false,
+          "isNearTurn": false,
+          "averagePicksBetweenTurns": 11.3,
+          "maxWaitUntilNextPick": 12,
+          "turnPairingRisk": "low",
+          "slotStrategySummary": "Middle-slot strategy preview: preserve flexibility and exploit falling value while monitoring tier risk.",
+          "projectedUserPicks": [
+            {
+              "round": 1,
+              "pickInRound": 6,
+              "overallPick": 6,
+              "window": "early anchor"
+            },
+            {
+              "round": 2,
+              "pickInRound": 7,
+              "overallPick": 19,
+              "window": "early anchor"
+            },
+            {
+              "round": 3,
+              "pickInRound": 6,
+              "overallPick": 30,
+              "window": "second/third turn"
+            },
+            {
+              "round": 4,
+              "pickInRound": 7,
+              "overallPick": 43,
+              "window": "second/third turn"
+            },
+            {
+              "round": 5,
+              "pickInRound": 6,
+              "overallPick": 54,
+              "window": "middle value"
+            },
+            {
+              "round": 6,
+              "pickInRound": 7,
+              "overallPick": 67,
+              "window": "middle value"
+            },
+            {
+              "round": 7,
+              "pickInRound": 6,
+              "overallPick": 78,
+              "window": "middle value"
+            },
+            {
+              "round": 8,
+              "pickInRound": 7,
+              "overallPick": 91,
+              "window": "middle value"
+            },
+            {
+              "round": 9,
+              "pickInRound": 6,
+              "overallPick": 102,
+              "window": "middle value"
+            },
+            {
+              "round": 10,
+              "pickInRound": 7,
+              "overallPick": 115,
+              "window": "middle value"
+            },
+            {
+              "round": 11,
+              "pickInRound": 6,
+              "overallPick": 126,
+              "window": "late fill"
+            },
+            {
+              "round": 12,
+              "pickInRound": 7,
+              "overallPick": 139,
+              "window": "late fill"
+            },
+            {
+              "round": 13,
+              "pickInRound": 6,
+              "overallPick": 150,
+              "window": "late fill"
+            },
+            {
+              "round": 14,
+              "pickInRound": 7,
+              "overallPick": 163,
+              "window": "late fill"
+            },
+            {
+              "round": 15,
+              "pickInRound": 6,
+              "overallPick": 174,
+              "window": "late fill"
+            },
+            {
+              "round": 16,
+              "pickInRound": 7,
+              "overallPick": 187,
+              "window": "late fill"
+            },
+            {
+              "round": 17,
+              "pickInRound": 6,
+              "overallPick": 198,
+              "window": "late fill"
+            },
+            {
+              "round": 18,
+              "pickInRound": 7,
+              "overallPick": 211,
+              "window": "late fill"
+            }
+          ],
+          "roundPickWindows": [
+            {
+              "label": "early anchor window",
+              "rounds": "1-4",
+              "picks": [
+                6,
+                19,
+                30,
+                43
+              ],
+              "guidance": "Blackbird leans toward flexible early value while tracking tier risk before the next window."
+            },
+            {
+              "label": "middle-round value windows",
+              "rounds": "5-10",
+              "picks": [
+                54,
+                67,
+                78,
+                91,
+                102,
+                115
+              ],
+              "guidance": "Timing signal: compare value pockets against a max snake wait near 12 picks."
+            },
+            {
+              "label": "IDP timing window",
+              "rounds": "middle-late",
+              "picks": [
+                102,
+                115,
+                126,
+                139,
+                150
+              ],
+              "guidance": "Use IDP tier risk and named targets before waiting through another full turn."
+            },
+            {
+              "label": "K/DST timing window",
+              "rounds": "late",
+              "picks": [
+                174,
+                187,
+                198,
+                211
+              ],
+              "guidance": "Keep K/DST in late fill windows unless scoring settings create a measurable format signal."
+            }
+          ],
+          "roundWindowPlanBySlot": [
+            {
+              "window": "early anchor window",
+              "rounds": "1-4",
+              "picks": [
+                6,
+                19,
+                30,
+                43
+              ],
+              "guidance": "Blackbird leans toward flexible early value while tracking tier risk before the next window."
+            },
+            {
+              "window": "middle-round value windows",
+              "rounds": "5-10",
+              "picks": [
+                54,
+                67,
+                78,
+                91,
+                102,
+                115
+              ],
+              "guidance": "Timing signal: compare value pockets against a max snake wait near 12 picks."
+            },
+            {
+              "window": "IDP timing window",
+              "rounds": "middle-late",
+              "picks": [
+                102,
+                115,
+                126,
+                139,
+                150
+              ],
+              "guidance": "Use IDP tier risk and named targets before waiting through another full turn."
+            },
+            {
+              "window": "K/DST timing window",
+              "rounds": "late",
+              "picks": [
+                174,
+                187,
+                198,
+                211
+              ],
+              "guidance": "Keep K/DST in late fill windows unless scoring settings create a measurable format signal."
+            }
+          ],
+          "timingSignals": [
+            "Middle-slot timing signal: stay flexible and monitor tier movement.",
+            "Max wait until the next user pick is about 12 picks."
+          ],
+          "positionsAtRiskBeforeNextTurn": [
+            "RB",
+            "TE",
+            "WR"
+          ]
+        },
+        "roundWindowPlan": [
+          {
+            "window": "early anchor targets",
+            "rounds": "1-4",
+            "positions": [
+              "QB",
+              "RB",
+              "WR",
+              "TE"
+            ],
+            "guidance": "Blackbird leans toward flexible early value while tracking tier risk before the next window."
+          },
+          {
+            "window": "TE premium tier window",
+            "rounds": "2-8",
+            "positions": [
+              "TE"
+            ],
+            "guidance": "Watch tight end tier gaps because premium scoring can amplify positional separation."
+          },
+          {
+            "window": "middle-round value pockets",
+            "rounds": "5-10",
+            "positions": [
+              "RB",
+              "WR",
+              "TE"
+            ],
+            "guidance": "Timing signal: compare value pockets against a max snake wait near 12 picks."
+          },
+          {
+            "window": "late-round depth/fill",
+            "rounds": "11+",
+            "positions": [
+              "RB",
+              "WR"
+            ],
+            "guidance": "Use late windows for depth, contingent value, and remaining roster coverage."
+          }
+        ],
+        "tierCliffWatchlist": [
+          {
+            "position": "TE",
+            "label": "Fixture Premium TE",
+            "tier": 1,
+            "risk": "high",
+            "reason": "TE tier risk is elevated in current H10 rows."
+          },
+          {
+            "position": "WR",
+            "label": "Fixture WR",
+            "tier": 1,
+            "risk": "high",
+            "reason": "WR tier risk is elevated in current H10 rows."
+          }
+        ],
+        "valuePocketWatchlist": [],
+        "waitPositions": [],
+        "doNotForcePositions": [
+          {
+            "position": "WR",
+            "reason": "WR has high opportunity cost versus the board in at least one H10 row."
+          }
+        ],
+        "contingencyPlans": [
+          {
+            "trigger": "If a TE premium tier falls into range",
+            "response": "consider TE within the tier window before filling low-scarcity depth."
+          },
+          {
+            "trigger": "If RB/WR value falls below market",
+            "response": "let value pocket evidence compete with roster need before filling a lower-value slot."
+          },
+          {
+            "trigger": "If wait guidance lacks named targets",
+            "response": "treat the position as monitor-only and prefer stronger tier or value signals."
+          }
+        ],
+        "specialPositionGuidance": [],
+        "riskNotes": [
+          "H11.0 is design/foundation only and read-only.",
+          "True historical completed-draft outcome validation remains unavailable."
+        ],
+        "explanationFragments": [
+          "Read-only strategy preview built from league format, roster settings, H10 timing signals, tiers, and market context.",
+          "Blackbird leans are deterministic and do not mutate draft state, projections, or player ordering.",
+          "Timing signal and tier risk are pre-draft planning aids; live H10 recommendations remain separate."
+        ],
+        "dataAvailabilityAudit": {
+          "leagueScoring": "available",
+          "rosterSlots": "available",
+          "startingLineupRequirements": "computed",
+          "draftOrder": "partial",
+          "draftSlot": "available",
+          "teamCount": "available",
+          "roundCount": "available",
+          "playerProjections": "available",
+          "marketAdp": "available",
+          "tiers": "available",
+          "scarcity": "available",
+          "h10RecommendationRows": "available",
+          "h10NeedTimingFields": "available",
+          "h10WaitPlanFields": "partial",
+          "idpKDstSupport": "partial",
+          "notes": [
+            "Exact pre-draft strategy improves when raw draft slot, team count, round count, and roster slots are loaded.",
+            "H10 validation artifacts provide compact timing and recommendation rows but not every raw league scoring key.",
+            "True historical completed-draft outcome validation remains unavailable."
+          ]
+        }
+      }
+    },
+    {
+      "label": "IDP mixed room",
+      "available": true,
+      "draftRoomId": "c82aef89-ce90-40f0-936f-545656045554",
+      "leagueName": "BestBalls in Hand IDP Dynasty ",
+      "strategy": {
+        "strategyPreviewLabel": "read-only strategy preview",
+        "leagueSummary": {
+          "leagueId": "95c929b9-cc55-411e-8493-06fd85308c1c",
+          "draftRoomId": "c82aef89-ce90-40f0-936f-545656045554",
+          "leagueName": "BestBalls in Hand IDP Dynasty ",
+          "teams": 12,
+          "rounds": 24,
+          "scoringType": "unknown",
+          "formats": [
+            "Superflex",
+            "IDP",
+            "Shallow roster"
+          ],
+          "superflexOr2Qb": true,
+          "tePremium": false,
+          "idp": true,
+          "kicker": false,
+          "teamDefense": false,
+          "flexStructure": [
+            "1 IDP flex"
+          ],
+          "startingRequirements": {
+            "QB": 1,
+            "RB": 1,
+            "WR": 1,
+            "TE": 1,
+            "K": 0,
+            "DEF": 0,
+            "DL": 1,
+            "LB": 1,
+            "DB": 1
+          },
+          "benchDepth": 6
+        },
+        "scoringEmphasis": [
+          {
+            "signal": "format signal",
+            "position": "QB",
+            "priority": "elite",
+            "reason": "Superflex or 2QB structure increases quarterback demand."
+          },
+          {
+            "signal": "format signal",
+            "position": "DL/LB/DB",
+            "priority": "medium",
+            "reason": "IDP slots require defensive position planning instead of a single generic pool."
+          },
+          {
+            "signal": "format signal",
+            "position": "RB/WR",
+            "priority": "high",
+            "reason": "Heavy flex or deep bench settings increase running back and wide receiver depth value."
+          }
+        ],
+        "rosterConstructionPlan": [
+          {
+            "phase": "QB structure",
+            "positions": [
+              "QB"
+            ],
+            "guidance": "Superflex and 2QB formats make quarterback structure a core planning lane."
+          },
+          {
+            "phase": "early anchor",
+            "positions": [
+              "QB",
+              "RB",
+              "WR",
+              "TE"
+            ],
+            "guidance": "Blackbird leans toward capturing format-sensitive value before forcing low-priority slots."
+          },
+          {
+            "phase": "middle value pocket",
+            "positions": [
+              "RB",
+              "WR",
+              "TE"
+            ],
+            "guidance": "Use tier risk and market value pockets to build starters and flexible depth."
+          },
+          {
+            "phase": "late depth and fill",
+            "positions": [
+              "RB",
+              "WR",
+              "K",
+              "DEF"
+            ],
+            "guidance": "Fill special positions late while using remaining bench slots for upside and coverage."
+          },
+          {
+            "phase": "IDP structure",
+            "positions": [
+              "DL",
+              "LB",
+              "DB"
+            ],
+            "guidance": "Build defensive coverage by position group, then react to tier risk."
+          }
+        ],
+        "positionalPriorityMap": {
+          "QB": {
+            "priority": "elite",
+            "score": 95,
+            "reasons": [
+              "QB has direct starter demand.",
+              "Superflex or 2QB format signal elevates QB priority."
+            ]
+          },
+          "RB": {
+            "priority": "high",
+            "score": 72,
+            "reasons": [
+              "RB has direct starter demand.",
+              "Flex or deep roster settings increase depth value."
+            ]
+          },
+          "WR": {
+            "priority": "high",
+            "score": 72,
+            "reasons": [
+              "WR has direct starter demand.",
+              "Flex or deep roster settings increase depth value."
+            ]
+          },
+          "TE": {
+            "priority": "medium",
+            "score": 60,
+            "reasons": [
+              "TE has direct starter demand."
+            ]
+          },
+          "K": {
+            "priority": "defer",
+            "score": 1,
+            "reasons": [
+              "K is generally a late-round fill position."
+            ]
+          },
+          "DEF": {
+            "priority": "defer",
+            "score": 1,
+            "reasons": [
+              "DEF is generally a late-round fill position."
+            ]
+          },
+          "DL": {
+            "priority": "high",
+            "score": 76,
+            "reasons": [
+              "DL has direct starter demand.",
+              "DL appears in the H10 planning pool.",
+              "IDP format signal requires defensive planning."
+            ]
+          },
+          "LB": {
+            "priority": "high",
+            "score": 76,
+            "reasons": [
+              "LB has direct starter demand.",
+              "LB appears in the H10 planning pool.",
+              "IDP format signal requires defensive planning."
+            ]
+          },
+          "DB": {
+            "priority": "high",
+            "score": 76,
+            "reasons": [
+              "DB has direct starter demand.",
+              "DB appears in the H10 planning pool.",
+              "IDP format signal requires defensive planning."
+            ]
+          }
+        },
+        "draftSlotStrategy": {
+          "slot": 8,
+          "teamCount": 12,
+          "archetype": "middle",
+          "expectedLongWaitPicks": 14,
+          "draftSlotBand": "late-middle",
+          "isTurnPick": false,
+          "isNearTurn": false,
+          "averagePicksBetweenTurns": 10,
+          "maxWaitUntilNextPick": 14,
+          "turnPairingRisk": "low",
+          "slotStrategySummary": "Strategy preview uses generic slot timing because exact slot context is partial.",
+          "projectedUserPicks": [
+            {
+              "round": 1,
+              "pickInRound": 8,
+              "overallPick": 8,
+              "window": "early anchor"
+            },
+            {
+              "round": 2,
+              "pickInRound": 5,
+              "overallPick": 17,
+              "window": "early anchor"
+            },
+            {
+              "round": 3,
+              "pickInRound": 8,
+              "overallPick": 32,
+              "window": "second/third turn"
+            },
+            {
+              "round": 4,
+              "pickInRound": 5,
+              "overallPick": 41,
+              "window": "second/third turn"
+            },
+            {
+              "round": 5,
+              "pickInRound": 8,
+              "overallPick": 56,
+              "window": "middle value"
+            },
+            {
+              "round": 6,
+              "pickInRound": 5,
+              "overallPick": 65,
+              "window": "middle value"
+            },
+            {
+              "round": 7,
+              "pickInRound": 8,
+              "overallPick": 80,
+              "window": "middle value"
+            },
+            {
+              "round": 8,
+              "pickInRound": 5,
+              "overallPick": 89,
+              "window": "middle value"
+            },
+            {
+              "round": 9,
+              "pickInRound": 8,
+              "overallPick": 104,
+              "window": "middle value"
+            },
+            {
+              "round": 10,
+              "pickInRound": 5,
+              "overallPick": 113,
+              "window": "middle value"
+            },
+            {
+              "round": 11,
+              "pickInRound": 8,
+              "overallPick": 128,
+              "window": "late fill"
+            },
+            {
+              "round": 12,
+              "pickInRound": 5,
+              "overallPick": 137,
+              "window": "late fill"
+            },
+            {
+              "round": 13,
+              "pickInRound": 8,
+              "overallPick": 152,
+              "window": "late fill"
+            },
+            {
+              "round": 14,
+              "pickInRound": 5,
+              "overallPick": 161,
+              "window": "late fill"
+            },
+            {
+              "round": 15,
+              "pickInRound": 8,
+              "overallPick": 176,
+              "window": "late fill"
+            },
+            {
+              "round": 16,
+              "pickInRound": 5,
+              "overallPick": 185,
+              "window": "late fill"
+            },
+            {
+              "round": 17,
+              "pickInRound": 8,
+              "overallPick": 200,
+              "window": "late fill"
+            },
+            {
+              "round": 18,
+              "pickInRound": 5,
+              "overallPick": 209,
+              "window": "late fill"
+            },
+            {
+              "round": 19,
+              "pickInRound": 8,
+              "overallPick": 224,
+              "window": "late fill"
+            },
+            {
+              "round": 20,
+              "pickInRound": 5,
+              "overallPick": 233,
+              "window": "late fill"
+            }
+          ],
+          "roundPickWindows": [
+            {
+              "label": "early anchor window",
+              "rounds": "1-4",
+              "picks": [
+                8,
+                17,
+                32,
+                41
+              ],
+              "guidance": "Blackbird leans toward flexible early value while tracking tier risk before the next window."
+            },
+            {
+              "label": "middle-round value windows",
+              "rounds": "5-10",
+              "picks": [
+                56,
+                65,
+                80,
+                89,
+                104,
+                113
+              ],
+              "guidance": "Timing signal: compare value pockets against a max snake wait near 14 picks."
+            },
+            {
+              "label": "IDP timing window",
+              "rounds": "middle-late",
+              "picks": [
+                104,
+                113,
+                128,
+                137,
+                152
+              ],
+              "guidance": "Use IDP tier risk and named targets before waiting through another full turn."
+            },
+            {
+              "label": "K/DST timing window",
+              "rounds": "late",
+              "picks": [
+                200,
+                209,
+                224,
+                233
+              ],
+              "guidance": "Keep K/DST in late fill windows unless scoring settings create a measurable format signal."
+            }
+          ],
+          "roundWindowPlanBySlot": [
+            {
+              "window": "early anchor window",
+              "rounds": "1-4",
+              "picks": [
+                8,
+                17,
+                32,
+                41
+              ],
+              "guidance": "Blackbird leans toward flexible early value while tracking tier risk before the next window."
+            },
+            {
+              "window": "middle-round value windows",
+              "rounds": "5-10",
+              "picks": [
+                56,
+                65,
+                80,
+                89,
+                104,
+                113
+              ],
+              "guidance": "Timing signal: compare value pockets against a max snake wait near 14 picks."
+            },
+            {
+              "window": "IDP timing window",
+              "rounds": "middle-late",
+              "picks": [
+                104,
+                113,
+                128,
+                137,
+                152
+              ],
+              "guidance": "Use IDP tier risk and named targets before waiting through another full turn."
+            },
+            {
+              "window": "K/DST timing window",
+              "rounds": "late",
+              "picks": [
+                200,
+                209,
+                224,
+                233
+              ],
+              "guidance": "Keep K/DST in late fill windows unless scoring settings create a measurable format signal."
+            }
+          ],
+          "timingSignals": [
+            "Slot timing signal: monitor value pockets and contingency paths.",
+            "Max wait until the next user pick is about 14 picks."
+          ],
+          "positionsAtRiskBeforeNextTurn": [
+            "QB"
+          ]
+        },
+        "roundWindowPlan": [
+          {
+            "window": "early anchor targets",
+            "rounds": "1-4",
+            "positions": [
+              "QB",
+              "RB",
+              "WR",
+              "TE"
+            ],
+            "guidance": "Blackbird leans toward flexible early value while tracking tier risk before the next window."
+          },
+          {
+            "window": "QB tier window",
+            "rounds": "1-8",
+            "positions": [
+              "QB"
+            ],
+            "guidance": "Monitor QB tier risk before long snake waits."
+          },
+          {
+            "window": "middle-round value pockets",
+            "rounds": "5-10",
+            "positions": [
+              "RB",
+              "WR",
+              "TE"
+            ],
+            "guidance": "Timing signal: compare value pockets against a max snake wait near 14 picks."
+          },
+          {
+            "window": "late-round depth/fill",
+            "rounds": "11+",
+            "positions": [
+              "RB",
+              "WR"
+            ],
+            "guidance": "Use late windows for depth, contingent value, and remaining roster coverage."
+          },
+          {
+            "window": "IDP timing",
+            "rounds": "middle-late",
+            "positions": [
+              "DL",
+              "LB",
+              "DB"
+            ],
+            "guidance": "Plan IDP starts around tier risk while accounting for lower projection confidence."
+          }
+        ],
+        "tierCliffWatchlist": [],
+        "valuePocketWatchlist": [],
+        "waitPositions": [],
+        "doNotForcePositions": [],
+        "contingencyPlans": [
+          {
+            "trigger": "If a QB tier dries up before the next turn",
+            "response": "pivot to the strongest non-QB value pocket and revisit QB on the next timing signal."
+          },
+          {
+            "trigger": "If an IDP tier becomes thin",
+            "response": "avoid waiting without named targets and compare DL/LB/DB coverage separately."
+          },
+          {
+            "trigger": "If RB/WR value falls below market",
+            "response": "let value pocket evidence compete with roster need before filling a lower-value slot."
+          },
+          {
+            "trigger": "If wait guidance lacks named targets",
+            "response": "treat the position as monitor-only and prefer stronger tier or value signals."
+          }
+        ],
+        "specialPositionGuidance": [
+          {
+            "position": "DL/LB/DB",
+            "guidance": "Plan IDP by position group; low-confidence baselines make tier risk and named targets more important."
+          }
+        ],
+        "riskNotes": [
+          "H11.0 is design/foundation only and read-only.",
+          "True historical completed-draft outcome validation remains unavailable."
+        ],
+        "explanationFragments": [
+          "Read-only strategy preview built from league format, roster settings, H10 timing signals, tiers, and market context.",
+          "Blackbird leans are deterministic and do not mutate draft state, projections, or player ordering.",
+          "Timing signal and tier risk are pre-draft planning aids; live H10 recommendations remain separate."
+        ],
+        "dataAvailabilityAudit": {
+          "leagueScoring": "missing",
+          "rosterSlots": "available",
+          "startingLineupRequirements": "computed",
+          "draftOrder": "partial",
+          "draftSlot": "available",
+          "teamCount": "available",
+          "roundCount": "available",
+          "playerProjections": "available",
+          "marketAdp": "available",
+          "tiers": "available",
+          "scarcity": "available",
+          "h10RecommendationRows": "available",
+          "h10NeedTimingFields": "available",
+          "h10WaitPlanFields": "partial",
+          "idpKDstSupport": "available",
+          "notes": [
+            "Exact pre-draft strategy improves when raw draft slot, team count, round count, and roster slots are loaded.",
+            "H10 validation artifacts provide compact timing and recommendation rows but not every raw league scoring key.",
+            "True historical completed-draft outcome validation remains unavailable."
+          ]
+        }
+      }
+    },
+    {
+      "label": "K/DST room",
+      "available": true,
+      "draftRoomId": "2f62d6e3-d309-4d50-8e7e-2ef05a83771c",
+      "leagueName": "Legacy League",
+      "strategy": {
+        "strategyPreviewLabel": "read-only strategy preview",
+        "leagueSummary": {
+          "leagueId": "fde3c4a0-3cb6-4fac-890d-b43c5c2f0c1a",
+          "draftRoomId": "2f62d6e3-d309-4d50-8e7e-2ef05a83771c",
+          "leagueName": "Legacy League",
+          "teams": 12,
+          "rounds": 16,
+          "scoringType": "unknown",
+          "formats": [
+            "Kicker",
+            "DST",
+            "Shallow roster"
+          ],
+          "superflexOr2Qb": false,
+          "tePremium": false,
+          "idp": false,
+          "kicker": true,
+          "teamDefense": true,
+          "flexStructure": [],
+          "startingRequirements": {
+            "QB": 1,
+            "RB": 2,
+            "WR": 2,
+            "TE": 1,
+            "K": 1,
+            "DEF": 1,
+            "DL": 0,
+            "LB": 0,
+            "DB": 0
+          },
+          "benchDepth": 2
+        },
+        "scoringEmphasis": [
+          {
+            "signal": "format signal",
+            "position": "K/DEF",
+            "priority": "defer",
+            "reason": "Kicker and team defense generally fit late-round fill windows unless scoring settings materially change."
+          }
+        ],
+        "rosterConstructionPlan": [
+          {
+            "phase": "early anchor",
+            "positions": [
+              "QB",
+              "RB",
+              "WR",
+              "TE"
+            ],
+            "guidance": "Blackbird leans toward capturing format-sensitive value before forcing low-priority slots."
+          },
+          {
+            "phase": "middle value pocket",
+            "positions": [
+              "RB",
+              "WR",
+              "TE"
+            ],
+            "guidance": "Use tier risk and market value pockets to build starters and flexible depth."
+          },
+          {
+            "phase": "late depth and fill",
+            "positions": [
+              "RB",
+              "WR",
+              "K",
+              "DEF"
+            ],
+            "guidance": "Fill special positions late while using remaining bench slots for upside and coverage."
+          }
+        ],
+        "positionalPriorityMap": {
+          "QB": {
+            "priority": "medium",
+            "score": 60,
+            "reasons": [
+              "QB has direct starter demand."
+            ]
+          },
+          "RB": {
+            "priority": "medium",
+            "score": 68,
+            "reasons": [
+              "RB has direct starter demand."
+            ]
+          },
+          "WR": {
+            "priority": "medium",
+            "score": 68,
+            "reasons": [
+              "WR has direct starter demand."
+            ]
+          },
+          "TE": {
+            "priority": "medium",
+            "score": 60,
+            "reasons": [
+              "TE has direct starter demand."
+            ]
+          },
+          "K": {
+            "priority": "low",
+            "score": 36,
+            "reasons": [
+              "K has direct starter demand.",
+              "K is generally a late-round fill position."
+            ]
+          },
+          "DEF": {
+            "priority": "low",
+            "score": 36,
+            "reasons": [
+              "DEF has direct starter demand.",
+              "DEF appears in the H10 planning pool.",
+              "DEF is generally a late-round fill position."
+            ]
+          },
+          "DL": {
+            "priority": "defer",
+            "score": 25,
+            "reasons": [
+              "DL has no strong pre-draft format signal."
+            ]
+          },
+          "LB": {
+            "priority": "defer",
+            "score": 25,
+            "reasons": [
+              "LB has no strong pre-draft format signal."
+            ]
+          },
+          "DB": {
+            "priority": "defer",
+            "score": 25,
+            "reasons": [
+              "DB has no strong pre-draft format signal."
+            ]
+          }
+        },
+        "draftSlotStrategy": {
+          "slot": 10,
+          "teamCount": 12,
+          "archetype": "turn",
+          "expectedLongWaitPicks": 18,
+          "draftSlotBand": "late",
+          "isTurnPick": false,
+          "isNearTurn": false,
+          "averagePicksBetweenTurns": 8.7,
+          "maxWaitUntilNextPick": 18,
+          "turnPairingRisk": "medium",
+          "slotStrategySummary": "Late-slot strategy preview: use double-tap planning while respecting tier-cliff pressure across a 18-pick wait.",
+          "projectedUserPicks": [
+            {
+              "round": 1,
+              "pickInRound": 10,
+              "overallPick": 10,
+              "window": "early anchor"
+            },
+            {
+              "round": 2,
+              "pickInRound": 3,
+              "overallPick": 15,
+              "window": "early anchor"
+            },
+            {
+              "round": 3,
+              "pickInRound": 10,
+              "overallPick": 34,
+              "window": "second/third turn"
+            },
+            {
+              "round": 4,
+              "pickInRound": 3,
+              "overallPick": 39,
+              "window": "second/third turn"
+            },
+            {
+              "round": 5,
+              "pickInRound": 10,
+              "overallPick": 58,
+              "window": "middle value"
+            },
+            {
+              "round": 6,
+              "pickInRound": 3,
+              "overallPick": 63,
+              "window": "middle value"
+            },
+            {
+              "round": 7,
+              "pickInRound": 10,
+              "overallPick": 82,
+              "window": "middle value"
+            },
+            {
+              "round": 8,
+              "pickInRound": 3,
+              "overallPick": 87,
+              "window": "middle value"
+            },
+            {
+              "round": 9,
+              "pickInRound": 10,
+              "overallPick": 106,
+              "window": "middle value"
+            },
+            {
+              "round": 10,
+              "pickInRound": 3,
+              "overallPick": 111,
+              "window": "middle value"
+            },
+            {
+              "round": 11,
+              "pickInRound": 10,
+              "overallPick": 130,
+              "window": "late fill"
+            },
+            {
+              "round": 12,
+              "pickInRound": 3,
+              "overallPick": 135,
+              "window": "late fill"
+            },
+            {
+              "round": 13,
+              "pickInRound": 10,
+              "overallPick": 154,
+              "window": "late fill"
+            },
+            {
+              "round": 14,
+              "pickInRound": 3,
+              "overallPick": 159,
+              "window": "late fill"
+            },
+            {
+              "round": 15,
+              "pickInRound": 10,
+              "overallPick": 178,
+              "window": "late fill"
+            },
+            {
+              "round": 16,
+              "pickInRound": 3,
+              "overallPick": 183,
+              "window": "late fill"
+            }
+          ],
+          "roundPickWindows": [
+            {
+              "label": "early anchor window",
+              "rounds": "1-4",
+              "picks": [
+                10,
+                15,
+                34,
+                39
+              ],
+              "guidance": "Blackbird leans toward paired early selections because the next return can carry tier pressure."
+            },
+            {
+              "label": "middle-round value windows",
+              "rounds": "5-10",
+              "picks": [
+                58,
+                63,
+                82,
+                87,
+                106,
+                111
+              ],
+              "guidance": "Timing signal: compare value pockets against a max snake wait near 18 picks."
+            },
+            {
+              "label": "IDP timing window",
+              "rounds": "middle-late",
+              "picks": [
+                106,
+                111,
+                130,
+                135,
+                154
+              ],
+              "guidance": "Use IDP tier risk and named targets before waiting through another full turn."
+            },
+            {
+              "label": "K/DST timing window",
+              "rounds": "late",
+              "picks": [
+                154,
+                159,
+                178,
+                183
+              ],
+              "guidance": "Keep K/DST in late fill windows unless scoring settings create a measurable format signal."
+            }
+          ],
+          "roundWindowPlanBySlot": [
+            {
+              "window": "early anchor window",
+              "rounds": "1-4",
+              "picks": [
+                10,
+                15,
+                34,
+                39
+              ],
+              "guidance": "Blackbird leans toward paired early selections because the next return can carry tier pressure."
+            },
+            {
+              "window": "middle-round value windows",
+              "rounds": "5-10",
+              "picks": [
+                58,
+                63,
+                82,
+                87,
+                106,
+                111
+              ],
+              "guidance": "Timing signal: compare value pockets against a max snake wait near 18 picks."
+            },
+            {
+              "window": "IDP timing window",
+              "rounds": "middle-late",
+              "picks": [
+                106,
+                111,
+                130,
+                135,
+                154
+              ],
+              "guidance": "Use IDP tier risk and named targets before waiting through another full turn."
+            },
+            {
+              "window": "K/DST timing window",
+              "rounds": "late",
+              "picks": [
+                154,
+                159,
+                178,
+                183
+              ],
+              "guidance": "Keep K/DST in late fill windows unless scoring settings create a measurable format signal."
+            }
+          ],
+          "timingSignals": [
+            "Late-slot timing signal: double-tap opportunity comes with tier-cliff pressure.",
+            "Max wait until the next user pick is about 18 picks."
+          ],
+          "positionsAtRiskBeforeNextTurn": []
+        },
+        "roundWindowPlan": [
+          {
+            "window": "early anchor targets",
+            "rounds": "1-4",
+            "positions": [
+              "QB",
+              "RB",
+              "WR",
+              "TE"
+            ],
+            "guidance": "Blackbird leans toward paired early selections because the next return can carry tier pressure."
+          },
+          {
+            "window": "middle-round value pockets",
+            "rounds": "5-10",
+            "positions": [
+              "RB",
+              "WR",
+              "TE"
+            ],
+            "guidance": "Timing signal: compare value pockets against a max snake wait near 18 picks."
+          },
+          {
+            "window": "late-round depth/fill",
+            "rounds": "11+",
+            "positions": [
+              "RB",
+              "WR"
+            ],
+            "guidance": "Use late windows for depth, contingent value, and remaining roster coverage."
+          },
+          {
+            "window": "K/DST timing",
+            "rounds": "late",
+            "positions": [
+              "K",
+              "DEF"
+            ],
+            "guidance": "Keep kicker and team defense in late fill windows unless league scoring creates a clear format signal."
+          }
+        ],
+        "tierCliffWatchlist": [],
+        "valuePocketWatchlist": [],
+        "waitPositions": [
+          {
+            "position": "DEF",
+            "confidence": "backed by wait targets",
+            "targetCount": 30,
+            "reason": "DEF has H10 wait target support in this planning pool."
+          }
+        ],
+        "doNotForcePositions": [
+          {
+            "position": "DEF",
+            "reason": "DEF has wait guidance from H10 timing signals."
+          },
+          {
+            "position": "K",
+            "reason": "Kicker belongs in a late fill window for this strategy preview."
+          }
+        ],
+        "contingencyPlans": [
+          {
+            "trigger": "If RB/WR value falls below market",
+            "response": "let value pocket evidence compete with roster need before filling a lower-value slot."
+          },
+          {
+            "trigger": "If wait guidance lacks named targets",
+            "response": "treat the position as monitor-only and prefer stronger tier or value signals."
+          }
+        ],
+        "specialPositionGuidance": [
+          {
+            "position": "K",
+            "guidance": "Kicker is a late fill position unless scoring settings create a measurable format signal."
+          },
+          {
+            "position": "DEF",
+            "guidance": "Team defense is a late fill position with allowance-only projection caveats where applicable."
+          }
+        ],
+        "riskNotes": [
+          "H11.0 is design/foundation only and read-only.",
+          "True historical completed-draft outcome validation remains unavailable."
+        ],
+        "explanationFragments": [
+          "Read-only strategy preview built from league format, roster settings, H10 timing signals, tiers, and market context.",
+          "Blackbird leans are deterministic and do not mutate draft state, projections, or player ordering.",
+          "Timing signal and tier risk are pre-draft planning aids; live H10 recommendations remain separate."
+        ],
+        "dataAvailabilityAudit": {
+          "leagueScoring": "missing",
+          "rosterSlots": "available",
+          "startingLineupRequirements": "computed",
+          "draftOrder": "partial",
+          "draftSlot": "available",
+          "teamCount": "available",
+          "roundCount": "available",
+          "playerProjections": "available",
+          "marketAdp": "available",
+          "tiers": "available",
+          "scarcity": "available",
+          "h10RecommendationRows": "available",
+          "h10NeedTimingFields": "available",
+          "h10WaitPlanFields": "available",
+          "idpKDstSupport": "available",
+          "notes": [
+            "Exact pre-draft strategy improves when raw draft slot, team count, round count, and roster slots are loaded.",
+            "H10 validation artifacts provide compact timing and recommendation rows but not every raw league scoring key.",
+            "True historical completed-draft outcome validation remains unavailable."
+          ]
+        }
+      }
+    },
+    {
+      "label": "shallow roster room",
+      "available": true,
+      "draftRoomId": "b386e78a-c7ff-4688-828e-6b48cbca863e",
+      "leagueName": "🪓 Chopped",
+      "strategy": {
+        "strategyPreviewLabel": "read-only strategy preview",
+        "leagueSummary": {
+          "leagueId": "8d1a3d47-0b1d-494c-bdab-1590fa630d7d",
+          "draftRoomId": "b386e78a-c7ff-4688-828e-6b48cbca863e",
+          "leagueName": "🪓 Chopped",
+          "teams": 12,
+          "rounds": 12,
+          "scoringType": "unknown",
+          "formats": [
+            "Superflex",
+            "Shallow roster"
+          ],
+          "superflexOr2Qb": true,
+          "tePremium": false,
+          "idp": false,
+          "kicker": false,
+          "teamDefense": false,
+          "flexStructure": [
+            "1 offensive flex"
+          ],
+          "startingRequirements": {
+            "QB": 1,
+            "RB": 1,
+            "WR": 1,
+            "TE": 1,
+            "K": 0,
+            "DEF": 0,
+            "DL": 0,
+            "LB": 0,
+            "DB": 0
+          },
+          "benchDepth": 2
+        },
+        "scoringEmphasis": [
+          {
+            "signal": "format signal",
+            "position": "QB",
+            "priority": "elite",
+            "reason": "Superflex or 2QB structure increases quarterback demand."
+          }
+        ],
+        "rosterConstructionPlan": [
+          {
+            "phase": "QB structure",
+            "positions": [
+              "QB"
+            ],
+            "guidance": "Superflex and 2QB formats make quarterback structure a core planning lane."
+          },
+          {
+            "phase": "early anchor",
+            "positions": [
+              "QB",
+              "RB",
+              "WR",
+              "TE"
+            ],
+            "guidance": "Blackbird leans toward capturing format-sensitive value before forcing low-priority slots."
+          },
+          {
+            "phase": "middle value pocket",
+            "positions": [
+              "RB",
+              "WR",
+              "TE"
+            ],
+            "guidance": "Use tier risk and market value pockets to build starters and flexible depth."
+          },
+          {
+            "phase": "late depth and fill",
+            "positions": [
+              "RB",
+              "WR",
+              "K",
+              "DEF"
+            ],
+            "guidance": "Fill special positions late while using remaining bench slots for upside and coverage."
+          }
+        ],
+        "positionalPriorityMap": {
+          "QB": {
+            "priority": "elite",
+            "score": 100,
+            "reasons": [
+              "QB has direct starter demand.",
+              "QB appears in the H10 planning pool.",
+              "QB has visible tier risk in H10 rows.",
+              "Superflex or 2QB format signal elevates QB priority."
+            ]
+          },
+          "RB": {
+            "priority": "high",
+            "score": 79,
+            "reasons": [
+              "RB has direct starter demand.",
+              "RB appears in the H10 planning pool.",
+              "RB has visible tier risk in H10 rows.",
+              "Flex or deep roster settings increase depth value."
+            ]
+          },
+          "WR": {
+            "priority": "high",
+            "score": 86,
+            "reasons": [
+              "WR has direct starter demand.",
+              "WR appears in the H10 planning pool.",
+              "WR has visible tier risk in H10 rows.",
+              "Flex or deep roster settings increase depth value."
+            ]
+          },
+          "TE": {
+            "priority": "high",
+            "score": 74,
+            "reasons": [
+              "TE has direct starter demand.",
+              "TE appears in the H10 planning pool.",
+              "TE has visible tier risk in H10 rows."
+            ]
+          },
+          "K": {
+            "priority": "defer",
+            "score": 1,
+            "reasons": [
+              "K is generally a late-round fill position."
+            ]
+          },
+          "DEF": {
+            "priority": "defer",
+            "score": 1,
+            "reasons": [
+              "DEF is generally a late-round fill position."
+            ]
+          },
+          "DL": {
+            "priority": "defer",
+            "score": 25,
+            "reasons": [
+              "DL has no strong pre-draft format signal."
+            ]
+          },
+          "LB": {
+            "priority": "defer",
+            "score": 25,
+            "reasons": [
+              "LB has no strong pre-draft format signal."
+            ]
+          },
+          "DB": {
+            "priority": "defer",
+            "score": 25,
+            "reasons": [
+              "DB has no strong pre-draft format signal."
+            ]
+          }
+        },
+        "draftSlotStrategy": {
+          "slot": 12,
+          "teamCount": 12,
+          "archetype": "turn",
+          "expectedLongWaitPicks": 22,
+          "draftSlotBand": "late",
+          "isTurnPick": true,
+          "isNearTurn": true,
+          "averagePicksBetweenTurns": 7.3,
+          "maxWaitUntilNextPick": 22,
+          "turnPairingRisk": "high",
+          "slotStrategySummary": "Turn-slot strategy preview: plan paired selections and avoid passing thin tiers through a 22-pick wait.",
+          "projectedUserPicks": [
+            {
+              "round": 1,
+              "pickInRound": 12,
+              "overallPick": 12,
+              "window": "early anchor"
+            },
+            {
+              "round": 2,
+              "pickInRound": 1,
+              "overallPick": 13,
+              "window": "early anchor"
+            },
+            {
+              "round": 3,
+              "pickInRound": 12,
+              "overallPick": 36,
+              "window": "second/third turn"
+            },
+            {
+              "round": 4,
+              "pickInRound": 1,
+              "overallPick": 37,
+              "window": "second/third turn"
+            },
+            {
+              "round": 5,
+              "pickInRound": 12,
+              "overallPick": 60,
+              "window": "middle value"
+            },
+            {
+              "round": 6,
+              "pickInRound": 1,
+              "overallPick": 61,
+              "window": "middle value"
+            },
+            {
+              "round": 7,
+              "pickInRound": 12,
+              "overallPick": 84,
+              "window": "middle value"
+            },
+            {
+              "round": 8,
+              "pickInRound": 1,
+              "overallPick": 85,
+              "window": "middle value"
+            },
+            {
+              "round": 9,
+              "pickInRound": 12,
+              "overallPick": 108,
+              "window": "middle value"
+            },
+            {
+              "round": 10,
+              "pickInRound": 1,
+              "overallPick": 109,
+              "window": "middle value"
+            },
+            {
+              "round": 11,
+              "pickInRound": 12,
+              "overallPick": 132,
+              "window": "late fill"
+            },
+            {
+              "round": 12,
+              "pickInRound": 1,
+              "overallPick": 133,
+              "window": "late fill"
+            }
+          ],
+          "roundPickWindows": [
+            {
+              "label": "early anchor window",
+              "rounds": "1-4",
+              "picks": [
+                12,
+                13,
+                36,
+                37
+              ],
+              "guidance": "Blackbird leans toward paired early selections because the next return can carry tier pressure."
+            },
+            {
+              "label": "middle-round value windows",
+              "rounds": "5-10",
+              "picks": [
+                60,
+                61,
+                84,
+                85,
+                108,
+                109
+              ],
+              "guidance": "Timing signal: compare value pockets against a max snake wait near 22 picks."
+            },
+            {
+              "label": "IDP timing window",
+              "rounds": "middle-late",
+              "picks": [
+                108,
+                109,
+                132,
+                133
+              ],
+              "guidance": "Use IDP tier risk and named targets before waiting through another full turn."
+            },
+            {
+              "label": "K/DST timing window",
+              "rounds": "late",
+              "picks": [
+                132,
+                133
+              ],
+              "guidance": "Keep K/DST in late fill windows unless scoring settings create a measurable format signal."
+            }
+          ],
+          "roundWindowPlanBySlot": [
+            {
+              "window": "early anchor window",
+              "rounds": "1-4",
+              "picks": [
+                12,
+                13,
+                36,
+                37
+              ],
+              "guidance": "Blackbird leans toward paired early selections because the next return can carry tier pressure."
+            },
+            {
+              "window": "middle-round value windows",
+              "rounds": "5-10",
+              "picks": [
+                60,
+                61,
+                84,
+                85,
+                108,
+                109
+              ],
+              "guidance": "Timing signal: compare value pockets against a max snake wait near 22 picks."
+            },
+            {
+              "window": "IDP timing window",
+              "rounds": "middle-late",
+              "picks": [
+                108,
+                109,
+                132,
+                133
+              ],
+              "guidance": "Use IDP tier risk and named targets before waiting through another full turn."
+            },
+            {
+              "window": "K/DST timing window",
+              "rounds": "late",
+              "picks": [
+                132,
+                133
+              ],
+              "guidance": "Keep K/DST in late fill windows unless scoring settings create a measurable format signal."
+            }
+          ],
+          "timingSignals": [
+            "Turn pick: Blackbird leans toward paired-position planning.",
+            "Max wait until the next user pick is about 22 picks."
+          ],
+          "positionsAtRiskBeforeNextTurn": [
+            "QB",
+            "RB",
+            "TE",
+            "WR"
+          ]
+        },
+        "roundWindowPlan": [
+          {
+            "window": "early anchor targets",
+            "rounds": "1-4",
+            "positions": [
+              "QB",
+              "RB",
+              "WR",
+              "TE"
+            ],
+            "guidance": "Blackbird leans toward paired early selections because the next return can carry tier pressure."
+          },
+          {
+            "window": "QB tier window",
+            "rounds": "1-8",
+            "positions": [
+              "QB"
+            ],
+            "guidance": "Monitor QB tier risk before long snake waits."
+          },
+          {
+            "window": "middle-round value pockets",
+            "rounds": "5-10",
+            "positions": [
+              "RB",
+              "WR",
+              "TE"
+            ],
+            "guidance": "Timing signal: compare value pockets against a max snake wait near 22 picks."
+          },
+          {
+            "window": "late-round depth/fill",
+            "rounds": "11+",
+            "positions": [
+              "RB",
+              "WR"
+            ],
+            "guidance": "Use late windows for depth, contingent value, and remaining roster coverage."
+          }
+        ],
+        "tierCliffWatchlist": [
+          {
+            "position": "TE",
+            "label": "Trey McBride",
+            "tier": 1,
+            "risk": "high",
+            "reason": "TE tier risk is elevated in current H10 rows."
+          },
+          {
+            "position": "RB",
+            "label": "Christian McCaffrey",
+            "tier": 1,
+            "risk": "high",
+            "reason": "RB tier risk is elevated in current H10 rows."
+          },
+          {
+            "position": "WR",
+            "label": "Puka Nacua",
+            "tier": 1,
+            "risk": "high",
+            "reason": "WR tier risk is elevated in current H10 rows."
+          },
+          {
+            "position": "TE",
+            "label": "Kyle Pitts",
+            "tier": 2,
+            "risk": "high",
+            "reason": "TE tier risk is elevated in current H10 rows."
+          },
+          {
+            "position": "RB",
+            "label": "James Cook",
+            "tier": 3,
+            "risk": "medium",
+            "reason": "RB tier risk is elevated in current H10 rows."
+          },
+          {
+            "position": "RB",
+            "label": "De'Von Achane",
+            "tier": 3,
+            "risk": "medium",
+            "reason": "RB tier risk is elevated in current H10 rows."
+          },
+          {
+            "position": "TE",
+            "label": "Travis Kelce",
+            "tier": 3,
+            "risk": "medium",
+            "reason": "TE tier risk is elevated in current H10 rows."
+          },
+          {
+            "position": "TE",
+            "label": "Dallas Goedert",
+            "tier": 3,
+            "risk": "medium",
+            "reason": "TE tier risk is elevated in current H10 rows."
+          }
+        ],
+        "valuePocketWatchlist": [],
+        "waitPositions": [
+          {
+            "position": "RB",
+            "confidence": "backed by wait targets",
+            "targetCount": 16,
+            "reason": "RB has H10 wait target support in this planning pool."
+          },
+          {
+            "position": "TE",
+            "confidence": "backed by wait targets",
+            "targetCount": 6,
+            "reason": "TE has H10 wait target support in this planning pool."
+          }
+        ],
+        "doNotForcePositions": [
+          {
+            "position": "QB",
+            "reason": "QB has high opportunity cost versus the board in at least one H10 row."
+          },
+          {
+            "position": "RB",
+            "reason": "RB has high opportunity cost versus the board in at least one H10 row."
+          },
+          {
+            "position": "TE",
+            "reason": "TE has high opportunity cost versus the board in at least one H10 row."
+          },
+          {
+            "position": "WR",
+            "reason": "WR has high opportunity cost versus the board in at least one H10 row."
+          }
+        ],
+        "contingencyPlans": [
+          {
+            "trigger": "If a QB tier dries up before the next turn",
+            "response": "pivot to the strongest non-QB value pocket and revisit QB on the next timing signal."
+          },
+          {
+            "trigger": "If a TE premium tier falls into range",
+            "response": "consider TE within the tier window before filling low-scarcity depth."
+          },
+          {
+            "trigger": "If RB/WR value falls below market",
+            "response": "let value pocket evidence compete with roster need before filling a lower-value slot."
+          },
+          {
+            "trigger": "If wait guidance lacks named targets",
+            "response": "treat the position as monitor-only and prefer stronger tier or value signals."
+          }
+        ],
+        "specialPositionGuidance": [],
+        "riskNotes": [
+          "H11.0 is design/foundation only and read-only.",
+          "True historical completed-draft outcome validation remains unavailable."
+        ],
+        "explanationFragments": [
+          "Read-only strategy preview built from league format, roster settings, H10 timing signals, tiers, and market context.",
+          "Blackbird leans are deterministic and do not mutate draft state, projections, or player ordering.",
+          "Timing signal and tier risk are pre-draft planning aids; live H10 recommendations remain separate."
+        ],
+        "dataAvailabilityAudit": {
+          "leagueScoring": "missing",
+          "rosterSlots": "available",
+          "startingLineupRequirements": "computed",
+          "draftOrder": "partial",
+          "draftSlot": "available",
+          "teamCount": "available",
+          "roundCount": "available",
+          "playerProjections": "available",
+          "marketAdp": "available",
+          "tiers": "available",
+          "scarcity": "available",
+          "h10RecommendationRows": "available",
+          "h10NeedTimingFields": "available",
+          "h10WaitPlanFields": "available",
+          "idpKDstSupport": "partial",
+          "notes": [
+            "Exact pre-draft strategy improves when raw draft slot, team count, round count, and roster slots are loaded.",
+            "H10 validation artifacts provide compact timing and recommendation rows but not every raw league scoring key.",
+            "True historical completed-draft outcome validation remains unavailable."
+          ]
+        }
+      }
+    }
+  ],
+  "safety": {
+    "bannedLanguageFailures": [],
+    "readOnly": true,
+    "mutatesDraftState": false,
+    "mutatesProjections": false,
+    "usesLlm": false
+  },
+  "missingDataRisks": [
+    "Exact pre-draft snake timing needs draft slot, team count, and round count on the H11 input.",
+    "The H10 validation artifact has compact format flags but does not always include raw league scoring keys.",
+    "Some representative rooms expose only the remaining pool visible to H10 validation, not a full pre-draft player universe.",
+    "True historical completed-draft outcome validation is still unavailable."
+  ],
+  "nextImplementationRecommendation": "Implement an authenticated read-only pre-draft strategy endpoint that loads live league settings, draft order, roster slots, H10 projections, market data, and timing rows, then returns this H11 read model without persisting strategy choices.",
+  "verdict": "H11.0 PRE-DRAFT STRATEGY DESIGN READY"
+}

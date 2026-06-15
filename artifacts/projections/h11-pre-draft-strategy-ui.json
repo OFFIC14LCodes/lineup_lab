@@ -1,0 +1,113 @@
+{
+  "generatedAt": "2026-06-15T19:56:55.219Z",
+  "verdict": "passed",
+  "endpointPath": "/api/draft-rooms/[draftRoomId]/pre-draft-strategy",
+  "roomsTested": [
+    {
+      "draftRoomId": "c82aef89-ce90-40f0-936f-545656045554",
+      "leagueName": "BestBalls in Hand IDP Dynasty ",
+      "reason": "superflex strategy coverage"
+    },
+    {
+      "draftRoomId": "2f62d6e3-d309-4d50-8e7e-2ef05a83771c",
+      "leagueName": "Legacy League",
+      "reason": "K/DST strategy coverage"
+    }
+  ],
+  "results": [
+    {
+      "roomId": "c82aef89-ce90-40f0-936f-545656045554",
+      "leagueName": "BestBalls in Hand IDP Dynasty ",
+      "endpointStatus": 200,
+      "sectionsRendered": [
+        "Pre-Draft Strategy Preview",
+        "League Summary",
+        "Scoring Emphasis",
+        "Roster Construction Plan",
+        "Positional Priority Map",
+        "Draft Slot Strategy",
+        "Strategy Watchlists",
+        "Contingency Plans",
+        "Risk Notes"
+      ],
+      "dataGapsRendered": true,
+      "safetyCaveatsVisible": true,
+      "bannedLanguageFound": [],
+      "mutationSafety": {
+        "draftStateUnchanged": true,
+        "availablePlayerOrderUnchanged": true,
+        "strategyEndpointStable": true
+      },
+      "screenshots": [
+        "C:\\Projects\\lineup_lab\\artifacts\\projections\\h11-pre-draft-strategy-ui-screenshots\\desktop-c82aef89-ce90-40f0-936f-545656045554.png",
+        "C:\\Projects\\lineup_lab\\artifacts\\projections\\h11-pre-draft-strategy-ui-screenshots\\mobile-c82aef89-ce90-40f0-936f-545656045554.png"
+      ],
+      "responsive": [
+        {
+          "viewport": "desktop",
+          "passed": true,
+          "error": null
+        },
+        {
+          "viewport": "mobile",
+          "passed": true,
+          "error": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "roomId": "2f62d6e3-d309-4d50-8e7e-2ef05a83771c",
+      "leagueName": "Legacy League",
+      "endpointStatus": 200,
+      "sectionsRendered": [
+        "Pre-Draft Strategy Preview",
+        "League Summary",
+        "Scoring Emphasis",
+        "Roster Construction Plan",
+        "Positional Priority Map",
+        "Draft Slot Strategy",
+        "Strategy Watchlists",
+        "Contingency Plans",
+        "Risk Notes"
+      ],
+      "dataGapsRendered": true,
+      "safetyCaveatsVisible": true,
+      "bannedLanguageFound": [],
+      "mutationSafety": {
+        "draftStateUnchanged": true,
+        "availablePlayerOrderUnchanged": true,
+        "strategyEndpointStable": true
+      },
+      "screenshots": [
+        "C:\\Projects\\lineup_lab\\artifacts\\projections\\h11-pre-draft-strategy-ui-screenshots\\desktop-2f62d6e3-d309-4d50-8e7e-2ef05a83771c.png",
+        "C:\\Projects\\lineup_lab\\artifacts\\projections\\h11-pre-draft-strategy-ui-screenshots\\mobile-2f62d6e3-d309-4d50-8e7e-2ef05a83771c.png"
+      ],
+      "responsive": [
+        {
+          "viewport": "desktop",
+          "passed": true,
+          "error": null
+        },
+        {
+          "viewport": "mobile",
+          "passed": true,
+          "error": null
+        }
+      ],
+      "error": null
+    }
+  ],
+  "summary": {
+    "total": 2,
+    "passed": 2,
+    "failed": 0,
+    "mutationSafetyPassed": true,
+    "bannedLanguagePassed": true
+  },
+  "remainingRisks": [
+    "This harness uses the server-only local authenticated test path rather than a real OAuth session.",
+    "The strategy panel is browser-smoked against representative rooms, not every possible league format.",
+    "Opening strategy details is local browser state only and is not persisted."
+  ]
+}
