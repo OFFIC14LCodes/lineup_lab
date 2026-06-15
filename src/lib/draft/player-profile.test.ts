@@ -53,6 +53,23 @@ describe("player profile stat lines", () => {
     ]);
   });
 
+  it("shows IDP historical aliases in player profiles", () => {
+    const line = buildHistoricalStatLine(
+      {
+        solo_tackles: 112,
+        assisted_tackles: 42,
+        sacks: 8.5,
+      },
+      "LB"
+    );
+
+    expect(line).toEqual([
+      { key: "tackles", label: "Tackles", value: 112 },
+      { key: "assists", label: "Ast", value: 42 },
+      { key: "sacks", label: "Sacks", value: 8.5 },
+    ]);
+  });
+
   it("detects UUIDs before route lookup builds id filters", () => {
     expect(isUuid("f85238ff-b2ee-4053-8493-e38c4cb63bd3")).toBe(true);
     expect(isUuid("1234567890")).toBe(false);

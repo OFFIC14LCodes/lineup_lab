@@ -64,6 +64,23 @@ export const IDP_SCORING_KEYS = [
   "def_td",
   "def_st_td",
   "bonus_sack_2p",
+  "idp_tkl_solo",
+  "idp_tkl_ast",
+  "idp_tkl",
+  "idp_tkl_loss",
+  "idp_st_tkl",
+  "idp_sack",
+  "idp_qb_hit",
+  "idp_int",
+  "idp_int_ret_yd",
+  "idp_pass_def",
+  "idp_ff",
+  "idp_fum_rec",
+  "idp_fum_ret_yd",
+  "idp_safe",
+  "idp_blk_kick",
+  "idp_def_td",
+  "idp_def_st_td",
 ] as const;
 
 export const DST_SCORING_KEYS = [

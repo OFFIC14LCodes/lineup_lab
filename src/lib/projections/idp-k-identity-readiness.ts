@@ -13,7 +13,14 @@ export type H99CandidatePlayer = {
 export type H99MatchDecision = {
   status: "existing_id" | "auto_safe" | "manual_review" | "ambiguous" | "unresolved";
   confidence: number;
-  method: string | null;
+  method:
+    | "exact_id"
+    | "exact_name_team_position"
+    | "known_alias"
+    | "normalized_name_team_position"
+    | "unique_name_position"
+    | "unresolved"
+    | null;
   candidateMatches: H99CandidatePlayer[];
   recommendedAction: string;
   reasonUnresolved: string | null;
@@ -80,20 +87,22 @@ export function makeUnresolvedAggregate(rows: H98NormalizedPlayerRow[]): H99Unre
 export function matchIdentityCandidate(
   aggregate: H99UnresolvedAggregate,
   candidatesByName: Map<string, H99CandidatePlayer[]>,
-  existingPlayerId?: string | null
+  existingPlayerId?: string | null,
+  knownAliases: Map<string, string> = new Map()
 ): H99MatchDecision {
   if (existingPlayerId) {
     return {
       status: "existing_id",
       confidence: 1,
-      method: "existing_gsis_mapping",
+      method: "exact_id",
       candidateMatches: [],
       recommendedAction: "No action; GSIS mapping already exists.",
       reasonUnresolved: null,
     };
   }
 
-  const candidates = candidatesByName.get(aggregate.normalizedName) ?? [];
+  const aliasName = knownAliases.get(aggregate.normalizedName);
+  const candidates = candidatesByName.get(aggregate.normalizedName) ?? (aliasName ? candidatesByName.get(aliasName) : []) ?? [];
   const compatible = candidates.filter((candidate) => positionCompatible(aggregate.positionGroup, candidate.positionGroup));
   const teamCompatible = compatible.filter((candidate) => {
     const candidateTeam = normalizeTeam(candidate.team);
@@ -103,10 +112,12 @@ export function matchIdentityCandidate(
   if (teamCompatible.length === 1) {
     return {
       status: "auto_safe",
-      confidence: 0.92,
-      method: "exact_name_team_position",
+      confidence: aliasName ? 0.9 : 0.92,
+      method: aliasName ? "known_alias" : "normalized_name_team_position",
       candidateMatches: teamCompatible,
-      recommendedAction: "Create audited GSIS mapping via exact normalized name, team, and compatible position.",
+      recommendedAction: aliasName
+        ? "Create audited GSIS mapping via known alias, team, and compatible position."
+        : "Create audited GSIS mapping via exact normalized name, team, and compatible position.",
       reasonUnresolved: "gsis_id_not_stored_for_canonical_player",
     };
   }
@@ -126,7 +137,7 @@ export function matchIdentityCandidate(
     return {
       status: "manual_review",
       confidence: 0.75,
-      method: "exact_name_position_team_mismatch",
+      method: "unique_name_position",
       candidateMatches: compatible,
       recommendedAction: "Manual review; exact name and position match but team does not match source rows.",
       reasonUnresolved: "team_mismatch_or_stale_canonical_team",
@@ -148,7 +159,7 @@ export function matchIdentityCandidate(
     return {
       status: "manual_review",
       confidence: 0.4,
-      method: "exact_name_position_mismatch",
+      method: "unresolved",
       candidateMatches: candidates,
       recommendedAction: "Manual review; exact name exists but position is incompatible.",
       reasonUnresolved: "position_mismatch",
@@ -158,7 +169,7 @@ export function matchIdentityCandidate(
   return {
     status: "unresolved",
     confidence: 0,
-    method: null,
+    method: "unresolved",
     candidateMatches: [],
     recommendedAction: "Keep unresolved; no exact normalized-name candidate in canonical players.",
     reasonUnresolved: "missing_player_or_name_mismatch",

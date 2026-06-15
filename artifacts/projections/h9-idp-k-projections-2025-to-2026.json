@@ -1,8 +1,8 @@
 {
-  "dryRunId": "h9.10-idp-k-2026-06-15T03:15:14.616Z",
+  "dryRunId": "h9.10-idp-k-2026-06-15T22:11:22.874Z",
   "historicalSeason": 2025,
   "projectionSeason": 2026,
-  "mode": "dry_run_only",
+  "mode": "execute",
   "scope": {
     "includeIdp": true,
     "includeKicker": true,
@@ -1349,7 +1349,7 @@
     }
   ],
   "persistencePlan": {
-    "semanticInputHash": "731007470d3cc0f188547d2a977cae7dc3634afe39f601c99119f8741e4be28d",
+    "semanticInputHash": "de374bb4c3b5899cc38049da7922d4a22c6b2b99cfdda78f50b623c862cef249",
     "expected": {
       "inputCount": 850,
       "outputCount": 1700,
@@ -1358,18 +1358,18 @@
       "leagueCount": 4
     },
     "method": "blackbird_idp_k_baseline_v1",
-    "projectionVersion": 1,
+    "projectionVersion": 3,
     "selectionScope": "idp_k"
   },
   "persistenceInspection": {
     "projection_runs": {
-      "idpKCompleteRuns": 1,
+      "idpKCompleteRuns": 3,
       "interruptedRuns": 0,
       "failedRuns": 0,
-      "totalRuns": 1
+      "totalRuns": 3
     },
     "latestPlannedRun": {
-      "projectionRunId": "aa83db3f-037e-4f6d-a583-2a7123d2e31b",
+      "projectionRunId": "ab070680-2e47-4e78-8c6a-086aeb6afb48",
       "runStatus": "complete",
       "inputCount": 850,
       "outputCount": 1700,

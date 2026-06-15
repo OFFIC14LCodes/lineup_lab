@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-15T20:30:59.467Z",
+  "generatedAt": "2026-06-15T22:12:50.299Z",
   "verdict": "passed",
   "boardOrderingMethod": "available players -> H10 recommendation/value rank -> projection/value score -> market/ADP value -> ADP/market rank -> projected points -> position/name",
   "syntheticAudit": {

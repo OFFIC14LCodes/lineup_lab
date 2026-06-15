@@ -9,7 +9,7 @@ import type {
 } from "@/lib/projections/idp-k-baseline-projections";
 
 export const H911_PROJECTION_METHOD = "blackbird_idp_k_baseline_v1";
-export const H911_PROJECTION_VERSION = 1;
+export const H911_PROJECTION_VERSION = 3;
 export const H911_SELECTION_SCOPE = "idp_k";
 export const H911_REASON_REGISTRY_VERSION = "h9.11-idp-k-reasons-v1";
 
@@ -151,6 +151,7 @@ const MODEL_CONFIG = {
   reasonRegistryVersion: H911_REASON_REGISTRY_VERSION,
   sourceDataVersion: "h9.8-special-teams-defense",
   label: "low-confidence baseline",
+  scoringKeyCompatibility: "sleeper_idp_prefixed_keys_projection_alias_v3",
   idpStableRegression: "light",
   idpBigPlayRegression: "heavy",
   idpTdSafetyVolatility: "extreme",

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-15T20:31:21.439Z",
+  "generatedAt": "2026-06-15T22:13:05.057Z",
   "artifactVersion": "h10.8-war-room-recommendation-validation-v3",
   "args": {
     "includeLive": true,
@@ -10905,7 +10905,7 @@
         "QB": 22
       },
       "warningCounts": {
-        "LOW_PROJECTION_CONFIDENCE": 93,
+        "LOW_PROJECTION_CONFIDENCE": 95,
         "MARKET_NOT_IMPLEMENTED": 58,
         "Best-ball and managed-league ADP are not blended.": 87,
         "NO_COMPATIBLE_MARKET": 87,
@@ -10965,8 +10965,8 @@
           },
           "draftContext": {
             "currentRound": 20,
-            "currentPick": 234,
-            "picksUntilNextUserPick": 0,
+            "currentPick": 238,
+            "picksUntilNextUserPick": 9,
             "positionNeedLevel": "urgent",
             "starterSlotNeed": true,
             "benchDepthNeed": false,
@@ -10982,14 +10982,14 @@
             "DL timing action: monitor.",
             "DL remains a starter need.",
             "Comparable DL options are likely to be available near the next pick.",
-            "DL survival confidence is medium (16 likely next-pick comparables).",
+            "DL survival confidence is medium (15 likely next-pick comparables).",
             "Wait plan fallback: monitor."
           ],
           "survivalConfidence": "medium",
           "survivalConfidenceScore": 58,
           "comparableOptionsNow": 17,
-          "comparableOptionsLikelyNextPick": 16,
-          "comparableOptionsLikelyNextTwoPicks": 16,
+          "comparableOptionsLikelyNextPick": 15,
+          "comparableOptionsLikelyNextTwoPicks": 13,
           "waitRisk": "low",
           "waitRiskReasons": [
             "DL projection confidence is low."
@@ -11055,8 +11055,8 @@
           },
           "draftContext": {
             "currentRound": 20,
-            "currentPick": 234,
-            "picksUntilNextUserPick": 0,
+            "currentPick": 238,
+            "picksUntilNextUserPick": 9,
             "positionNeedLevel": "urgent",
             "starterSlotNeed": true,
             "benchDepthNeed": false,
@@ -11072,14 +11072,14 @@
             "DL timing action: monitor.",
             "DL remains a starter need.",
             "Comparable DL options are likely to be available near the next pick.",
-            "DL survival confidence is medium (16 likely next-pick comparables).",
+            "DL survival confidence is medium (15 likely next-pick comparables).",
             "Wait plan fallback: monitor."
           ],
           "survivalConfidence": "medium",
           "survivalConfidenceScore": 58,
           "comparableOptionsNow": 17,
-          "comparableOptionsLikelyNextPick": 16,
-          "comparableOptionsLikelyNextTwoPicks": 16,
+          "comparableOptionsLikelyNextPick": 15,
+          "comparableOptionsLikelyNextTwoPicks": 13,
           "waitRisk": "low",
           "waitRiskReasons": [
             "DL projection confidence is low."
@@ -11145,8 +11145,8 @@
           },
           "draftContext": {
             "currentRound": 20,
-            "currentPick": 234,
-            "picksUntilNextUserPick": 0,
+            "currentPick": 238,
+            "picksUntilNextUserPick": 9,
             "positionNeedLevel": "urgent",
             "starterSlotNeed": true,
             "benchDepthNeed": false,
@@ -11162,14 +11162,14 @@
             "DL timing action: monitor.",
             "DL remains a starter need.",
             "Comparable DL options are likely to be available near the next pick.",
-            "DL survival confidence is medium (16 likely next-pick comparables).",
+            "DL survival confidence is medium (15 likely next-pick comparables).",
             "Wait plan fallback: monitor."
           ],
           "survivalConfidence": "medium",
           "survivalConfidenceScore": 58,
           "comparableOptionsNow": 17,
-          "comparableOptionsLikelyNextPick": 16,
-          "comparableOptionsLikelyNextTwoPicks": 16,
+          "comparableOptionsLikelyNextPick": 15,
+          "comparableOptionsLikelyNextTwoPicks": 13,
           "waitRisk": "low",
           "waitRiskReasons": [
             "DL projection confidence is low."
@@ -11235,8 +11235,8 @@
           },
           "draftContext": {
             "currentRound": 20,
-            "currentPick": 234,
-            "picksUntilNextUserPick": 0,
+            "currentPick": 238,
+            "picksUntilNextUserPick": 9,
             "positionNeedLevel": "urgent",
             "starterSlotNeed": true,
             "benchDepthNeed": false,
@@ -11252,14 +11252,14 @@
             "DL timing action: monitor.",
             "DL remains a starter need.",
             "Comparable DL options are likely to be available near the next pick.",
-            "DL survival confidence is medium (16 likely next-pick comparables).",
+            "DL survival confidence is medium (15 likely next-pick comparables).",
             "Wait plan fallback: monitor."
           ],
           "survivalConfidence": "medium",
           "survivalConfidenceScore": 58,
           "comparableOptionsNow": 17,
-          "comparableOptionsLikelyNextPick": 16,
-          "comparableOptionsLikelyNextTwoPicks": 16,
+          "comparableOptionsLikelyNextPick": 15,
+          "comparableOptionsLikelyNextTwoPicks": 13,
           "waitRisk": "low",
           "waitRiskReasons": [
             "DL projection confidence is low."
@@ -11325,8 +11325,8 @@
           },
           "draftContext": {
             "currentRound": 20,
-            "currentPick": 234,
-            "picksUntilNextUserPick": 0,
+            "currentPick": 238,
+            "picksUntilNextUserPick": 9,
             "positionNeedLevel": "urgent",
             "starterSlotNeed": true,
             "benchDepthNeed": false,
@@ -11342,14 +11342,14 @@
             "DL timing action: monitor.",
             "DL remains a starter need.",
             "Comparable DL options are likely to be available near the next pick.",
-            "DL survival confidence is medium (16 likely next-pick comparables).",
+            "DL survival confidence is medium (15 likely next-pick comparables).",
             "Wait plan fallback: monitor."
           ],
           "survivalConfidence": "medium",
           "survivalConfidenceScore": 58,
           "comparableOptionsNow": 17,
-          "comparableOptionsLikelyNextPick": 16,
-          "comparableOptionsLikelyNextTwoPicks": 16,
+          "comparableOptionsLikelyNextPick": 15,
+          "comparableOptionsLikelyNextTwoPicks": 13,
           "waitRisk": "low",
           "waitRiskReasons": [
             "DL projection confidence is low."
@@ -11415,8 +11415,8 @@
           },
           "draftContext": {
             "currentRound": 20,
-            "currentPick": 234,
-            "picksUntilNextUserPick": 0,
+            "currentPick": 238,
+            "picksUntilNextUserPick": 9,
             "positionNeedLevel": "urgent",
             "starterSlotNeed": true,
             "benchDepthNeed": false,
@@ -11432,14 +11432,14 @@
             "DL timing action: monitor.",
             "DL remains a starter need.",
             "Comparable DL options are likely to be available near the next pick.",
-            "DL survival confidence is medium (16 likely next-pick comparables).",
+            "DL survival confidence is medium (15 likely next-pick comparables).",
             "Wait plan fallback: monitor."
           ],
           "survivalConfidence": "medium",
           "survivalConfidenceScore": 58,
           "comparableOptionsNow": 17,
-          "comparableOptionsLikelyNextPick": 16,
-          "comparableOptionsLikelyNextTwoPicks": 16,
+          "comparableOptionsLikelyNextPick": 15,
+          "comparableOptionsLikelyNextTwoPicks": 13,
           "waitRisk": "low",
           "waitRiskReasons": [
             "DL projection confidence is low."
@@ -11505,8 +11505,8 @@
           },
           "draftContext": {
             "currentRound": 20,
-            "currentPick": 234,
-            "picksUntilNextUserPick": 0,
+            "currentPick": 238,
+            "picksUntilNextUserPick": 9,
             "positionNeedLevel": "urgent",
             "starterSlotNeed": true,
             "benchDepthNeed": false,
@@ -11522,14 +11522,14 @@
             "DL timing action: monitor.",
             "DL remains a starter need.",
             "Comparable DL options are likely to be available near the next pick.",
-            "DL survival confidence is medium (16 likely next-pick comparables).",
+            "DL survival confidence is medium (15 likely next-pick comparables).",
             "Wait plan fallback: monitor."
           ],
           "survivalConfidence": "medium",
           "survivalConfidenceScore": 58,
           "comparableOptionsNow": 17,
-          "comparableOptionsLikelyNextPick": 16,
-          "comparableOptionsLikelyNextTwoPicks": 16,
+          "comparableOptionsLikelyNextPick": 15,
+          "comparableOptionsLikelyNextTwoPicks": 13,
           "waitRisk": "low",
           "waitRiskReasons": [
             "DL projection confidence is low."
@@ -11595,8 +11595,8 @@
           },
           "draftContext": {
             "currentRound": 20,
-            "currentPick": 234,
-            "picksUntilNextUserPick": 0,
+            "currentPick": 238,
+            "picksUntilNextUserPick": 9,
             "positionNeedLevel": "urgent",
             "starterSlotNeed": true,
             "benchDepthNeed": false,
@@ -11612,14 +11612,14 @@
             "DL timing action: monitor.",
             "DL remains a starter need.",
             "Comparable DL options are likely to be available near the next pick.",
-            "DL survival confidence is medium (16 likely next-pick comparables).",
+            "DL survival confidence is medium (15 likely next-pick comparables).",
             "Wait plan fallback: monitor."
           ],
           "survivalConfidence": "medium",
           "survivalConfidenceScore": 58,
           "comparableOptionsNow": 17,
-          "comparableOptionsLikelyNextPick": 16,
-          "comparableOptionsLikelyNextTwoPicks": 16,
+          "comparableOptionsLikelyNextPick": 15,
+          "comparableOptionsLikelyNextTwoPicks": 13,
           "waitRisk": "low",
           "waitRiskReasons": [
             "DL projection confidence is low."
@@ -11685,8 +11685,8 @@
           },
           "draftContext": {
             "currentRound": 20,
-            "currentPick": 234,
-            "picksUntilNextUserPick": 0,
+            "currentPick": 238,
+            "picksUntilNextUserPick": 9,
             "positionNeedLevel": "urgent",
             "starterSlotNeed": true,
             "benchDepthNeed": false,
@@ -11702,14 +11702,14 @@
             "DL timing action: monitor.",
             "DL remains a starter need.",
             "Comparable DL options are likely to be available near the next pick.",
-            "DL survival confidence is medium (16 likely next-pick comparables).",
+            "DL survival confidence is medium (15 likely next-pick comparables).",
             "Wait plan fallback: monitor."
           ],
           "survivalConfidence": "medium",
           "survivalConfidenceScore": 58,
           "comparableOptionsNow": 17,
-          "comparableOptionsLikelyNextPick": 16,
-          "comparableOptionsLikelyNextTwoPicks": 16,
+          "comparableOptionsLikelyNextPick": 15,
+          "comparableOptionsLikelyNextTwoPicks": 13,
           "waitRisk": "low",
           "waitRiskReasons": [
             "DL projection confidence is low."
@@ -11775,8 +11775,8 @@
           },
           "draftContext": {
             "currentRound": 20,
-            "currentPick": 234,
-            "picksUntilNextUserPick": 0,
+            "currentPick": 238,
+            "picksUntilNextUserPick": 9,
             "positionNeedLevel": "urgent",
             "starterSlotNeed": true,
             "benchDepthNeed": false,
@@ -11792,14 +11792,14 @@
             "DL timing action: monitor.",
             "DL remains a starter need.",
             "Comparable DL options are likely to be available near the next pick.",
-            "DL survival confidence is medium (16 likely next-pick comparables).",
+            "DL survival confidence is medium (15 likely next-pick comparables).",
             "Wait plan fallback: monitor."
           ],
           "survivalConfidence": "medium",
           "survivalConfidenceScore": 58,
           "comparableOptionsNow": 17,
-          "comparableOptionsLikelyNextPick": 16,
-          "comparableOptionsLikelyNextTwoPicks": 16,
+          "comparableOptionsLikelyNextPick": 15,
+          "comparableOptionsLikelyNextTwoPicks": 13,
           "waitRisk": "low",
           "waitRiskReasons": [
             "DL projection confidence is low."
@@ -11865,8 +11865,8 @@
           },
           "draftContext": {
             "currentRound": 20,
-            "currentPick": 234,
-            "picksUntilNextUserPick": 0,
+            "currentPick": 238,
+            "picksUntilNextUserPick": 9,
             "positionNeedLevel": "urgent",
             "starterSlotNeed": true,
             "benchDepthNeed": false,
@@ -11882,14 +11882,14 @@
             "DL timing action: monitor.",
             "DL remains a starter need.",
             "Comparable DL options are likely to be available near the next pick.",
-            "DL survival confidence is medium (16 likely next-pick comparables).",
+            "DL survival confidence is medium (15 likely next-pick comparables).",
             "Wait plan fallback: monitor."
           ],
           "survivalConfidence": "medium",
           "survivalConfidenceScore": 58,
           "comparableOptionsNow": 17,
-          "comparableOptionsLikelyNextPick": 16,
-          "comparableOptionsLikelyNextTwoPicks": 16,
+          "comparableOptionsLikelyNextPick": 15,
+          "comparableOptionsLikelyNextTwoPicks": 13,
           "waitRisk": "low",
           "waitRiskReasons": [
             "DL projection confidence is low."
@@ -11955,8 +11955,8 @@
           },
           "draftContext": {
             "currentRound": 20,
-            "currentPick": 234,
-            "picksUntilNextUserPick": 0,
+            "currentPick": 238,
+            "picksUntilNextUserPick": 9,
             "positionNeedLevel": "urgent",
             "starterSlotNeed": true,
             "benchDepthNeed": false,
@@ -11972,14 +11972,14 @@
             "DL timing action: monitor.",
             "DL remains a starter need.",
             "Comparable DL options are likely to be available near the next pick.",
-            "DL survival confidence is medium (16 likely next-pick comparables).",
+            "DL survival confidence is medium (15 likely next-pick comparables).",
             "Wait plan fallback: monitor."
           ],
           "survivalConfidence": "medium",
           "survivalConfidenceScore": 58,
           "comparableOptionsNow": 17,
-          "comparableOptionsLikelyNextPick": 16,
-          "comparableOptionsLikelyNextTwoPicks": 16,
+          "comparableOptionsLikelyNextPick": 15,
+          "comparableOptionsLikelyNextTwoPicks": 13,
           "waitRisk": "low",
           "waitRiskReasons": [
             "DL projection confidence is low."
@@ -12045,8 +12045,8 @@
           },
           "draftContext": {
             "currentRound": 20,
-            "currentPick": 234,
-            "picksUntilNextUserPick": 0,
+            "currentPick": 238,
+            "picksUntilNextUserPick": 9,
             "positionNeedLevel": "urgent",
             "starterSlotNeed": true,
             "benchDepthNeed": false,
@@ -12062,14 +12062,14 @@
             "DL timing action: monitor.",
             "DL remains a starter need.",
             "Comparable DL options are likely to be available near the next pick.",
-            "DL survival confidence is medium (16 likely next-pick comparables).",
+            "DL survival confidence is medium (15 likely next-pick comparables).",
             "Wait plan fallback: monitor."
           ],
           "survivalConfidence": "medium",
           "survivalConfidenceScore": 58,
           "comparableOptionsNow": 17,
-          "comparableOptionsLikelyNextPick": 16,
-          "comparableOptionsLikelyNextTwoPicks": 16,
+          "comparableOptionsLikelyNextPick": 15,
+          "comparableOptionsLikelyNextTwoPicks": 13,
           "waitRisk": "low",
           "waitRiskReasons": [
             "DL projection confidence is low."
@@ -12135,8 +12135,8 @@
           },
           "draftContext": {
             "currentRound": 20,
-            "currentPick": 234,
-            "picksUntilNextUserPick": 0,
+            "currentPick": 238,
+            "picksUntilNextUserPick": 9,
             "positionNeedLevel": "urgent",
             "starterSlotNeed": true,
             "benchDepthNeed": false,
@@ -12152,14 +12152,14 @@
             "DL timing action: monitor.",
             "DL remains a starter need.",
             "Comparable DL options are likely to be available near the next pick.",
-            "DL survival confidence is medium (16 likely next-pick comparables).",
+            "DL survival confidence is medium (15 likely next-pick comparables).",
             "Wait plan fallback: monitor."
           ],
           "survivalConfidence": "medium",
           "survivalConfidenceScore": 58,
           "comparableOptionsNow": 17,
-          "comparableOptionsLikelyNextPick": 16,
-          "comparableOptionsLikelyNextTwoPicks": 16,
+          "comparableOptionsLikelyNextPick": 15,
+          "comparableOptionsLikelyNextTwoPicks": 13,
           "waitRisk": "low",
           "waitRiskReasons": [
             "DL projection confidence is low."
@@ -12225,8 +12225,8 @@
           },
           "draftContext": {
             "currentRound": 20,
-            "currentPick": 234,
-            "picksUntilNextUserPick": 0,
+            "currentPick": 238,
+            "picksUntilNextUserPick": 9,
             "positionNeedLevel": "urgent",
             "starterSlotNeed": true,
             "benchDepthNeed": false,
@@ -12242,14 +12242,14 @@
             "DL timing action: monitor.",
             "DL remains a starter need.",
             "Comparable DL options are likely to be available near the next pick.",
-            "DL survival confidence is medium (16 likely next-pick comparables).",
+            "DL survival confidence is medium (15 likely next-pick comparables).",
             "Wait plan fallback: monitor."
           ],
           "survivalConfidence": "medium",
           "survivalConfidenceScore": 58,
           "comparableOptionsNow": 17,
-          "comparableOptionsLikelyNextPick": 16,
-          "comparableOptionsLikelyNextTwoPicks": 16,
+          "comparableOptionsLikelyNextPick": 15,
+          "comparableOptionsLikelyNextTwoPicks": 13,
           "waitRisk": "low",
           "waitRiskReasons": [
             "DL projection confidence is low."
@@ -12317,8 +12317,8 @@
           },
           "draftContext": {
             "currentRound": 20,
-            "currentPick": 234,
-            "picksUntilNextUserPick": 0,
+            "currentPick": 238,
+            "picksUntilNextUserPick": 9,
             "positionNeedLevel": "urgent",
             "starterSlotNeed": true,
             "benchDepthNeed": false,
@@ -12334,14 +12334,14 @@
             "DL timing action: monitor.",
             "DL remains a starter need.",
             "Comparable DL options are likely to be available near the next pick.",
-            "DL survival confidence is medium (16 likely next-pick comparables).",
+            "DL survival confidence is medium (15 likely next-pick comparables).",
             "Wait plan fallback: monitor."
           ],
           "survivalConfidence": "medium",
           "survivalConfidenceScore": 58,
           "comparableOptionsNow": 17,
-          "comparableOptionsLikelyNextPick": 16,
-          "comparableOptionsLikelyNextTwoPicks": 16,
+          "comparableOptionsLikelyNextPick": 15,
+          "comparableOptionsLikelyNextTwoPicks": 13,
           "waitRisk": "low",
           "waitRiskReasons": [
             "DL projection confidence is low."
@@ -12407,8 +12407,8 @@
           },
           "draftContext": {
             "currentRound": 20,
-            "currentPick": 234,
-            "picksUntilNextUserPick": 0,
+            "currentPick": 238,
+            "picksUntilNextUserPick": 9,
             "positionNeedLevel": "urgent",
             "starterSlotNeed": true,
             "benchDepthNeed": false,
@@ -12424,14 +12424,14 @@
             "DL timing action: monitor.",
             "DL remains a starter need.",
             "Comparable DL options are likely to be available near the next pick.",
-            "DL survival confidence is medium (16 likely next-pick comparables).",
+            "DL survival confidence is medium (15 likely next-pick comparables).",
             "Wait plan fallback: monitor."
           ],
           "survivalConfidence": "medium",
           "survivalConfidenceScore": 58,
           "comparableOptionsNow": 17,
-          "comparableOptionsLikelyNextPick": 16,
-          "comparableOptionsLikelyNextTwoPicks": 16,
+          "comparableOptionsLikelyNextPick": 15,
+          "comparableOptionsLikelyNextTwoPicks": 13,
           "waitRisk": "low",
           "waitRiskReasons": [
             "DL projection confidence is low."
@@ -12497,8 +12497,8 @@
           },
           "draftContext": {
             "currentRound": 20,
-            "currentPick": 234,
-            "picksUntilNextUserPick": 0,
+            "currentPick": 238,
+            "picksUntilNextUserPick": 9,
             "positionNeedLevel": "urgent",
             "starterSlotNeed": true,
             "benchDepthNeed": false,
@@ -12514,14 +12514,14 @@
             "DL timing action: monitor.",
             "DL remains a starter need.",
             "Comparable DL options are likely to be available near the next pick.",
-            "DL survival confidence is medium (16 likely next-pick comparables).",
+            "DL survival confidence is medium (15 likely next-pick comparables).",
             "Wait plan fallback: monitor."
           ],
           "survivalConfidence": "medium",
           "survivalConfidenceScore": 58,
           "comparableOptionsNow": 17,
-          "comparableOptionsLikelyNextPick": 16,
-          "comparableOptionsLikelyNextTwoPicks": 16,
+          "comparableOptionsLikelyNextPick": 15,
+          "comparableOptionsLikelyNextTwoPicks": 13,
           "waitRisk": "low",
           "waitRiskReasons": [
             "DL projection confidence is low."
@@ -12587,8 +12587,8 @@
           },
           "draftContext": {
             "currentRound": 20,
-            "currentPick": 234,
-            "picksUntilNextUserPick": 0,
+            "currentPick": 238,
+            "picksUntilNextUserPick": 9,
             "positionNeedLevel": "urgent",
             "starterSlotNeed": true,
             "benchDepthNeed": false,
@@ -12604,14 +12604,14 @@
             "DL timing action: monitor.",
             "DL remains a starter need.",
             "Comparable DL options are likely to be available near the next pick.",
-            "DL survival confidence is medium (16 likely next-pick comparables).",
+            "DL survival confidence is medium (15 likely next-pick comparables).",
             "Wait plan fallback: monitor."
           ],
           "survivalConfidence": "medium",
           "survivalConfidenceScore": 58,
           "comparableOptionsNow": 17,
-          "comparableOptionsLikelyNextPick": 16,
-          "comparableOptionsLikelyNextTwoPicks": 16,
+          "comparableOptionsLikelyNextPick": 15,
+          "comparableOptionsLikelyNextTwoPicks": 13,
           "waitRisk": "low",
           "waitRiskReasons": [
             "DL projection confidence is low."
@@ -12677,8 +12677,8 @@
           },
           "draftContext": {
             "currentRound": 20,
-            "currentPick": 234,
-            "picksUntilNextUserPick": 0,
+            "currentPick": 238,
+            "picksUntilNextUserPick": 9,
             "positionNeedLevel": "urgent",
             "starterSlotNeed": true,
             "benchDepthNeed": false,
@@ -12694,14 +12694,14 @@
             "DL timing action: monitor.",
             "DL remains a starter need.",
             "Comparable DL options are likely to be available near the next pick.",
-            "DL survival confidence is medium (16 likely next-pick comparables).",
+            "DL survival confidence is medium (15 likely next-pick comparables).",
             "Wait plan fallback: monitor."
           ],
           "survivalConfidence": "medium",
           "survivalConfidenceScore": 58,
           "comparableOptionsNow": 17,
-          "comparableOptionsLikelyNextPick": 16,
-          "comparableOptionsLikelyNextTwoPicks": 16,
+          "comparableOptionsLikelyNextPick": 15,
+          "comparableOptionsLikelyNextTwoPicks": 13,
           "waitRisk": "low",
           "waitRiskReasons": [
             "DL projection confidence is low."
@@ -12767,8 +12767,8 @@
           },
           "draftContext": {
             "currentRound": 20,
-            "currentPick": 234,
-            "picksUntilNextUserPick": 0,
+            "currentPick": 238,
+            "picksUntilNextUserPick": 9,
             "positionNeedLevel": "urgent",
             "starterSlotNeed": true,
             "benchDepthNeed": false,
@@ -12784,14 +12784,14 @@
             "DL timing action: monitor.",
             "DL remains a starter need.",
             "Comparable DL options are likely to be available near the next pick.",
-            "DL survival confidence is medium (16 likely next-pick comparables).",
+            "DL survival confidence is medium (15 likely next-pick comparables).",
             "Wait plan fallback: monitor."
           ],
           "survivalConfidence": "medium",
           "survivalConfidenceScore": 58,
           "comparableOptionsNow": 17,
-          "comparableOptionsLikelyNextPick": 16,
-          "comparableOptionsLikelyNextTwoPicks": 16,
+          "comparableOptionsLikelyNextPick": 15,
+          "comparableOptionsLikelyNextTwoPicks": 13,
           "waitRisk": "low",
           "waitRiskReasons": [
             "DL projection confidence is low."
@@ -12857,8 +12857,8 @@
           },
           "draftContext": {
             "currentRound": 20,
-            "currentPick": 234,
-            "picksUntilNextUserPick": 0,
+            "currentPick": 238,
+            "picksUntilNextUserPick": 9,
             "positionNeedLevel": "urgent",
             "starterSlotNeed": true,
             "benchDepthNeed": false,
@@ -12874,14 +12874,14 @@
             "DL timing action: monitor.",
             "DL remains a starter need.",
             "Comparable DL options are likely to be available near the next pick.",
-            "DL survival confidence is medium (16 likely next-pick comparables).",
+            "DL survival confidence is medium (15 likely next-pick comparables).",
             "Wait plan fallback: monitor."
           ],
           "survivalConfidence": "medium",
           "survivalConfidenceScore": 58,
           "comparableOptionsNow": 17,
-          "comparableOptionsLikelyNextPick": 16,
-          "comparableOptionsLikelyNextTwoPicks": 16,
+          "comparableOptionsLikelyNextPick": 15,
+          "comparableOptionsLikelyNextTwoPicks": 13,
           "waitRisk": "low",
           "waitRiskReasons": [
             "DL projection confidence is low."
@@ -12947,8 +12947,8 @@
           },
           "draftContext": {
             "currentRound": 20,
-            "currentPick": 234,
-            "picksUntilNextUserPick": 0,
+            "currentPick": 238,
+            "picksUntilNextUserPick": 9,
             "positionNeedLevel": "urgent",
             "starterSlotNeed": true,
             "benchDepthNeed": false,
@@ -12964,14 +12964,14 @@
             "DL timing action: monitor.",
             "DL remains a starter need.",
             "Comparable DL options are likely to be available near the next pick.",
-            "DL survival confidence is medium (16 likely next-pick comparables).",
+            "DL survival confidence is medium (15 likely next-pick comparables).",
             "Wait plan fallback: monitor."
           ],
           "survivalConfidence": "medium",
           "survivalConfidenceScore": 58,
           "comparableOptionsNow": 17,
-          "comparableOptionsLikelyNextPick": 16,
-          "comparableOptionsLikelyNextTwoPicks": 16,
+          "comparableOptionsLikelyNextPick": 15,
+          "comparableOptionsLikelyNextTwoPicks": 13,
           "waitRisk": "low",
           "waitRiskReasons": [
             "DL projection confidence is low."
@@ -13037,8 +13037,8 @@
           },
           "draftContext": {
             "currentRound": 20,
-            "currentPick": 234,
-            "picksUntilNextUserPick": 0,
+            "currentPick": 238,
+            "picksUntilNextUserPick": 9,
             "positionNeedLevel": "urgent",
             "starterSlotNeed": true,
             "benchDepthNeed": false,
@@ -13054,14 +13054,14 @@
             "DL timing action: monitor.",
             "DL remains a starter need.",
             "Comparable DL options are likely to be available near the next pick.",
-            "DL survival confidence is medium (16 likely next-pick comparables).",
+            "DL survival confidence is medium (15 likely next-pick comparables).",
             "Wait plan fallback: monitor."
           ],
           "survivalConfidence": "medium",
           "survivalConfidenceScore": 58,
           "comparableOptionsNow": 17,
-          "comparableOptionsLikelyNextPick": 16,
-          "comparableOptionsLikelyNextTwoPicks": 16,
+          "comparableOptionsLikelyNextPick": 15,
+          "comparableOptionsLikelyNextTwoPicks": 13,
           "waitRisk": "low",
           "waitRiskReasons": [
             "DL projection confidence is low."
@@ -13127,8 +13127,8 @@
           },
           "draftContext": {
             "currentRound": 20,
-            "currentPick": 234,
-            "picksUntilNextUserPick": 0,
+            "currentPick": 238,
+            "picksUntilNextUserPick": 9,
             "positionNeedLevel": "urgent",
             "starterSlotNeed": true,
             "benchDepthNeed": false,
@@ -13144,14 +13144,14 @@
             "DL timing action: monitor.",
             "DL remains a starter need.",
             "Comparable DL options are likely to be available near the next pick.",
-            "DL survival confidence is medium (16 likely next-pick comparables).",
+            "DL survival confidence is medium (15 likely next-pick comparables).",
             "Wait plan fallback: monitor."
           ],
           "survivalConfidence": "medium",
           "survivalConfidenceScore": 58,
           "comparableOptionsNow": 17,
-          "comparableOptionsLikelyNextPick": 16,
-          "comparableOptionsLikelyNextTwoPicks": 16,
+          "comparableOptionsLikelyNextPick": 15,
+          "comparableOptionsLikelyNextTwoPicks": 13,
           "waitRisk": "low",
           "waitRiskReasons": [
             "DL projection confidence is low."
@@ -13212,8 +13212,8 @@
           },
           "draftContext": {
             "currentRound": 20,
-            "currentPick": 234,
-            "picksUntilNextUserPick": 0,
+            "currentPick": 238,
+            "picksUntilNextUserPick": 9,
             "positionNeedLevel": "urgent",
             "starterSlotNeed": true,
             "benchDepthNeed": false,
@@ -13229,14 +13229,14 @@
             "DL timing action: fill_now.",
             "DL remains a starter need.",
             "Comparable DL options are likely to be available near the next pick.",
-            "DL survival confidence is medium (17 likely next-pick comparables).",
+            "DL survival confidence is medium (16 likely next-pick comparables).",
             "Wait plan fallback: fill_now."
           ],
           "survivalConfidence": "medium",
           "survivalConfidenceScore": 50,
           "comparableOptionsNow": 18,
-          "comparableOptionsLikelyNextPick": 17,
-          "comparableOptionsLikelyNextTwoPicks": 17,
+          "comparableOptionsLikelyNextPick": 16,
+          "comparableOptionsLikelyNextTwoPicks": 14,
           "waitRisk": "severe",
           "waitRiskReasons": [
             "DL tier drop risk is high."
@@ -13295,8 +13295,8 @@
           },
           "draftContext": {
             "currentRound": 20,
-            "currentPick": 234,
-            "picksUntilNextUserPick": 0,
+            "currentPick": 238,
+            "picksUntilNextUserPick": 9,
             "positionNeedLevel": "urgent",
             "starterSlotNeed": true,
             "benchDepthNeed": false,
@@ -13312,14 +13312,14 @@
             "DL timing action: fill_now.",
             "DL remains a starter need.",
             "Comparable DL options are likely to be available near the next pick.",
-            "DL survival confidence is medium (17 likely next-pick comparables).",
+            "DL survival confidence is medium (16 likely next-pick comparables).",
             "Wait plan fallback: fill_now."
           ],
           "survivalConfidence": "medium",
           "survivalConfidenceScore": 50,
           "comparableOptionsNow": 18,
-          "comparableOptionsLikelyNextPick": 17,
-          "comparableOptionsLikelyNextTwoPicks": 17,
+          "comparableOptionsLikelyNextPick": 16,
+          "comparableOptionsLikelyNextTwoPicks": 14,
           "waitRisk": "severe",
           "waitRiskReasons": [
             "DL tier drop risk is high."
@@ -13378,8 +13378,8 @@
           },
           "draftContext": {
             "currentRound": 20,
-            "currentPick": 234,
-            "picksUntilNextUserPick": 0,
+            "currentPick": 238,
+            "picksUntilNextUserPick": 9,
             "positionNeedLevel": "urgent",
             "starterSlotNeed": true,
             "benchDepthNeed": false,
@@ -13395,14 +13395,14 @@
             "DL timing action: fill_now.",
             "DL remains a starter need.",
             "Comparable DL options are likely to be available near the next pick.",
-            "DL survival confidence is medium (17 likely next-pick comparables).",
+            "DL survival confidence is medium (16 likely next-pick comparables).",
             "Wait plan fallback: fill_now."
           ],
           "survivalConfidence": "medium",
           "survivalConfidenceScore": 50,
           "comparableOptionsNow": 18,
-          "comparableOptionsLikelyNextPick": 17,
-          "comparableOptionsLikelyNextTwoPicks": 17,
+          "comparableOptionsLikelyNextPick": 16,
+          "comparableOptionsLikelyNextTwoPicks": 14,
           "waitRisk": "severe",
           "waitRiskReasons": [
             "DL tier drop risk is high."
@@ -13457,8 +13457,8 @@
           },
           "draftContext": {
             "currentRound": 20,
-            "currentPick": 234,
-            "picksUntilNextUserPick": 0,
+            "currentPick": 238,
+            "picksUntilNextUserPick": 9,
             "positionNeedLevel": "low",
             "starterSlotNeed": false,
             "benchDepthNeed": false,
@@ -13474,14 +13474,14 @@
             "LB timing action: fill_now.",
             "LB is a depth need, not a starter need.",
             "Comparable LB options are likely to be available near the next pick.",
-            "LB survival confidence is medium (18 likely next-pick comparables).",
+            "LB survival confidence is medium (17 likely next-pick comparables).",
             "Wait plan fallback: fill_now."
           ],
           "survivalConfidence": "medium",
           "survivalConfidenceScore": 65,
           "comparableOptionsNow": 19,
-          "comparableOptionsLikelyNextPick": 18,
-          "comparableOptionsLikelyNextTwoPicks": 18,
+          "comparableOptionsLikelyNextPick": 17,
+          "comparableOptionsLikelyNextTwoPicks": 15,
           "waitRisk": "low",
           "waitRiskReasons": [
             "LB tier drop risk is high."
@@ -13536,8 +13536,8 @@
           },
           "draftContext": {
             "currentRound": 20,
-            "currentPick": 234,
-            "picksUntilNextUserPick": 0,
+            "currentPick": 238,
+            "picksUntilNextUserPick": 9,
             "positionNeedLevel": "low",
             "starterSlotNeed": false,
             "benchDepthNeed": false,
@@ -13553,14 +13553,14 @@
             "LB timing action: fill_now.",
             "LB is a depth need, not a starter need.",
             "Comparable LB options are likely to be available near the next pick.",
-            "LB survival confidence is medium (18 likely next-pick comparables).",
+            "LB survival confidence is medium (17 likely next-pick comparables).",
             "Wait plan fallback: fill_now."
           ],
           "survivalConfidence": "medium",
           "survivalConfidenceScore": 65,
           "comparableOptionsNow": 19,
-          "comparableOptionsLikelyNextPick": 18,
-          "comparableOptionsLikelyNextTwoPicks": 18,
+          "comparableOptionsLikelyNextPick": 17,
+          "comparableOptionsLikelyNextTwoPicks": 15,
           "waitRisk": "low",
           "waitRiskReasons": [
             "LB tier drop risk is high."
@@ -13612,7 +13612,7 @@
         "matchRate": 0.967,
         "insufficientDataRate": 0.033,
         "warningCounts": {
-          "LOW_PROJECTION_CONFIDENCE": 93,
+          "LOW_PROJECTION_CONFIDENCE": 95,
           "MARKET_NOT_IMPLEMENTED": 58,
           "Best-ball and managed-league ADP are not blended.": 87,
           "NO_COMPATIBLE_MARKET": 87,

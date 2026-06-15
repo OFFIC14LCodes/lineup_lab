@@ -1,6 +1,7 @@
 import { auditLeagueRoster, IDP_SCORING_KEYS, KICKER_SCORING_KEYS } from "@/lib/projections/idp-dst-k-audit";
 import { normalizePositionGroup } from "@/lib/players/normalize";
 import { scoreFantasyStats } from "@/lib/scoring";
+import { createStatResolver } from "@/lib/scoring/stat-aliases";
 
 export type H910Scenario = "downside" | "floor" | "median" | "ceiling" | "upside";
 export type H910Position = "DL" | "LB" | "DB" | "K";
@@ -99,15 +100,39 @@ const K_BUCKET_MADE = ["fgm_0_19", "fgm_20_29", "fgm_30_39", "fgm_40_49", "fgm_5
 const K_BUCKET_MISS = ["fgmiss_0_19", "fgmiss_20_29", "fgmiss_30_39", "fgmiss_40_49", "fgmiss_50p"] as const;
 const BENEFICIAL = new Set([...IDP_STABLE, ...IDP_BIG, ...IDP_EXTREME, "bonus_sack_2p", "fga", "fgm", "xpa", "xpm", ...K_BUCKET_MADE]);
 const HARMFUL = new Set(["fgmiss", "xpmiss", ...K_BUCKET_MISS]);
+const STAT_RESOLVER_CACHE = new WeakMap<Record<string, unknown>, ReturnType<typeof createStatResolver>>();
+const IDP_SCORING_KEY_ALIASES: Record<string, string> = {
+  idp_blk_kick: "blk_kick",
+  idp_def_st_td: "def_st_td",
+  idp_def_td: "def_td",
+  idp_ff: "ff",
+  idp_fum_rec: "fr",
+  idp_fum_ret_yd: "fr_ret_yd",
+  idp_int: "int",
+  idp_int_ret_yd: "int_ret_yd",
+  idp_pass_def: "pd",
+  idp_qb_hit: "qb_hit",
+  idp_sack: "sack",
+  idp_safe: "safe",
+  idp_st_tkl: "st_tkl",
+  idp_tkl: "tkl",
+  idp_tkl_ast: "ast_tkl",
+  idp_tkl_loss: "tkl_loss",
+  idp_tkl_solo: "solo_tkl",
+};
 
 function num(stats: Record<string, unknown> | null | undefined, key: string): number {
+  if (!stats) return 0;
   const value = stats?.[key];
   if (typeof value === "number" && Number.isFinite(value)) return value;
   if (typeof value === "string" && value.trim() !== "") {
     const parsed = Number(value);
-    return Number.isFinite(parsed) ? parsed : 0;
+    if (Number.isFinite(parsed)) return parsed;
   }
-  return 0;
+  const cached = STAT_RESOLVER_CACHE.get(stats);
+  const resolver = cached ?? createStatResolver(stats);
+  if (!cached) STAT_RESOLVER_CACHE.set(stats, resolver);
+  return resolver.getStat(key).statValue ?? 0;
 }
 
 function round(value: number): number {
@@ -367,10 +392,24 @@ function activeRelevantKeys(settings: Record<string, unknown>, category: H910Cat
   return Object.entries(settings).filter(([, value]) => Number(value) !== 0).map(([key]) => key).filter((key) => keySet.has(key)).sort();
 }
 
+function projectionScoringSettings(projection: H910PlayerProjection, league: H910LeagueInput): Record<string, unknown> {
+  if (projection.category !== "idp") return league.scoringSettings;
+
+  const settings = { ...league.scoringSettings };
+  for (const [sleeperKey, canonicalKey] of Object.entries(IDP_SCORING_KEY_ALIASES)) {
+    const value = league.scoringSettings[sleeperKey];
+    if (value !== undefined && Number(value) !== 0) {
+      settings[canonicalKey] = value;
+    }
+    delete settings[sleeperKey];
+  }
+  return settings;
+}
+
 function scoreScenario(projection: H910PlayerProjection, league: H910LeagueInput, scenario: H910Scenario) {
   return scoreFantasyStats({
     stats: projection.componentsByScenario[scenario],
-    scoringSettings: league.scoringSettings,
+    scoringSettings: projectionScoringSettings(projection, league),
     positionGroup: projection.position,
     statSource: "projection",
     context: { season: league.season, playerId: projection.canonicalPlayerId },

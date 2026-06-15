@@ -40,6 +40,8 @@
     "audit:h9-idp-dst-k": "tsx scripts/h9-idp-dst-k-audit.ts",
     "dry-run:h9-special-teams-defense-ingest": "tsx scripts/h9-special-teams-defense-ingest.ts",
     "audit:h9-idp-k-identity-readiness": "tsx scripts/h9-idp-k-identity-readiness.ts",
+    "diagnose:h9-idp-identity-coverage": "tsx scripts/h9-idp-identity-coverage.ts",
+    "diagnose:h9-idp-projection-quality": "tsx scripts/h9-idp-projection-quality.ts",
     "dry-run:h9-idp-k-projections": "tsx scripts/h9-idp-k-projection-dry-run.ts",
     "dry-run:h9-dst-projections": "tsx scripts/h9-dst-projection-dry-run.ts",
     "dry-run:h9-combined-projections": "tsx scripts/h9-combined-projection-read-model.ts",

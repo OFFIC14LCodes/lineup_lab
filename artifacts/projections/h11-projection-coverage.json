@@ -1,5 +1,5 @@
 {
-  "draftRoomId": "f85238ff-b2ee-4053-8493-e38c4cb63bd3",
+  "draftRoomId": "c82aef89-ce90-40f0-936f-545656045554",
   "leagueId": "95c929b9-cc55-411e-8493-06fd85308c1c",
   "scoringFingerprint": "6d2483a4",
   "rosterPositions": [
@@ -61,31 +61,19 @@
     "WR": 233
   },
   "availablePlayersByPosition": {
-    "QB": 22,
-    "RB": 22,
-    "WR": 22,
-    "TE": 21,
-    "DL": 21,
-    "LB": 21,
-    "DB": 21
+    "DL": 8,
+    "LB": 8,
+    "DB": 8
   },
   "boardRowsByPosition": {
-    "DL": 21,
-    "DB": 21,
-    "LB": 21,
-    "TE": 21,
-    "WR": 22,
-    "RB": 22,
-    "QB": 22
+    "DL": 8,
+    "LB": 8,
+    "DB": 8
   },
   "recommendationRowsByPosition": {
-    "DL": 21,
-    "DB": 21,
-    "LB": 21,
-    "TE": 21,
-    "WR": 22,
-    "RB": 22,
-    "QB": 22
+    "DL": 8,
+    "LB": 8,
+    "DB": 8
   },
   "missingProjectionPositions": [],
   "excludedPositionsWithReason": [
@@ -98,7 +86,7 @@
       "reason": "team defense is not enabled by roster settings"
     }
   ],
-  "suspiciousLowProjectionCount": 2,
+  "suspiciousLowProjectionCount": 0,
   "suspiciousSinglePositionOnly": false,
   "providerCountDistribution": {
     "0": 1405

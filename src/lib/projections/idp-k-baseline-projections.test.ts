@@ -108,6 +108,76 @@ describe("H9.10 IDP/K low-confidence baseline projections", () => {
     expect(scored.unsupportedScoringKeys.some((key) => key.includes("fgmiss_50p"))).toBe(false);
   });
 
+  it("uses provider IDP stat aliases so high-value tackles and sacks do not collapse to near-zero season points", () => {
+    const rows = Array.from({ length: 14 }, (_, index) =>
+      row("lb-alias", index + 1, "LB", {
+        solo_tackles: 6,
+        assisted_tackles: 3,
+        sacks: index % 4 === 0 ? 1 : 0,
+        tackles_for_loss: 1,
+      })
+    );
+
+    const projections = projectH910Population({ rows, includeIdp: true, includeKicker: false }).projections;
+    const scored = scoreH910Leagues({
+      projections,
+      leagues: [
+        {
+          leagueId: "heavy-idp",
+          leagueName: "Heavy IDP",
+          season: 2026,
+          rosterPositions: ["LB", "IDP"],
+          scoringSettings: { solo_tkl: 2, ast_tkl: 1, sack: 6, tkl_loss: 1 },
+        },
+      ],
+    });
+
+    const output = scored.outputs.find((row) => row.playerId === "lb-alias");
+    expect(projections[0].componentsByScenario.median.solo_tkl).toBeGreaterThan(60);
+    expect(projections[0].componentsByScenario.median.sack).toBeGreaterThan(2);
+    expect(output?.medianPoints).toBeGreaterThan(150);
+    expect(output?.unsupportedScoringKeys).toEqual([]);
+    expect(output?.missingStatsForSupportedKeys).toEqual([]);
+  });
+
+  it("scores Sleeper idp-prefixed scoring keys separately from team-defense sack scoring", () => {
+    const rows = Array.from({ length: 14 }, (_, index) =>
+      row("lb-sleeper-idp", index + 1, "LB", {
+        solo_tkl: 6,
+        ast_tkl: 3,
+        sack: index % 4 === 0 ? 1 : 0,
+        tkl_loss: 1,
+      })
+    );
+
+    const projections = projectH910Population({ rows, includeIdp: true, includeKicker: false }).projections;
+    const scored = scoreH910Leagues({
+      projections,
+      leagues: [
+        {
+          leagueId: "bestballs-idp",
+          leagueName: "BestBalls IDP",
+          season: 2026,
+          rosterPositions: ["DL", "LB", "DB", "IDP_FLEX"],
+          scoringSettings: {
+            idp_tkl_solo: 2,
+            idp_tkl_ast: 1,
+            idp_sack: 6,
+            idp_tkl_loss: 2,
+            idp_qb_hit: 1,
+            idp_pass_def: 3,
+            sack: 1,
+          },
+        },
+      ],
+    });
+
+    const output = scored.outputs.find((row) => row.playerId === "lb-sleeper-idp");
+    expect(output?.medianPoints).toBeGreaterThan(150);
+    expect(output?.unsupportedScoringKeys).toEqual([]);
+    expect(output?.missingStatsForSupportedKeys).toEqual([]);
+  });
+
   it("keeps scope to resolved IDP/K rows only and can tag unresolved exclusions", () => {
     const result = projectH910Population({
       rows: [

@@ -95,7 +95,7 @@ function parseArgs(): Args {
     limit: argValue("--limit") ? Number(argValue("--limit")) : null,
     playerId: argValue("--player-id"),
     leagueId: argValue("--league-id"),
-    execute: hasArg("--execute"),
+    execute: hasArg("--execute") || hasArg("--persist"),
     allowPartialExecute: hasArg("--allow-partial-execute"),
     inspectPersistence: hasArg("--inspect-persistence"),
   };

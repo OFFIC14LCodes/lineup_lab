@@ -49,7 +49,7 @@ describe("H9.9 identity matching", () => {
     );
 
     expect(decision.status).toBe("existing_id");
-    expect(decision.method).toBe("existing_gsis_mapping");
+    expect(decision.method).toBe("exact_id");
   });
 
   it("returns auto_safe for unique exact name, team, and position match", () => {
@@ -61,7 +61,20 @@ describe("H9.9 identity matching", () => {
 
     expect(decision.status).toBe("auto_safe");
     expect(decision.confidence).toBeGreaterThanOrEqual(0.9);
-    expect(decision.method).toBe("exact_name_team_position");
+    expect(decision.method).toBe("normalized_name_team_position");
+  });
+
+  it("returns known_alias for explicit alias matches", () => {
+    const aggregate = makeUnresolvedAggregate([row({ playerDisplayName: "Defender Alias" })]);
+    const decision = matchIdentityCandidate(
+      aggregate,
+      new Map([["defender", [{ playerId: PLAYER_A, fullName: "Defender", normalizedName: "defender", team: "BAL", positionGroup: "LB", active: true }]]]),
+      null,
+      new Map([[aggregate.normalizedName, "defender"]])
+    );
+
+    expect(decision.status).toBe("auto_safe");
+    expect(decision.method).toBe("known_alias");
   });
 
   it("rejects ambiguous same-name team-position candidates", () => {
@@ -84,7 +97,21 @@ describe("H9.9 identity matching", () => {
     );
 
     expect(decision.status).toBe("manual_review");
+    expect(decision.method).toBe("unique_name_position");
     expect(decision.reasonUnresolved).toBe("team_mismatch_or_stale_canonical_team");
+  });
+
+  it("keeps ambiguous normalized name/team/position rows unresolved for repair writes", () => {
+    const aggregate = makeUnresolvedAggregate([row()]);
+    const candidate = { fullName: "Defender", normalizedName: aggregate.normalizedName, team: "BAL", positionGroup: "LB", active: true };
+    const decision = matchIdentityCandidate(
+      aggregate,
+      new Map([[aggregate.normalizedName, [{ ...candidate, playerId: PLAYER_A }, { ...candidate, playerId: PLAYER_B }]]])
+    );
+
+    expect(decision.status).toBe("ambiguous");
+    expect(decision.method).toBeNull();
+    expect(decision.reasonUnresolved).toBe("duplicate_candidate_ambiguity");
   });
 });
 

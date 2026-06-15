@@ -42,6 +42,9 @@ describe("provider data builders", () => {
 
     expect(row.position_group).toBe("LB");
     expect(row.stats_json.solo_tackles).toBe(8);
+    expect(row.stats_json.solo_tkl).toBe(8);
+    expect(row.stats_json.sack).toBe(1.5);
+    expect(row.stats_json.pd).toBe(1);
   });
 
   it("builds a valid kicker stats row", () => {
@@ -77,6 +80,9 @@ describe("provider data builders", () => {
     expect(row.opponent).toBe("BAL");
     expect(row.home_away).toBe("home");
     expect(row.position_group).toBe("DEF");
+    expect(row.stats_json.sack).toBe(4);
+    expect(row.stats_json.int).toBe(1);
+    expect(row.stats_json.pts_allow).toBe(13);
   });
 
   it("builds a season aggregate row", () => {

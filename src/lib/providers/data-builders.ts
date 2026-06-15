@@ -1,5 +1,6 @@
 import { normalizePositionGroup, normalizeTeam } from "@/lib/players/normalize";
 import { normalizeProviderName } from "@/lib/providers/constants";
+import { getCanonicalStatDefinitions } from "@/lib/scoring/stat-aliases";
 import {
   HOME_AWAY_VALUES,
   PROJECTION_TYPES,
@@ -51,6 +52,8 @@ export function normalizeStatsJson(stats: Record<string, unknown>): ProviderStat
     if (!normalizedKey) continue;
     normalized[normalizedKey] = normalizeStatsJsonValue(value, normalizedKey);
   }
+
+  addCanonicalStatAliases(normalized);
 
   return normalized;
 }
@@ -249,4 +252,22 @@ function normalizeStatsJsonValue(value: unknown, key: string): ProviderStatsJson
   }
 
   throw new Error(`Stat ${key} must be a string, number, boolean, or null.`);
+}
+
+function addCanonicalStatAliases(stats: ProviderStatsJson) {
+  const lowerKeyLookup = new Map(Object.keys(stats).map((key) => [key.trim().toLowerCase(), key]));
+
+  for (const definition of getCanonicalStatDefinitions()) {
+    if (lowerKeyLookup.has(definition.canonicalKey)) continue;
+
+    const matchingAlias = definition.aliases
+      .map((alias) => lowerKeyLookup.get(alias))
+      .find((key): key is string => Boolean(key));
+    if (!matchingAlias) continue;
+
+    const value = stats[matchingAlias];
+    if (typeof value === "number" || typeof value === "string") {
+      stats[definition.canonicalKey] = value;
+    }
+  }
 }
