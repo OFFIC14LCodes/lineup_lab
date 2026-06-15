@@ -60,6 +60,8 @@ type PlayerRow = {
   primary_position: string | null;
   position_group: string | null;
   team: string | null;
+  age: number | null;
+  years_exp: number | null;
   fantasy_positions_json: string[] | null;
   eligible_positions_json: string[] | null;
   normalized_name: string | null;
@@ -196,6 +198,7 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
       .filter((player) => Boolean(player.sleeper_player_id))
       .map((player) => [player.sleeper_player_id as string, player])
   );
+  const playerRowsById = new Map(fallbackPlayers.map((player) => [player.id, player]));
   const hasRankings = rankingRows.length > 0;
   const rosterRequirements = buildNormalizedRosterRequirements(
     Array.isArray(room.leagues?.roster_positions_json) ? room.leagues.roster_positions_json : []
@@ -222,6 +225,8 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
       best_ball_value: null,
       superflex_value: null,
       te_premium_value: null,
+      age: player.age,
+      years_exp: player.years_exp,
       match_status: null,
       match_confidence: null,
       is_ranked: false,
@@ -246,25 +251,33 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
           const byName = !ranking.sleeper_player_id && draftedNames.has(normalizePlayerName(ranking.player_name));
           return !byId && !byName;
         })
-        .map((ranking) => ({
-          source: "ranking" as const,
-          sleeper_player_id: ranking.sleeper_player_id,
-          matched_player_id: ranking.matched_player_id,
-          player_name: ranking.player_name,
-          position: ranking.position,
-          team: ranking.team,
-          rank: ranking.rank,
-          adp: ranking.adp,
-          projected_points: ranking.projected_points,
-          dynasty_value: ranking.dynasty_value,
-          best_ball_value: ranking.best_ball_value,
-          superflex_value: ranking.superflex_value,
-          te_premium_value: ranking.te_premium_value,
-          match_status: ranking.match_status,
-          match_confidence: ranking.match_confidence,
-          is_ranked: true,
-          is_fallback: false
-        }))
+        .map((ranking) => {
+          const matchedPlayer =
+            (ranking.sleeper_player_id ? playerRowsBySleeperId.get(ranking.sleeper_player_id) : null) ??
+            (ranking.matched_player_id ? playerRowsById.get(ranking.matched_player_id) : null) ??
+            null;
+          return {
+            source: "ranking" as const,
+            sleeper_player_id: ranking.sleeper_player_id,
+            matched_player_id: ranking.matched_player_id,
+            player_name: ranking.player_name,
+            position: ranking.position,
+            team: ranking.team,
+            rank: ranking.rank,
+            adp: ranking.adp,
+            projected_points: ranking.projected_points,
+            dynasty_value: ranking.dynasty_value,
+            best_ball_value: ranking.best_ball_value,
+            superflex_value: ranking.superflex_value,
+            te_premium_value: ranking.te_premium_value,
+            age: matchedPlayer?.age ?? null,
+            years_exp: matchedPlayer?.years_exp ?? null,
+            match_status: ranking.match_status,
+            match_confidence: ranking.match_confidence,
+            is_ranked: true,
+            is_fallback: false
+          };
+        })
         .sort((a, b) => (a.rank ?? 99999) - (b.rank ?? 99999))
         .slice(0, 150)
     : selectBalancedFallbackPlayers(fallbackRelevance.players, rosterRequirements, fallbackValueRows, 150);
@@ -424,7 +437,7 @@ async function loadActivePlayerRows(supabase: ReturnType<typeof createAdminClien
     const { data, error } = await supabase
       .from("players")
       .select(
-        "id,sleeper_player_id,full_name,position,primary_position,position_group,team,fantasy_positions_json,eligible_positions_json,normalized_name"
+        "id,sleeper_player_id,full_name,position,primary_position,position_group,team,age,years_exp,fantasy_positions_json,eligible_positions_json,normalized_name"
       )
       .eq("active", true)
       .range(from, from + pageSize - 1);

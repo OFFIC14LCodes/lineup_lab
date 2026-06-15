@@ -1,28 +1,27 @@
 # H11.3 War Room Blackbird Board
 
-Generated: 2026-06-15T22:12:50.299Z
+Generated: 2026-06-15T23:25:54.290Z
 Verdict: passed
 
 ## Ordering
 
-available players -> H10 recommendation/value rank -> projection/value score -> market/ADP value -> ADP/market rank -> projected points -> position/name
+available players -> contextual Blackbird value -> PAR -> projected fantasy points -> H10 tie-breakers -> position/name
 
 ## Coverage
 
 - Rows audited: 5
 - H10 rows: 3
 - Projection rows: 3
-- ADP rows: 3
-- Market rows: 3
+- Blackbird rank rows: 5
 - Fallback ordered rows: 2
 
 ## Example Rows
 
-- #1 Bravo QB: proj=332, adp=8, delta=7
-- #2 Alpha WR: proj=261, adp=24, delta=22
-- #3 Delta LB: proj=145, adp=180, delta=177
-- #4 Charlie RB: proj=unavailable, adp=unavailable, delta=unavailable
-- #5 Echo K: proj=unavailable, adp=unavailable, delta=unavailable
+- #1 Bravo QB: proj=330, blackbirdRank=1
+- #2 Alpha WR: proj=260, blackbirdRank=2
+- #3 Delta LB: proj=145, blackbirdRank=3
+- #4 Charlie RB: proj=unavailable, blackbirdRank=4
+- #5 Echo K: proj=unavailable, blackbirdRank=5
 
 ## Browser Smoke
 
@@ -44,4 +43,4 @@ available players -> H10 recommendation/value rank -> projection/value score -> 
 
 - Browser smoke uses local authenticated E2E bypass rather than a real OAuth session.
 - The board is smoked against one representative room; pure sorting tests cover edge cases.
-- Market rank falls back to ADP when exact compatible market rank is not available.
+- Blackbird rank is deterministic from the current draft room context and does not use ADP as the primary order.

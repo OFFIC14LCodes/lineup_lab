@@ -21,7 +21,7 @@ type Artifact = {
   verdict: "passed" | "failed" | "blocked";
   boardOrderingMethod: string;
   syntheticAudit: ReturnType<typeof buildBlackbirdBoard>["diagnostics"] & {
-    exampleRows: Array<Pick<ReturnType<typeof buildBlackbirdBoard>["rows"][number], "blackbirdBoardRank" | "playerName" | "projectionPoints" | "adp" | "rankDelta" | "dataStatus">>;
+    exampleRows: Array<Pick<ReturnType<typeof buildBlackbirdBoard>["rows"][number], "blackbirdBoardRank" | "playerName" | "projectionPoints" | "marketRank" | "dataStatus">>;
   };
   browserSmoke: {
     draftRoomId: string | null;
@@ -29,7 +29,7 @@ type Artifact = {
     loadMoreVisible: boolean;
     loadedMore: boolean;
     projectionColumnVisible: boolean;
-    adpColumnVisible: boolean;
+    blackbirdRankColumnVisible: boolean;
     valueColumnVisible: boolean;
     positionFilterWorks: boolean;
     mobileUsable: boolean;
@@ -93,8 +93,7 @@ async function main() {
         blackbirdBoardRank: row.blackbirdBoardRank,
         playerName: row.playerName,
         projectionPoints: row.projectionPoints,
-        adp: row.adp,
-        rankDelta: row.rankDelta,
+        marketRank: row.marketRank,
         dataStatus: row.dataStatus,
       })),
     },
@@ -102,7 +101,7 @@ async function main() {
     remainingRisks: [
       "Browser smoke uses local authenticated E2E bypass rather than a real OAuth session.",
       "The board is smoked against one representative room; pure sorting tests cover edge cases.",
-      "Market rank falls back to ADP when exact compatible market rank is not available.",
+      "Blackbird rank is deterministic from the current draft room context and does not use ADP as the primary order.",
     ],
   };
   writeArtifacts(artifact);
@@ -125,7 +124,7 @@ async function smokeBoard(browser: Browser, draftRoomId: string): Promise<Artifa
     const visible = await page.getByText("Blackbird Board").first().isVisible();
     const projectionCoverage = buildBrowserProjectionCoverage(draftRoomId, recordOrNull(beforeState.body));
     const projectionColumnVisible = await page.getByRole("columnheader", { name: "Proj" }).isVisible().catch(() => false);
-    const adpColumnVisible = await page.getByRole("columnheader", { name: "ADP" }).isVisible().catch(() => false);
+    const blackbirdRankColumnVisible = await page.getByRole("columnheader", { name: "Blackbird Rank" }).isVisible().catch(() => false);
     const valueColumnVisible = await page.getByRole("columnheader", { name: "Value" }).isVisible().catch(() => false);
     const loadMore = page.getByRole("button", { name: "Load more" });
     const loadMoreVisible = await loadMore.isVisible().catch(() => false);
@@ -169,7 +168,7 @@ async function smokeBoard(browser: Browser, draftRoomId: string): Promise<Artifa
       loadMoreVisible,
       loadedMore,
       projectionColumnVisible,
-      adpColumnVisible,
+      blackbirdRankColumnVisible,
       valueColumnVisible,
       positionFilterWorks,
       mobileUsable,
@@ -180,7 +179,7 @@ async function smokeBoard(browser: Browser, draftRoomId: string): Promise<Artifa
       },
       projectionCoverage,
       screenshots,
-      error: visible && projectionColumnVisible && adpColumnVisible && valueColumnVisible && loadedMore && positionFilterWorks && mobileUsable && projectionCoverage.verdict !== "failed" ? null : "Blackbird board browser assertions failed.",
+      error: visible && projectionColumnVisible && blackbirdRankColumnVisible && valueColumnVisible && loadedMore && positionFilterWorks && mobileUsable && projectionCoverage.verdict !== "failed" ? null : "Blackbird board browser assertions failed.",
     };
   } catch (error) {
     return {
@@ -189,7 +188,7 @@ async function smokeBoard(browser: Browser, draftRoomId: string): Promise<Artifa
       loadMoreVisible: false,
       loadedMore: false,
       projectionColumnVisible: false,
-      adpColumnVisible: false,
+      blackbirdRankColumnVisible: false,
       valueColumnVisible: false,
       positionFilterWorks: false,
       mobileUsable: false,
@@ -309,13 +308,12 @@ function renderMarkdown(artifact: Artifact): string {
     `- Rows audited: ${artifact.syntheticAudit.availableRows}`,
     `- H10 rows: ${artifact.syntheticAudit.h10RowsMatched}`,
     `- Projection rows: ${artifact.syntheticAudit.projectionRows}`,
-    `- ADP rows: ${artifact.syntheticAudit.adpRows}`,
-    `- Market rows: ${artifact.syntheticAudit.marketRows}`,
+    `- Blackbird rank rows: ${artifact.syntheticAudit.marketRows}`,
     `- Fallback ordered rows: ${artifact.syntheticAudit.fallbackOrderedRows}`,
     "",
     "## Example Rows",
     "",
-    ...artifact.syntheticAudit.exampleRows.map((row) => `- #${row.blackbirdBoardRank} ${row.playerName}: proj=${row.projectionPoints ?? "unavailable"}, adp=${row.adp ?? "unavailable"}, delta=${row.rankDelta ?? "unavailable"}`),
+    ...artifact.syntheticAudit.exampleRows.map((row) => `- #${row.blackbirdBoardRank} ${row.playerName}: proj=${row.projectionPoints ?? "unavailable"}, blackbirdRank=${row.marketRank ?? "unavailable"}`),
     "",
     "## Browser Smoke",
     "",
@@ -352,7 +350,7 @@ function blockedArtifact(message: string): Artifact {
       loadMoreVisible: false,
       loadedMore: false,
       projectionColumnVisible: false,
-      adpColumnVisible: false,
+      blackbirdRankColumnVisible: false,
       valueColumnVisible: false,
       positionFilterWorks: false,
       mobileUsable: false,
@@ -422,6 +420,8 @@ function overlay(overrides: Partial<WarRoomValueOverlayRow> = {}): WarRoomValueO
     draftRelevance: "draft_relevant",
     overlayStatus: "available",
     ...overrides,
+    floorPoints: overrides.floorPoints ?? 190,
+    ceilingPoints: overrides.ceilingPoints ?? 250,
   };
 }
 

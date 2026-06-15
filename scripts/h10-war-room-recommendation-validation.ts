@@ -430,7 +430,9 @@ function buildSyntheticDstValidationOverlay(leagueId: string, players: DraftTarg
     displayName: player.player_name ?? `Validation DST ${index + 1}`,
     team: player.team,
     position: "DEF",
+    floorPoints: 65 - index,
     medianPoints: 75 - index,
+    ceilingPoints: 85 - index,
     pointsAboveReplacement: 8 - index * 0.5,
     pointsAboveStarterCutline: 4 - index * 0.25,
     riskAdjustedValue: 6 - index * 0.4,
@@ -620,6 +622,8 @@ function fixtureOverlay(
     draftRelevance: "draft_relevant",
     overlayStatus: "available",
     ...overrides,
+    floorPoints: overrides.floorPoints ?? value - 10,
+    ceilingPoints: overrides.ceilingPoints ?? value + 10,
   };
 }
 

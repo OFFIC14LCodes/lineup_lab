@@ -21,7 +21,7 @@ describe("H11.3 Blackbird board", () => {
     expect(rows.map((row) => row.playerName)).toEqual(["Zulu RB", "Alpha WR"]);
   });
 
-  it("sorts by Blackbird/value rank before ADP and projection", () => {
+  it("does not let H10 recommendation rank override stronger contextual value", () => {
     const { rows } = buildBlackbirdBoard({
       players: [
         player({ player_name: "Projection Lead", matched_player_id: "p", projected_points: 350, adp: 5 }),
@@ -33,10 +33,10 @@ describe("H11.3 Blackbird board", () => {
       ],
     });
 
-    expect(rows[0]).toMatchObject({ playerName: "Blackbird Lead", blackbirdBoardRank: 1 });
+    expect(rows[0]).toMatchObject({ playerName: "Projection Lead", blackbirdBoardRank: 1 });
   });
 
-  it("renders ADP/projection data status when present", () => {
+  it("renders projection data status and Blackbird draft rank when present", () => {
     const { rows } = buildBlackbirdBoard({
       players: [player({ projected_points: 280.5, adp: 18 })],
       overlays: [overlay({ medianPoints: 281, pointsAboveReplacement: 42 })],
@@ -44,12 +44,13 @@ describe("H11.3 Blackbird board", () => {
 
     expect(rows[0]).toMatchObject({
       projectionPoints: 281,
-      adp: 18,
-      dataStatus: expect.objectContaining({ projection: "available", adp: "available", h10: "available" }),
+      marketRank: 1,
+      rankDelta: null,
+      dataStatus: expect.objectContaining({ projection: "available", marketRank: "available", h10: "available" }),
     });
   });
 
-  it("marks missing ADP/projection with explicit unavailable statuses", () => {
+  it("marks missing projection with explicit unavailable statuses", () => {
     const { rows } = buildBlackbirdBoard({
       players: [player({ projected_points: null, adp: null, draftTargetScore: null })],
       overlays: [overlay({ overlayStatus: "missing_projection", medianPoints: null })],
@@ -57,10 +58,10 @@ describe("H11.3 Blackbird board", () => {
 
     expect(rows[0].dataStatus).toMatchObject({
       projection: "unavailable",
-      adp: "unavailable",
-      marketRank: "unavailable",
+      marketRank: "available",
       h10: "unavailable",
     });
+    expect(rows[0].playerDetailContext?.dataGaps).toEqual(expect.arrayContaining(["projection", "H10 context"]));
   });
 
   it("excludes drafted players", () => {
@@ -73,16 +74,88 @@ describe("H11.3 Blackbird board", () => {
     expect(diagnostics.draftedRowsExcluded).toBe(1);
   });
 
-  it("supports local sort keys without mutating input order", () => {
+  it("supports local projection sort without mutating input order", () => {
     const players = [
-      player({ player_name: "Low ADP", adp: 40, projected_points: 300 }),
-      player({ player_name: "High ADP", adp: 4, projected_points: 100 }),
+      player({ player_name: "Low Projection", projected_points: 100 }),
+      player({ player_name: "High Projection", projected_points: 300 }),
     ];
     const before = JSON.stringify(players);
-    const { rows } = buildBlackbirdBoard({ players, sortKey: "adp" });
+    const { rows } = buildBlackbirdBoard({ players, sortKey: "projection" });
 
-    expect(rows[0].playerName).toBe("High ADP");
+    expect(rows[0].playerName).toBe("High Projection");
     expect(JSON.stringify(players)).toBe(before);
+  });
+
+  it("matches overlay projections by identity instead of array position", () => {
+    const { rows } = buildBlackbirdBoard({
+      players: [
+        player({ player_name: "Alpha LB", matched_player_id: "alpha", position: "LB", projected_points: 4 }),
+        player({ player_name: "Beta LB", matched_player_id: "beta", position: "LB", projected_points: 5 }),
+      ],
+      overlays: [
+        overlay({ entityId: "beta", displayName: "Beta LB", position: "LB", medianPoints: 250, pointsAboveReplacement: 40 }),
+        overlay({ entityId: "alpha", displayName: "Alpha LB", position: "LB", medianPoints: 150, pointsAboveReplacement: 20 }),
+      ],
+    });
+
+    expect(rows.find((row) => row.playerName === "Alpha LB")?.projectionPoints).toBe(150);
+    expect(rows.find((row) => row.playerName === "Beta LB")?.projectionPoints).toBe(250);
+  });
+
+  it("refines tied value scores with same-position projection and PAR context", () => {
+    const { rows } = buildBlackbirdBoard({
+      players: [
+        player({ player_name: "Lower LB", matched_player_id: "lower", position: "LB", projected_points: 120, draftTargetScore: 70 }),
+        player({ player_name: "Higher LB", matched_player_id: "higher", position: "LB", projected_points: 200, draftTargetScore: 70 }),
+      ],
+      overlays: [
+        overlay({ entityId: "lower", displayName: "Lower LB", position: "LB", medianPoints: 120, pointsAboveReplacement: 5 }),
+        overlay({ entityId: "higher", displayName: "Higher LB", position: "LB", medianPoints: 200, pointsAboveReplacement: 30 }),
+      ],
+    });
+
+    const lower = rows.find((row) => row.playerName === "Lower LB");
+    const higher = rows.find((row) => row.playerName === "Higher LB");
+    expect(higher?.blackbirdValueScore).toBeGreaterThan(lower?.blackbirdValueScore ?? 0);
+  });
+
+  it("does not use ADP as the Blackbird rank fallback", () => {
+    const { rows } = buildBlackbirdBoard({
+      players: [
+        player({ player_name: "ADP First", matched_player_id: "adp", adp: 1, projected_points: 190 }),
+        player({ player_name: "Blackbird First", matched_player_id: "bb", adp: 250, projected_points: 240 }),
+      ],
+      overlays: [
+        overlay({ entityId: "adp", displayName: "ADP First", medianPoints: 190, pointsAboveReplacement: 8 }),
+        overlay({ entityId: "bb", displayName: "Blackbird First", medianPoints: 240, pointsAboveReplacement: 38 }),
+      ],
+    });
+
+    expect(rows[0].playerName).toBe("Blackbird First");
+    expect(rows[0].marketRank).toBe(1);
+  });
+
+  it("keeps board projection and detail projection consistent", () => {
+    const { rows } = buildBlackbirdBoard({
+      players: [player({ projected_points: 50 })],
+      overlays: [overlay({ medianPoints: 275, floorPoints: 230, ceilingPoints: 315 })],
+    });
+
+    expect(rows[0].projectionPoints).toBe(275);
+    expect(rows[0].playerDetailContext?.projectedFantasyPoints).toMatchObject({
+      low: 230,
+      median: 275,
+      high: 315,
+    });
+  });
+
+  it("surfaces contextual data gaps instead of fabricating missing context", () => {
+    const { rows } = buildBlackbirdBoard({
+      players: [player({ age: null, years_exp: null })],
+      overlays: [overlay()],
+    });
+
+    expect(rows[0].contextualDataGaps).toEqual(expect.arrayContaining(["age", "years experience", "projected snap share"]));
   });
 
   it("does not emit banned board language", () => {
@@ -93,6 +166,33 @@ describe("H11.3 Blackbird board", () => {
     expect(diagnostics.bannedLanguageFound).toEqual([]);
     expect(findBannedBoardLanguage(JSON.stringify(rows))).toEqual([]);
     expect(findBannedBoardLanguage("must draft")).toEqual(["must draft"]);
+  });
+
+  it("builds deterministic player detail context with neighbors, explanations, and wait context", () => {
+    const { rows } = buildBlackbirdBoard({
+      players: [
+        player({ player_name: "Alpha RB", matched_player_id: "a", projected_points: 210, adp: 30 }),
+        player({ player_name: "Beta RB", matched_player_id: "b", projected_points: 205, adp: 35 }),
+        player({ player_name: "Gamma RB", matched_player_id: "g", projected_points: 200, adp: 40 }),
+      ],
+      recommendations: [
+        recommendation({ entityId: "a", displayName: "Alpha RB", recommendationRank: 1, recommendationScore: 88, needTimingAction: "monitor" }),
+        recommendation({ entityId: "b", displayName: "Beta RB", recommendationRank: 2, recommendationScore: 84, needTimingAction: "wait_one_turn", waitPlanTargetCount: 2 }),
+        recommendation({ entityId: "g", displayName: "Gamma RB", recommendationRank: 3, recommendationScore: 80 }),
+      ],
+    });
+
+    const detail = rows[1].playerDetailContext;
+    expect(detail).toMatchObject({
+      playerName: "Beta RB",
+      blackbirdRank: 2,
+      timingAction: "wait_one_turn",
+    });
+    expect(detail?.whyBlackbirdLikes.length).toBeGreaterThan(0);
+    expect(detail?.tierNeighborContext.previous[0].playerName).toBe("Alpha RB");
+    expect(detail?.tierNeighborContext.next[0].playerName).toBe("Gamma RB");
+    expect(detail?.waitPlanContext.join(" ")).toContain("2 wait-plan targets");
+    expect(findBannedBoardLanguage(JSON.stringify(detail))).toEqual([]);
   });
 });
 
@@ -152,6 +252,8 @@ function overlay(overrides: Partial<WarRoomValueOverlayRow> = {}): WarRoomValueO
     draftRelevance: "draft_relevant",
     overlayStatus: "available",
     ...overrides,
+    floorPoints: overrides.floorPoints ?? 190,
+    ceilingPoints: overrides.ceilingPoints ?? 250,
   };
 }
 

@@ -345,5 +345,7 @@ function overlay(overrides: Partial<WarRoomValueOverlayRow> = {}): WarRoomValueO
     draftRelevance: "draft_relevant",
     overlayStatus: "available",
     ...overrides,
+    floorPoints: overrides.floorPoints ?? 180,
+    ceilingPoints: overrides.ceilingPoints ?? 220,
   };
 }

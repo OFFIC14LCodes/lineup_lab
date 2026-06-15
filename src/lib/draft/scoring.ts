@@ -31,6 +31,9 @@ export type DraftTargetScorePlayer = {
   player_name: string | null;
   position: string | null;
   team: string | null;
+  age?: number | null;
+  years_exp?: number | null;
+  yearsExperience?: number | null;
   rank: number | null;
   adp: number | null;
   projected_points: number | null;

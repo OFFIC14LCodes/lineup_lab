@@ -95,6 +95,14 @@ export type PreDraftStrategyOutput = {
     positionsAtRiskBeforeNextTurn: string[];
   };
   roundWindowPlan: Array<{ window: string; rounds: string; positions: string[]; guidance: string }>;
+  roundWindowPlanDetailed: RoundWindowPlanDetail[];
+  roundWindowPositionTargets: Array<{ window: string; positions: string[]; reason: string }>;
+  roundWindowValueTargets: Array<{ window: string; positions: string[]; reason: string }>;
+  roundWindowAvoids: Array<{ window: string; positions: string[]; reason: string }>;
+  roundWindowContingencies: Array<{ window: string; trigger: string; adjustment: string }>;
+  roundWindowTierRisks: Array<{ window: string; positions: string[]; riskLevel: "low" | "medium" | "high"; reason: string }>;
+  roundWindowFallbacks: Array<{ window: string; fallbackPath: string; reason: string }>;
+  contingencyTriggers: ContingencyTrigger[];
   tierCliffWatchlist: Array<{ position: string; label: string; tier: number | null; risk: string; reason: string }>;
   valuePocketWatchlist: Array<{ position: string; label: string; marketSignal: string | null; reason: string }>;
   waitPositions: Array<{ position: string; confidence: string; reason: string; targetCount: number }>;
@@ -104,6 +112,31 @@ export type PreDraftStrategyOutput = {
   riskNotes: string[];
   explanationFragments: string[];
   dataAvailabilityAudit: PreDraftStrategyDataAudit;
+};
+
+export type RoundWindowPlanDetail = {
+  window: string;
+  rounds: string;
+  projectedPicks: number[];
+  primaryPositions: string[];
+  avoidForcingPositions: string[];
+  likelyValuePockets: string[];
+  tierCliffRisks: string[];
+  contingencyTriggers: string[];
+  fallbackPath: string;
+  guidance: string;
+};
+
+export type ContingencyTrigger = {
+  id: string;
+  label: string;
+  appliesToRounds: number[];
+  appliesToPositions: string[];
+  triggerConditionSummary: string;
+  suggestedAdjustment: string;
+  riskLevel: "low" | "medium" | "high";
+  confidence: "low" | "medium" | "high";
+  reasons: string[];
 };
 
 const IDP_POSITIONS = new Set(["DL", "LB", "DB"]);
@@ -133,6 +166,9 @@ export function buildPreDraftStrategy(input: PreDraftStrategyInput): PreDraftStr
     priorityMap: positionalPriorityMap,
     recommendations,
   });
+  const roundWindowPlan = buildRoundWindowPlan(input, requirements);
+  const contingencyTriggers = buildContingencyTriggers(input, requirements, recommendations, draftSlotStrategy);
+  const roundWindowPlanDetailed = buildRoundWindowPlanDetailed(roundWindowPlan, draftSlotStrategy, recommendations, contingencyTriggers);
 
   const output: PreDraftStrategyOutput = {
     strategyPreviewLabel: "read-only strategy preview",
@@ -157,7 +193,15 @@ export function buildPreDraftStrategy(input: PreDraftStrategyInput): PreDraftStr
     rosterConstructionPlan: buildRosterConstructionPlan(input, requirements),
     positionalPriorityMap,
     draftSlotStrategy,
-    roundWindowPlan: buildRoundWindowPlan(input, requirements),
+    roundWindowPlan,
+    roundWindowPlanDetailed,
+    roundWindowPositionTargets: roundWindowPlanDetailed.map((window) => ({ window: window.window, positions: window.primaryPositions, reason: window.guidance })),
+    roundWindowValueTargets: roundWindowPlanDetailed.map((window) => ({ window: window.window, positions: window.likelyValuePockets, reason: "Value pocket positions are derived from market and H10 score signals in the window." })),
+    roundWindowAvoids: roundWindowPlanDetailed.map((window) => ({ window: window.window, positions: window.avoidForcingPositions, reason: "Avoid-forcing labels reflect low timing leverage or special-position caution." })),
+    roundWindowContingencies: roundWindowPlanDetailed.flatMap((window) => window.contingencyTriggers.map((trigger) => ({ window: window.window, trigger, adjustment: window.fallbackPath }))),
+    roundWindowTierRisks: roundWindowPlanDetailed.map((window) => ({ window: window.window, positions: window.tierCliffRisks, riskLevel: window.tierCliffRisks.length ? "high" : "low", reason: window.tierCliffRisks.length ? "H10 tier-cliff rows are present for this window." : "No strong tier-cliff row is present for this window." })),
+    roundWindowFallbacks: roundWindowPlanDetailed.map((window) => ({ window: window.window, fallbackPath: window.fallbackPath, reason: "Fallback path is deterministic from slot timing, tier risk, and value pocket state." })),
+    contingencyTriggers,
     tierCliffWatchlist: buildTierCliffWatchlist(recommendations),
     valuePocketWatchlist: buildValuePocketWatchlist(recommendations),
     waitPositions: buildWaitPositions(recommendations),
@@ -510,6 +554,168 @@ function buildContingencyPlans(input: PreDraftStrategyInput, recommendations: H1
   return uniqueBy(plans, (plan) => `${plan.trigger}|${plan.response}`).slice(0, 8);
 }
 
+function buildContingencyTriggers(
+  input: PreDraftStrategyInput,
+  requirements: NormalizedRosterRequirements,
+  recommendations: H10WarRoomCompactRecommendation[],
+  draftSlotStrategy: PreDraftStrategyOutput["draftSlotStrategy"]
+): ContingencyTrigger[] {
+  const triggers: ContingencyTrigger[] = [];
+  const highTierRiskPositions = [...new Set(recommendations.filter((row) => row.tierDropRisk === "high" || row.scoreComponents.tierCliff >= 12).map((row) => normalizePosition(row.position)).filter(Boolean))];
+  const weakSurvivalPositions = [...new Set(recommendations.filter((row) => row.survivalConfidence === "low" || row.waitRisk === "high").map((row) => normalizePosition(row.position)).filter(Boolean))];
+  const valuePocketPositions = [...new Set(recommendations.filter((row) => row.h10.marketValueSignal === "above_market" || row.scoreComponents.marketValue >= 8).map((row) => normalizePosition(row.position)).filter(Boolean))];
+  const roundCount = input.rounds ?? 16;
+
+  if (input.room.isSuperflex || input.room.is2QB || requirements.superflexCount > 0 || requirements.directStarters.QB >= 2) {
+    triggers.push({
+      id: "qb-tier-superflex-pivot",
+      label: "QB tier contingency",
+      appliesToRounds: range(1, Math.min(8, roundCount)),
+      appliesToPositions: ["QB"],
+      triggerConditionSummary: "Elite or starter QB tier thins before the next projected user pick.",
+      suggestedAdjustment: highTierRiskPositions.includes("QB")
+        ? "Monitor the next QB tier against best available non-QB value before the long wait."
+        : "Let non-QB value pockets compete with the next QB tier when scarcity is not elevated.",
+      riskLevel: highTierRiskPositions.includes("QB") ? "high" : "medium",
+      confidence: recommendations.some((row) => normalizePosition(row.position) === "QB") ? "medium" : "low",
+      reasons: ["Superflex or 2QB structure increases QB demand.", "Adjustment uses deterministic tier and market signals."],
+    });
+  }
+
+  if (input.room.isTEPremium || isTePremium(input.scoringSettings)) {
+    triggers.push({
+      id: "te-premium-value-fall",
+      label: "TE premium value contingency",
+      appliesToRounds: range(2, Math.min(8, roundCount)),
+      appliesToPositions: ["TE"],
+      triggerConditionSummary: "A TE premium tier player falls near market range.",
+      suggestedAdjustment: "Consider TE within the premium window before lower-scarcity depth if projection and market signals align.",
+      riskLevel: highTierRiskPositions.includes("TE") ? "high" : "medium",
+      confidence: recommendations.some((row) => normalizePosition(row.position) === "TE") ? "medium" : "low",
+      reasons: ["TE premium scoring can amplify tier gaps.", "Market alignment reduces overreach risk."],
+    });
+  }
+
+  if (valuePocketPositions.some((position) => position === "RB" || position === "WR")) {
+    triggers.push({
+      id: "rb-wr-depth-value-pocket",
+      label: "RB/WR value pocket contingency",
+      appliesToRounds: range(3, Math.min(12, roundCount)),
+      appliesToPositions: ["RB", "WR"],
+      triggerConditionSummary: "RB/WR depth remains strong and value pockets are visible.",
+      suggestedAdjustment: "Allow waiting on lower-urgency needs while monitoring tier risk and named wait targets.",
+      riskLevel: weakSurvivalPositions.some((position) => position === "RB" || position === "WR") ? "medium" : "low",
+      confidence: "medium",
+      reasons: ["RB/WR value pockets are present in H10 rows.", "Depth positions can support flexible fallback paths."],
+    });
+  }
+
+  for (const position of weakSurvivalPositions) {
+    triggers.push({
+      id: `weak-survival-${position.toLowerCase()}`,
+      label: `${position} survival contingency`,
+      appliesToRounds: range(1, Math.min(12, roundCount)),
+      appliesToPositions: [position],
+      triggerConditionSummary: `${position} survival confidence is weak before a projected user pick.`,
+      suggestedAdjustment: "Escalate from wait to monitor or fill-soon if named alternatives are thin.",
+      riskLevel: "high",
+      confidence: "medium",
+      reasons: ["H10 survival confidence or wait risk is weak.", "Fallback avoids overcommitting when target depth is thin."],
+    });
+  }
+
+  if (input.room.hasKicker || input.room.hasTeamDefense || requirements.hasKicker || requirements.hasTeamDefense) {
+    triggers.push({
+      id: "special-position-late-caution",
+      label: "K/DST timing contingency",
+      appliesToRounds: range(Math.max(10, roundCount - 5), roundCount),
+      appliesToPositions: ["K", "DEF"],
+      triggerConditionSummary: "K or DST appears before the late fill window.",
+      suggestedAdjustment: "Avoid forcing special positions early unless league scoring creates a clear format signal.",
+      riskLevel: "low",
+      confidence: "high",
+      reasons: ["K/DST are marked as late fill positions in roster construction.", "No persistent state changes are made."],
+    });
+  }
+
+  if (input.room.hasIDP || requirements.hasIDP) {
+    triggers.push({
+      id: "idp-confidence-caution",
+      label: "IDP confidence contingency",
+      appliesToRounds: range(6, roundCount),
+      appliesToPositions: ["DL", "LB", "DB"],
+      triggerConditionSummary: "IDP tier or roster pressure rises while projection confidence remains lower.",
+      suggestedAdjustment: "Monitor DL/LB/DB separately and avoid over-pushing IDP before stronger offensive value unless the format demands coverage.",
+      riskLevel: "medium",
+      confidence: "medium",
+      reasons: ["IDP baselines carry unresolved identity and confidence caveats.", "Defensive positions need separate coverage checks."],
+    });
+  }
+
+  if (draftSlotStrategy.isTurnPick || draftSlotStrategy.isNearTurn) {
+    triggers.push({
+      id: "turn-paired-position",
+      label: "Turn pairing contingency",
+      appliesToRounds: range(1, Math.min(10, roundCount)),
+      appliesToPositions: ["QB", "RB", "WR", "TE"],
+      triggerConditionSummary: "User pick is on or near the turn with a long wait after paired picks.",
+      suggestedAdjustment: "Plan paired-position paths and compare one tier-risk position with one value-pocket position.",
+      riskLevel: "high",
+      confidence: "high",
+      reasons: ["Turn slots have longer waits between picks.", "Paired planning reduces single-position overcommitment."],
+    });
+  } else if (draftSlotStrategy.archetype === "middle") {
+    triggers.push({
+      id: "middle-slot-flexibility",
+      label: "Middle-slot flexibility contingency",
+      appliesToRounds: range(1, Math.min(10, roundCount)),
+      appliesToPositions: ["QB", "RB", "WR", "TE"],
+      triggerConditionSummary: "Middle slot has more frequent market updates before each pick.",
+      suggestedAdjustment: "Preserve flexibility and let fallen value compete with pre-draft position lanes.",
+      riskLevel: "medium",
+      confidence: "high",
+      reasons: ["Middle slots can react to both ends of the board.", "Avoids overcommitting before value falls."],
+    });
+  }
+
+  return uniqueBy(triggers, (trigger) => trigger.id).slice(0, 12);
+}
+
+function buildRoundWindowPlanDetailed(
+  windows: PreDraftStrategyOutput["roundWindowPlan"],
+  draftSlotStrategy: PreDraftStrategyOutput["draftSlotStrategy"],
+  recommendations: H10WarRoomCompactRecommendation[],
+  triggers: ContingencyTrigger[]
+): RoundWindowPlanDetail[] {
+  const valuePocketPositions = [...new Set(recommendations.filter((row) => row.h10.marketValueSignal === "above_market" || row.scoreComponents.marketValue >= 8).map((row) => normalizePosition(row.position)).filter(Boolean))];
+  const tierRiskPositions = [...new Set(recommendations.filter((row) => row.tierDropRisk === "high" || row.scoreComponents.tierCliff >= 12).map((row) => normalizePosition(row.position)).filter(Boolean))];
+  const waitPositions = [...new Set(recommendations.filter((row) => row.needTimingAction === "wait_one_turn" || row.needTimingAction === "wait_multiple_turns").map((row) => normalizePosition(row.position)).filter(Boolean))];
+
+  return windows.map((window, index) => {
+    const projectedPicks = draftSlotStrategy.roundPickWindows[index]?.picks ?? [];
+    const windowRounds = roundsFromLabel(window.rounds);
+    const matchingTriggers = triggers.filter((trigger) => trigger.appliesToRounds.some((round) => windowRounds.includes(round)));
+    const avoidForcingPositions = [...new Set([
+      ...window.positions.filter((position) => waitPositions.includes(position)),
+      ...(window.window.toLowerCase().includes("late") || window.window.toLowerCase().includes("k/dst") ? [] : ["K", "DEF"]),
+    ])].filter((position) => window.positions.includes(position) || position === "K" || position === "DEF");
+    const likelyValuePockets = valuePocketPositions.filter((position) => window.positions.includes(position));
+    const tierCliffRisks = tierRiskPositions.filter((position) => window.positions.includes(position));
+    return {
+      window: window.window,
+      rounds: window.rounds,
+      projectedPicks,
+      primaryPositions: window.positions,
+      avoidForcingPositions,
+      likelyValuePockets,
+      tierCliffRisks,
+      contingencyTriggers: matchingTriggers.map((trigger) => trigger.label),
+      fallbackPath: fallbackForWindow(window, tierCliffRisks, likelyValuePockets, draftSlotStrategy),
+      guidance: window.guidance,
+    };
+  });
+}
+
 function buildSpecialPositionGuidance(input: PreDraftStrategyInput, requirements: NormalizedRosterRequirements) {
   const guidance: PreDraftStrategyOutput["specialPositionGuidance"] = [];
   if (input.room.hasIDP || requirements.hasIDP) {
@@ -598,6 +804,48 @@ function finiteNumber(value: number | null | undefined): number | null {
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value));
+}
+
+function range(start: number, end: number): number[] {
+  const from = Math.max(1, Math.floor(start));
+  const to = Math.max(from, Math.floor(end));
+  return Array.from({ length: to - from + 1 }, (_, index) => from + index);
+}
+
+function roundsFromLabel(label: string): number[] {
+  const normalized = label.toLowerCase();
+  const match = normalized.match(/(\d+)\s*-\s*(\d+)/);
+  if (match) return range(Number(match[1]), Number(match[2]));
+  const plus = normalized.match(/(\d+)\+/);
+  if (plus) return range(Number(plus[1]), Number(plus[1]) + 8);
+  if (normalized.includes("middle-late")) return range(6, 16);
+  if (normalized.includes("late")) return range(10, 16);
+  const single = normalized.match(/\d+/);
+  return single ? [Number(single[0])] : range(1, 16);
+}
+
+function fallbackForWindow(
+  window: PreDraftStrategyOutput["roundWindowPlan"][number],
+  tierCliffRisks: string[],
+  likelyValuePockets: string[],
+  draftSlotStrategy: PreDraftStrategyOutput["draftSlotStrategy"]
+): string {
+  if (tierCliffRisks.length > 0 && likelyValuePockets.length > 0) {
+    return `Monitor ${tierCliffRisks.join("/")} tier risk while keeping ${likelyValuePockets.join("/")} value pockets active.`;
+  }
+  if (tierCliffRisks.length > 0) {
+    return `If ${tierCliffRisks.join("/")} dries up, pivot to the strongest available value pocket rather than forcing the next tier.`;
+  }
+  if (likelyValuePockets.length > 0) {
+    return `If expected targets thin out, let ${likelyValuePockets.join("/")} value pockets compete with roster need.`;
+  }
+  if (draftSlotStrategy.isTurnPick || draftSlotStrategy.isNearTurn) {
+    return "Use paired-position planning because the next wait can be long.";
+  }
+  if (window.window.toLowerCase().includes("late")) {
+    return "Use late windows for remaining coverage and avoid forcing low-signal positions early.";
+  }
+  return "Preserve flexibility and monitor tier movement before committing to a narrow position lane.";
 }
 
 function uniqueBy<T>(items: T[], keyFor: (item: T) => string): T[] {

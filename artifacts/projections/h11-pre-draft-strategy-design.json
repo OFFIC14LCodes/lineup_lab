@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-15T20:27:32.483Z",
+  "generatedAt": "2026-06-15T22:31:39.074Z",
   "artifactVersion": "h11.0-pre-draft-strategy-design-v1",
   "sourceArtifact": "artifacts\\projections\\h10-war-room-recommendation-validation.json",
   "dataAvailabilityAudit": {
@@ -651,6 +651,407 @@
             "guidance": "Plan IDP starts around tier risk while accounting for lower projection confidence."
           }
         ],
+        "roundWindowPlanDetailed": [
+          {
+            "window": "early anchor targets",
+            "rounds": "1-4",
+            "projectedPicks": [
+              3,
+              22,
+              27,
+              46
+            ],
+            "primaryPositions": [
+              "QB",
+              "RB",
+              "WR",
+              "TE"
+            ],
+            "avoidForcingPositions": [
+              "K",
+              "DEF"
+            ],
+            "likelyValuePockets": [],
+            "tierCliffRisks": [],
+            "contingencyTriggers": [
+              "QB tier contingency"
+            ],
+            "fallbackPath": "Preserve flexibility and monitor tier movement before committing to a narrow position lane.",
+            "guidance": "Blackbird leans toward flexible early value while tracking tier risk before the next window."
+          },
+          {
+            "window": "QB tier window",
+            "rounds": "1-8",
+            "projectedPicks": [
+              51,
+              70,
+              75,
+              94,
+              99,
+              118
+            ],
+            "primaryPositions": [
+              "QB"
+            ],
+            "avoidForcingPositions": [
+              "K",
+              "DEF"
+            ],
+            "likelyValuePockets": [],
+            "tierCliffRisks": [],
+            "contingencyTriggers": [
+              "QB tier contingency",
+              "IDP confidence contingency"
+            ],
+            "fallbackPath": "Preserve flexibility and monitor tier movement before committing to a narrow position lane.",
+            "guidance": "Monitor QB tier risk before long snake waits."
+          },
+          {
+            "window": "middle-round value pockets",
+            "rounds": "5-10",
+            "projectedPicks": [
+              99,
+              118,
+              123,
+              142,
+              147
+            ],
+            "primaryPositions": [
+              "RB",
+              "WR",
+              "TE"
+            ],
+            "avoidForcingPositions": [
+              "K",
+              "DEF"
+            ],
+            "likelyValuePockets": [],
+            "tierCliffRisks": [],
+            "contingencyTriggers": [
+              "QB tier contingency",
+              "IDP confidence contingency"
+            ],
+            "fallbackPath": "Preserve flexibility and monitor tier movement before committing to a narrow position lane.",
+            "guidance": "Timing signal: compare value pockets against a max snake wait near 18 picks."
+          },
+          {
+            "window": "late-round depth/fill",
+            "rounds": "11+",
+            "projectedPicks": [
+              195,
+              214,
+              219,
+              238
+            ],
+            "primaryPositions": [
+              "RB",
+              "WR"
+            ],
+            "avoidForcingPositions": [],
+            "likelyValuePockets": [],
+            "tierCliffRisks": [],
+            "contingencyTriggers": [
+              "IDP confidence contingency"
+            ],
+            "fallbackPath": "Use late windows for remaining coverage and avoid forcing low-signal positions early.",
+            "guidance": "Use late windows for depth, contingent value, and remaining roster coverage."
+          },
+          {
+            "window": "IDP timing",
+            "rounds": "middle-late",
+            "projectedPicks": [],
+            "primaryPositions": [
+              "DL",
+              "LB",
+              "DB"
+            ],
+            "avoidForcingPositions": [
+              "K",
+              "DEF"
+            ],
+            "likelyValuePockets": [],
+            "tierCliffRisks": [],
+            "contingencyTriggers": [
+              "QB tier contingency",
+              "IDP confidence contingency"
+            ],
+            "fallbackPath": "Preserve flexibility and monitor tier movement before committing to a narrow position lane.",
+            "guidance": "Plan IDP starts around tier risk while accounting for lower projection confidence."
+          }
+        ],
+        "roundWindowPositionTargets": [
+          {
+            "window": "early anchor targets",
+            "positions": [
+              "QB",
+              "RB",
+              "WR",
+              "TE"
+            ],
+            "reason": "Blackbird leans toward flexible early value while tracking tier risk before the next window."
+          },
+          {
+            "window": "QB tier window",
+            "positions": [
+              "QB"
+            ],
+            "reason": "Monitor QB tier risk before long snake waits."
+          },
+          {
+            "window": "middle-round value pockets",
+            "positions": [
+              "RB",
+              "WR",
+              "TE"
+            ],
+            "reason": "Timing signal: compare value pockets against a max snake wait near 18 picks."
+          },
+          {
+            "window": "late-round depth/fill",
+            "positions": [
+              "RB",
+              "WR"
+            ],
+            "reason": "Use late windows for depth, contingent value, and remaining roster coverage."
+          },
+          {
+            "window": "IDP timing",
+            "positions": [
+              "DL",
+              "LB",
+              "DB"
+            ],
+            "reason": "Plan IDP starts around tier risk while accounting for lower projection confidence."
+          }
+        ],
+        "roundWindowValueTargets": [
+          {
+            "window": "early anchor targets",
+            "positions": [],
+            "reason": "Value pocket positions are derived from market and H10 score signals in the window."
+          },
+          {
+            "window": "QB tier window",
+            "positions": [],
+            "reason": "Value pocket positions are derived from market and H10 score signals in the window."
+          },
+          {
+            "window": "middle-round value pockets",
+            "positions": [],
+            "reason": "Value pocket positions are derived from market and H10 score signals in the window."
+          },
+          {
+            "window": "late-round depth/fill",
+            "positions": [],
+            "reason": "Value pocket positions are derived from market and H10 score signals in the window."
+          },
+          {
+            "window": "IDP timing",
+            "positions": [],
+            "reason": "Value pocket positions are derived from market and H10 score signals in the window."
+          }
+        ],
+        "roundWindowAvoids": [
+          {
+            "window": "early anchor targets",
+            "positions": [
+              "K",
+              "DEF"
+            ],
+            "reason": "Avoid-forcing labels reflect low timing leverage or special-position caution."
+          },
+          {
+            "window": "QB tier window",
+            "positions": [
+              "K",
+              "DEF"
+            ],
+            "reason": "Avoid-forcing labels reflect low timing leverage or special-position caution."
+          },
+          {
+            "window": "middle-round value pockets",
+            "positions": [
+              "K",
+              "DEF"
+            ],
+            "reason": "Avoid-forcing labels reflect low timing leverage or special-position caution."
+          },
+          {
+            "window": "late-round depth/fill",
+            "positions": [],
+            "reason": "Avoid-forcing labels reflect low timing leverage or special-position caution."
+          },
+          {
+            "window": "IDP timing",
+            "positions": [
+              "K",
+              "DEF"
+            ],
+            "reason": "Avoid-forcing labels reflect low timing leverage or special-position caution."
+          }
+        ],
+        "roundWindowContingencies": [
+          {
+            "window": "early anchor targets",
+            "trigger": "QB tier contingency",
+            "adjustment": "Preserve flexibility and monitor tier movement before committing to a narrow position lane."
+          },
+          {
+            "window": "QB tier window",
+            "trigger": "QB tier contingency",
+            "adjustment": "Preserve flexibility and monitor tier movement before committing to a narrow position lane."
+          },
+          {
+            "window": "QB tier window",
+            "trigger": "IDP confidence contingency",
+            "adjustment": "Preserve flexibility and monitor tier movement before committing to a narrow position lane."
+          },
+          {
+            "window": "middle-round value pockets",
+            "trigger": "QB tier contingency",
+            "adjustment": "Preserve flexibility and monitor tier movement before committing to a narrow position lane."
+          },
+          {
+            "window": "middle-round value pockets",
+            "trigger": "IDP confidence contingency",
+            "adjustment": "Preserve flexibility and monitor tier movement before committing to a narrow position lane."
+          },
+          {
+            "window": "late-round depth/fill",
+            "trigger": "IDP confidence contingency",
+            "adjustment": "Use late windows for remaining coverage and avoid forcing low-signal positions early."
+          },
+          {
+            "window": "IDP timing",
+            "trigger": "QB tier contingency",
+            "adjustment": "Preserve flexibility and monitor tier movement before committing to a narrow position lane."
+          },
+          {
+            "window": "IDP timing",
+            "trigger": "IDP confidence contingency",
+            "adjustment": "Preserve flexibility and monitor tier movement before committing to a narrow position lane."
+          }
+        ],
+        "roundWindowTierRisks": [
+          {
+            "window": "early anchor targets",
+            "positions": [],
+            "riskLevel": "low",
+            "reason": "No strong tier-cliff row is present for this window."
+          },
+          {
+            "window": "QB tier window",
+            "positions": [],
+            "riskLevel": "low",
+            "reason": "No strong tier-cliff row is present for this window."
+          },
+          {
+            "window": "middle-round value pockets",
+            "positions": [],
+            "riskLevel": "low",
+            "reason": "No strong tier-cliff row is present for this window."
+          },
+          {
+            "window": "late-round depth/fill",
+            "positions": [],
+            "riskLevel": "low",
+            "reason": "No strong tier-cliff row is present for this window."
+          },
+          {
+            "window": "IDP timing",
+            "positions": [],
+            "riskLevel": "low",
+            "reason": "No strong tier-cliff row is present for this window."
+          }
+        ],
+        "roundWindowFallbacks": [
+          {
+            "window": "early anchor targets",
+            "fallbackPath": "Preserve flexibility and monitor tier movement before committing to a narrow position lane.",
+            "reason": "Fallback path is deterministic from slot timing, tier risk, and value pocket state."
+          },
+          {
+            "window": "QB tier window",
+            "fallbackPath": "Preserve flexibility and monitor tier movement before committing to a narrow position lane.",
+            "reason": "Fallback path is deterministic from slot timing, tier risk, and value pocket state."
+          },
+          {
+            "window": "middle-round value pockets",
+            "fallbackPath": "Preserve flexibility and monitor tier movement before committing to a narrow position lane.",
+            "reason": "Fallback path is deterministic from slot timing, tier risk, and value pocket state."
+          },
+          {
+            "window": "late-round depth/fill",
+            "fallbackPath": "Use late windows for remaining coverage and avoid forcing low-signal positions early.",
+            "reason": "Fallback path is deterministic from slot timing, tier risk, and value pocket state."
+          },
+          {
+            "window": "IDP timing",
+            "fallbackPath": "Preserve flexibility and monitor tier movement before committing to a narrow position lane.",
+            "reason": "Fallback path is deterministic from slot timing, tier risk, and value pocket state."
+          }
+        ],
+        "contingencyTriggers": [
+          {
+            "id": "qb-tier-superflex-pivot",
+            "label": "QB tier contingency",
+            "appliesToRounds": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8
+            ],
+            "appliesToPositions": [
+              "QB"
+            ],
+            "triggerConditionSummary": "Elite or starter QB tier thins before the next projected user pick.",
+            "suggestedAdjustment": "Let non-QB value pockets compete with the next QB tier when scarcity is not elevated.",
+            "riskLevel": "medium",
+            "confidence": "low",
+            "reasons": [
+              "Superflex or 2QB structure increases QB demand.",
+              "Adjustment uses deterministic tier and market signals."
+            ]
+          },
+          {
+            "id": "idp-confidence-caution",
+            "label": "IDP confidence contingency",
+            "appliesToRounds": [
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20
+            ],
+            "appliesToPositions": [
+              "DL",
+              "LB",
+              "DB"
+            ],
+            "triggerConditionSummary": "IDP tier or roster pressure rises while projection confidence remains lower.",
+            "suggestedAdjustment": "Monitor DL/LB/DB separately and avoid over-pushing IDP before stronger offensive value unless the format demands coverage.",
+            "riskLevel": "medium",
+            "confidence": "medium",
+            "reasons": [
+              "IDP baselines carry unresolved identity and confidence caveats.",
+              "Defensive positions need separate coverage checks."
+            ]
+          }
+        ],
         "tierCliffWatchlist": [],
         "valuePocketWatchlist": [],
         "waitPositions": [],
@@ -1130,6 +1531,463 @@
               "WR"
             ],
             "guidance": "Use late windows for depth, contingent value, and remaining roster coverage."
+          }
+        ],
+        "roundWindowPlanDetailed": [
+          {
+            "window": "early anchor targets",
+            "rounds": "1-4",
+            "projectedPicks": [
+              6,
+              19,
+              30,
+              43
+            ],
+            "primaryPositions": [
+              "QB",
+              "RB",
+              "WR",
+              "TE"
+            ],
+            "avoidForcingPositions": [
+              "K",
+              "DEF"
+            ],
+            "likelyValuePockets": [],
+            "tierCliffRisks": [
+              "TE",
+              "WR"
+            ],
+            "contingencyTriggers": [
+              "TE premium value contingency",
+              "TE survival contingency",
+              "WR survival contingency",
+              "Middle-slot flexibility contingency"
+            ],
+            "fallbackPath": "If TE/WR dries up, pivot to the strongest available value pocket rather than forcing the next tier.",
+            "guidance": "Blackbird leans toward flexible early value while tracking tier risk before the next window."
+          },
+          {
+            "window": "TE premium tier window",
+            "rounds": "2-8",
+            "projectedPicks": [
+              54,
+              67,
+              78,
+              91,
+              102,
+              115
+            ],
+            "primaryPositions": [
+              "TE"
+            ],
+            "avoidForcingPositions": [
+              "K",
+              "DEF"
+            ],
+            "likelyValuePockets": [],
+            "tierCliffRisks": [
+              "TE"
+            ],
+            "contingencyTriggers": [
+              "TE premium value contingency",
+              "TE survival contingency",
+              "WR survival contingency",
+              "Middle-slot flexibility contingency"
+            ],
+            "fallbackPath": "If TE dries up, pivot to the strongest available value pocket rather than forcing the next tier.",
+            "guidance": "Watch tight end tier gaps because premium scoring can amplify positional separation."
+          },
+          {
+            "window": "middle-round value pockets",
+            "rounds": "5-10",
+            "projectedPicks": [
+              102,
+              115,
+              126,
+              139,
+              150
+            ],
+            "primaryPositions": [
+              "RB",
+              "WR",
+              "TE"
+            ],
+            "avoidForcingPositions": [
+              "K",
+              "DEF"
+            ],
+            "likelyValuePockets": [],
+            "tierCliffRisks": [
+              "TE",
+              "WR"
+            ],
+            "contingencyTriggers": [
+              "TE premium value contingency",
+              "TE survival contingency",
+              "WR survival contingency",
+              "Middle-slot flexibility contingency"
+            ],
+            "fallbackPath": "If TE/WR dries up, pivot to the strongest available value pocket rather than forcing the next tier.",
+            "guidance": "Timing signal: compare value pockets against a max snake wait near 12 picks."
+          },
+          {
+            "window": "late-round depth/fill",
+            "rounds": "11+",
+            "projectedPicks": [
+              174,
+              187,
+              198,
+              211
+            ],
+            "primaryPositions": [
+              "RB",
+              "WR"
+            ],
+            "avoidForcingPositions": [],
+            "likelyValuePockets": [],
+            "tierCliffRisks": [
+              "WR"
+            ],
+            "contingencyTriggers": [
+              "TE survival contingency",
+              "WR survival contingency"
+            ],
+            "fallbackPath": "If WR dries up, pivot to the strongest available value pocket rather than forcing the next tier.",
+            "guidance": "Use late windows for depth, contingent value, and remaining roster coverage."
+          }
+        ],
+        "roundWindowPositionTargets": [
+          {
+            "window": "early anchor targets",
+            "positions": [
+              "QB",
+              "RB",
+              "WR",
+              "TE"
+            ],
+            "reason": "Blackbird leans toward flexible early value while tracking tier risk before the next window."
+          },
+          {
+            "window": "TE premium tier window",
+            "positions": [
+              "TE"
+            ],
+            "reason": "Watch tight end tier gaps because premium scoring can amplify positional separation."
+          },
+          {
+            "window": "middle-round value pockets",
+            "positions": [
+              "RB",
+              "WR",
+              "TE"
+            ],
+            "reason": "Timing signal: compare value pockets against a max snake wait near 12 picks."
+          },
+          {
+            "window": "late-round depth/fill",
+            "positions": [
+              "RB",
+              "WR"
+            ],
+            "reason": "Use late windows for depth, contingent value, and remaining roster coverage."
+          }
+        ],
+        "roundWindowValueTargets": [
+          {
+            "window": "early anchor targets",
+            "positions": [],
+            "reason": "Value pocket positions are derived from market and H10 score signals in the window."
+          },
+          {
+            "window": "TE premium tier window",
+            "positions": [],
+            "reason": "Value pocket positions are derived from market and H10 score signals in the window."
+          },
+          {
+            "window": "middle-round value pockets",
+            "positions": [],
+            "reason": "Value pocket positions are derived from market and H10 score signals in the window."
+          },
+          {
+            "window": "late-round depth/fill",
+            "positions": [],
+            "reason": "Value pocket positions are derived from market and H10 score signals in the window."
+          }
+        ],
+        "roundWindowAvoids": [
+          {
+            "window": "early anchor targets",
+            "positions": [
+              "K",
+              "DEF"
+            ],
+            "reason": "Avoid-forcing labels reflect low timing leverage or special-position caution."
+          },
+          {
+            "window": "TE premium tier window",
+            "positions": [
+              "K",
+              "DEF"
+            ],
+            "reason": "Avoid-forcing labels reflect low timing leverage or special-position caution."
+          },
+          {
+            "window": "middle-round value pockets",
+            "positions": [
+              "K",
+              "DEF"
+            ],
+            "reason": "Avoid-forcing labels reflect low timing leverage or special-position caution."
+          },
+          {
+            "window": "late-round depth/fill",
+            "positions": [],
+            "reason": "Avoid-forcing labels reflect low timing leverage or special-position caution."
+          }
+        ],
+        "roundWindowContingencies": [
+          {
+            "window": "early anchor targets",
+            "trigger": "TE premium value contingency",
+            "adjustment": "If TE/WR dries up, pivot to the strongest available value pocket rather than forcing the next tier."
+          },
+          {
+            "window": "early anchor targets",
+            "trigger": "TE survival contingency",
+            "adjustment": "If TE/WR dries up, pivot to the strongest available value pocket rather than forcing the next tier."
+          },
+          {
+            "window": "early anchor targets",
+            "trigger": "WR survival contingency",
+            "adjustment": "If TE/WR dries up, pivot to the strongest available value pocket rather than forcing the next tier."
+          },
+          {
+            "window": "early anchor targets",
+            "trigger": "Middle-slot flexibility contingency",
+            "adjustment": "If TE/WR dries up, pivot to the strongest available value pocket rather than forcing the next tier."
+          },
+          {
+            "window": "TE premium tier window",
+            "trigger": "TE premium value contingency",
+            "adjustment": "If TE dries up, pivot to the strongest available value pocket rather than forcing the next tier."
+          },
+          {
+            "window": "TE premium tier window",
+            "trigger": "TE survival contingency",
+            "adjustment": "If TE dries up, pivot to the strongest available value pocket rather than forcing the next tier."
+          },
+          {
+            "window": "TE premium tier window",
+            "trigger": "WR survival contingency",
+            "adjustment": "If TE dries up, pivot to the strongest available value pocket rather than forcing the next tier."
+          },
+          {
+            "window": "TE premium tier window",
+            "trigger": "Middle-slot flexibility contingency",
+            "adjustment": "If TE dries up, pivot to the strongest available value pocket rather than forcing the next tier."
+          },
+          {
+            "window": "middle-round value pockets",
+            "trigger": "TE premium value contingency",
+            "adjustment": "If TE/WR dries up, pivot to the strongest available value pocket rather than forcing the next tier."
+          },
+          {
+            "window": "middle-round value pockets",
+            "trigger": "TE survival contingency",
+            "adjustment": "If TE/WR dries up, pivot to the strongest available value pocket rather than forcing the next tier."
+          },
+          {
+            "window": "middle-round value pockets",
+            "trigger": "WR survival contingency",
+            "adjustment": "If TE/WR dries up, pivot to the strongest available value pocket rather than forcing the next tier."
+          },
+          {
+            "window": "middle-round value pockets",
+            "trigger": "Middle-slot flexibility contingency",
+            "adjustment": "If TE/WR dries up, pivot to the strongest available value pocket rather than forcing the next tier."
+          },
+          {
+            "window": "late-round depth/fill",
+            "trigger": "TE survival contingency",
+            "adjustment": "If WR dries up, pivot to the strongest available value pocket rather than forcing the next tier."
+          },
+          {
+            "window": "late-round depth/fill",
+            "trigger": "WR survival contingency",
+            "adjustment": "If WR dries up, pivot to the strongest available value pocket rather than forcing the next tier."
+          }
+        ],
+        "roundWindowTierRisks": [
+          {
+            "window": "early anchor targets",
+            "positions": [
+              "TE",
+              "WR"
+            ],
+            "riskLevel": "high",
+            "reason": "H10 tier-cliff rows are present for this window."
+          },
+          {
+            "window": "TE premium tier window",
+            "positions": [
+              "TE"
+            ],
+            "riskLevel": "high",
+            "reason": "H10 tier-cliff rows are present for this window."
+          },
+          {
+            "window": "middle-round value pockets",
+            "positions": [
+              "TE",
+              "WR"
+            ],
+            "riskLevel": "high",
+            "reason": "H10 tier-cliff rows are present for this window."
+          },
+          {
+            "window": "late-round depth/fill",
+            "positions": [
+              "WR"
+            ],
+            "riskLevel": "high",
+            "reason": "H10 tier-cliff rows are present for this window."
+          }
+        ],
+        "roundWindowFallbacks": [
+          {
+            "window": "early anchor targets",
+            "fallbackPath": "If TE/WR dries up, pivot to the strongest available value pocket rather than forcing the next tier.",
+            "reason": "Fallback path is deterministic from slot timing, tier risk, and value pocket state."
+          },
+          {
+            "window": "TE premium tier window",
+            "fallbackPath": "If TE dries up, pivot to the strongest available value pocket rather than forcing the next tier.",
+            "reason": "Fallback path is deterministic from slot timing, tier risk, and value pocket state."
+          },
+          {
+            "window": "middle-round value pockets",
+            "fallbackPath": "If TE/WR dries up, pivot to the strongest available value pocket rather than forcing the next tier.",
+            "reason": "Fallback path is deterministic from slot timing, tier risk, and value pocket state."
+          },
+          {
+            "window": "late-round depth/fill",
+            "fallbackPath": "If WR dries up, pivot to the strongest available value pocket rather than forcing the next tier.",
+            "reason": "Fallback path is deterministic from slot timing, tier risk, and value pocket state."
+          }
+        ],
+        "contingencyTriggers": [
+          {
+            "id": "te-premium-value-fall",
+            "label": "TE premium value contingency",
+            "appliesToRounds": [
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8
+            ],
+            "appliesToPositions": [
+              "TE"
+            ],
+            "triggerConditionSummary": "A TE premium tier player falls near market range.",
+            "suggestedAdjustment": "Consider TE within the premium window before lower-scarcity depth if projection and market signals align.",
+            "riskLevel": "high",
+            "confidence": "medium",
+            "reasons": [
+              "TE premium scoring can amplify tier gaps.",
+              "Market alignment reduces overreach risk."
+            ]
+          },
+          {
+            "id": "weak-survival-te",
+            "label": "TE survival contingency",
+            "appliesToRounds": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "appliesToPositions": [
+              "TE"
+            ],
+            "triggerConditionSummary": "TE survival confidence is weak before a projected user pick.",
+            "suggestedAdjustment": "Escalate from wait to monitor or fill-soon if named alternatives are thin.",
+            "riskLevel": "high",
+            "confidence": "medium",
+            "reasons": [
+              "H10 survival confidence or wait risk is weak.",
+              "Fallback avoids overcommitting when target depth is thin."
+            ]
+          },
+          {
+            "id": "weak-survival-wr",
+            "label": "WR survival contingency",
+            "appliesToRounds": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "appliesToPositions": [
+              "WR"
+            ],
+            "triggerConditionSummary": "WR survival confidence is weak before a projected user pick.",
+            "suggestedAdjustment": "Escalate from wait to monitor or fill-soon if named alternatives are thin.",
+            "riskLevel": "high",
+            "confidence": "medium",
+            "reasons": [
+              "H10 survival confidence or wait risk is weak.",
+              "Fallback avoids overcommitting when target depth is thin."
+            ]
+          },
+          {
+            "id": "middle-slot-flexibility",
+            "label": "Middle-slot flexibility contingency",
+            "appliesToRounds": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ],
+            "appliesToPositions": [
+              "QB",
+              "RB",
+              "WR",
+              "TE"
+            ],
+            "triggerConditionSummary": "Middle slot has more frequent market updates before each pick.",
+            "suggestedAdjustment": "Preserve flexibility and let fallen value compete with pre-draft position lanes.",
+            "riskLevel": "medium",
+            "confidence": "high",
+            "reasons": [
+              "Middle slots can react to both ends of the board.",
+              "Avoids overcommitting before value falls."
+            ]
           }
         ],
         "tierCliffWatchlist": [
@@ -1675,6 +2533,465 @@
             "guidance": "Plan IDP starts around tier risk while accounting for lower projection confidence."
           }
         ],
+        "roundWindowPlanDetailed": [
+          {
+            "window": "early anchor targets",
+            "rounds": "1-4",
+            "projectedPicks": [
+              8,
+              17,
+              32,
+              41
+            ],
+            "primaryPositions": [
+              "QB",
+              "RB",
+              "WR",
+              "TE"
+            ],
+            "avoidForcingPositions": [
+              "K",
+              "DEF"
+            ],
+            "likelyValuePockets": [],
+            "tierCliffRisks": [],
+            "contingencyTriggers": [
+              "QB tier contingency",
+              "Middle-slot flexibility contingency"
+            ],
+            "fallbackPath": "Preserve flexibility and monitor tier movement before committing to a narrow position lane.",
+            "guidance": "Blackbird leans toward flexible early value while tracking tier risk before the next window."
+          },
+          {
+            "window": "QB tier window",
+            "rounds": "1-8",
+            "projectedPicks": [
+              56,
+              65,
+              80,
+              89,
+              104,
+              113
+            ],
+            "primaryPositions": [
+              "QB"
+            ],
+            "avoidForcingPositions": [
+              "K",
+              "DEF"
+            ],
+            "likelyValuePockets": [],
+            "tierCliffRisks": [],
+            "contingencyTriggers": [
+              "QB tier contingency",
+              "IDP confidence contingency",
+              "Middle-slot flexibility contingency"
+            ],
+            "fallbackPath": "Preserve flexibility and monitor tier movement before committing to a narrow position lane.",
+            "guidance": "Monitor QB tier risk before long snake waits."
+          },
+          {
+            "window": "middle-round value pockets",
+            "rounds": "5-10",
+            "projectedPicks": [
+              104,
+              113,
+              128,
+              137,
+              152
+            ],
+            "primaryPositions": [
+              "RB",
+              "WR",
+              "TE"
+            ],
+            "avoidForcingPositions": [
+              "K",
+              "DEF"
+            ],
+            "likelyValuePockets": [],
+            "tierCliffRisks": [],
+            "contingencyTriggers": [
+              "QB tier contingency",
+              "IDP confidence contingency",
+              "Middle-slot flexibility contingency"
+            ],
+            "fallbackPath": "Preserve flexibility and monitor tier movement before committing to a narrow position lane.",
+            "guidance": "Timing signal: compare value pockets against a max snake wait near 14 picks."
+          },
+          {
+            "window": "late-round depth/fill",
+            "rounds": "11+",
+            "projectedPicks": [
+              200,
+              209,
+              224,
+              233
+            ],
+            "primaryPositions": [
+              "RB",
+              "WR"
+            ],
+            "avoidForcingPositions": [],
+            "likelyValuePockets": [],
+            "tierCliffRisks": [],
+            "contingencyTriggers": [
+              "IDP confidence contingency"
+            ],
+            "fallbackPath": "Use late windows for remaining coverage and avoid forcing low-signal positions early.",
+            "guidance": "Use late windows for depth, contingent value, and remaining roster coverage."
+          },
+          {
+            "window": "IDP timing",
+            "rounds": "middle-late",
+            "projectedPicks": [],
+            "primaryPositions": [
+              "DL",
+              "LB",
+              "DB"
+            ],
+            "avoidForcingPositions": [
+              "K",
+              "DEF"
+            ],
+            "likelyValuePockets": [],
+            "tierCliffRisks": [],
+            "contingencyTriggers": [
+              "QB tier contingency",
+              "IDP confidence contingency",
+              "Middle-slot flexibility contingency"
+            ],
+            "fallbackPath": "Preserve flexibility and monitor tier movement before committing to a narrow position lane.",
+            "guidance": "Plan IDP starts around tier risk while accounting for lower projection confidence."
+          }
+        ],
+        "roundWindowPositionTargets": [
+          {
+            "window": "early anchor targets",
+            "positions": [
+              "QB",
+              "RB",
+              "WR",
+              "TE"
+            ],
+            "reason": "Blackbird leans toward flexible early value while tracking tier risk before the next window."
+          },
+          {
+            "window": "QB tier window",
+            "positions": [
+              "QB"
+            ],
+            "reason": "Monitor QB tier risk before long snake waits."
+          },
+          {
+            "window": "middle-round value pockets",
+            "positions": [
+              "RB",
+              "WR",
+              "TE"
+            ],
+            "reason": "Timing signal: compare value pockets against a max snake wait near 14 picks."
+          },
+          {
+            "window": "late-round depth/fill",
+            "positions": [
+              "RB",
+              "WR"
+            ],
+            "reason": "Use late windows for depth, contingent value, and remaining roster coverage."
+          },
+          {
+            "window": "IDP timing",
+            "positions": [
+              "DL",
+              "LB",
+              "DB"
+            ],
+            "reason": "Plan IDP starts around tier risk while accounting for lower projection confidence."
+          }
+        ],
+        "roundWindowValueTargets": [
+          {
+            "window": "early anchor targets",
+            "positions": [],
+            "reason": "Value pocket positions are derived from market and H10 score signals in the window."
+          },
+          {
+            "window": "QB tier window",
+            "positions": [],
+            "reason": "Value pocket positions are derived from market and H10 score signals in the window."
+          },
+          {
+            "window": "middle-round value pockets",
+            "positions": [],
+            "reason": "Value pocket positions are derived from market and H10 score signals in the window."
+          },
+          {
+            "window": "late-round depth/fill",
+            "positions": [],
+            "reason": "Value pocket positions are derived from market and H10 score signals in the window."
+          },
+          {
+            "window": "IDP timing",
+            "positions": [],
+            "reason": "Value pocket positions are derived from market and H10 score signals in the window."
+          }
+        ],
+        "roundWindowAvoids": [
+          {
+            "window": "early anchor targets",
+            "positions": [
+              "K",
+              "DEF"
+            ],
+            "reason": "Avoid-forcing labels reflect low timing leverage or special-position caution."
+          },
+          {
+            "window": "QB tier window",
+            "positions": [
+              "K",
+              "DEF"
+            ],
+            "reason": "Avoid-forcing labels reflect low timing leverage or special-position caution."
+          },
+          {
+            "window": "middle-round value pockets",
+            "positions": [
+              "K",
+              "DEF"
+            ],
+            "reason": "Avoid-forcing labels reflect low timing leverage or special-position caution."
+          },
+          {
+            "window": "late-round depth/fill",
+            "positions": [],
+            "reason": "Avoid-forcing labels reflect low timing leverage or special-position caution."
+          },
+          {
+            "window": "IDP timing",
+            "positions": [
+              "K",
+              "DEF"
+            ],
+            "reason": "Avoid-forcing labels reflect low timing leverage or special-position caution."
+          }
+        ],
+        "roundWindowContingencies": [
+          {
+            "window": "early anchor targets",
+            "trigger": "QB tier contingency",
+            "adjustment": "Preserve flexibility and monitor tier movement before committing to a narrow position lane."
+          },
+          {
+            "window": "early anchor targets",
+            "trigger": "Middle-slot flexibility contingency",
+            "adjustment": "Preserve flexibility and monitor tier movement before committing to a narrow position lane."
+          },
+          {
+            "window": "QB tier window",
+            "trigger": "QB tier contingency",
+            "adjustment": "Preserve flexibility and monitor tier movement before committing to a narrow position lane."
+          },
+          {
+            "window": "QB tier window",
+            "trigger": "IDP confidence contingency",
+            "adjustment": "Preserve flexibility and monitor tier movement before committing to a narrow position lane."
+          },
+          {
+            "window": "QB tier window",
+            "trigger": "Middle-slot flexibility contingency",
+            "adjustment": "Preserve flexibility and monitor tier movement before committing to a narrow position lane."
+          },
+          {
+            "window": "middle-round value pockets",
+            "trigger": "QB tier contingency",
+            "adjustment": "Preserve flexibility and monitor tier movement before committing to a narrow position lane."
+          },
+          {
+            "window": "middle-round value pockets",
+            "trigger": "IDP confidence contingency",
+            "adjustment": "Preserve flexibility and monitor tier movement before committing to a narrow position lane."
+          },
+          {
+            "window": "middle-round value pockets",
+            "trigger": "Middle-slot flexibility contingency",
+            "adjustment": "Preserve flexibility and monitor tier movement before committing to a narrow position lane."
+          },
+          {
+            "window": "late-round depth/fill",
+            "trigger": "IDP confidence contingency",
+            "adjustment": "Use late windows for remaining coverage and avoid forcing low-signal positions early."
+          },
+          {
+            "window": "IDP timing",
+            "trigger": "QB tier contingency",
+            "adjustment": "Preserve flexibility and monitor tier movement before committing to a narrow position lane."
+          },
+          {
+            "window": "IDP timing",
+            "trigger": "IDP confidence contingency",
+            "adjustment": "Preserve flexibility and monitor tier movement before committing to a narrow position lane."
+          },
+          {
+            "window": "IDP timing",
+            "trigger": "Middle-slot flexibility contingency",
+            "adjustment": "Preserve flexibility and monitor tier movement before committing to a narrow position lane."
+          }
+        ],
+        "roundWindowTierRisks": [
+          {
+            "window": "early anchor targets",
+            "positions": [],
+            "riskLevel": "low",
+            "reason": "No strong tier-cliff row is present for this window."
+          },
+          {
+            "window": "QB tier window",
+            "positions": [],
+            "riskLevel": "low",
+            "reason": "No strong tier-cliff row is present for this window."
+          },
+          {
+            "window": "middle-round value pockets",
+            "positions": [],
+            "riskLevel": "low",
+            "reason": "No strong tier-cliff row is present for this window."
+          },
+          {
+            "window": "late-round depth/fill",
+            "positions": [],
+            "riskLevel": "low",
+            "reason": "No strong tier-cliff row is present for this window."
+          },
+          {
+            "window": "IDP timing",
+            "positions": [],
+            "riskLevel": "low",
+            "reason": "No strong tier-cliff row is present for this window."
+          }
+        ],
+        "roundWindowFallbacks": [
+          {
+            "window": "early anchor targets",
+            "fallbackPath": "Preserve flexibility and monitor tier movement before committing to a narrow position lane.",
+            "reason": "Fallback path is deterministic from slot timing, tier risk, and value pocket state."
+          },
+          {
+            "window": "QB tier window",
+            "fallbackPath": "Preserve flexibility and monitor tier movement before committing to a narrow position lane.",
+            "reason": "Fallback path is deterministic from slot timing, tier risk, and value pocket state."
+          },
+          {
+            "window": "middle-round value pockets",
+            "fallbackPath": "Preserve flexibility and monitor tier movement before committing to a narrow position lane.",
+            "reason": "Fallback path is deterministic from slot timing, tier risk, and value pocket state."
+          },
+          {
+            "window": "late-round depth/fill",
+            "fallbackPath": "Use late windows for remaining coverage and avoid forcing low-signal positions early.",
+            "reason": "Fallback path is deterministic from slot timing, tier risk, and value pocket state."
+          },
+          {
+            "window": "IDP timing",
+            "fallbackPath": "Preserve flexibility and monitor tier movement before committing to a narrow position lane.",
+            "reason": "Fallback path is deterministic from slot timing, tier risk, and value pocket state."
+          }
+        ],
+        "contingencyTriggers": [
+          {
+            "id": "qb-tier-superflex-pivot",
+            "label": "QB tier contingency",
+            "appliesToRounds": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8
+            ],
+            "appliesToPositions": [
+              "QB"
+            ],
+            "triggerConditionSummary": "Elite or starter QB tier thins before the next projected user pick.",
+            "suggestedAdjustment": "Let non-QB value pockets compete with the next QB tier when scarcity is not elevated.",
+            "riskLevel": "medium",
+            "confidence": "low",
+            "reasons": [
+              "Superflex or 2QB structure increases QB demand.",
+              "Adjustment uses deterministic tier and market signals."
+            ]
+          },
+          {
+            "id": "idp-confidence-caution",
+            "label": "IDP confidence contingency",
+            "appliesToRounds": [
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24
+            ],
+            "appliesToPositions": [
+              "DL",
+              "LB",
+              "DB"
+            ],
+            "triggerConditionSummary": "IDP tier or roster pressure rises while projection confidence remains lower.",
+            "suggestedAdjustment": "Monitor DL/LB/DB separately and avoid over-pushing IDP before stronger offensive value unless the format demands coverage.",
+            "riskLevel": "medium",
+            "confidence": "medium",
+            "reasons": [
+              "IDP baselines carry unresolved identity and confidence caveats.",
+              "Defensive positions need separate coverage checks."
+            ]
+          },
+          {
+            "id": "middle-slot-flexibility",
+            "label": "Middle-slot flexibility contingency",
+            "appliesToRounds": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ],
+            "appliesToPositions": [
+              "QB",
+              "RB",
+              "WR",
+              "TE"
+            ],
+            "triggerConditionSummary": "Middle slot has more frequent market updates before each pick.",
+            "suggestedAdjustment": "Preserve flexibility and let fallen value compete with pre-draft position lanes.",
+            "riskLevel": "medium",
+            "confidence": "high",
+            "reasons": [
+              "Middle slots can react to both ends of the board.",
+              "Avoids overcommitting before value falls."
+            ]
+          }
+        ],
         "tierCliffWatchlist": [],
         "valuePocketWatchlist": [],
         "waitPositions": [],
@@ -2134,6 +3451,281 @@
               "DEF"
             ],
             "guidance": "Keep kicker and team defense in late fill windows unless league scoring creates a clear format signal."
+          }
+        ],
+        "roundWindowPlanDetailed": [
+          {
+            "window": "early anchor targets",
+            "rounds": "1-4",
+            "projectedPicks": [
+              10,
+              15,
+              34,
+              39
+            ],
+            "primaryPositions": [
+              "QB",
+              "RB",
+              "WR",
+              "TE"
+            ],
+            "avoidForcingPositions": [
+              "K",
+              "DEF"
+            ],
+            "likelyValuePockets": [],
+            "tierCliffRisks": [],
+            "contingencyTriggers": [],
+            "fallbackPath": "Preserve flexibility and monitor tier movement before committing to a narrow position lane.",
+            "guidance": "Blackbird leans toward paired early selections because the next return can carry tier pressure."
+          },
+          {
+            "window": "middle-round value pockets",
+            "rounds": "5-10",
+            "projectedPicks": [
+              58,
+              63,
+              82,
+              87,
+              106,
+              111
+            ],
+            "primaryPositions": [
+              "RB",
+              "WR",
+              "TE"
+            ],
+            "avoidForcingPositions": [
+              "K",
+              "DEF"
+            ],
+            "likelyValuePockets": [],
+            "tierCliffRisks": [],
+            "contingencyTriggers": [],
+            "fallbackPath": "Preserve flexibility and monitor tier movement before committing to a narrow position lane.",
+            "guidance": "Timing signal: compare value pockets against a max snake wait near 18 picks."
+          },
+          {
+            "window": "late-round depth/fill",
+            "rounds": "11+",
+            "projectedPicks": [
+              106,
+              111,
+              130,
+              135,
+              154
+            ],
+            "primaryPositions": [
+              "RB",
+              "WR"
+            ],
+            "avoidForcingPositions": [],
+            "likelyValuePockets": [],
+            "tierCliffRisks": [],
+            "contingencyTriggers": [
+              "K/DST timing contingency"
+            ],
+            "fallbackPath": "Use late windows for remaining coverage and avoid forcing low-signal positions early.",
+            "guidance": "Use late windows for depth, contingent value, and remaining roster coverage."
+          },
+          {
+            "window": "K/DST timing",
+            "rounds": "late",
+            "projectedPicks": [
+              154,
+              159,
+              178,
+              183
+            ],
+            "primaryPositions": [
+              "K",
+              "DEF"
+            ],
+            "avoidForcingPositions": [
+              "DEF"
+            ],
+            "likelyValuePockets": [],
+            "tierCliffRisks": [],
+            "contingencyTriggers": [
+              "K/DST timing contingency"
+            ],
+            "fallbackPath": "Preserve flexibility and monitor tier movement before committing to a narrow position lane.",
+            "guidance": "Keep kicker and team defense in late fill windows unless league scoring creates a clear format signal."
+          }
+        ],
+        "roundWindowPositionTargets": [
+          {
+            "window": "early anchor targets",
+            "positions": [
+              "QB",
+              "RB",
+              "WR",
+              "TE"
+            ],
+            "reason": "Blackbird leans toward paired early selections because the next return can carry tier pressure."
+          },
+          {
+            "window": "middle-round value pockets",
+            "positions": [
+              "RB",
+              "WR",
+              "TE"
+            ],
+            "reason": "Timing signal: compare value pockets against a max snake wait near 18 picks."
+          },
+          {
+            "window": "late-round depth/fill",
+            "positions": [
+              "RB",
+              "WR"
+            ],
+            "reason": "Use late windows for depth, contingent value, and remaining roster coverage."
+          },
+          {
+            "window": "K/DST timing",
+            "positions": [
+              "K",
+              "DEF"
+            ],
+            "reason": "Keep kicker and team defense in late fill windows unless league scoring creates a clear format signal."
+          }
+        ],
+        "roundWindowValueTargets": [
+          {
+            "window": "early anchor targets",
+            "positions": [],
+            "reason": "Value pocket positions are derived from market and H10 score signals in the window."
+          },
+          {
+            "window": "middle-round value pockets",
+            "positions": [],
+            "reason": "Value pocket positions are derived from market and H10 score signals in the window."
+          },
+          {
+            "window": "late-round depth/fill",
+            "positions": [],
+            "reason": "Value pocket positions are derived from market and H10 score signals in the window."
+          },
+          {
+            "window": "K/DST timing",
+            "positions": [],
+            "reason": "Value pocket positions are derived from market and H10 score signals in the window."
+          }
+        ],
+        "roundWindowAvoids": [
+          {
+            "window": "early anchor targets",
+            "positions": [
+              "K",
+              "DEF"
+            ],
+            "reason": "Avoid-forcing labels reflect low timing leverage or special-position caution."
+          },
+          {
+            "window": "middle-round value pockets",
+            "positions": [
+              "K",
+              "DEF"
+            ],
+            "reason": "Avoid-forcing labels reflect low timing leverage or special-position caution."
+          },
+          {
+            "window": "late-round depth/fill",
+            "positions": [],
+            "reason": "Avoid-forcing labels reflect low timing leverage or special-position caution."
+          },
+          {
+            "window": "K/DST timing",
+            "positions": [
+              "DEF"
+            ],
+            "reason": "Avoid-forcing labels reflect low timing leverage or special-position caution."
+          }
+        ],
+        "roundWindowContingencies": [
+          {
+            "window": "late-round depth/fill",
+            "trigger": "K/DST timing contingency",
+            "adjustment": "Use late windows for remaining coverage and avoid forcing low-signal positions early."
+          },
+          {
+            "window": "K/DST timing",
+            "trigger": "K/DST timing contingency",
+            "adjustment": "Preserve flexibility and monitor tier movement before committing to a narrow position lane."
+          }
+        ],
+        "roundWindowTierRisks": [
+          {
+            "window": "early anchor targets",
+            "positions": [],
+            "riskLevel": "low",
+            "reason": "No strong tier-cliff row is present for this window."
+          },
+          {
+            "window": "middle-round value pockets",
+            "positions": [],
+            "riskLevel": "low",
+            "reason": "No strong tier-cliff row is present for this window."
+          },
+          {
+            "window": "late-round depth/fill",
+            "positions": [],
+            "riskLevel": "low",
+            "reason": "No strong tier-cliff row is present for this window."
+          },
+          {
+            "window": "K/DST timing",
+            "positions": [],
+            "riskLevel": "low",
+            "reason": "No strong tier-cliff row is present for this window."
+          }
+        ],
+        "roundWindowFallbacks": [
+          {
+            "window": "early anchor targets",
+            "fallbackPath": "Preserve flexibility and monitor tier movement before committing to a narrow position lane.",
+            "reason": "Fallback path is deterministic from slot timing, tier risk, and value pocket state."
+          },
+          {
+            "window": "middle-round value pockets",
+            "fallbackPath": "Preserve flexibility and monitor tier movement before committing to a narrow position lane.",
+            "reason": "Fallback path is deterministic from slot timing, tier risk, and value pocket state."
+          },
+          {
+            "window": "late-round depth/fill",
+            "fallbackPath": "Use late windows for remaining coverage and avoid forcing low-signal positions early.",
+            "reason": "Fallback path is deterministic from slot timing, tier risk, and value pocket state."
+          },
+          {
+            "window": "K/DST timing",
+            "fallbackPath": "Preserve flexibility and monitor tier movement before committing to a narrow position lane.",
+            "reason": "Fallback path is deterministic from slot timing, tier risk, and value pocket state."
+          }
+        ],
+        "contingencyTriggers": [
+          {
+            "id": "special-position-late-caution",
+            "label": "K/DST timing contingency",
+            "appliesToRounds": [
+              11,
+              12,
+              13,
+              14,
+              15,
+              16
+            ],
+            "appliesToPositions": [
+              "K",
+              "DEF"
+            ],
+            "triggerConditionSummary": "K or DST appears before the late fill window.",
+            "suggestedAdjustment": "Avoid forcing special positions early unless league scoring creates a clear format signal.",
+            "riskLevel": "low",
+            "confidence": "high",
+            "reasons": [
+              "K/DST are marked as late fill positions in roster construction.",
+              "No persistent state changes are made."
+            ]
           }
         ],
         "tierCliffWatchlist": [],
@@ -2597,6 +4189,587 @@
               "WR"
             ],
             "guidance": "Use late windows for depth, contingent value, and remaining roster coverage."
+          }
+        ],
+        "roundWindowPlanDetailed": [
+          {
+            "window": "early anchor targets",
+            "rounds": "1-4",
+            "projectedPicks": [
+              12,
+              13,
+              36,
+              37
+            ],
+            "primaryPositions": [
+              "QB",
+              "RB",
+              "WR",
+              "TE"
+            ],
+            "avoidForcingPositions": [
+              "RB",
+              "TE",
+              "K",
+              "DEF"
+            ],
+            "likelyValuePockets": [],
+            "tierCliffRisks": [
+              "TE",
+              "RB",
+              "WR",
+              "QB"
+            ],
+            "contingencyTriggers": [
+              "QB tier contingency",
+              "TE survival contingency",
+              "RB survival contingency",
+              "WR survival contingency",
+              "QB survival contingency",
+              "Turn pairing contingency"
+            ],
+            "fallbackPath": "If TE/RB/WR/QB dries up, pivot to the strongest available value pocket rather than forcing the next tier.",
+            "guidance": "Blackbird leans toward paired early selections because the next return can carry tier pressure."
+          },
+          {
+            "window": "QB tier window",
+            "rounds": "1-8",
+            "projectedPicks": [
+              60,
+              61,
+              84,
+              85,
+              108,
+              109
+            ],
+            "primaryPositions": [
+              "QB"
+            ],
+            "avoidForcingPositions": [
+              "K",
+              "DEF"
+            ],
+            "likelyValuePockets": [],
+            "tierCliffRisks": [
+              "QB"
+            ],
+            "contingencyTriggers": [
+              "QB tier contingency",
+              "TE survival contingency",
+              "RB survival contingency",
+              "WR survival contingency",
+              "QB survival contingency",
+              "Turn pairing contingency"
+            ],
+            "fallbackPath": "If QB dries up, pivot to the strongest available value pocket rather than forcing the next tier.",
+            "guidance": "Monitor QB tier risk before long snake waits."
+          },
+          {
+            "window": "middle-round value pockets",
+            "rounds": "5-10",
+            "projectedPicks": [
+              108,
+              109,
+              132,
+              133
+            ],
+            "primaryPositions": [
+              "RB",
+              "WR",
+              "TE"
+            ],
+            "avoidForcingPositions": [
+              "RB",
+              "TE",
+              "K",
+              "DEF"
+            ],
+            "likelyValuePockets": [],
+            "tierCliffRisks": [
+              "TE",
+              "RB",
+              "WR"
+            ],
+            "contingencyTriggers": [
+              "QB tier contingency",
+              "TE survival contingency",
+              "RB survival contingency",
+              "WR survival contingency",
+              "QB survival contingency",
+              "Turn pairing contingency"
+            ],
+            "fallbackPath": "If TE/RB/WR dries up, pivot to the strongest available value pocket rather than forcing the next tier.",
+            "guidance": "Timing signal: compare value pockets against a max snake wait near 22 picks."
+          },
+          {
+            "window": "late-round depth/fill",
+            "rounds": "11+",
+            "projectedPicks": [
+              132,
+              133
+            ],
+            "primaryPositions": [
+              "RB",
+              "WR"
+            ],
+            "avoidForcingPositions": [
+              "RB"
+            ],
+            "likelyValuePockets": [],
+            "tierCliffRisks": [
+              "RB",
+              "WR"
+            ],
+            "contingencyTriggers": [
+              "TE survival contingency",
+              "RB survival contingency",
+              "WR survival contingency",
+              "QB survival contingency"
+            ],
+            "fallbackPath": "If RB/WR dries up, pivot to the strongest available value pocket rather than forcing the next tier.",
+            "guidance": "Use late windows for depth, contingent value, and remaining roster coverage."
+          }
+        ],
+        "roundWindowPositionTargets": [
+          {
+            "window": "early anchor targets",
+            "positions": [
+              "QB",
+              "RB",
+              "WR",
+              "TE"
+            ],
+            "reason": "Blackbird leans toward paired early selections because the next return can carry tier pressure."
+          },
+          {
+            "window": "QB tier window",
+            "positions": [
+              "QB"
+            ],
+            "reason": "Monitor QB tier risk before long snake waits."
+          },
+          {
+            "window": "middle-round value pockets",
+            "positions": [
+              "RB",
+              "WR",
+              "TE"
+            ],
+            "reason": "Timing signal: compare value pockets against a max snake wait near 22 picks."
+          },
+          {
+            "window": "late-round depth/fill",
+            "positions": [
+              "RB",
+              "WR"
+            ],
+            "reason": "Use late windows for depth, contingent value, and remaining roster coverage."
+          }
+        ],
+        "roundWindowValueTargets": [
+          {
+            "window": "early anchor targets",
+            "positions": [],
+            "reason": "Value pocket positions are derived from market and H10 score signals in the window."
+          },
+          {
+            "window": "QB tier window",
+            "positions": [],
+            "reason": "Value pocket positions are derived from market and H10 score signals in the window."
+          },
+          {
+            "window": "middle-round value pockets",
+            "positions": [],
+            "reason": "Value pocket positions are derived from market and H10 score signals in the window."
+          },
+          {
+            "window": "late-round depth/fill",
+            "positions": [],
+            "reason": "Value pocket positions are derived from market and H10 score signals in the window."
+          }
+        ],
+        "roundWindowAvoids": [
+          {
+            "window": "early anchor targets",
+            "positions": [
+              "RB",
+              "TE",
+              "K",
+              "DEF"
+            ],
+            "reason": "Avoid-forcing labels reflect low timing leverage or special-position caution."
+          },
+          {
+            "window": "QB tier window",
+            "positions": [
+              "K",
+              "DEF"
+            ],
+            "reason": "Avoid-forcing labels reflect low timing leverage or special-position caution."
+          },
+          {
+            "window": "middle-round value pockets",
+            "positions": [
+              "RB",
+              "TE",
+              "K",
+              "DEF"
+            ],
+            "reason": "Avoid-forcing labels reflect low timing leverage or special-position caution."
+          },
+          {
+            "window": "late-round depth/fill",
+            "positions": [
+              "RB"
+            ],
+            "reason": "Avoid-forcing labels reflect low timing leverage or special-position caution."
+          }
+        ],
+        "roundWindowContingencies": [
+          {
+            "window": "early anchor targets",
+            "trigger": "QB tier contingency",
+            "adjustment": "If TE/RB/WR/QB dries up, pivot to the strongest available value pocket rather than forcing the next tier."
+          },
+          {
+            "window": "early anchor targets",
+            "trigger": "TE survival contingency",
+            "adjustment": "If TE/RB/WR/QB dries up, pivot to the strongest available value pocket rather than forcing the next tier."
+          },
+          {
+            "window": "early anchor targets",
+            "trigger": "RB survival contingency",
+            "adjustment": "If TE/RB/WR/QB dries up, pivot to the strongest available value pocket rather than forcing the next tier."
+          },
+          {
+            "window": "early anchor targets",
+            "trigger": "WR survival contingency",
+            "adjustment": "If TE/RB/WR/QB dries up, pivot to the strongest available value pocket rather than forcing the next tier."
+          },
+          {
+            "window": "early anchor targets",
+            "trigger": "QB survival contingency",
+            "adjustment": "If TE/RB/WR/QB dries up, pivot to the strongest available value pocket rather than forcing the next tier."
+          },
+          {
+            "window": "early anchor targets",
+            "trigger": "Turn pairing contingency",
+            "adjustment": "If TE/RB/WR/QB dries up, pivot to the strongest available value pocket rather than forcing the next tier."
+          },
+          {
+            "window": "QB tier window",
+            "trigger": "QB tier contingency",
+            "adjustment": "If QB dries up, pivot to the strongest available value pocket rather than forcing the next tier."
+          },
+          {
+            "window": "QB tier window",
+            "trigger": "TE survival contingency",
+            "adjustment": "If QB dries up, pivot to the strongest available value pocket rather than forcing the next tier."
+          },
+          {
+            "window": "QB tier window",
+            "trigger": "RB survival contingency",
+            "adjustment": "If QB dries up, pivot to the strongest available value pocket rather than forcing the next tier."
+          },
+          {
+            "window": "QB tier window",
+            "trigger": "WR survival contingency",
+            "adjustment": "If QB dries up, pivot to the strongest available value pocket rather than forcing the next tier."
+          },
+          {
+            "window": "QB tier window",
+            "trigger": "QB survival contingency",
+            "adjustment": "If QB dries up, pivot to the strongest available value pocket rather than forcing the next tier."
+          },
+          {
+            "window": "QB tier window",
+            "trigger": "Turn pairing contingency",
+            "adjustment": "If QB dries up, pivot to the strongest available value pocket rather than forcing the next tier."
+          },
+          {
+            "window": "middle-round value pockets",
+            "trigger": "QB tier contingency",
+            "adjustment": "If TE/RB/WR dries up, pivot to the strongest available value pocket rather than forcing the next tier."
+          },
+          {
+            "window": "middle-round value pockets",
+            "trigger": "TE survival contingency",
+            "adjustment": "If TE/RB/WR dries up, pivot to the strongest available value pocket rather than forcing the next tier."
+          },
+          {
+            "window": "middle-round value pockets",
+            "trigger": "RB survival contingency",
+            "adjustment": "If TE/RB/WR dries up, pivot to the strongest available value pocket rather than forcing the next tier."
+          },
+          {
+            "window": "middle-round value pockets",
+            "trigger": "WR survival contingency",
+            "adjustment": "If TE/RB/WR dries up, pivot to the strongest available value pocket rather than forcing the next tier."
+          },
+          {
+            "window": "middle-round value pockets",
+            "trigger": "QB survival contingency",
+            "adjustment": "If TE/RB/WR dries up, pivot to the strongest available value pocket rather than forcing the next tier."
+          },
+          {
+            "window": "middle-round value pockets",
+            "trigger": "Turn pairing contingency",
+            "adjustment": "If TE/RB/WR dries up, pivot to the strongest available value pocket rather than forcing the next tier."
+          },
+          {
+            "window": "late-round depth/fill",
+            "trigger": "TE survival contingency",
+            "adjustment": "If RB/WR dries up, pivot to the strongest available value pocket rather than forcing the next tier."
+          },
+          {
+            "window": "late-round depth/fill",
+            "trigger": "RB survival contingency",
+            "adjustment": "If RB/WR dries up, pivot to the strongest available value pocket rather than forcing the next tier."
+          },
+          {
+            "window": "late-round depth/fill",
+            "trigger": "WR survival contingency",
+            "adjustment": "If RB/WR dries up, pivot to the strongest available value pocket rather than forcing the next tier."
+          },
+          {
+            "window": "late-round depth/fill",
+            "trigger": "QB survival contingency",
+            "adjustment": "If RB/WR dries up, pivot to the strongest available value pocket rather than forcing the next tier."
+          }
+        ],
+        "roundWindowTierRisks": [
+          {
+            "window": "early anchor targets",
+            "positions": [
+              "TE",
+              "RB",
+              "WR",
+              "QB"
+            ],
+            "riskLevel": "high",
+            "reason": "H10 tier-cliff rows are present for this window."
+          },
+          {
+            "window": "QB tier window",
+            "positions": [
+              "QB"
+            ],
+            "riskLevel": "high",
+            "reason": "H10 tier-cliff rows are present for this window."
+          },
+          {
+            "window": "middle-round value pockets",
+            "positions": [
+              "TE",
+              "RB",
+              "WR"
+            ],
+            "riskLevel": "high",
+            "reason": "H10 tier-cliff rows are present for this window."
+          },
+          {
+            "window": "late-round depth/fill",
+            "positions": [
+              "RB",
+              "WR"
+            ],
+            "riskLevel": "high",
+            "reason": "H10 tier-cliff rows are present for this window."
+          }
+        ],
+        "roundWindowFallbacks": [
+          {
+            "window": "early anchor targets",
+            "fallbackPath": "If TE/RB/WR/QB dries up, pivot to the strongest available value pocket rather than forcing the next tier.",
+            "reason": "Fallback path is deterministic from slot timing, tier risk, and value pocket state."
+          },
+          {
+            "window": "QB tier window",
+            "fallbackPath": "If QB dries up, pivot to the strongest available value pocket rather than forcing the next tier.",
+            "reason": "Fallback path is deterministic from slot timing, tier risk, and value pocket state."
+          },
+          {
+            "window": "middle-round value pockets",
+            "fallbackPath": "If TE/RB/WR dries up, pivot to the strongest available value pocket rather than forcing the next tier.",
+            "reason": "Fallback path is deterministic from slot timing, tier risk, and value pocket state."
+          },
+          {
+            "window": "late-round depth/fill",
+            "fallbackPath": "If RB/WR dries up, pivot to the strongest available value pocket rather than forcing the next tier.",
+            "reason": "Fallback path is deterministic from slot timing, tier risk, and value pocket state."
+          }
+        ],
+        "contingencyTriggers": [
+          {
+            "id": "qb-tier-superflex-pivot",
+            "label": "QB tier contingency",
+            "appliesToRounds": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8
+            ],
+            "appliesToPositions": [
+              "QB"
+            ],
+            "triggerConditionSummary": "Elite or starter QB tier thins before the next projected user pick.",
+            "suggestedAdjustment": "Monitor the next QB tier against best available non-QB value before the long wait.",
+            "riskLevel": "high",
+            "confidence": "medium",
+            "reasons": [
+              "Superflex or 2QB structure increases QB demand.",
+              "Adjustment uses deterministic tier and market signals."
+            ]
+          },
+          {
+            "id": "weak-survival-te",
+            "label": "TE survival contingency",
+            "appliesToRounds": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "appliesToPositions": [
+              "TE"
+            ],
+            "triggerConditionSummary": "TE survival confidence is weak before a projected user pick.",
+            "suggestedAdjustment": "Escalate from wait to monitor or fill-soon if named alternatives are thin.",
+            "riskLevel": "high",
+            "confidence": "medium",
+            "reasons": [
+              "H10 survival confidence or wait risk is weak.",
+              "Fallback avoids overcommitting when target depth is thin."
+            ]
+          },
+          {
+            "id": "weak-survival-rb",
+            "label": "RB survival contingency",
+            "appliesToRounds": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "appliesToPositions": [
+              "RB"
+            ],
+            "triggerConditionSummary": "RB survival confidence is weak before a projected user pick.",
+            "suggestedAdjustment": "Escalate from wait to monitor or fill-soon if named alternatives are thin.",
+            "riskLevel": "high",
+            "confidence": "medium",
+            "reasons": [
+              "H10 survival confidence or wait risk is weak.",
+              "Fallback avoids overcommitting when target depth is thin."
+            ]
+          },
+          {
+            "id": "weak-survival-wr",
+            "label": "WR survival contingency",
+            "appliesToRounds": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "appliesToPositions": [
+              "WR"
+            ],
+            "triggerConditionSummary": "WR survival confidence is weak before a projected user pick.",
+            "suggestedAdjustment": "Escalate from wait to monitor or fill-soon if named alternatives are thin.",
+            "riskLevel": "high",
+            "confidence": "medium",
+            "reasons": [
+              "H10 survival confidence or wait risk is weak.",
+              "Fallback avoids overcommitting when target depth is thin."
+            ]
+          },
+          {
+            "id": "weak-survival-qb",
+            "label": "QB survival contingency",
+            "appliesToRounds": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "appliesToPositions": [
+              "QB"
+            ],
+            "triggerConditionSummary": "QB survival confidence is weak before a projected user pick.",
+            "suggestedAdjustment": "Escalate from wait to monitor or fill-soon if named alternatives are thin.",
+            "riskLevel": "high",
+            "confidence": "medium",
+            "reasons": [
+              "H10 survival confidence or wait risk is weak.",
+              "Fallback avoids overcommitting when target depth is thin."
+            ]
+          },
+          {
+            "id": "turn-paired-position",
+            "label": "Turn pairing contingency",
+            "appliesToRounds": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ],
+            "appliesToPositions": [
+              "QB",
+              "RB",
+              "WR",
+              "TE"
+            ],
+            "triggerConditionSummary": "User pick is on or near the turn with a long wait after paired picks.",
+            "suggestedAdjustment": "Plan paired-position paths and compare one tier-risk position with one value-pocket position.",
+            "riskLevel": "high",
+            "confidence": "high",
+            "reasons": [
+              "Turn slots have longer waits between picks.",
+              "Paired planning reduces single-position overcommitment."
+            ]
           }
         ],
         "tierCliffWatchlist": [

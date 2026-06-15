@@ -102,6 +102,40 @@ describe("H11 pre-draft strategy", () => {
     expect(strategy.contingencyPlans.some((plan) => plan.trigger.includes("QB tier"))).toBe(true);
   });
 
+  it("builds detailed round windows and contingency triggers without command language", () => {
+    const turn = buildPreDraftStrategy(input({
+      room: { isSuperflex: true, isTEPremium: true, hasIDP: true, hasKicker: true, hasTeamDefense: true, positions_present: ["QB", "TE", "DL", "LB", "DB", "K", "DEF"] },
+      rosterSlots: ["QB", "SUPER_FLEX", "RB", "WR", "TE", "DL", "LB", "DB", "K", "DEF", "BN"],
+      draftSlot: 12,
+      teamCount: 12,
+      rounds: 16,
+      recommendations: [
+        rec({ position: "QB", tierDropRisk: "high", scoreComponents: { tierCliff: 18 }, survivalConfidence: "low", waitRisk: "high" }),
+        rec({ position: "TE", h10: { marketValueSignal: "above_market" }, scoreComponents: { marketValue: 10 } }),
+      ],
+    }));
+
+    expect(turn.roundWindowPlanDetailed.length).toBeGreaterThan(3);
+    expect(turn.roundWindowContingencies.length).toBeGreaterThan(0);
+    expect(turn.roundWindowAvoids.some((row) => row.positions.includes("K") || row.positions.includes("DEF"))).toBe(true);
+    expect(turn.contingencyTriggers.map((trigger) => trigger.id)).toEqual(expect.arrayContaining([
+      "qb-tier-superflex-pivot",
+      "te-premium-value-fall",
+      "special-position-late-caution",
+      "idp-confidence-caution",
+      "turn-paired-position",
+    ]));
+    expect(validateStrategyLanguage(turn)).toEqual([]);
+  });
+
+  it("makes middle-slot contingency guidance differ from turn-slot guidance", () => {
+    const middle = buildPreDraftStrategy(input({ draftSlot: 6, teamCount: 12, rounds: 16 }));
+    const turn = buildPreDraftStrategy(input({ draftSlot: 12, teamCount: 12, rounds: 16 }));
+
+    expect(middle.contingencyTriggers.some((trigger) => trigger.id === "middle-slot-flexibility")).toBe(true);
+    expect(turn.contingencyTriggers.some((trigger) => trigger.id === "turn-paired-position")).toBe(true);
+  });
+
   it("prevents banned strategy language", () => {
     const strategy = buildPreDraftStrategy(input({
       room: { isSuperflex: true, hasKicker: true, hasTeamDefense: true },

@@ -248,5 +248,7 @@ function overlay(id: string, position: string, value: number, tier: number, over
     draftRelevance: "draft_relevant",
     overlayStatus: "available",
     ...overrides,
+    floorPoints: overrides.floorPoints ?? 90,
+    ceilingPoints: overrides.ceilingPoints ?? 110,
   };
 }

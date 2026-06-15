@@ -67,11 +67,11 @@ describe("DraftWarRoom H11 strategy UI wiring", () => {
   it("renders the read-only Blackbird board controls and missing-data labels", () => {
     [
       "Blackbird Board",
-      "Sorted by Blackbird value/projection/market context",
+      "Sorted by contextual Blackbird value and league scoring",
       "Load more",
       "Projection unavailable",
-      "ADP unavailable",
-      "Market rank unavailable",
+      "Rank unavailable",
+      "Blackbird Rank",
       "Blackbird rank",
       "Filters and sort are local to this browser view.",
     ].forEach((text) => expect(source).toContain(text));

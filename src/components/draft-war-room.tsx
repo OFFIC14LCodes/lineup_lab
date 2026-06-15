@@ -35,6 +35,9 @@ type AvailablePlayer = {
   player_name: string | null;
   position: string | null;
   team: string | null;
+  age?: number | null;
+  years_exp?: number | null;
+  yearsExperience?: number | null;
   rank: number | null;
   adp: number | null;
   projected_points: number | null;
@@ -85,7 +88,16 @@ type DraftBoardTeam = {
 
 type DraftState = {
   room: { id: string; status: string | null; last_synced_at: string | null };
-  league: { name: string | null } | null;
+  league: {
+    name: string | null;
+    is_dynasty?: boolean | null;
+    is_best_ball?: boolean | null;
+    is_superflex?: boolean | null;
+    is_two_qb?: boolean | null;
+    te_premium?: number | null;
+    roster_positions_json?: string[] | null;
+    scoring_settings_json?: Record<string, number | string | boolean | null> | null;
+  } | null;
   picks: PickLine[];
   currentPickNumber: number;
   currentRound: number;
@@ -281,6 +293,29 @@ type PreDraftStrategyResponse = {
     positionsAtRiskBeforeNextTurn: string[];
   };
   roundWindowPlan: Array<{ window: string; rounds: string; positions: string[]; guidance: string }>;
+  roundWindowPlanDetailed?: Array<{
+    window: string;
+    rounds: string;
+    projectedPicks: number[];
+    primaryPositions: string[];
+    avoidForcingPositions: string[];
+    likelyValuePockets: string[];
+    tierCliffRisks: string[];
+    contingencyTriggers: string[];
+    fallbackPath: string;
+    guidance: string;
+  }>;
+  contingencyTriggers?: Array<{
+    id: string;
+    label: string;
+    appliesToRounds: number[];
+    appliesToPositions: string[];
+    triggerConditionSummary: string;
+    suggestedAdjustment: string;
+    riskLevel: "low" | "medium" | "high";
+    confidence: "low" | "medium" | "high";
+    reasons: string[];
+  }>;
   tierCliffWatchlist: Array<{ position: string; label: string; tier: number | null; risk: string; reason: string }>;
   valuePocketWatchlist: Array<{ position: string; label: string; marketSignal: string | null; reason: string }>;
   waitPositions: Array<{ position: string; confidence: string; reason: string; targetCount: number }>;
@@ -303,7 +338,6 @@ const POSITIONS = ["All", "QB", "RB", "WR", "TE", "K", "DEF", "DL", "LB", "DB"];
 const MATCH_FILTERS = ["All", "Matched", "Issues"];
 const BOARD_SORTS: Array<{ value: BlackbirdBoardSortKey; label: string }> = [
   { value: "blackbird", label: "Blackbird rank" },
-  { value: "adp", label: "ADP" },
   { value: "projection", label: "Projection" },
   { value: "value", label: "Value" },
 ];
@@ -433,14 +467,40 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
   }, [boardSort, matchFilter, positionFilter, search]);
 
   const blackbirdBoard = useMemo(() => {
+    const scoringSettings =
+      state?.league?.scoring_settings_json && typeof state.league.scoring_settings_json === "object"
+        ? state.league.scoring_settings_json
+        : null;
     return buildBlackbirdBoard({
       players: state?.remainingPlayers ?? [],
       overlays: state?.h10ValueOverlay ?? [],
       recommendations: state?.h10RecommendationPreview ?? [],
       draftedPlayerIds: state?.draftedPlayerIds ?? [],
       sortKey: boardSort,
+      leagueContext: {
+        isDynasty: Boolean(state?.league?.is_dynasty),
+        isBestBall: Boolean(state?.league?.is_best_ball),
+        isSuperflex: Boolean(state?.league?.is_superflex),
+        isTwoQb: Boolean(state?.league?.is_two_qb),
+        tePremium: Number(state?.league?.te_premium ?? 0),
+        hasIDP: Boolean(state?.hasIDP),
+        hasKicker: Boolean(state?.hasKicker),
+        hasTeamDefense: Boolean(state?.hasTeamDefense),
+        rosterPositions: Array.isArray(state?.league?.roster_positions_json) ? state.league.roster_positions_json : [],
+        scoringSettings,
+      },
     });
-  }, [boardSort, state?.draftedPlayerIds, state?.h10RecommendationPreview, state?.h10ValueOverlay, state?.remainingPlayers]);
+  }, [
+    boardSort,
+    state?.draftedPlayerIds,
+    state?.h10RecommendationPreview,
+    state?.h10ValueOverlay,
+    state?.remainingPlayers,
+    state?.league,
+    state?.hasIDP,
+    state?.hasKicker,
+    state?.hasTeamDefense,
+  ]);
 
   const filteredBoardRows = useMemo(() => {
     const needle = search.trim().toLowerCase();
@@ -587,7 +647,7 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
                     <span className="rounded-full border border-brand/25 bg-brand/10 px-2 py-1 text-[11px] uppercase tracking-wide text-brand">Experimental</span>
                   </div>
                   <p className="mt-1 text-sm text-slate-400">
-                    Sorted by Blackbird value/projection/market context · {blackbirdBoard.diagnostics.availableRows} available rows · {state.boardLabel}
+                    Sorted by contextual Blackbird value and league scoring · {blackbirdBoard.diagnostics.availableRows} available rows · {state.boardLabel}
                   </p>
                 </div>
                 <div className="grid gap-2 sm:grid-cols-[minmax(180px,1fr)_140px_120px_160px]">
@@ -870,15 +930,14 @@ function BlackbirdBoardStatus({
   visibleCount: number;
 }) {
   return (
-    <div className="mt-3 grid gap-2 text-xs sm:grid-cols-2 xl:grid-cols-5">
+    <div className="mt-3 grid gap-2 text-xs sm:grid-cols-2 xl:grid-cols-4">
       <BoardStatusPill label="H10 rows" value={`${diagnostics.h10RowsMatched}/${diagnostics.availableRows}`} warning={diagnostics.h10RowsMatched === 0} />
       <BoardStatusPill label="Projection" value={`${diagnostics.projectionRows}/${diagnostics.availableRows}`} warning={diagnostics.projectionRows === 0} />
-      <BoardStatusPill label="ADP" value={`${diagnostics.adpRows}/${diagnostics.availableRows}`} warning={diagnostics.adpRows === 0} />
-      <BoardStatusPill label="Market rank" value={`${diagnostics.marketRows}/${diagnostics.availableRows}`} warning={diagnostics.marketRows === 0} />
+      <BoardStatusPill label="Blackbird rank" value={`${diagnostics.marketRows}/${diagnostics.availableRows}`} warning={diagnostics.marketRows === 0} />
       <BoardStatusPill label="Visible" value={`${visibleCount}/${filteredCount}`} />
       {diagnostics.fallbackOrderedRows > 0 ? (
-        <p className="rounded-md border border-gold/25 bg-gold/10 px-3 py-2 text-gold sm:col-span-2 xl:col-span-5">
-          Some rows use fallback ordering because Blackbird projection or market context is unavailable.
+        <p className="rounded-md border border-gold/25 bg-gold/10 px-3 py-2 text-gold sm:col-span-2 xl:col-span-4">
+          Some rows use fallback ordering because Blackbird projection or H10 context is unavailable.
         </p>
       ) : null}
     </div>
@@ -897,7 +956,7 @@ function BoardStatusPill({ label, value, warning = false }: { label: string; val
 function AvailablePlayersTable({ rows, onSelectPlayer }: { rows: BlackbirdBoardRow[]; onSelectPlayer: (row: BlackbirdBoardRow) => void }) {
   return (
     <div className="overflow-x-auto">
-      <table className="w-full min-w-[1180px] text-left text-sm">
+      <table className="w-full min-w-[1040px] text-left text-sm">
         <thead className="bg-panel2 text-xs uppercase text-slate-400">
           <tr>
             <th className="px-3 py-3">BB Rank</th>
@@ -906,9 +965,7 @@ function AvailablePlayersTable({ rows, onSelectPlayer }: { rows: BlackbirdBoardR
             <th className="px-3 py-3">Team</th>
             <th className="px-3 py-3">Proj</th>
             <th className="px-3 py-3">PAR</th>
-            <th className="px-3 py-3">ADP</th>
-            <th className="px-3 py-3">Market</th>
-            <th className="px-3 py-3">Delta</th>
+            <th className="px-3 py-3">Blackbird Rank</th>
             <th className="px-3 py-3">Value</th>
             <th className="px-3 py-3">Timing</th>
             <th className="px-3 py-3">Confidence / Risk</th>
@@ -935,14 +992,13 @@ function AvailablePlayersTable({ rows, onSelectPlayer }: { rows: BlackbirdBoardR
                   <span>{row.playerId ? "Matched context" : "Fallback context"}</span>
                   <span>{row.dataStatus.ordering.replace("_", " ")}</span>
                 </div>
+                <BlackbirdBoardPlayerDetails row={row} />
               </td>
               <td className="px-3 py-3"><PositionBadge position={row.position} /></td>
               <td className="px-3 py-3">{row.team || "-"}</td>
               <td className="px-3 py-3">{row.dataStatus.projection === "available" ? formatNumber(row.projectionPoints) : "Projection unavailable"}</td>
               <td className="px-3 py-3">{row.pointsAboveReplacement === null ? "Projection unavailable" : formatNumber(row.pointsAboveReplacement)}</td>
-              <td className="px-3 py-3">{row.dataStatus.adp === "available" ? formatNumber(row.adp) : "ADP unavailable"}</td>
-              <td className="px-3 py-3">{row.dataStatus.marketRank === "available" ? formatNumber(row.marketRank) : "Market rank unavailable"}</td>
-              <td className="px-3 py-3">{row.rankDelta === null ? "Market rank unavailable" : formatSignedNumber(row.rankDelta)}</td>
+              <td className="px-3 py-3">{row.dataStatus.marketRank === "available" ? `#${formatNumber(row.marketRank)}` : "Rank unavailable"}</td>
               <td className="px-3 py-3">
                 {row.blackbirdValueScore === null ? "Projection unavailable" : (
                   <span className="inline-flex min-w-[3.75rem] justify-center rounded-md border border-brand/20 bg-brand/10 px-2 py-1 font-black text-brand">
@@ -963,9 +1019,90 @@ function AvailablePlayersTable({ rows, onSelectPlayer }: { rows: BlackbirdBoardR
               </td>
             </tr>
           ))}
-          {rows.length === 0 ? <EmptyTable colSpan={13} text="No available players match these filters." /> : null}
+          {rows.length === 0 ? <EmptyTable colSpan={11} text="No available players match these filters." /> : null}
         </tbody>
       </table>
+    </div>
+  );
+}
+
+function BlackbirdBoardPlayerDetails({ row }: { row: BlackbirdBoardRow }) {
+  const detail = row.playerDetailContext;
+  if (!detail) return null;
+  return (
+    <details className="group mt-2 max-w-[460px] rounded-md border border-line/70 bg-background/45 px-2 py-2 text-xs">
+      <summary className="flex cursor-pointer list-none items-center justify-between gap-2 font-bold text-brand">
+        <span>Details</span>
+        <ChevronDown className="h-3.5 w-3.5 shrink-0 transition group-open:rotate-180" />
+      </summary>
+      <div className="mt-2 space-y-2 text-slate-300">
+        <div className="flex flex-wrap gap-1">
+          <StrategyPill>Blackbird preview</StrategyPill>
+          <StrategyPill>Read-only</StrategyPill>
+          <StrategyPill>Experimental</StrategyPill>
+        </div>
+        <div className="grid gap-2 sm:grid-cols-2">
+          <MiniDetail label="Projection" value={formatNullableNumber(detail.projection)} />
+          <MiniDetail label="Floor" value={formatNullableNumber(detail.projectedFantasyPoints.low)} />
+          <MiniDetail label="Ceiling" value={formatNullableNumber(detail.projectedFantasyPoints.high)} />
+          <MiniDetail label="PAR" value={formatNullableNumber(detail.par)} />
+          <MiniDetail label="Blackbird Rank" value={`#${formatNumber(detail.marketRank)}`} />
+          <MiniDetail label="Value" value={formatNullableNumber(detail.valueScore)} />
+          <MiniDetail label="Tier" value={detail.blackbirdTier === null ? "-" : String(detail.blackbirdTier)} />
+        </div>
+        {detail.valueScoreComponents ? (
+          <div>
+            <div className="text-[11px] uppercase tracking-wide text-slate-500">Value Components</div>
+            <div className="mt-1 grid grid-cols-2 gap-1">
+              {Object.entries(detail.valueScoreComponents).slice(0, 8).map(([label, value]) => (
+                <MiniDetail key={label} label={label.replace(/([A-Z])/g, " $1")} value={formatNullableNumber(value)} />
+              ))}
+            </div>
+          </div>
+        ) : null}
+        <DetailList title="Why Blackbird Likes" items={detail.whyBlackbirdLikes.slice(0, 3)} />
+        <DetailList title="Cautions" items={detail.whyBlackbirdIsCautious.slice(0, 3)} />
+        <DetailList title="Wait Plan" items={detail.waitPlanContext.slice(0, 2)} />
+        <DetailList title="Contingency" items={detail.contingencyContext.slice(0, 2)} />
+        {detail.tierNeighborContext.previous.length || detail.tierNeighborContext.next.length ? (
+          <div>
+            <div className="text-[11px] uppercase tracking-wide text-slate-500">Tier Neighbors</div>
+            <div className="mt-1 flex flex-wrap gap-1">
+              {[...detail.tierNeighborContext.previous, ...detail.tierNeighborContext.next].slice(0, 4).map((neighbor) => (
+                <span key={`${neighbor.rank}-${neighbor.playerName}`} className="rounded-full border border-line bg-panel2 px-2 py-1 text-[11px] text-slate-300">
+                  #{neighbor.rank} {neighbor.playerName}
+                </span>
+              ))}
+            </div>
+          </div>
+        ) : null}
+        <DetailList title="Data Gaps" items={detail.dataGaps.slice(0, 4).map((gap) => gap === "none" ? "No explicit data gaps." : gap)} />
+      </div>
+    </details>
+  );
+}
+
+function MiniDetail({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-md border border-line/70 bg-panel2 px-2 py-1">
+      <div className="uppercase tracking-wide text-slate-500">{label}</div>
+      <div className="mt-0.5 font-bold text-slate-200">{value}</div>
+    </div>
+  );
+}
+
+function DetailList({ title, items }: { title: string; items: string[] }) {
+  if (!items.length) return null;
+  return (
+    <div>
+      <div className="text-[11px] uppercase tracking-wide text-slate-500">{title}</div>
+      <ul className="mt-1 space-y-1">
+        {items.map((item) => (
+          <li key={item} className="rounded-md border border-line/70 bg-panel2 px-2 py-1 text-[11px] text-slate-300">
+            {item}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
@@ -1103,8 +1240,7 @@ function BoardDataStatus({ row }: { row: BlackbirdBoardRow }) {
   const labels = [
     row.dataStatus.h10 === "available" ? "H10" : "No H10 rows",
     row.dataStatus.projection === "available" ? "Projection" : "Projection unavailable",
-    row.dataStatus.adp === "available" ? "ADP" : "ADP unavailable",
-    row.dataStatus.marketRank === "available" ? "Market rank" : "Market rank unavailable",
+    row.dataStatus.marketRank === "available" ? "Blackbird rank" : "Rank unavailable",
   ];
   return (
     <div className="flex max-w-[220px] flex-wrap gap-1">
@@ -1261,6 +1397,9 @@ function PreDraftStrategyPanel({
               <H11Section title="Round Window Plan">
                 <StrategyList items={strategy.roundWindowPlan.slice(0, 5).map((row) => `${row.window} (${row.rounds}): ${row.positions.join(", ")}`)} />
               </H11Section>
+              <H11Section title="Detailed Round Windows">
+                <RoundWindowDetailPreview strategy={strategy} />
+              </H11Section>
               <H11Section title="Tier Cliff Watchlist">
                 <StrategyList items={strategy.tierCliffWatchlist.slice(0, 5).map((row) => `${row.position}: ${row.label} (${row.risk})`)} empty="No tier cliff rows returned." />
               </H11Section>
@@ -1280,6 +1419,9 @@ function PreDraftStrategyPanel({
           </details>
           <H11Section title="Contingency Plans">
             <StrategyList items={strategy.contingencyPlans.slice(0, prominent ? 5 : 3).map((row) => `${row.trigger}: ${row.response}`)} />
+          </H11Section>
+          <H11Section title="Contingency Triggers">
+            <ContingencyTriggerPreview strategy={strategy} />
           </H11Section>
           <H11Section title="Risk Notes">
             <StrategyList items={strategy.riskNotes.slice(0, 5)} />
@@ -1334,6 +1476,57 @@ function H11SlotWindowPreview({ strategy }: { strategy: PreDraftStrategyResponse
           ))}
         </div>
       ) : null}
+    </div>
+  );
+}
+
+function RoundWindowDetailPreview({ strategy }: { strategy: PreDraftStrategyResponse }) {
+  const windows = strategy.roundWindowPlanDetailed ?? [];
+  if (!windows.length) return <p className="text-sm text-slate-500">No detailed round windows returned.</p>;
+  return (
+    <div className="grid gap-2">
+      {windows.slice(0, 4).map((window) => (
+        <div key={`${window.window}-${window.rounds}`} className="rounded-md border border-line/70 bg-background/50 px-2 py-2 text-xs">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="font-bold text-slate-200">{window.window}</div>
+            <div className="text-slate-500">Rounds {window.rounds}</div>
+          </div>
+          <div className="mt-2 flex flex-wrap gap-1">
+            {window.primaryPositions.map((position) => <StrategyPill key={position}>{position}</StrategyPill>)}
+          </div>
+          <p className="mt-2 text-slate-300">{window.guidance}</p>
+          <div className="mt-2 grid gap-2 sm:grid-cols-2">
+            <MiniDetail label="Value pockets" value={window.likelyValuePockets.join(", ") || "Monitor board"} />
+            <MiniDetail label="Tier risk" value={window.tierCliffRisks.join(", ") || "Low visible risk"} />
+            <MiniDetail label="Avoid forcing" value={window.avoidForcingPositions.join(", ") || "None flagged"} />
+            <MiniDetail label="Fallback" value={window.fallbackPath} />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function ContingencyTriggerPreview({ strategy }: { strategy: PreDraftStrategyResponse }) {
+  const triggers = strategy.contingencyTriggers ?? [];
+  if (!triggers.length) return <p className="text-sm text-slate-500">No contingency triggers returned.</p>;
+  return (
+    <div className="grid gap-2 lg:grid-cols-2">
+      {triggers.slice(0, 6).map((trigger) => (
+        <div key={trigger.id} className="rounded-md border border-line/70 bg-background/50 px-2 py-2 text-xs">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="font-bold text-slate-200">{trigger.label}</div>
+            <span className="rounded-full border border-line bg-panel2 px-2 py-1 text-[11px] text-slate-300">
+              {trigger.riskLevel} risk · {trigger.confidence} confidence
+            </span>
+          </div>
+          <p className="mt-2 text-slate-400">{trigger.triggerConditionSummary}</p>
+          <p className="mt-1 text-slate-200">{trigger.suggestedAdjustment}</p>
+          <div className="mt-2 flex flex-wrap gap-1">
+            {trigger.appliesToPositions.map((position) => <StrategyPill key={position}>{position}</StrategyPill>)}
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
@@ -2207,10 +2400,8 @@ function formatNumber(value: number | null | undefined) {
   return Number(value).toLocaleString(undefined, { maximumFractionDigits: 1 });
 }
 
-function formatSignedNumber(value: number | null | undefined) {
-  if (value === null || value === undefined) return "-";
-  const rounded = Number(value).toLocaleString(undefined, { maximumFractionDigits: 1 });
-  return value > 0 ? `+${rounded}` : rounded;
+function formatNullableNumber(value: number | null | undefined) {
+  return value === null || value === undefined ? "-" : formatNumber(value);
 }
 
 function formatTimingAction(value: string | null | undefined) {

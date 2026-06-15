@@ -14,7 +14,9 @@ export type WarRoomValueOverlayRow = {
   displayName: string;
   team: string | null;
   position: string | null;
+  floorPoints: number | null;
   medianPoints: number | null;
+  ceilingPoints: number | null;
   pointsAboveReplacement: number | null;
   pointsAboveStarterCutline: number | null;
   riskAdjustedValue: number | null;
@@ -121,7 +123,9 @@ function overlayRow(
     displayName: player.player_name ?? row.displayName,
     team: player.team ?? row.team,
     position: player.position ?? row.position,
+    floorPoints: row.floorPoints,
     medianPoints: row.medianPoints,
+    ceilingPoints: row.ceilingPoints,
     pointsAboveReplacement: row.pointsAboveReplacement,
     pointsAboveStarterCutline: row.pointsAboveStarterCutline,
     riskAdjustedValue: row.riskAdjustedValue,
@@ -150,7 +154,9 @@ function missingRow(leagueId: string, player: DraftTargetScorePlayer): WarRoomVa
     displayName: player.player_name ?? "Unknown",
     team: player.team,
     position: player.position,
+    floorPoints: null,
     medianPoints: null,
+    ceilingPoints: null,
     pointsAboveReplacement: null,
     pointsAboveStarterCutline: null,
     riskAdjustedValue: null,

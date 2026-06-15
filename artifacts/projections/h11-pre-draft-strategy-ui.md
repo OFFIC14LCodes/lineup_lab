@@ -1,6 +1,6 @@
 # H11.2 Pre-Draft Strategy UI
 
-Generated: 2026-06-15T20:30:29.374Z
+Generated: 2026-06-15T23:29:06.340Z
 Verdict: passed
 Endpoint: /api/draft-rooms/[draftRoomId]/pre-draft-strategy
 

@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-06-15T22:12:50.299Z",
+  "generatedAt": "2026-06-15T23:25:54.290Z",
   "verdict": "passed",
-  "boardOrderingMethod": "available players -> H10 recommendation/value rank -> projection/value score -> market/ADP value -> ADP/market rank -> projected points -> position/name",
+  "boardOrderingMethod": "available players -> contextual Blackbird value -> PAR -> projected fantasy points -> H10 tie-breakers -> position/name",
   "syntheticAudit": {
     "totalInputPlayers": 5,
     "availableRows": 5,
@@ -9,17 +9,16 @@
     "h10RowsMatched": 3,
     "projectionRows": 3,
     "adpRows": 3,
-    "marketRows": 3,
+    "marketRows": 5,
     "fallbackOrderedRows": 2,
-    "orderingMethod": "available players -> H10 recommendation/value rank -> projection/value score -> market/ADP value -> ADP/market rank -> projected points -> position/name",
+    "orderingMethod": "available players -> contextual Blackbird value -> PAR -> projected fantasy points -> H10 tie-breakers -> position/name",
     "bannedLanguageFound": [],
     "exampleRows": [
       {
         "blackbirdBoardRank": 1,
         "playerName": "Bravo QB",
-        "projectionPoints": 332,
-        "adp": 8,
-        "rankDelta": 7,
+        "projectionPoints": 330,
+        "marketRank": 1,
         "dataStatus": {
           "projection": "available",
           "adp": "available",
@@ -31,9 +30,8 @@
       {
         "blackbirdBoardRank": 2,
         "playerName": "Alpha WR",
-        "projectionPoints": 261,
-        "adp": 24,
-        "rankDelta": 22,
+        "projectionPoints": 260,
+        "marketRank": 2,
         "dataStatus": {
           "projection": "available",
           "adp": "available",
@@ -46,8 +44,7 @@
         "blackbirdBoardRank": 3,
         "playerName": "Delta LB",
         "projectionPoints": 145,
-        "adp": 180,
-        "rankDelta": 177,
+        "marketRank": 3,
         "dataStatus": {
           "projection": "available",
           "adp": "available",
@@ -60,12 +57,11 @@
         "blackbirdBoardRank": 4,
         "playerName": "Charlie RB",
         "projectionPoints": null,
-        "adp": null,
-        "rankDelta": null,
+        "marketRank": 4,
         "dataStatus": {
           "projection": "unavailable",
           "adp": "unavailable",
-          "marketRank": "unavailable",
+          "marketRank": "available",
           "h10": "unavailable",
           "ordering": "fallback_context"
         }
@@ -74,12 +70,11 @@
         "blackbirdBoardRank": 5,
         "playerName": "Echo K",
         "projectionPoints": null,
-        "adp": null,
-        "rankDelta": null,
+        "marketRank": 5,
         "dataStatus": {
           "projection": "unavailable",
           "adp": "unavailable",
-          "marketRank": "unavailable",
+          "marketRank": "available",
           "h10": "unavailable",
           "ordering": "fallback_context"
         }
@@ -92,7 +87,7 @@
     "loadMoreVisible": false,
     "loadedMore": true,
     "projectionColumnVisible": true,
-    "adpColumnVisible": true,
+    "blackbirdRankColumnVisible": true,
     "valueColumnVisible": true,
     "positionFilterWorks": true,
     "mobileUsable": true,
@@ -120,6 +115,6 @@
   "remainingRisks": [
     "Browser smoke uses local authenticated E2E bypass rather than a real OAuth session.",
     "The board is smoked against one representative room; pure sorting tests cover edge cases.",
-    "Market rank falls back to ADP when exact compatible market rank is not available."
+    "Blackbird rank is deterministic from the current draft room context and does not use ADP as the primary order."
   ]
 }
