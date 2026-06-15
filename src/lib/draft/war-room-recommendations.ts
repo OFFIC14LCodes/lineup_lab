@@ -2,6 +2,7 @@ import type { DraftTargetScorePlayer } from "@/lib/draft/scoring";
 import type { NormalizedRosterRequirements } from "@/lib/draft/roster-slots";
 import type { WarRoomValueOverlayRow } from "@/lib/draft/h10-war-room-overlay";
 import type { WarRoomMatchingCoverageSummary } from "@/lib/draft/war-room-matching-coverage";
+import { buildNeedTimingDiagnostic, type FutureAvailability, type NeedTimingAction, type NeedUrgency, type OpportunityCost, type RosterNeedStatus, type TierDropRisk } from "@/lib/draft/need-timing-intelligence";
 
 export type WarRoomRecommendationTier =
   | "priority_target"
@@ -37,6 +38,7 @@ export type WarRoomRecommendationRow = {
     tierCliff: number;
     marketValue: number;
     availabilityRisk: number;
+    needTiming: number;
     confidencePenalty: number;
     formatPenalty: number;
   };
@@ -62,6 +64,13 @@ export type WarRoomRecommendationRow = {
     benchDepthNeed: boolean;
     tierDropBeforeNextPick: boolean | null;
   };
+  rosterNeedStatus: RosterNeedStatus;
+  needUrgency: NeedUrgency;
+  futureAvailability: FutureAvailability;
+  tierDropRisk: TierDropRisk;
+  opportunityCost: OpportunityCost;
+  needTimingAction: NeedTimingAction;
+  needTimingReasons: string[];
   status: WarRoomRecommendationStatus;
 };
 
@@ -135,9 +144,30 @@ type ScoreContext = {
 };
 
 const FORBIDDEN_FIELDS = ["bestPick", "shouldDraft", "takeNow", "lockButton", "mustDraft", "guaranteed"];
-const BANNED_EXPLANATION_TERMS = ["steal", "smash", "lock", "must draft", "league winner", "trust me"];
+const BANNED_EXPLANATION_TERMS = ["steal", "smash", "lock", "must draft", "league winner", "trust me", "best pick", "you should draft", "ai says"];
 const IDP_POSITIONS = new Set(["DL", "LB", "DB"]);
 const OFFENSIVE_FLEX_POSITIONS = new Set(["RB", "WR", "TE"]);
+
+export const WAR_ROOM_RECOMMENDATION_CALIBRATION = {
+  componentCaps: {
+    leagueValue: 30,
+    rosterNeed: 20,
+    scarcity: 15,
+    tierCliff: 20,
+    marketValue: 10,
+    availabilityRisk: 5,
+    needTimingPositive: 14,
+    needTimingNegative: -10,
+  },
+  guardrails: {
+    earlySpecialTeamsLatestRound: 12,
+    lowConfidencePriorityThreshold: 85,
+    dominantComponentShareWarning: 0.45,
+    closeScoreMargin: 2,
+    largeRankJump: 5,
+    unstableScoreDelta: 8,
+  },
+} as const;
 
 export function buildWarRoomRecommendations(input: BuildWarRoomRecommendationsInput): WarRoomRecommendationResult {
   const contextLimitations = buildContextLimitations(input);
@@ -209,6 +239,17 @@ function buildRecommendationRow({
   const tierCliffResult = scoreTierCliff(overlay, input, scoreContext);
   const marketValue = status === "missing_projection" ? 0 : scoreMarketValue(overlay, player);
   const availabilityRisk = scoreAvailabilityRisk(player, overlay, input, tierCliffResult.sameTierRemaining);
+  const needTiming = buildNeedTimingDiagnostic({
+    candidate: player,
+    overlay,
+    remainingPlayers: input.remainingPlayers,
+    h10ValueOverlay: input.h10ValueOverlay,
+    rosterRequirements: input.rosterRequirements,
+    positionCounts: input.positionCounts,
+    currentPickNumber: input.currentPickNumber,
+    currentRound: input.currentRound,
+    picksUntilMyNextPick: input.picksUntilMyNextPick,
+  });
   const confidencePenalty = scoreConfidencePenalty(overlay, position, input);
   const formatPenalty =
     status === "format_excluded"
@@ -227,7 +268,7 @@ function buildRecommendationRow({
   if (position === "DEF" && isEarlyRound(input.currentRound ?? null)) warningCodes.add("DST_EARLY_ROUND_SUPPRESSION");
 
   const score = clamp(
-    leagueValue + rosterNeed + scarcity + tierCliffResult.score + marketValue + availabilityRisk + confidencePenalty + formatPenalty,
+    leagueValue + rosterNeed + scarcity + tierCliffResult.score + marketValue + availabilityRisk + needTiming.needTimingModifier + confidencePenalty + formatPenalty,
     0,
     100
   );
@@ -246,9 +287,11 @@ function buildRecommendationRow({
       tierCliff: tierCliffResult.score,
       marketValue,
       availabilityRisk,
+      needTiming: needTiming.needTimingModifier,
       confidencePenalty,
       formatPenalty,
     },
+    needTiming,
     warningCodes: [...warningCodes],
   });
 
@@ -270,6 +313,7 @@ function buildRecommendationRow({
       tierCliff: round(tierCliffResult.score),
       marketValue: round(marketValue),
       availabilityRisk: round(availabilityRisk),
+      needTiming: round(needTiming.needTimingModifier),
       confidencePenalty: round(confidencePenalty),
       formatPenalty: round(formatPenalty),
     },
@@ -295,6 +339,13 @@ function buildRecommendationRow({
       benchDepthNeed: rosterContext.benchNeed,
       tierDropBeforeNextPick: tierCliffResult.tierDropBeforeNextPick,
     },
+    rosterNeedStatus: needTiming.rosterNeedStatus,
+    needUrgency: needTiming.needUrgency,
+    futureAvailability: needTiming.futureAvailability,
+    tierDropRisk: needTiming.tierDropRisk,
+    opportunityCost: needTiming.opportunityCost,
+    needTimingAction: needTiming.needTimingAction,
+    needTimingReasons: needTiming.needTimingReasons,
     status: finalStatus,
   };
 }
@@ -415,12 +466,12 @@ function scoreTierCliff(overlay: WarRoomValueOverlayRow | null, input: BuildWarR
   const hasPickContext = input.picksUntilMyNextPick !== null && input.picksUntilMyNextPick !== undefined;
   const tierDropBeforeNextPick = hasPickContext ? sameTierRemaining <= Math.max(1, Math.ceil((input.picksUntilMyNextPick ?? 0) / 6)) : null;
   let score = 2;
-  if (sameTierRemaining <= 1) score += 9;
-  else if (sameTierRemaining <= 3) score += 6;
+  if (sameTierRemaining <= 1) score += 12;
+  else if (sameTierRemaining <= 3) score += 7;
   else if (sameTierRemaining <= 6) score += 3;
-  if (tierDropBeforeNextPick) score += 4;
+  if (tierDropBeforeNextPick) score += 5;
   if (!hasPickContext && visible) score += 2;
-  return { score: clamp(score, 0, 15), visible, sameTierRemaining, tierDropBeforeNextPick };
+  return { score: clamp(score, 0, 20), visible, sameTierRemaining, tierDropBeforeNextPick };
 }
 
 function scoreMarketValue(overlay: WarRoomValueOverlayRow | null, player: DraftTargetScorePlayer): number {
@@ -515,6 +566,7 @@ function buildExplanationFragments(input: {
   tierCliff: ReturnType<typeof scoreTierCliff>;
   marketValue: number;
   scoreComponents: WarRoomRecommendationRow["scoreComponents"];
+  needTiming: ReturnType<typeof buildNeedTimingDiagnostic>;
   warningCodes: string[];
 }): string[] {
   const fragments: string[] = [];
@@ -536,7 +588,24 @@ function buildExplanationFragments(input: {
   if (input.overlay?.overlayStatus === "low_confidence") fragments.push("Risk: low-confidence baseline; range is wide.");
   if (input.overlay?.overlayStatus === "dst_dry_run") fragments.push("Risk: team defense value is allowance-only dry-run context.");
   if (input.warningCodes.includes("NEXT_PICK_CONTEXT_MISSING")) fragments.push("Timing: next-pick context is missing, so urgency is conservative.");
+  fragments.push(...buildNeedTimingExplanationFragments(input.position, input.needTiming));
   return Array.from(new Set(fragments)).slice(0, 6);
+}
+
+function buildNeedTimingExplanationFragments(position: string, needTiming: ReturnType<typeof buildNeedTimingDiagnostic>): string[] {
+  if (needTiming.needTimingAction === "fill_now") {
+    return [`Timing signal: ${position} urgency is ${needTiming.needUrgency}, and preview leans toward addressing the need in this window.`];
+  }
+  if (needTiming.needTimingAction === "wait_one_turn") {
+    return [`Timing signal: ${position} need is acknowledged, but comparable options may remain near the next pick.`];
+  }
+  if (needTiming.needTimingAction === "wait_multiple_turns") {
+    return [`Timing signal: ${position} does not need to be forced early in this draft window.`];
+  }
+  if (needTiming.needTimingAction === "ignore_for_now") {
+    return [`Timing signal: ${position} is currently behind stronger roster or value fits.`];
+  }
+  return [`Timing signal: ${position} is monitored without overriding the broader value signal.`];
 }
 
 function isAlreadyDrafted(player: DraftTargetScorePlayer, overlay: WarRoomValueOverlayRow | null, draftedPlayerIds: string[]): boolean {
@@ -693,10 +762,11 @@ function averageScoreComponents(rows: WarRoomRecommendationRow[]): WarRoomRecomm
       tierCliff: acc.tierCliff + row.scoreComponents.tierCliff,
       marketValue: acc.marketValue + row.scoreComponents.marketValue,
       availabilityRisk: acc.availabilityRisk + row.scoreComponents.availabilityRisk,
+      needTiming: acc.needTiming + row.scoreComponents.needTiming,
       confidencePenalty: acc.confidencePenalty + row.scoreComponents.confidencePenalty,
       formatPenalty: acc.formatPenalty + row.scoreComponents.formatPenalty,
     }),
-    { leagueValue: 0, rosterNeed: 0, scarcity: 0, tierCliff: 0, marketValue: 0, availabilityRisk: 0, confidencePenalty: 0, formatPenalty: 0 }
+    { leagueValue: 0, rosterNeed: 0, scarcity: 0, tierCliff: 0, marketValue: 0, availabilityRisk: 0, needTiming: 0, confidencePenalty: 0, formatPenalty: 0 }
   );
   return {
     leagueValue: round(totals.leagueValue / rows.length),
@@ -705,6 +775,7 @@ function averageScoreComponents(rows: WarRoomRecommendationRow[]): WarRoomRecomm
     tierCliff: round(totals.tierCliff / rows.length),
     marketValue: round(totals.marketValue / rows.length),
     availabilityRisk: round(totals.availabilityRisk / rows.length),
+    needTiming: round(totals.needTiming / rows.length),
     confidencePenalty: round(totals.confidencePenalty / rows.length),
     formatPenalty: round(totals.formatPenalty / rows.length),
   };

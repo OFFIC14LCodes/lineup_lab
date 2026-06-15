@@ -1,0 +1,64 @@
+{
+  "generatedAt": "2026-06-15T15:50:58.551Z",
+  "artifactVersion": "h10.11-need-timing-intelligence-v1",
+  "scenarios": [
+    {
+      "name": "starter_need_fill_now",
+      "description": "Open DL starter need with a thin current tier and next-pick availability risk.",
+      "diagnostic": {
+        "rosterNeedStatus": "starter_need_open",
+        "needUrgency": "critical",
+        "futureAvailability": "unlikely_available_next_pick",
+        "tierDropRisk": "high",
+        "opportunityCost": "low",
+        "needTimingAction": "fill_now",
+        "needTimingModifier": 22,
+        "needTimingReasons": [
+          "DL timing action: fill_now.",
+          "DL remains a starter need.",
+          "Comparable DL options are unlikely to last to the next pick.",
+          "DL tier drop risk is high.",
+          "DL urgency is critical."
+        ]
+      }
+    },
+    {
+      "name": "starter_need_wait_one_turn",
+      "description": "Open DL starter need, but several comparable DL options project to survive and WR value is stronger.",
+      "diagnostic": {
+        "rosterNeedStatus": "starter_need_open",
+        "needUrgency": "medium",
+        "futureAvailability": "likely_available_next_pick",
+        "tierDropRisk": "low",
+        "opportunityCost": "high",
+        "needTimingAction": "wait_one_turn",
+        "needTimingModifier": -8,
+        "needTimingReasons": [
+          "DL timing action: wait_one_turn.",
+          "DL remains a starter need.",
+          "Comparable DL options are likely to be available near the next pick.",
+          "Forcing this need has high opportunity cost versus the board."
+        ]
+      }
+    },
+    {
+      "name": "kicker_wait",
+      "description": "Open K slot in an early round should not force a kicker.",
+      "diagnostic": {
+        "rosterNeedStatus": "starter_need_open",
+        "needUrgency": "low",
+        "futureAvailability": "unlikely_available_next_pick",
+        "tierDropRisk": "high",
+        "opportunityCost": "low",
+        "needTimingAction": "wait_multiple_turns",
+        "needTimingModifier": -10,
+        "needTimingReasons": [
+          "K timing action: wait_multiple_turns.",
+          "K remains a starter need.",
+          "Comparable K options are unlikely to last to the next pick.",
+          "K tier drop risk is high."
+        ]
+      }
+    }
+  ]
+}

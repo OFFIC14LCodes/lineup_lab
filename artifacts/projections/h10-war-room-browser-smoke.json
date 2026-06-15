@@ -1,0 +1,396 @@
+{
+  "generatedAt": "2026-06-15T15:52:35.465Z",
+  "verdict": "passed",
+  "authMethod": "server-only local e2e auth bypass via signed-in test user id env and http cookie",
+  "browserEngine": "chromium",
+  "flagCases": [
+    {
+      "name": "legacy_flags_disabled",
+      "port": 3010,
+      "preview": false,
+      "experiment": false
+    },
+    {
+      "name": "preview_only",
+      "port": 3011,
+      "preview": true,
+      "experiment": false
+    },
+    {
+      "name": "experiment_selector",
+      "port": 3012,
+      "preview": true,
+      "experiment": true
+    }
+  ],
+  "roomsTested": [
+    {
+      "draftRoomId": "c82aef89-ce90-40f0-936f-545656045554",
+      "leagueName": "BestBalls in Hand IDP Dynasty ",
+      "reason": "superflex_qb"
+    },
+    {
+      "draftRoomId": "2f62d6e3-d309-4d50-8e7e-2ef05a83771c",
+      "leagueName": "Legacy League",
+      "reason": "kicker"
+    },
+    {
+      "draftRoomId": "2a5c27ce-1a26-4473-95cc-9da9ed78520a",
+      "leagueName": "Legacy League",
+      "reason": "dst"
+    },
+    {
+      "draftRoomId": "b386e78a-c7ff-4688-828e-6b48cbca863e",
+      "leagueName": "🪓 Chopped",
+      "reason": "shallow_roster"
+    },
+    {
+      "draftRoomId": "f85238ff-b2ee-4053-8493-e38c4cb63bd3",
+      "leagueName": "BestBalls in Hand IDP Dynasty ",
+      "reason": "idp_mixed"
+    }
+  ],
+  "results": [
+    {
+      "roomId": "c82aef89-ce90-40f0-936f-545656045554",
+      "leagueName": "BestBalls in Hand IDP Dynasty ",
+      "flagCase": "legacy_flags_disabled",
+      "loaded": true,
+      "legacyDefault": true,
+      "previewVisible": true,
+      "selectorVisible": true,
+      "sourceSwitchWorked": true,
+      "switchedBackToLegacy": true,
+      "experimentalLabelsPresent": true,
+      "bannedLanguageFound": [],
+      "mutationSafety": {
+        "legacyRecommendationsUnchanged": true,
+        "availablePlayerOrderUnchanged": true,
+        "projectionsUnchanged": true,
+        "draftRoomStateUnchanged": true,
+        "selectedSourceNotPersisted": true
+      },
+      "screenshotPath": "C:\\Projects\\lineup_lab\\artifacts\\projections\\h10-war-room-browser-screenshots\\legacy_flags_disabled-c82aef89-ce90-40f0-936f-545656045554.png",
+      "error": null
+    },
+    {
+      "roomId": "2f62d6e3-d309-4d50-8e7e-2ef05a83771c",
+      "leagueName": "Legacy League",
+      "flagCase": "legacy_flags_disabled",
+      "loaded": true,
+      "legacyDefault": true,
+      "previewVisible": true,
+      "selectorVisible": true,
+      "sourceSwitchWorked": true,
+      "switchedBackToLegacy": true,
+      "experimentalLabelsPresent": true,
+      "bannedLanguageFound": [],
+      "mutationSafety": {
+        "legacyRecommendationsUnchanged": true,
+        "availablePlayerOrderUnchanged": true,
+        "projectionsUnchanged": true,
+        "draftRoomStateUnchanged": true,
+        "selectedSourceNotPersisted": true
+      },
+      "screenshotPath": "C:\\Projects\\lineup_lab\\artifacts\\projections\\h10-war-room-browser-screenshots\\legacy_flags_disabled-2f62d6e3-d309-4d50-8e7e-2ef05a83771c.png",
+      "error": null
+    },
+    {
+      "roomId": "2a5c27ce-1a26-4473-95cc-9da9ed78520a",
+      "leagueName": "Legacy League",
+      "flagCase": "legacy_flags_disabled",
+      "loaded": true,
+      "legacyDefault": true,
+      "previewVisible": true,
+      "selectorVisible": true,
+      "sourceSwitchWorked": true,
+      "switchedBackToLegacy": true,
+      "experimentalLabelsPresent": true,
+      "bannedLanguageFound": [],
+      "mutationSafety": {
+        "legacyRecommendationsUnchanged": true,
+        "availablePlayerOrderUnchanged": true,
+        "projectionsUnchanged": true,
+        "draftRoomStateUnchanged": true,
+        "selectedSourceNotPersisted": true
+      },
+      "screenshotPath": "C:\\Projects\\lineup_lab\\artifacts\\projections\\h10-war-room-browser-screenshots\\legacy_flags_disabled-2a5c27ce-1a26-4473-95cc-9da9ed78520a.png",
+      "error": null
+    },
+    {
+      "roomId": "b386e78a-c7ff-4688-828e-6b48cbca863e",
+      "leagueName": "🪓 Chopped",
+      "flagCase": "legacy_flags_disabled",
+      "loaded": true,
+      "legacyDefault": true,
+      "previewVisible": true,
+      "selectorVisible": true,
+      "sourceSwitchWorked": true,
+      "switchedBackToLegacy": true,
+      "experimentalLabelsPresent": true,
+      "bannedLanguageFound": [],
+      "mutationSafety": {
+        "legacyRecommendationsUnchanged": true,
+        "availablePlayerOrderUnchanged": true,
+        "projectionsUnchanged": true,
+        "draftRoomStateUnchanged": true,
+        "selectedSourceNotPersisted": true
+      },
+      "screenshotPath": "C:\\Projects\\lineup_lab\\artifacts\\projections\\h10-war-room-browser-screenshots\\legacy_flags_disabled-b386e78a-c7ff-4688-828e-6b48cbca863e.png",
+      "error": null
+    },
+    {
+      "roomId": "f85238ff-b2ee-4053-8493-e38c4cb63bd3",
+      "leagueName": "BestBalls in Hand IDP Dynasty ",
+      "flagCase": "legacy_flags_disabled",
+      "loaded": true,
+      "legacyDefault": true,
+      "previewVisible": true,
+      "selectorVisible": true,
+      "sourceSwitchWorked": true,
+      "switchedBackToLegacy": true,
+      "experimentalLabelsPresent": true,
+      "bannedLanguageFound": [],
+      "mutationSafety": {
+        "legacyRecommendationsUnchanged": true,
+        "availablePlayerOrderUnchanged": true,
+        "projectionsUnchanged": true,
+        "draftRoomStateUnchanged": true,
+        "selectedSourceNotPersisted": true
+      },
+      "screenshotPath": "C:\\Projects\\lineup_lab\\artifacts\\projections\\h10-war-room-browser-screenshots\\legacy_flags_disabled-f85238ff-b2ee-4053-8493-e38c4cb63bd3.png",
+      "error": null
+    },
+    {
+      "roomId": "c82aef89-ce90-40f0-936f-545656045554",
+      "leagueName": "BestBalls in Hand IDP Dynasty ",
+      "flagCase": "preview_only",
+      "loaded": true,
+      "legacyDefault": true,
+      "previewVisible": true,
+      "selectorVisible": true,
+      "sourceSwitchWorked": true,
+      "switchedBackToLegacy": true,
+      "experimentalLabelsPresent": true,
+      "bannedLanguageFound": [],
+      "mutationSafety": {
+        "legacyRecommendationsUnchanged": true,
+        "availablePlayerOrderUnchanged": true,
+        "projectionsUnchanged": true,
+        "draftRoomStateUnchanged": true,
+        "selectedSourceNotPersisted": true
+      },
+      "screenshotPath": "C:\\Projects\\lineup_lab\\artifacts\\projections\\h10-war-room-browser-screenshots\\preview_only-c82aef89-ce90-40f0-936f-545656045554.png",
+      "error": null
+    },
+    {
+      "roomId": "2f62d6e3-d309-4d50-8e7e-2ef05a83771c",
+      "leagueName": "Legacy League",
+      "flagCase": "preview_only",
+      "loaded": true,
+      "legacyDefault": true,
+      "previewVisible": true,
+      "selectorVisible": true,
+      "sourceSwitchWorked": true,
+      "switchedBackToLegacy": true,
+      "experimentalLabelsPresent": true,
+      "bannedLanguageFound": [],
+      "mutationSafety": {
+        "legacyRecommendationsUnchanged": true,
+        "availablePlayerOrderUnchanged": true,
+        "projectionsUnchanged": true,
+        "draftRoomStateUnchanged": true,
+        "selectedSourceNotPersisted": true
+      },
+      "screenshotPath": "C:\\Projects\\lineup_lab\\artifacts\\projections\\h10-war-room-browser-screenshots\\preview_only-2f62d6e3-d309-4d50-8e7e-2ef05a83771c.png",
+      "error": null
+    },
+    {
+      "roomId": "2a5c27ce-1a26-4473-95cc-9da9ed78520a",
+      "leagueName": "Legacy League",
+      "flagCase": "preview_only",
+      "loaded": true,
+      "legacyDefault": true,
+      "previewVisible": true,
+      "selectorVisible": true,
+      "sourceSwitchWorked": true,
+      "switchedBackToLegacy": true,
+      "experimentalLabelsPresent": true,
+      "bannedLanguageFound": [],
+      "mutationSafety": {
+        "legacyRecommendationsUnchanged": true,
+        "availablePlayerOrderUnchanged": true,
+        "projectionsUnchanged": true,
+        "draftRoomStateUnchanged": true,
+        "selectedSourceNotPersisted": true
+      },
+      "screenshotPath": "C:\\Projects\\lineup_lab\\artifacts\\projections\\h10-war-room-browser-screenshots\\preview_only-2a5c27ce-1a26-4473-95cc-9da9ed78520a.png",
+      "error": null
+    },
+    {
+      "roomId": "b386e78a-c7ff-4688-828e-6b48cbca863e",
+      "leagueName": "🪓 Chopped",
+      "flagCase": "preview_only",
+      "loaded": true,
+      "legacyDefault": true,
+      "previewVisible": true,
+      "selectorVisible": true,
+      "sourceSwitchWorked": true,
+      "switchedBackToLegacy": true,
+      "experimentalLabelsPresent": true,
+      "bannedLanguageFound": [],
+      "mutationSafety": {
+        "legacyRecommendationsUnchanged": true,
+        "availablePlayerOrderUnchanged": true,
+        "projectionsUnchanged": true,
+        "draftRoomStateUnchanged": true,
+        "selectedSourceNotPersisted": true
+      },
+      "screenshotPath": "C:\\Projects\\lineup_lab\\artifacts\\projections\\h10-war-room-browser-screenshots\\preview_only-b386e78a-c7ff-4688-828e-6b48cbca863e.png",
+      "error": null
+    },
+    {
+      "roomId": "f85238ff-b2ee-4053-8493-e38c4cb63bd3",
+      "leagueName": "BestBalls in Hand IDP Dynasty ",
+      "flagCase": "preview_only",
+      "loaded": true,
+      "legacyDefault": true,
+      "previewVisible": true,
+      "selectorVisible": true,
+      "sourceSwitchWorked": true,
+      "switchedBackToLegacy": true,
+      "experimentalLabelsPresent": true,
+      "bannedLanguageFound": [],
+      "mutationSafety": {
+        "legacyRecommendationsUnchanged": true,
+        "availablePlayerOrderUnchanged": true,
+        "projectionsUnchanged": true,
+        "draftRoomStateUnchanged": true,
+        "selectedSourceNotPersisted": true
+      },
+      "screenshotPath": "C:\\Projects\\lineup_lab\\artifacts\\projections\\h10-war-room-browser-screenshots\\preview_only-f85238ff-b2ee-4053-8493-e38c4cb63bd3.png",
+      "error": null
+    },
+    {
+      "roomId": "c82aef89-ce90-40f0-936f-545656045554",
+      "leagueName": "BestBalls in Hand IDP Dynasty ",
+      "flagCase": "experiment_selector",
+      "loaded": true,
+      "legacyDefault": true,
+      "previewVisible": true,
+      "selectorVisible": true,
+      "sourceSwitchWorked": true,
+      "switchedBackToLegacy": true,
+      "experimentalLabelsPresent": true,
+      "bannedLanguageFound": [],
+      "mutationSafety": {
+        "legacyRecommendationsUnchanged": true,
+        "availablePlayerOrderUnchanged": true,
+        "projectionsUnchanged": true,
+        "draftRoomStateUnchanged": true,
+        "selectedSourceNotPersisted": true
+      },
+      "screenshotPath": "C:\\Projects\\lineup_lab\\artifacts\\projections\\h10-war-room-browser-screenshots\\experiment_selector-c82aef89-ce90-40f0-936f-545656045554.png",
+      "error": null
+    },
+    {
+      "roomId": "2f62d6e3-d309-4d50-8e7e-2ef05a83771c",
+      "leagueName": "Legacy League",
+      "flagCase": "experiment_selector",
+      "loaded": true,
+      "legacyDefault": true,
+      "previewVisible": true,
+      "selectorVisible": true,
+      "sourceSwitchWorked": true,
+      "switchedBackToLegacy": true,
+      "experimentalLabelsPresent": true,
+      "bannedLanguageFound": [],
+      "mutationSafety": {
+        "legacyRecommendationsUnchanged": true,
+        "availablePlayerOrderUnchanged": true,
+        "projectionsUnchanged": true,
+        "draftRoomStateUnchanged": true,
+        "selectedSourceNotPersisted": true
+      },
+      "screenshotPath": "C:\\Projects\\lineup_lab\\artifacts\\projections\\h10-war-room-browser-screenshots\\experiment_selector-2f62d6e3-d309-4d50-8e7e-2ef05a83771c.png",
+      "error": null
+    },
+    {
+      "roomId": "2a5c27ce-1a26-4473-95cc-9da9ed78520a",
+      "leagueName": "Legacy League",
+      "flagCase": "experiment_selector",
+      "loaded": true,
+      "legacyDefault": true,
+      "previewVisible": true,
+      "selectorVisible": true,
+      "sourceSwitchWorked": true,
+      "switchedBackToLegacy": true,
+      "experimentalLabelsPresent": true,
+      "bannedLanguageFound": [],
+      "mutationSafety": {
+        "legacyRecommendationsUnchanged": true,
+        "availablePlayerOrderUnchanged": true,
+        "projectionsUnchanged": true,
+        "draftRoomStateUnchanged": true,
+        "selectedSourceNotPersisted": true
+      },
+      "screenshotPath": "C:\\Projects\\lineup_lab\\artifacts\\projections\\h10-war-room-browser-screenshots\\experiment_selector-2a5c27ce-1a26-4473-95cc-9da9ed78520a.png",
+      "error": null
+    },
+    {
+      "roomId": "b386e78a-c7ff-4688-828e-6b48cbca863e",
+      "leagueName": "🪓 Chopped",
+      "flagCase": "experiment_selector",
+      "loaded": true,
+      "legacyDefault": true,
+      "previewVisible": true,
+      "selectorVisible": true,
+      "sourceSwitchWorked": true,
+      "switchedBackToLegacy": true,
+      "experimentalLabelsPresent": true,
+      "bannedLanguageFound": [],
+      "mutationSafety": {
+        "legacyRecommendationsUnchanged": true,
+        "availablePlayerOrderUnchanged": true,
+        "projectionsUnchanged": true,
+        "draftRoomStateUnchanged": true,
+        "selectedSourceNotPersisted": true
+      },
+      "screenshotPath": "C:\\Projects\\lineup_lab\\artifacts\\projections\\h10-war-room-browser-screenshots\\experiment_selector-b386e78a-c7ff-4688-828e-6b48cbca863e.png",
+      "error": null
+    },
+    {
+      "roomId": "f85238ff-b2ee-4053-8493-e38c4cb63bd3",
+      "leagueName": "BestBalls in Hand IDP Dynasty ",
+      "flagCase": "experiment_selector",
+      "loaded": true,
+      "legacyDefault": true,
+      "previewVisible": true,
+      "selectorVisible": true,
+      "sourceSwitchWorked": true,
+      "switchedBackToLegacy": true,
+      "experimentalLabelsPresent": true,
+      "bannedLanguageFound": [],
+      "mutationSafety": {
+        "legacyRecommendationsUnchanged": true,
+        "availablePlayerOrderUnchanged": true,
+        "projectionsUnchanged": true,
+        "draftRoomStateUnchanged": true,
+        "selectedSourceNotPersisted": true
+      },
+      "screenshotPath": "C:\\Projects\\lineup_lab\\artifacts\\projections\\h10-war-room-browser-screenshots\\experiment_selector-f85238ff-b2ee-4053-8493-e38c4cb63bd3.png",
+      "error": null
+    }
+  ],
+  "summary": {
+    "total": 15,
+    "passed": 15,
+    "failed": 0,
+    "blocked": 0,
+    "mutationSafetyPassed": true
+  },
+  "remainingRisks": [
+    "This harness does not perform real Google OAuth; it uses a server-only local authenticated test path.",
+    "The harness disables War Room auto-sync so it can isolate UI interaction mutation safety from Sleeper sync writes."
+  ]
+}

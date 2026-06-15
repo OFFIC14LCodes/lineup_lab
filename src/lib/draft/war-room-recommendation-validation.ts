@@ -76,9 +76,19 @@ export type H10WarRoomCompactRecommendation = {
   recommendationScore: number;
   status: string;
   primaryReason: string;
+  explanationFragments: string[];
   warningCodes: string[];
   reasonCodes: string[];
   scoreComponents: WarRoomRecommendationRow["scoreComponents"];
+  h10: WarRoomRecommendationRow["h10"];
+  draftContext: WarRoomRecommendationRow["draftContext"];
+  rosterNeedStatus: WarRoomRecommendationRow["rosterNeedStatus"];
+  needUrgency: WarRoomRecommendationRow["needUrgency"];
+  futureAvailability: WarRoomRecommendationRow["futureAvailability"];
+  tierDropRisk: WarRoomRecommendationRow["tierDropRisk"];
+  opportunityCost: WarRoomRecommendationRow["opportunityCost"];
+  needTimingAction: WarRoomRecommendationRow["needTimingAction"];
+  needTimingReasons: string[];
 };
 
 const TARGET_TIERS = new Set(["priority_target", "strong_target", "solid_target", "watchlist"]);
@@ -135,9 +145,19 @@ export function compactRecommendationRow(row: WarRoomRecommendationRow): H10WarR
     recommendationScore: row.recommendationScore,
     status: row.status,
     primaryReason: row.primaryReason,
+    explanationFragments: row.explanationFragments,
     warningCodes: row.warningCodes,
     reasonCodes: row.reasonCodes,
     scoreComponents: row.scoreComponents,
+    h10: row.h10,
+    draftContext: row.draftContext,
+    rosterNeedStatus: row.rosterNeedStatus,
+    needUrgency: row.needUrgency,
+    futureAvailability: row.futureAvailability,
+    tierDropRisk: row.tierDropRisk,
+    opportunityCost: row.opportunityCost,
+    needTimingAction: row.needTimingAction,
+    needTimingReasons: row.needTimingReasons,
   };
 }
 

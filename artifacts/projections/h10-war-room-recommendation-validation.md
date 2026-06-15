@@ -1,6 +1,6 @@
 # H10.8 War Room Recommendation Validation
 
-Generated: 2026-06-15T13:43:50.325Z
+Generated: 2026-06-15T15:50:23.093Z
 
 Readiness verdict: ready
 
@@ -47,21 +47,21 @@ Readiness verdict: ready
 - Experiment readiness: {"legacyReady":false,"blackbirdPreviewReady":true,"blackbirdExperimentEligible":true,"failedExperimentGates":[]}
 - Legacy changed: false
 - Remaining order changed: false
-- Top rows: Myles Garrett DL watchlist 56; Aidan Hutchinson DL avoid_for_now 41; Danielle Hunter DL avoid_for_now 37.2; Chase Young DL avoid_for_now 29.5; Brian Burns LB avoid_for_now 29.3
+- Top rows: Myles Garrett DL watchlist 56; Aidan Hutchinson DL avoid_for_now 41; Danielle Hunter DL avoid_for_now 32.2; Chase Young DL avoid_for_now 24.5; Brian Burns LB avoid_for_now 24.3
 
 ### 🪓 Chopped (b386e78a-c7ff-4688-828e-6b48cbca863e)
 
 - Formats: Superflex, Shallow roster, Uploaded rankings
 - Loaded: 20 remaining, 20 overlay rows, 20 recommendations
 - Match rate: 1
-- Rows by tier: {"solid_target":2,"watchlist":4,"avoid_for_now":14}
+- Rows by tier: {"solid_target":2,"watchlist":2,"avoid_for_now":16}
 - Rows by status: {"watch_only":20}
 - Warnings: {"SINGLE_SEASON_OFFENSIVE_BASELINE":20,"Superflex mismatch: snapshot=false, league=true — QB tiers differ":20,"Team count difference (12 vs 18) — positional scarcity shifts":20,"Team count difference: snapshot=12, league=18":20,"Superflex mismatch — QB tier values diverge (snapshot=false, league=true)":4}
 - Thresholds: {"matchRatePass":true,"insufficientDataPass":true,"invariantPass":true,"legacyUnchangedPass":true,"remainingOrderUnchangedPass":true,"forbiddenLanguagePass":true,"offensiveTargetTierPass":true,"superflexQbUrgencyPass":false,"kEarlySuppressionPass":null,"dstEarlySuppressionPass":null}
 - Experiment readiness: {"legacyReady":false,"blackbirdPreviewReady":true,"blackbirdExperimentEligible":true,"failedExperimentGates":[]}
 - Legacy changed: false
 - Remaining order changed: false
-- Top rows: Trey McBride TE solid_target 65; Christian McCaffrey RB solid_target 60.7; Puka Nacua WR watchlist 48; Kyle Pitts TE watchlist 45.6; Jonathan Taylor RB watchlist 42.6
+- Top rows: Christian McCaffrey RB solid_target 64.7; Trey McBride TE solid_target 64; Josh Allen QB watchlist 54.5; Puka Nacua WR watchlist 52; Kyle Pitts TE avoid_for_now 41.6
 
 ### Legacy League (2f62d6e3-d309-4d50-8e7e-2ef05a83771c)
 
@@ -75,91 +75,91 @@ Readiness verdict: ready
 - Experiment readiness: {"legacyReady":false,"blackbirdPreviewReady":true,"blackbirdExperimentEligible":true,"failedExperimentGates":[]}
 - Legacy changed: false
 - Remaining order changed: false
-- Top rows: Pittsburgh Steelers DEF avoid_for_now 11; Baltimore Ravens DEF avoid_for_now 3; New York Jets DEF avoid_for_now 0; Buffalo Bills DEF avoid_for_now 0; Cleveland Browns DEF avoid_for_now 0
+- Top rows: Pittsburgh Steelers DEF avoid_for_now 2; Baltimore Ravens DEF avoid_for_now 0; New York Jets DEF avoid_for_now 0; Buffalo Bills DEF avoid_for_now 0; Cleveland Browns DEF avoid_for_now 0
 
 ### Legacy League (2a5c27ce-1a26-4473-95cc-9da9ed78520a)
 
 - Formats: 1QB offense, Kicker, DST, Shallow roster, Uploaded rankings
 - Loaded: 22 remaining, 22 overlay rows, 22 recommendations
 - Match rate: 1
-- Rows by tier: {"solid_target":2,"watchlist":4,"avoid_for_now":16}
+- Rows by tier: {"solid_target":3,"avoid_for_now":19}
 - Rows by status: {"watch_only":22}
 - Warnings: {"SINGLE_SEASON_OFFENSIVE_BASELINE":14,"K_EARLY_ROUND_SUPPRESSION":8,"LOW_PROJECTION_CONFIDENCE":8,"MARKET_NOT_IMPLEMENTED":8}
 - Thresholds: {"matchRatePass":true,"insufficientDataPass":true,"invariantPass":true,"legacyUnchangedPass":true,"remainingOrderUnchangedPass":true,"forbiddenLanguagePass":true,"offensiveTargetTierPass":true,"superflexQbUrgencyPass":null,"kEarlySuppressionPass":true,"dstEarlySuppressionPass":null}
 - Experiment readiness: {"legacyReady":false,"blackbirdPreviewReady":true,"blackbirdExperimentEligible":true,"failedExperimentGates":[]}
 - Legacy changed: false
 - Remaining order changed: false
-- Top rows: Trey McBride TE solid_target 64.3; Christian McCaffrey RB solid_target 62.8; Puka Nacua WR watchlist 56.1; Bijan Robinson RB watchlist 45.9; Jahmyr Gibbs RB watchlist 43.7
+- Top rows: Trey McBride TE solid_target 68.3; Christian McCaffrey RB solid_target 66.8; Puka Nacua WR solid_target 60.1; Bijan Robinson RB avoid_for_now 38.9; Jahmyr Gibbs RB avoid_for_now 36.7
 
 ### 🪓 Chopped (f131b67c-c646-4e01-a925-c7d9f3eab4b0)
 
 - Formats: Superflex, Shallow roster, Uploaded rankings
 - Loaded: 26 remaining, 26 overlay rows, 26 recommendations
 - Match rate: 1
-- Rows by tier: {"solid_target":2,"watchlist":4,"avoid_for_now":20}
+- Rows by tier: {"solid_target":2,"watchlist":2,"avoid_for_now":22}
 - Rows by status: {"watch_only":26}
 - Warnings: {"SINGLE_SEASON_OFFENSIVE_BASELINE":26,"Superflex mismatch: snapshot=false, league=true — QB tiers differ":26,"Team count difference (12 vs 18) — positional scarcity shifts":26,"Team count difference: snapshot=12, league=18":26,"Superflex mismatch — QB tier values diverge (snapshot=false, league=true)":10}
 - Thresholds: {"matchRatePass":true,"insufficientDataPass":true,"invariantPass":true,"legacyUnchangedPass":true,"remainingOrderUnchangedPass":true,"forbiddenLanguagePass":true,"offensiveTargetTierPass":true,"superflexQbUrgencyPass":true,"kEarlySuppressionPass":null,"dstEarlySuppressionPass":null}
 - Experiment readiness: {"legacyReady":false,"blackbirdPreviewReady":true,"blackbirdExperimentEligible":true,"failedExperimentGates":[]}
 - Legacy changed: false
 - Remaining order changed: false
-- Top rows: Trey McBride TE solid_target 63; Christian McCaffrey RB solid_target 59.9; Puka Nacua WR watchlist 47.3; Kyle Pitts TE watchlist 44.1; Jonathan Taylor RB watchlist 42.9
+- Top rows: Christian McCaffrey RB solid_target 63.9; Trey McBride TE solid_target 62; Josh Allen QB watchlist 53.9; Puka Nacua WR watchlist 43.3; Kyle Pitts TE avoid_for_now 40.1
 
 ### BestBalls in Hand IDP Dynasty  (f85238ff-b2ee-4053-8493-e38c4cb63bd3)
 
 - Formats: Superflex, IDP, Deep roster, Fallback pool
 - Loaded: 150 remaining, 150 overlay rows, 150 recommendations
 - Match rate: 1
-- Rows by tier: {"watchlist":7,"avoid_for_now":143}
+- Rows by tier: {"watchlist":1,"avoid_for_now":149}
 - Rows by status: {"watch_only":150}
 - Warnings: {"LOW_PROJECTION_CONFIDENCE":150,"MARKET_NOT_IMPLEMENTED":150}
 - Thresholds: {"matchRatePass":true,"insufficientDataPass":true,"invariantPass":true,"legacyUnchangedPass":true,"remainingOrderUnchangedPass":true,"forbiddenLanguagePass":true,"offensiveTargetTierPass":null,"superflexQbUrgencyPass":null,"kEarlySuppressionPass":null,"dstEarlySuppressionPass":null}
 - Experiment readiness: {"legacyReady":false,"blackbirdPreviewReady":true,"blackbirdExperimentEligible":true,"failedExperimentGates":[]}
 - Legacy changed: false
 - Remaining order changed: false
-- Top rows: Jamel Dean DB watchlist 48; Kevin Byard DB watchlist 46.3; Derek Stingley DB watchlist 45.3; Marlon Humphrey DB watchlist 44.3; Jaylinn Hawkins DB watchlist 43.6
+- Top rows: Jamel Dean DB watchlist 43; Kevin Byard DB avoid_for_now 41.3; Derek Stingley DB avoid_for_now 40.3; Marlon Humphrey DB avoid_for_now 39.3; Jaylinn Hawkins DB avoid_for_now 38.6
 
 ### [Fixture] 1QB Offense (fixture-one-qb-offense)
 
 - Formats: 1QB offense, Shallow roster, Uploaded rankings
 - Loaded: 4 remaining, 4 overlay rows, 4 recommendations
 - Match rate: 1
-- Rows by tier: {"priority_target":1,"watchlist":3}
+- Rows by tier: {"priority_target":1,"strong_target":3}
 - Rows by status: {"recommendable":4}
 - Warnings: {}
 - Thresholds: {"matchRatePass":true,"insufficientDataPass":true,"invariantPass":true,"legacyUnchangedPass":true,"remainingOrderUnchangedPass":true,"forbiddenLanguagePass":true,"offensiveTargetTierPass":true,"superflexQbUrgencyPass":null,"kEarlySuppressionPass":null,"dstEarlySuppressionPass":null}
 - Experiment readiness: {"legacyReady":false,"blackbirdPreviewReady":true,"blackbirdExperimentEligible":true,"failedExperimentGates":[]}
 - Legacy changed: false
 - Remaining order changed: false
-- Top rows: Fixture RB RB priority_target 91; Fixture WR WR watchlist 57.9; Fixture TE TE watchlist 49; Fixture QB QB watchlist 48.1
+- Top rows: Fixture RB RB priority_target 100; Fixture WR WR strong_target 83.9; Fixture TE TE strong_target 75; Fixture QB QB strong_target 74.1
 
 ### [Fixture] Superflex QB (fixture-superflex-qb)
 
 - Formats: Superflex, Shallow roster, Uploaded rankings
 - Loaded: 3 remaining, 3 overlay rows, 3 recommendations
 - Match rate: 1
-- Rows by tier: {"strong_target":2,"avoid_for_now":1}
+- Rows by tier: {"priority_target":2,"watchlist":1}
 - Rows by status: {"recommendable":3}
 - Warnings: {}
 - Thresholds: {"matchRatePass":true,"insufficientDataPass":true,"invariantPass":true,"legacyUnchangedPass":true,"remainingOrderUnchangedPass":true,"forbiddenLanguagePass":true,"offensiveTargetTierPass":true,"superflexQbUrgencyPass":true,"kEarlySuppressionPass":null,"dstEarlySuppressionPass":null}
 - Experiment readiness: {"legacyReady":false,"blackbirdPreviewReady":true,"blackbirdExperimentEligible":true,"failedExperimentGates":[]}
 - Legacy changed: false
 - Remaining order changed: false
-- Top rows: Fixture SF RB RB strong_target 82; Fixture SF QB QB strong_target 77.6; Fixture SF WR WR avoid_for_now 40
+- Top rows: Fixture SF QB QB priority_target 100; Fixture SF RB RB priority_target 94; Fixture SF WR WR watchlist 44
 
 ### [Fixture] TE Premium (fixture-te-premium)
 
 - Formats: TE premium, Shallow roster, Uploaded rankings
 - Loaded: 2 remaining, 2 overlay rows, 2 recommendations
 - Match rate: 1
-- Rows by tier: {"priority_target":1,"watchlist":1}
+- Rows by tier: {"priority_target":1,"strong_target":1}
 - Rows by status: {"recommendable":2}
 - Warnings: {}
 - Thresholds: {"matchRatePass":true,"insufficientDataPass":true,"invariantPass":true,"legacyUnchangedPass":true,"remainingOrderUnchangedPass":true,"forbiddenLanguagePass":true,"offensiveTargetTierPass":true,"superflexQbUrgencyPass":null,"kEarlySuppressionPass":null,"dstEarlySuppressionPass":null}
 - Experiment readiness: {"legacyReady":false,"blackbirdPreviewReady":true,"blackbirdExperimentEligible":true,"failedExperimentGates":[]}
 - Legacy changed: false
 - Remaining order changed: false
-- Top rows: Fixture Premium TE TE priority_target 91; Fixture WR WR watchlist 49
+- Top rows: Fixture Premium TE TE priority_target 100; Fixture WR WR strong_target 75
 
 ### [Fixture] Kicker DST (fixture-kicker-dst)
 
@@ -173,21 +173,21 @@ Readiness verdict: ready
 - Experiment readiness: {"legacyReady":false,"blackbirdPreviewReady":true,"blackbirdExperimentEligible":true,"failedExperimentGates":[]}
 - Legacy changed: false
 - Remaining order changed: false
-- Top rows: Fixture K K avoid_for_now 10; Fixture DST DEF avoid_for_now 33
+- Top rows: Fixture K K avoid_for_now 4; Fixture DST DEF avoid_for_now 27
 
 ### [Fixture] Mixed IDP (fixture-idp-mixed)
 
 - Formats: IDP, Shallow roster, Uploaded rankings
 - Loaded: 3 remaining, 3 overlay rows, 3 recommendations
 - Match rate: 1
-- Rows by tier: {"priority_target":1,"strong_target":1,"watchlist":1}
+- Rows by tier: {"priority_target":2,"strong_target":1}
 - Rows by status: {"recommendable":3}
 - Warnings: {}
 - Thresholds: {"matchRatePass":true,"insufficientDataPass":true,"invariantPass":true,"legacyUnchangedPass":true,"remainingOrderUnchangedPass":true,"forbiddenLanguagePass":true,"offensiveTargetTierPass":null,"superflexQbUrgencyPass":null,"kEarlySuppressionPass":null,"dstEarlySuppressionPass":null}
 - Experiment readiness: {"legacyReady":false,"blackbirdPreviewReady":true,"blackbirdExperimentEligible":true,"failedExperimentGates":[]}
 - Legacy changed: false
 - Remaining order changed: false
-- Top rows: Fixture LB LB priority_target 91; Fixture DL DL strong_target 76.5; Fixture DB DB watchlist 49
+- Top rows: Fixture DL DL priority_target 100; Fixture LB LB priority_target 100; Fixture DB DB strong_target 75
 
 ## Failures
 

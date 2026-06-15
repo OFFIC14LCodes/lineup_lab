@@ -183,7 +183,7 @@ type AvailablePlayerTableRow = {
 const POSITIONS = ["All", "QB", "RB", "WR", "TE", "K", "DEF", "DL", "LB", "DB"];
 const MATCH_FILTERS = ["All", "Matched", "Issues"];
 
-export function DraftWarRoom({ draftRoomId }: { draftRoomId: string }) {
+export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRoomId: string; disableAutoSync?: boolean }) {
   const [state, setState] = useState<DraftState | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [syncing, setSyncing] = useState(false);
@@ -215,10 +215,11 @@ export function DraftWarRoom({ draftRoomId }: { draftRoomId: string }) {
   }, [draftRoomId, loadState]);
 
   useEffect(() => {
-    void syncNow();
+    if (disableAutoSync) void loadState();
+    else void syncNow();
     const interval = window.setInterval(loadState, 5000);
     return () => window.clearInterval(interval);
-  }, [loadState, syncNow]);
+  }, [disableAutoSync, loadState, syncNow]);
 
   const availablePlayers = useMemo(() => {
     const needle = search.trim().toLowerCase();
@@ -871,14 +872,26 @@ function H10RecommendationCard({ row }: { row: WarRoomRecommendationRow }) {
         <H10MiniStat label="Risk value" value={formatNumber(row.h10.riskAdjustedValue)} />
         <H10MiniStat label="Tier" value={row.h10.tier === null ? "-" : String(row.h10.tier)} />
         <H10MiniStat label="Market" value={row.h10.marketValueSignal ?? "-"} />
+        <H10MiniStat label="Timing" value={row.needTimingAction ?? "-"} />
+        <H10MiniStat label="Urgency" value={row.needUrgency ?? "-"} />
         <H10MiniStat label="League value" value={formatNumber(row.scoreComponents.leagueValue)} />
         <H10MiniStat label="Roster need" value={formatNumber(row.scoreComponents.rosterNeed)} />
         <H10MiniStat label="Scarcity" value={formatNumber(row.scoreComponents.scarcity)} />
         <H10MiniStat label="Tier cliff" value={formatNumber(row.scoreComponents.tierCliff)} />
         <H10MiniStat label="Availability" value={formatNumber(row.scoreComponents.availabilityRisk)} />
+        <H10MiniStat label="Timing adj" value={formatNumber(row.scoreComponents.needTiming)} />
         <H10MiniStat label="Confidence" value={row.h10.confidenceLabel ?? row.status} />
         <H10MiniStat label="Risk" value={row.h10.valueReadiness ?? "-"} />
       </div>
+      {row.needTimingReasons?.length ? (
+        <div className="mt-2 grid gap-1">
+          {row.needTimingReasons.slice(0, 2).map((reason) => (
+            <p key={reason} className="rounded-md border border-line/70 bg-background/50 px-2 py-1 text-[11px] text-slate-400">
+              {reason}
+            </p>
+          ))}
+        </div>
+      ) : null}
       {row.warningCodes.length ? (
         <div className="mt-3 flex flex-wrap gap-1">
           {row.warningCodes.slice(0, 3).map((warning) => (

@@ -20,12 +20,32 @@ describe("Supabase auth OAuth helpers", () => {
 
   it("uses configured site URL when present", () => {
     const url = buildAuthCallbackUrl({
-      origin: "http://localhost:3000",
+      origin: "https://preview.blackbirdgm.com",
       configuredSiteUrl: "https://blackbirdgm.com",
       nextPath: "/dashboard",
     });
 
     expect(url).toBe("https://blackbirdgm.com/auth/callback?next=%2Fdashboard");
+  });
+
+  it("uses localhost origin even when NEXT_PUBLIC_SITE_URL is production", () => {
+    const url = buildAuthCallbackUrl({
+      origin: "http://localhost:3006",
+      configuredSiteUrl: "https://blackbirdgm.com",
+      nextPath: "/settings",
+    });
+
+    expect(url).toBe("http://localhost:3006/auth/callback?next=%2Fsettings");
+  });
+
+  it("uses 127.0.0.1 origin even when NEXT_PUBLIC_SITE_URL is production", () => {
+    const url = buildAuthCallbackUrl({
+      origin: "http://127.0.0.1:3006",
+      configuredSiteUrl: "https://blackbirdgm.com",
+      nextPath: "/dashboard",
+    });
+
+    expect(url).toBe("http://127.0.0.1:3006/auth/callback?next=%2Fdashboard");
   });
 
   it("rejects absolute and protocol-relative next values", () => {

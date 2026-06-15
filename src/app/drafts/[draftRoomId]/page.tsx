@@ -13,7 +13,7 @@ export default async function DraftRoomPage({ params }: { params: Promise<{ draf
       <Link className="mb-4 inline-block text-sm text-brand" href="/leagues">
         Back to leagues
       </Link>
-      <DraftWarRoom draftRoomId={draftRoomId} />
+      <DraftWarRoom draftRoomId={draftRoomId} disableAutoSync={process.env.DISABLE_WAR_ROOM_AUTO_SYNC_FOR_E2E === "true"} />
     </PageShell>
   );
 }

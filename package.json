@@ -49,6 +49,9 @@
     "dry-run:h10-war-room-recommendations": "tsx scripts/h10-war-room-recommendation-dry-run.ts",
     "validate:h10-war-room-recommendations": "tsx scripts/h10-war-room-recommendation-validation.ts",
     "diagnose:h10-war-room-side-by-side": "tsx scripts/h10-war-room-side-by-side-diagnostics.ts",
+    "smoke:h10-war-room-browser": "tsx scripts/h10-war-room-browser-smoke.ts",
+    "diagnose:h10-need-timing": "tsx scripts/h10-need-timing-intelligence.ts",
+    "diagnose:h10-recommendation-quality": "tsx scripts/h10-recommendation-quality-calibration.ts",
     "seed:h10-validation-rooms": "tsx scripts/seed-h10-validation-draft-rooms.ts",
     "repair:sleeper-player-identities": "tsx scripts/repair-sleeper-player-identities.ts",
     "test:watch": "vitest",
@@ -68,6 +71,7 @@
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.61.0",
     "@types/node": "^22.10.2",
     "@types/papaparse": "^5.3.15",
     "@types/react": "^19.0.2",

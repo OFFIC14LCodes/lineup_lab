@@ -9,6 +9,7 @@ export function getSafeAuthNextPath(next: string | null | undefined, fallback = 
 }
 
 export function getAuthRedirectOrigin(origin: string, configuredSiteUrl?: string | null) {
+  if (isLocalAuthOrigin(origin)) return origin;
   return configuredSiteUrl?.trim() || origin;
 }
 
@@ -37,5 +38,14 @@ export async function withAuthTimeout<T>(
     ]);
   } finally {
     if (timeout) clearTimeout(timeout);
+  }
+}
+
+function isLocalAuthOrigin(origin: string) {
+  try {
+    const url = new URL(origin);
+    return url.hostname === "localhost" || url.hostname === "127.0.0.1";
+  } catch {
+    return false;
   }
 }
