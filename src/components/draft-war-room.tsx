@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { ChevronDown, RefreshCw, Search } from "lucide-react";
+import { ChevronDown, RefreshCw, Search, Users } from "lucide-react";
 
 import type { WarRoomValueOverlayRow, WarRoomValueOverlayResult } from "@/lib/draft/h10-war-room-overlay";
 import type { H10RecommendationExperimentDiagnostics } from "@/lib/draft/war-room-recommendation-experiment";
@@ -64,7 +64,15 @@ type PickLine = {
   pick_no: number;
   round: number | null;
   pick_in_round: number | null;
+  platform_roster_id: string | null;
   roster_label?: string | null;
+};
+
+type DraftBoardTeam = {
+  rosterId: string;
+  label: string;
+  ownerPlatformUserId: string | null;
+  draftSlot: number;
 };
 
 type DraftState = {
@@ -74,8 +82,11 @@ type DraftState = {
   currentPickNumber: number;
   currentRound: number;
   picksUntilMyNextPick: number | null;
+  myDraftSlot: number | null;
+  teamCount: number | null;
   lastPick: PickLine | null;
   myRoster: PickLine[];
+  draftBoardTeams: DraftBoardTeam[];
   positionCounts: Record<string, number>;
   remainingPlayers: AvailablePlayer[];
   recommendations: AvailablePlayer[];
@@ -182,6 +193,17 @@ type AvailablePlayerTableRow = {
 
 const POSITIONS = ["All", "QB", "RB", "WR", "TE", "K", "DEF", "DL", "LB", "DB"];
 const MATCH_FILTERS = ["All", "Matched", "Issues"];
+const POSITION_SORT_ORDER: Record<string, number> = {
+  QB: 1,
+  RB: 2,
+  WR: 3,
+  TE: 4,
+  K: 5,
+  DEF: 6,
+  DL: 7,
+  LB: 8,
+  DB: 9,
+};
 
 export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRoomId: string; disableAutoSync?: boolean }) {
   const [state, setState] = useState<DraftState | null>(null);
@@ -190,6 +212,7 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
   const [positionFilter, setPositionFilter] = useState("All");
   const [matchFilter, setMatchFilter] = useState("All");
   const [search, setSearch] = useState("");
+  const [selectedRosterId, setSelectedRosterId] = useState<string | null>(null);
   const [recommendationSource, setRecommendationSource] = useState<H10RecommendationSource>(DEFAULT_H10_RECOMMENDATION_SOURCE);
 
   const loadState = useCallback(async () => {
@@ -239,15 +262,33 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
   }, [matchFilter, positionFilter, search, state?.h10ValueOverlay, state?.remainingPlayers]);
 
   if (error && !state) {
-    return <div className="rf-panel p-6 text-red-300">{error}</div>;
+    return (
+      <div className="rf-panel p-6">
+        <h1 className="text-xl font-black text-red-200">War Room state could not load</h1>
+        <p className="mt-2 text-sm text-slate-300">{error}</p>
+        <p className="mt-2 text-xs text-slate-500">Refresh the room or sync the league before relying on draft board, roster, or preview signals.</p>
+      </div>
+    );
   }
 
   if (!state) {
-    return <div className="rf-panel p-6 text-slate-300">Loading draft room...</div>;
+    return (
+      <div className="rf-panel p-6">
+        <h1 className="text-xl font-black text-slate-100">Loading draft room state</h1>
+        <p className="mt-2 text-sm text-slate-400">Syncing picks, roster construction, available players, and preview signals.</p>
+      </div>
+    );
   }
 
   const recentPicks = state.picks.slice(-24).reverse();
   const totalDraftedByMe = state.myRoster.length;
+  const draftBoardTeams = state.draftBoardTeams ?? [];
+  const selectedTeam =
+    draftBoardTeams.find((team) => team.rosterId === selectedRosterId) ??
+    draftBoardTeams.find((team) => team.draftSlot === state.myDraftSlot) ??
+    draftBoardTeams[0] ??
+    null;
+  const selectedTeamPicks = selectedTeam ? state.picks.filter((pick) => pick.platform_roster_id === selectedTeam.rosterId) : [];
 
   return (
     <div className="space-y-6">
@@ -280,6 +321,16 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
             Some diagnostic fallback players are hidden because they lack rankings, ADP, and Blackbird projections.
           </p>
         ) : null}
+        {state.myDraftSlot === null ? (
+          <p className="mt-3 rounded-md border border-gold/25 bg-gold/10 px-3 py-2 text-xs text-gold">
+            Your draft slot is not detected yet. Sync league rosters or draft picks to restore exact pick timing.
+          </p>
+        ) : null}
+        {!state.picks.length ? (
+          <p className="mt-3 rounded-md border border-line bg-panel2 px-3 py-2 text-xs text-slate-400">
+            No synced draft picks yet. The board will fill as Sleeper picks arrive.
+          </p>
+        ) : null}
         <div className="mt-5 grid gap-3 md:grid-cols-5">
           <Metric label="Current pick" value={state.currentPickNumber} />
           <Metric label="Round" value={state.currentRound} />
@@ -293,35 +344,34 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
         <section className="space-y-6">
           <section className="rf-panel overflow-hidden">
             <div className="border-b border-line p-4">
-              <h2 className="text-xl font-bold">Draft Board</h2>
+              <div className="flex flex-col justify-between gap-3 lg:flex-row lg:items-center">
+                <div>
+                  <h2 className="text-xl font-bold">Draft Board</h2>
+                  <p className="mt-1 text-sm text-slate-400">
+                    {(state.teamCount ?? draftBoardTeams.length) || "Unknown"} teams · Slot {state.myDraftSlot ?? "-"} · {recentPicks.length} recent picks
+                  </p>
+                </div>
+                {draftBoardTeams.length ? (
+                  <label className="flex items-center gap-2 text-sm text-slate-300">
+                    <Users className="h-4 w-4 text-slate-500" />
+                    <span className="shrink-0 text-xs uppercase tracking-wide text-slate-500">View roster</span>
+                    <select
+                      className="rf-input min-w-[220px]"
+                      value={selectedTeam?.rosterId ?? ""}
+                      onChange={(event) => setSelectedRosterId(event.target.value)}
+                    >
+                      {draftBoardTeams.map((team) => (
+                        <option key={team.rosterId} value={team.rosterId}>
+                          Slot {team.draftSlot} · {team.label}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                ) : null}
+              </div>
             </div>
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-[820px] text-left text-sm">
-                <thead className="bg-panel2 text-xs uppercase text-slate-400">
-                  <tr>
-                    <th className="px-4 py-3">Pick</th>
-                    <th className="px-4 py-3">Round</th>
-                    <th className="px-4 py-3">Player</th>
-                    <th className="px-4 py-3">Pos</th>
-                    <th className="px-4 py-3">Team</th>
-                    <th className="px-4 py-3">Roster</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {recentPicks.map((pick) => (
-                    <tr key={pick.pick_no} className="border-t border-line/70">
-                      <td className="px-4 py-3 font-bold">{pick.pick_no}</td>
-                      <td className="px-4 py-3">{pick.round ?? "-"}</td>
-                      <td className="px-4 py-3">{pick.player_name ?? "Unknown"}</td>
-                      <td className="px-4 py-3">{pick.position ?? "-"}</td>
-                      <td className="px-4 py-3">{pick.team ?? "-"}</td>
-                      <td className="px-4 py-3">{pick.roster_label ?? "-"}</td>
-                    </tr>
-                  ))}
-                  {recentPicks.length === 0 ? <EmptyTable colSpan={6} text="No picks synced yet." /> : null}
-                </tbody>
-              </table>
-            </div>
+            <SleeperStyleDraftBoard picks={state.picks} teams={draftBoardTeams} myDraftSlot={state.myDraftSlot} currentPickNumber={state.currentPickNumber} />
+            {selectedTeam ? <TeamRosterStrip team={selectedTeam} picks={selectedTeamPicks} /> : null}
           </section>
 
           <section className="rf-panel overflow-hidden">
@@ -384,6 +434,13 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
                 blackbirdDiagnostics={state.h10RecommendationDiagnostics ?? null}
                 experimentDiagnostics={state.h10RecommendationExperimentDiagnostics ?? null}
               />
+            ) : !state.rankingsUploaded && !state.recommendations.length && (state.h10RecommendationPreview || state.h10RecommendationDiagnostics) ? (
+              <H10RecommendationPreview
+                rows={state.h10RecommendationPreview ?? []}
+                diagnostics={state.h10RecommendationDiagnostics ?? null}
+                experimentDiagnostics={state.h10RecommendationExperimentDiagnostics ?? null}
+                mode="preview"
+              />
             ) : (
               <RecommendationList
                 players={state.recommendations.slice(0, 10)}
@@ -396,7 +453,7 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
             <ScoringMetadata metadata={state.scoringMetadata} />
           </SidePanel>
 
-          {!state.h10RecommendationExperimentEnabled && (state.h10RecommendationPreview || state.h10RecommendationDiagnostics) ? (
+          {!state.h10RecommendationExperimentEnabled && (state.rankingsUploaded || state.recommendations.length > 0) && (state.h10RecommendationPreview || state.h10RecommendationDiagnostics) ? (
             <SidePanel title="Blackbird Value Preview">
               <H10RecommendationPreview
                 rows={state.h10RecommendationPreview ?? []}
@@ -407,6 +464,153 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
             </SidePanel>
           ) : null}
         </aside>
+      </div>
+    </div>
+  );
+}
+
+function SleeperStyleDraftBoard({
+  picks,
+  teams,
+  myDraftSlot,
+  currentPickNumber,
+}: {
+  picks: PickLine[];
+  teams: DraftBoardTeam[];
+  myDraftSlot: number | null;
+  currentPickNumber: number;
+}) {
+  if (!teams.length) {
+    return (
+      <div className="p-4">
+        <div className="rounded-xl border border-dashed border-line bg-panel2/60 px-4 py-6 text-sm text-slate-400">
+          Team columns need synced league roster metadata. Sync the league to populate draft slots and roster labels.
+        </div>
+      </div>
+    );
+  }
+
+  const maxRound = Math.max(1, ...picks.map((pick) => pick.round ?? 1), Math.ceil(currentPickNumber / Math.max(1, teams.length)));
+  const picksByRoundAndSlot = new Map<string, PickLine>();
+  for (const pick of picks) {
+    const round = pick.round ?? Math.ceil(pick.pick_no / teams.length);
+    const slot = pick.pick_in_round ?? inferDraftSlotForPick(pick.pick_no, teams.length);
+    picksByRoundAndSlot.set(`${round}:${slot}`, pick);
+  }
+
+  return (
+    <div>
+      <div className="border-b border-line/70 px-4 py-3">
+        <PositionLegend />
+        {!picks.length ? (
+          <p className="mt-2 text-xs text-slate-500">No picks are synced yet; empty slots are shown in snake order until Sleeper pick data arrives.</p>
+        ) : null}
+      </div>
+      <div className="overflow-x-auto">
+        <div
+          className="grid min-w-[1120px] gap-px bg-line/70 p-px"
+          style={{ gridTemplateColumns: `56px repeat(${teams.length}, minmax(128px, 1fr))` }}
+        >
+          <div className="sticky left-0 z-10 bg-panel2 px-2 py-3 text-center text-[11px] font-bold uppercase tracking-wide text-slate-500">
+            Rd
+          </div>
+          {teams.map((team) => (
+            <div
+              key={team.rosterId}
+              className={`bg-panel2 px-3 py-3 text-xs ${team.draftSlot === myDraftSlot ? "ring-1 ring-inset ring-gold/60" : ""}`}
+            >
+              <div className="font-black text-slate-100">Slot {team.draftSlot}</div>
+              <div className="mt-1 truncate text-slate-400">{team.label}</div>
+              {team.draftSlot === myDraftSlot ? <div className="mt-1 text-[11px] font-bold uppercase tracking-wide text-gold">My slot</div> : null}
+            </div>
+          ))}
+          {Array.from({ length: maxRound }, (_, index) => index + 1).flatMap((round) => [
+            <div key={`round-${round}`} className="sticky left-0 z-10 flex items-center justify-center bg-panel2 text-sm font-black text-slate-300">
+              {round}
+            </div>,
+            ...teams.map((team) => {
+              const pick = picksByRoundAndSlot.get(`${round}:${team.draftSlot}`);
+              const expectedPickNo = expectedPickNumber(round, team.draftSlot, teams.length);
+              const isCurrent = expectedPickNo === currentPickNumber;
+              return <DraftPickCard key={`${round}-${team.rosterId}`} pick={pick ?? null} expectedPickNo={expectedPickNo} isCurrent={isCurrent} />;
+            }),
+          ])}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function PositionLegend() {
+  const positions = ["QB", "RB", "WR", "TE", "K", "DEF", "DL", "LB", "DB"];
+  return (
+    <div className="flex flex-wrap gap-2 text-[11px]">
+      {positions.map((position) => (
+        <span key={position} className={`rounded-full border px-2 py-1 font-bold ${positionBadgeClass(position)}`}>
+          {position}
+        </span>
+      ))}
+    </div>
+  );
+}
+
+function DraftPickCard({ pick, expectedPickNo, isCurrent }: { pick: PickLine | null; expectedPickNo: number; isCurrent: boolean }) {
+  if (!pick) {
+    return (
+      <div className={`min-h-[78px] bg-background/70 p-2 ${isCurrent ? "outline outline-2 outline-gold/70" : ""}`}>
+        <div className="text-[11px] font-semibold text-slate-600">#{expectedPickNo}</div>
+        {isCurrent ? <div className="mt-3 text-xs font-bold text-gold">On clock</div> : null}
+      </div>
+    );
+  }
+
+  return (
+    <div className={`min-h-[78px] border-l-4 p-2 ${positionCardClass(pick.position)}`}>
+      <div className="flex items-center justify-between gap-2 text-[11px]">
+        <span className="font-semibold text-slate-300">#{pick.pick_no}</span>
+        <span className="rounded-full bg-background/50 px-2 py-0.5 font-bold text-slate-100">{pick.position ?? "UNK"}</span>
+      </div>
+      <div className="mt-2 line-clamp-2 text-sm font-black leading-tight text-slate-50">{pick.player_name ?? "Unknown"}</div>
+      <div className="mt-1 truncate text-[11px] text-slate-300">{pick.team ?? pick.roster_label ?? "-"}</div>
+    </div>
+  );
+}
+
+function TeamRosterStrip({ team, picks }: { team: DraftBoardTeam; picks: PickLine[] }) {
+  const grouped = picks.reduce<Record<string, PickLine[]>>((acc, pick) => {
+    const position = pick.position ?? "UNK";
+    acc[position] = acc[position] ?? [];
+    acc[position].push(pick);
+    return acc;
+  }, {});
+  const positions = Object.keys(grouped).sort((a, b) => (POSITION_SORT_ORDER[a] ?? 99) - (POSITION_SORT_ORDER[b] ?? 99) || a.localeCompare(b));
+
+  return (
+    <div className="border-t border-line bg-panel2/40 p-4">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div>
+          <div className="text-sm font-black text-slate-100">{team.label}</div>
+          <div className="text-xs text-slate-500">Slot {team.draftSlot} · {picks.length} picks</div>
+        </div>
+        <div className="flex flex-wrap gap-1">
+          {positions.map((position) => (
+            <span key={position} className={`rounded-full border px-2 py-1 text-[11px] font-bold ${positionBadgeClass(position)}`}>
+              {position} {grouped[position].length}
+            </span>
+          ))}
+        </div>
+      </div>
+      <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+        {picks.map((pick) => (
+          <div key={pick.pick_no} className="rounded-md border border-line bg-background/60 px-3 py-2 text-xs">
+            <div className="flex items-center justify-between gap-2">
+              <span className="font-bold text-slate-100">{pick.player_name ?? "Unknown"}</span>
+              <span className={`rounded-full border px-2 py-0.5 font-bold ${positionBadgeClass(pick.position)}`}>{pick.position ?? "UNK"}</span>
+            </div>
+            <div className="mt-1 text-slate-500">Pick {pick.pick_no} · Round {pick.round ?? "-"}</div>
+          </div>
+        ))}
+        {!picks.length ? <p className="text-sm text-slate-400">No synced picks for this team yet. Sync Sleeper draft picks to populate this roster view.</p> : null}
       </div>
     </div>
   );
@@ -725,9 +929,10 @@ function RecommendationSourcePanel({
   blackbirdDiagnostics: WarRoomRecommendationResult["diagnostics"] | null;
   experimentDiagnostics: H10RecommendationExperimentDiagnostics | null;
 }) {
+  const effectiveSource = !rankingsUploaded && !legacyRows.length && blackbirdRows.length ? "blackbird" : source;
   const uiState = buildH10RecommendationExperimentUiState({
     experimentEnabled: true,
-    selectedSource: source,
+    selectedSource: effectiveSource,
     rows: blackbirdRows,
     experimentDiagnostics,
   });
@@ -739,21 +944,21 @@ function RecommendationSourcePanel({
         <div className="grid grid-cols-2 gap-2">
           <button
             type="button"
-            className={`rounded-md border px-3 py-2 text-xs font-semibold ${source === "legacy" ? "border-brand/40 bg-brand/15 text-brand" : "border-line bg-panel2 text-slate-300"}`}
+            className={`rounded-md border px-3 py-2 text-xs font-semibold ${effectiveSource === "legacy" ? "border-brand/40 bg-brand/15 text-brand" : "border-line bg-panel2 text-slate-300"}`}
             onClick={() => onSourceChange("legacy")}
           >
             Legacy
           </button>
           <button
             type="button"
-            className={`rounded-md border px-3 py-2 text-xs font-semibold ${source === "blackbird" ? "border-gold/40 bg-gold/10 text-gold" : "border-line bg-panel2 text-slate-300"}`}
+            className={`rounded-md border px-3 py-2 text-xs font-semibold ${effectiveSource === "blackbird" ? "border-gold/40 bg-gold/10 text-gold" : "border-line bg-panel2 text-slate-300"}`}
             onClick={() => onSourceChange("blackbird")}
           >
             Blackbird Value Preview
           </button>
         </div>
       </div>
-      {source === "legacy" ? (
+      {effectiveSource === "legacy" ? (
         <RecommendationList
           players={legacyRows}
           rankingsUploaded={rankingsUploaded}
@@ -802,7 +1007,8 @@ function H10RecommendationPreview({
   return (
     <div className="space-y-3">
       <div className="rounded-md border border-brand/20 bg-brand/10 px-3 py-2 text-xs text-brand">
-        {H10_RECOMMENDATION_READINESS_LABELS.join(" · ")}. Blackbird value recommendations do not replace legacy recommendations.
+        {H10_RECOMMENDATION_READINESS_LABELS.join(" · ")}. Blackbird preview is a read-only experimental signal based on current projections,
+        market value, roster need, and pick timing. It does not replace legacy Draft Target Score rows.
       </div>
       {mode === "experiment" && disabled ? (
         <p className="rounded-md border border-gold/25 bg-gold/10 px-3 py-2 text-xs text-gold">
@@ -812,7 +1018,7 @@ function H10RecommendationPreview({
       ) : null}
       {mostlyInsufficient ? (
         <p className="rounded-md border border-gold/25 bg-gold/10 px-3 py-2 text-xs text-gold">
-          Blackbird has value data for some players, but many available players are missing deterministic projection matches in this room.
+          Blackbird has value data for some players, but many available players are missing deterministic projection matches in this room. Confidence and risk caveats apply.
         </p>
       ) : null}
       {!disabled && visibleRows.length ? (
@@ -824,7 +1030,10 @@ function H10RecommendationPreview({
       ) : (
         <div className="rounded-xl border border-dashed border-line bg-panel2/60 px-4 py-4 text-sm">
           <p className="font-semibold text-slate-100">No H10 preview rows available.</p>
-          <p className="mt-2 text-slate-400">The preview needs a synced draft room plus deterministic H10 value overlay rows.</p>
+          <p className="mt-2 text-slate-400">
+            The Blackbird preview needs a synced draft room plus deterministic projection and market rows. Upload rankings to use legacy Draft Target Score
+            while preview rows are unavailable.
+          </p>
         </div>
       )}
       {diagnostics ? (
@@ -1308,6 +1517,48 @@ function formatNullableRate(value: number | null) {
 function formatScoreComponents(components: WarRoomRecommendationResult["diagnostics"]["idpAverageScoreComponents"]) {
   if (!components) return "None";
   return Object.entries(components).map(([key, value]) => `${key}: ${formatNumber(value)}`).join(", ");
+}
+
+function expectedPickNumber(round: number, draftSlot: number, teamCount: number) {
+  const pickInRound = round % 2 === 0 ? teamCount - draftSlot + 1 : draftSlot;
+  return (round - 1) * teamCount + pickInRound;
+}
+
+function inferDraftSlotForPick(pickNo: number, teamCount: number) {
+  const round = Math.ceil(pickNo / teamCount);
+  const pickInRound = ((pickNo - 1) % teamCount) + 1;
+  return round % 2 === 0 ? teamCount - pickInRound + 1 : pickInRound;
+}
+
+function positionCardClass(position: string | null | undefined) {
+  const base = "border-line bg-panel2 text-slate-100";
+  const classes: Record<string, string> = {
+    QB: "border-red-400 bg-red-500/20",
+    RB: "border-emerald-400 bg-emerald-500/18",
+    WR: "border-sky-400 bg-sky-500/18",
+    TE: "border-orange-300 bg-orange-500/18",
+    K: "border-fuchsia-300 bg-fuchsia-500/16",
+    DEF: "border-zinc-300 bg-zinc-500/18",
+    DL: "border-violet-300 bg-violet-500/18",
+    LB: "border-lime-300 bg-lime-500/16",
+    DB: "border-cyan-300 bg-cyan-500/16",
+  };
+  return classes[position ?? ""] ?? base;
+}
+
+function positionBadgeClass(position: string | null | undefined) {
+  const classes: Record<string, string> = {
+    QB: "border-red-300/40 bg-red-500/15 text-red-100",
+    RB: "border-emerald-300/40 bg-emerald-500/15 text-emerald-100",
+    WR: "border-sky-300/40 bg-sky-500/15 text-sky-100",
+    TE: "border-orange-300/40 bg-orange-500/15 text-orange-100",
+    K: "border-fuchsia-300/40 bg-fuchsia-500/15 text-fuchsia-100",
+    DEF: "border-zinc-300/40 bg-zinc-500/15 text-zinc-100",
+    DL: "border-violet-300/40 bg-violet-500/15 text-violet-100",
+    LB: "border-lime-300/40 bg-lime-500/15 text-lime-100",
+    DB: "border-cyan-300/40 bg-cyan-500/15 text-cyan-100",
+  };
+  return classes[position ?? ""] ?? "border-line bg-background text-slate-300";
 }
 
 // TODO: Extend War Room display logic for IDP roster slots and defensive positions.

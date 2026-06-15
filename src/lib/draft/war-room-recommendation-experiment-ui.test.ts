@@ -61,7 +61,7 @@ describe("buildH10RecommendationExperimentUiState", () => {
     expect(state.legacyPanelPrimary).toBe(true);
   });
 
-  it("disables Blackbird panel and exposes failed gates when gates fail", () => {
+  it("keeps read-only Blackbird preview visible when experiment gates fail but preview is ready", () => {
     const state = buildH10RecommendationExperimentUiState({
       experimentEnabled: true,
       selectedSource: "blackbird",
@@ -72,8 +72,24 @@ describe("buildH10RecommendationExperimentUiState", () => {
       }),
     });
 
-    expect(state.blackbirdPanelEnabled).toBe(false);
+    expect(state.blackbirdPanelEnabled).toBe(true);
     expect(state.failedExperimentGates).toEqual(["MATCH_RATE_BELOW_0_85"]);
+  });
+
+  it("disables Blackbird panel when preview generation is not ready", () => {
+    const state = buildH10RecommendationExperimentUiState({
+      experimentEnabled: true,
+      selectedSource: "blackbird",
+      rows: [],
+      experimentDiagnostics: diagnostics({
+        blackbirdPreviewReady: false,
+        blackbirdExperimentEligible: false,
+        failedExperimentGates: ["INVARIANT_FAILURES_PRESENT"],
+      }),
+    });
+
+    expect(state.blackbirdPanelEnabled).toBe(false);
+    expect(state.failedExperimentGates).toEqual(["INVARIANT_FAILURES_PRESENT"]);
   });
 
   it("counts missing projection and format excluded rows as diagnostics-only", () => {
@@ -94,7 +110,7 @@ describe("buildH10RecommendationExperimentUiState", () => {
     expect(labelText).toContain("deterministic");
     expect(labelText).toContain("projection-based");
     expect(labelText).toContain("not final draft advice");
-    expect(labelText).not.toMatch(/\b(ai says|guaranteed|must draft|lock|best pick)\b/);
+    expect(labelText).not.toMatch(/\b(ai says|ai advice|guaranteed|must draft|lock|best pick|can't miss|can’t miss|you should draft|final recommendation)\b/);
   });
 });
 

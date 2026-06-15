@@ -89,6 +89,23 @@ export type H10WarRoomCompactRecommendation = {
   opportunityCost: WarRoomRecommendationRow["opportunityCost"];
   needTimingAction: WarRoomRecommendationRow["needTimingAction"];
   needTimingReasons: string[];
+  survivalConfidence: WarRoomRecommendationRow["survivalConfidence"];
+  survivalConfidenceScore: number;
+  comparableOptionsNow: number;
+  comparableOptionsLikelyNextPick: number;
+  comparableOptionsLikelyNextTwoPicks: number;
+  waitRisk: WarRoomRecommendationRow["waitRisk"];
+  waitRiskReasons: string[];
+  needTimingAdjustedBySurvival: boolean;
+  waitPlanTargets: WarRoomRecommendationRow["waitPlanTargets"];
+  waitPlanTargetCount: number;
+  waitPlanStrongTargetCount: number;
+  waitPlanSurvivalSummary: string;
+  waitPlanRisk: WarRoomRecommendationRow["waitPlanRisk"];
+  waitPlanReason: string;
+  waitPlanBacked: boolean;
+  waitPlanFallbackAction: WarRoomRecommendationRow["waitPlanFallbackAction"];
+  needTimingAdjustedByWaitPlan: boolean;
 };
 
 const TARGET_TIERS = new Set(["priority_target", "strong_target", "solid_target", "watchlist"]);
@@ -158,6 +175,23 @@ export function compactRecommendationRow(row: WarRoomRecommendationRow): H10WarR
     opportunityCost: row.opportunityCost,
     needTimingAction: row.needTimingAction,
     needTimingReasons: row.needTimingReasons,
+    survivalConfidence: row.survivalConfidence,
+    survivalConfidenceScore: row.survivalConfidenceScore,
+    comparableOptionsNow: row.comparableOptionsNow,
+    comparableOptionsLikelyNextPick: row.comparableOptionsLikelyNextPick,
+    comparableOptionsLikelyNextTwoPicks: row.comparableOptionsLikelyNextTwoPicks,
+    waitRisk: row.waitRisk,
+    waitRiskReasons: row.waitRiskReasons,
+    needTimingAdjustedBySurvival: row.needTimingAdjustedBySurvival,
+    waitPlanTargets: row.waitPlanTargets,
+    waitPlanTargetCount: row.waitPlanTargetCount,
+    waitPlanStrongTargetCount: row.waitPlanStrongTargetCount,
+    waitPlanSurvivalSummary: row.waitPlanSurvivalSummary,
+    waitPlanRisk: row.waitPlanRisk,
+    waitPlanReason: row.waitPlanReason,
+    waitPlanBacked: row.waitPlanBacked,
+    waitPlanFallbackAction: row.waitPlanFallbackAction,
+    needTimingAdjustedByWaitPlan: row.needTimingAdjustedByWaitPlan,
   };
 }
 

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-15T15:50:56.287Z",
+  "generatedAt": "2026-06-15T17:46:38.469Z",
   "artifactVersion": "h10.12-recommendation-quality-calibration-v1",
   "rooms": [
     {
@@ -13,7 +13,7 @@
         "marketAdpValue": 5.4,
         "positionalScarcity": 6.3,
         "rosterNeed": 20,
-        "needTiming": -4.3,
+        "needTiming": 0,
         "confidenceRiskAdjustment": -14,
         "tierDropRisk": 2,
         "futureAvailability": 2.2,
@@ -85,16 +85,16 @@
           "recommendationRank": 3,
           "displayName": "Danielle Hunter",
           "position": "DL",
-          "recommendationScore": 32.2,
+          "recommendationScore": 37.2,
           "recommendationTier": "avoid_for_now",
           "status": "watch_only",
-          "needTimingAction": "wait_one_turn",
+          "needTimingAction": "monitor",
           "componentBreakdown": {
             "projectionValue": 11.2,
             "marketAdpValue": 7,
             "positionalScarcity": 11,
             "rosterNeed": 20,
-            "needTiming": -5,
+            "needTiming": 0,
             "confidenceRiskAdjustment": -14,
             "tierDropRisk": 2,
             "futureAvailability": 4,
@@ -114,16 +114,16 @@
           "recommendationRank": 4,
           "displayName": "Chase Young",
           "position": "DL",
-          "recommendationScore": 24.5,
+          "recommendationScore": 29.5,
           "recommendationTier": "avoid_for_now",
           "status": "watch_only",
-          "needTimingAction": "wait_one_turn",
+          "needTimingAction": "monitor",
           "componentBreakdown": {
             "projectionValue": 5.5,
             "marketAdpValue": 5,
             "positionalScarcity": 11,
             "rosterNeed": 20,
-            "needTiming": -5,
+            "needTiming": 0,
             "confidenceRiskAdjustment": -14,
             "tierDropRisk": 2,
             "futureAvailability": 2,
@@ -143,16 +143,16 @@
           "recommendationRank": 5,
           "displayName": "Brian Burns",
           "position": "LB",
-          "recommendationScore": 24.3,
+          "recommendationScore": 29.3,
           "recommendationTier": "avoid_for_now",
           "status": "watch_only",
-          "needTimingAction": "wait_one_turn",
+          "needTimingAction": "monitor",
           "componentBreakdown": {
             "projectionValue": 15.3,
             "marketAdpValue": 5,
             "positionalScarcity": 1,
             "rosterNeed": 20,
-            "needTiming": -5,
+            "needTiming": 0,
             "confidenceRiskAdjustment": -14,
             "tierDropRisk": 2,
             "futureAvailability": 2,
@@ -172,16 +172,16 @@
           "recommendationRank": 6,
           "displayName": "Jeffery Simmons",
           "position": "DL",
-          "recommendationScore": 24.1,
+          "recommendationScore": 29.1,
           "recommendationTier": "avoid_for_now",
           "status": "watch_only",
-          "needTimingAction": "wait_one_turn",
+          "needTimingAction": "monitor",
           "componentBreakdown": {
             "projectionValue": 5.1,
             "marketAdpValue": 5,
             "positionalScarcity": 11,
             "rosterNeed": 20,
-            "needTiming": -5,
+            "needTiming": 0,
             "confidenceRiskAdjustment": -14,
             "tierDropRisk": 2,
             "futureAvailability": 2,
@@ -201,16 +201,16 @@
           "recommendationRank": 7,
           "displayName": "Laiatu Latu",
           "position": "DL",
-          "recommendationScore": 24,
+          "recommendationScore": 29,
           "recommendationTier": "avoid_for_now",
           "status": "watch_only",
-          "needTimingAction": "wait_one_turn",
+          "needTimingAction": "monitor",
           "componentBreakdown": {
             "projectionValue": 4,
             "marketAdpValue": 6,
             "positionalScarcity": 11,
             "rosterNeed": 20,
-            "needTiming": -5,
+            "needTiming": 0,
             "confidenceRiskAdjustment": -14,
             "tierDropRisk": 2,
             "futureAvailability": 2,
@@ -230,16 +230,16 @@
           "recommendationRank": 8,
           "displayName": "Maxx Crosby",
           "position": "DL",
-          "recommendationScore": 22.4,
+          "recommendationScore": 27.4,
           "recommendationTier": "avoid_for_now",
           "status": "watch_only",
-          "needTimingAction": "wait_one_turn",
+          "needTimingAction": "monitor",
           "componentBreakdown": {
             "projectionValue": 2.4,
             "marketAdpValue": 6,
             "positionalScarcity": 11,
             "rosterNeed": 20,
-            "needTiming": -5,
+            "needTiming": 0,
             "confidenceRiskAdjustment": -14,
             "tierDropRisk": 2,
             "futureAvailability": 2,
@@ -261,16 +261,16 @@
           "recommendationRank": 9,
           "displayName": "Will Anderson",
           "position": "DL",
-          "recommendationScore": 20,
+          "recommendationScore": 25,
           "recommendationTier": "avoid_for_now",
           "status": "watch_only",
-          "needTimingAction": "wait_one_turn",
+          "needTimingAction": "monitor",
           "componentBreakdown": {
             "projectionValue": 0,
             "marketAdpValue": 6,
             "positionalScarcity": 11,
             "rosterNeed": 20,
-            "needTiming": -5,
+            "needTiming": 0,
             "confidenceRiskAdjustment": -14,
             "tierDropRisk": 2,
             "futureAvailability": 2,
@@ -292,16 +292,16 @@
           "recommendationRank": 10,
           "displayName": "Antonio Johnson",
           "position": "DB",
-          "recommendationScore": 19.2,
+          "recommendationScore": 24.2,
           "recommendationTier": "avoid_for_now",
           "status": "watch_only",
-          "needTimingAction": "wait_one_turn",
+          "needTimingAction": "monitor",
           "componentBreakdown": {
             "projectionValue": 11.2,
             "marketAdpValue": 4,
             "positionalScarcity": 1,
             "rosterNeed": 20,
-            "needTiming": -5,
+            "needTiming": 0,
             "confidenceRiskAdjustment": -14,
             "tierDropRisk": 2,
             "futureAvailability": 1,
@@ -331,15 +331,15 @@
         },
         {
           "displayName": "Danielle Hunter",
-          "explanation": "League value: +0.7 points above replacement. Roster need: DL starter depth still matters in this format. Scarcity: DL scarcity is low in this league. DL timing action: wait_one_turn."
+          "explanation": "League value: +0.7 points above replacement. Roster need: DL starter depth still matters in this format. Scarcity: DL scarcity is low in this league. DL timing action: monitor."
         },
         {
           "displayName": "Chase Young",
-          "explanation": "League value: +0 points above replacement. Roster need: DL starter depth still matters in this format. Scarcity: DL scarcity is low in this league. DL timing action: wait_one_turn."
+          "explanation": "League value: +0 points above replacement. Roster need: DL starter depth still matters in this format. Scarcity: DL scarcity is low in this league. DL timing action: monitor."
         },
         {
           "displayName": "Brian Burns",
-          "explanation": "League value: +1 points above replacement. Roster need: LB starter depth still matters in this format. Risk: low-confidence baseline; range is wide. LB timing action: wait_one_turn."
+          "explanation": "League value: +1 points above replacement. Roster need: LB starter depth still matters in this format. Risk: low-confidence baseline; range is wide. LB timing action: monitor."
         }
       ],
       "confidenceRiskFindings": [],
@@ -355,61 +355,32 @@
       "leagueName": "🪓 Chopped",
       "rowCount": 15,
       "componentAverages": {
-        "projectionValue": 14.5,
-        "marketAdpValue": 9.2,
+        "projectionValue": 14.3,
+        "marketAdpValue": 9.3,
         "positionalScarcity": 5.8,
-        "rosterNeed": 19.7,
-        "needTiming": -4.2,
+        "rosterNeed": 19.6,
+        "needTiming": 5.6,
         "confidenceRiskAdjustment": -18,
-        "tierDropRisk": 12.5,
-        "futureAvailability": 3.1,
-        "opportunityCost": 5.3
+        "tierDropRisk": 12.2,
+        "futureAvailability": 3.2,
+        "opportunityCost": 3.2
       },
       "dominantComponentCounts": {},
       "topRecommendationExamples": [
         {
           "recommendationRank": 1,
-          "displayName": "Christian McCaffrey",
-          "position": "RB",
-          "recommendationScore": 64.7,
-          "recommendationTier": "solid_target",
-          "status": "watch_only",
-          "needTimingAction": "monitor",
-          "componentBreakdown": {
-            "projectionValue": 26.3,
-            "marketAdpValue": 11,
-            "positionalScarcity": 6.4,
-            "rosterNeed": 20,
-            "needTiming": 0,
-            "confidenceRiskAdjustment": -18,
-            "tierDropRisk": 19,
-            "futureAvailability": 5,
-            "opportunityCost": 0
-          },
-          "dominantComponents": [],
-          "explanationQuality": {
-            "hasValueReason": true,
-            "hasNeedReason": true,
-            "hasTimingReason": true,
-            "hasRiskCaveat": true,
-            "bannedLanguage": []
-          },
-          "guardrailFindings": []
-        },
-        {
-          "recommendationRank": 2,
           "displayName": "Trey McBride",
           "position": "TE",
-          "recommendationScore": 64,
-          "recommendationTier": "solid_target",
+          "recommendationScore": 91,
+          "recommendationTier": "strong_target",
           "status": "watch_only",
-          "needTimingAction": "wait_one_turn",
+          "needTimingAction": "fill_now",
           "componentBreakdown": {
             "projectionValue": 28,
             "marketAdpValue": 9,
             "positionalScarcity": 11,
             "rosterNeed": 20,
-            "needTiming": -5,
+            "needTiming": 22,
             "confidenceRiskAdjustment": -18,
             "tierDropRisk": 19,
             "futureAvailability": 3,
@@ -426,7 +397,94 @@
           "guardrailFindings": []
         },
         {
+          "recommendationRank": 2,
+          "displayName": "Christian McCaffrey",
+          "position": "RB",
+          "recommendationScore": 86.7,
+          "recommendationTier": "strong_target",
+          "status": "watch_only",
+          "needTimingAction": "fill_now",
+          "componentBreakdown": {
+            "projectionValue": 26.3,
+            "marketAdpValue": 11,
+            "positionalScarcity": 6.4,
+            "rosterNeed": 20,
+            "needTiming": 22,
+            "confidenceRiskAdjustment": -18,
+            "tierDropRisk": 19,
+            "futureAvailability": 5,
+            "opportunityCost": 0
+          },
+          "dominantComponents": [],
+          "explanationQuality": {
+            "hasValueReason": true,
+            "hasNeedReason": true,
+            "hasTimingReason": true,
+            "hasRiskCaveat": true,
+            "bannedLanguage": []
+          },
+          "guardrailFindings": []
+        },
+        {
           "recommendationRank": 3,
+          "displayName": "Puka Nacua",
+          "position": "WR",
+          "recommendationScore": 74,
+          "recommendationTier": "strong_target",
+          "status": "watch_only",
+          "needTimingAction": "fill_now",
+          "componentBreakdown": {
+            "projectionValue": 20,
+            "marketAdpValue": 10,
+            "positionalScarcity": 1,
+            "rosterNeed": 20,
+            "needTiming": 22,
+            "confidenceRiskAdjustment": -18,
+            "tierDropRisk": 19,
+            "futureAvailability": 4,
+            "opportunityCost": 0
+          },
+          "dominantComponents": [],
+          "explanationQuality": {
+            "hasValueReason": true,
+            "hasNeedReason": true,
+            "hasTimingReason": true,
+            "hasRiskCaveat": true,
+            "bannedLanguage": []
+          },
+          "guardrailFindings": []
+        },
+        {
+          "recommendationRank": 4,
+          "displayName": "Kyle Pitts",
+          "position": "TE",
+          "recommendationScore": 71.6,
+          "recommendationTier": "solid_target",
+          "status": "watch_only",
+          "needTimingAction": "fill_now",
+          "componentBreakdown": {
+            "projectionValue": 8.6,
+            "marketAdpValue": 9,
+            "positionalScarcity": 11,
+            "rosterNeed": 20,
+            "needTiming": 22,
+            "confidenceRiskAdjustment": -18,
+            "tierDropRisk": 19,
+            "futureAvailability": 3,
+            "opportunityCost": 0
+          },
+          "dominantComponents": [],
+          "explanationQuality": {
+            "hasValueReason": true,
+            "hasNeedReason": true,
+            "hasTimingReason": true,
+            "hasRiskCaveat": true,
+            "bannedLanguage": []
+          },
+          "guardrailFindings": []
+        },
+        {
+          "recommendationRank": 5,
           "displayName": "Josh Allen",
           "position": "QB",
           "recommendationScore": 54.5,
@@ -455,22 +513,22 @@
           "guardrailFindings": []
         },
         {
-          "recommendationRank": 4,
-          "displayName": "Puka Nacua",
+          "recommendationRank": 6,
+          "displayName": "Ja'Marr Chase",
           "position": "WR",
-          "recommendationScore": 52,
+          "recommendationScore": 51.6,
           "recommendationTier": "watchlist",
           "status": "watch_only",
-          "needTimingAction": "monitor",
+          "needTimingAction": "fill_now",
           "componentBreakdown": {
-            "projectionValue": 20,
-            "marketAdpValue": 10,
+            "projectionValue": 10.6,
+            "marketAdpValue": 7,
             "positionalScarcity": 1,
             "rosterNeed": 20,
-            "needTiming": 0,
+            "needTiming": 22,
             "confidenceRiskAdjustment": -18,
-            "tierDropRisk": 19,
-            "futureAvailability": 4,
+            "tierDropRisk": 9,
+            "futureAvailability": 1,
             "opportunityCost": 0
           },
           "dominantComponents": [],
@@ -484,23 +542,23 @@
           "guardrailFindings": []
         },
         {
-          "recommendationRank": 5,
-          "displayName": "Kyle Pitts",
-          "position": "TE",
-          "recommendationScore": 41.6,
+          "recommendationRank": 7,
+          "displayName": "Jahmyr Gibbs",
+          "position": "RB",
+          "recommendationScore": 40.1,
           "recommendationTier": "avoid_for_now",
           "status": "watch_only",
-          "needTimingAction": "wait_one_turn",
+          "needTimingAction": "monitor",
           "componentBreakdown": {
-            "projectionValue": 8.6,
-            "marketAdpValue": 9,
-            "positionalScarcity": 11,
+            "projectionValue": 14.7,
+            "marketAdpValue": 8,
+            "positionalScarcity": 6.4,
             "rosterNeed": 20,
-            "needTiming": -8,
+            "needTiming": 0,
             "confidenceRiskAdjustment": -18,
-            "tierDropRisk": 19,
-            "futureAvailability": 3,
-            "opportunityCost": 8
+            "tierDropRisk": 9,
+            "futureAvailability": 2,
+            "opportunityCost": 0
           },
           "dominantComponents": [],
           "explanationQuality": {
@@ -513,7 +571,7 @@
           "guardrailFindings": []
         },
         {
-          "recommendationRank": 6,
+          "recommendationRank": 8,
           "displayName": "James Cook",
           "position": "RB",
           "recommendationScore": 36.1,
@@ -542,7 +600,7 @@
           "guardrailFindings": []
         },
         {
-          "recommendationRank": 7,
+          "recommendationRank": 9,
           "displayName": "De'Von Achane",
           "position": "RB",
           "recommendationScore": 35.7,
@@ -571,7 +629,7 @@
           "guardrailFindings": []
         },
         {
-          "recommendationRank": 8,
+          "recommendationRank": 10,
           "displayName": "Jonathan Taylor",
           "position": "RB",
           "recommendationScore": 35.6,
@@ -598,94 +656,34 @@
             "bannedLanguage": []
           },
           "guardrailFindings": []
-        },
-        {
-          "recommendationRank": 9,
-          "displayName": "Bijan Robinson",
-          "position": "RB",
-          "recommendationScore": 34.9,
-          "recommendationTier": "avoid_for_now",
-          "status": "watch_only",
-          "needTimingAction": "wait_one_turn",
-          "componentBreakdown": {
-            "projectionValue": 17.5,
-            "marketAdpValue": 8,
-            "positionalScarcity": 6.4,
-            "rosterNeed": 20,
-            "needTiming": -8,
-            "confidenceRiskAdjustment": -18,
-            "tierDropRisk": 9,
-            "futureAvailability": 2,
-            "opportunityCost": 8
-          },
-          "dominantComponents": [],
-          "explanationQuality": {
-            "hasValueReason": true,
-            "hasNeedReason": true,
-            "hasTimingReason": true,
-            "hasRiskCaveat": true,
-            "bannedLanguage": []
-          },
-          "guardrailFindings": []
-        },
-        {
-          "recommendationRank": 10,
-          "displayName": "Travis Kelce",
-          "position": "TE",
-          "recommendationScore": 32.3,
-          "recommendationTier": "avoid_for_now",
-          "status": "watch_only",
-          "needTimingAction": "wait_one_turn",
-          "componentBreakdown": {
-            "projectionValue": 4.3,
-            "marketAdpValue": 9,
-            "positionalScarcity": 11,
-            "rosterNeed": 20,
-            "needTiming": -8,
-            "confidenceRiskAdjustment": -18,
-            "tierDropRisk": 14,
-            "futureAvailability": 3,
-            "opportunityCost": 8
-          },
-          "dominantComponents": [],
-          "explanationQuality": {
-            "hasValueReason": true,
-            "hasNeedReason": true,
-            "hasTimingReason": true,
-            "hasRiskCaveat": true,
-            "bannedLanguage": []
-          },
-          "guardrailFindings": []
         }
       ],
       "topExplanationExamples": [
         {
-          "displayName": "Christian McCaffrey",
-          "explanation": "High league value: +72.8 points above replacement. Roster need: RB starter depth still matters in this format. Tier cliff: few players remain in this tier. RB timing action: monitor."
+          "displayName": "Trey McBride",
+          "explanation": "High league value: +94 points above replacement. Roster need: TE starter depth still matters in this format. Scarcity: TE scarcity is low in this league. TE timing action: fill_now."
         },
         {
-          "displayName": "Trey McBride",
-          "explanation": "High league value: +94 points above replacement. Roster need: TE starter depth still matters in this format. Scarcity: TE scarcity is low in this league. TE timing action: wait_one_turn."
+          "displayName": "Christian McCaffrey",
+          "explanation": "High league value: +72.8 points above replacement. Roster need: RB starter depth still matters in this format. Tier cliff: few players remain in this tier. RB timing action: fill_now."
+        },
+        {
+          "displayName": "Puka Nacua",
+          "explanation": "High league value: +41.3 points above replacement. Roster need: WR starter depth still matters in this format. Tier cliff: few players remain in this tier. WR timing action: fill_now."
+        },
+        {
+          "displayName": "Kyle Pitts",
+          "explanation": "League value: +0 points above replacement. Roster need: TE starter depth still matters in this format. Scarcity: TE scarcity is low in this league. TE timing action: fill_now."
         },
         {
           "displayName": "Josh Allen",
           "explanation": "League value: +22.7 points above replacement. Roster need: QB starter depth still matters in this format. Risk: low-confidence baseline; range is wide. QB timing action: fill_now."
-        },
-        {
-          "displayName": "Puka Nacua",
-          "explanation": "High league value: +41.3 points above replacement. Roster need: WR starter depth still matters in this format. Tier cliff: few players remain in this tier. WR timing action: monitor."
-        },
-        {
-          "displayName": "Kyle Pitts",
-          "explanation": "League value: +0 points above replacement. Roster need: TE starter depth still matters in this format. Scarcity: TE scarcity is low in this league. TE timing action: wait_one_turn."
         }
       ],
       "confidenceRiskFindings": [],
       "specialTeamsCautionFindings": [],
       "idpCautionFindings": [],
-      "stabilityFindings": [
-        "Top recommendation margin is 0.7 points; treat top-row ordering as close."
-      ],
+      "stabilityFindings": [],
       "safetyFindings": []
     },
     {
@@ -923,11 +921,11 @@
         "marketAdpValue": 9.1,
         "positionalScarcity": 5.1,
         "rosterNeed": 18.5,
-        "needTiming": -5.5,
+        "needTiming": 3.2,
         "confidenceRiskAdjustment": -20.8,
         "tierDropRisk": 12.3,
         "futureAvailability": 3.3,
-        "opportunityCost": 5.5
+        "opportunityCost": 1.2
       },
       "dominantComponentCounts": {},
       "topRecommendationExamples": [
@@ -935,16 +933,16 @@
           "recommendationRank": 1,
           "displayName": "Trey McBride",
           "position": "TE",
-          "recommendationScore": 68.3,
-          "recommendationTier": "solid_target",
+          "recommendationScore": 90.3,
+          "recommendationTier": "strong_target",
           "status": "watch_only",
-          "needTimingAction": "monitor",
+          "needTimingAction": "fill_now",
           "componentBreakdown": {
             "projectionValue": 28.3,
             "marketAdpValue": 10,
             "positionalScarcity": 11,
             "rosterNeed": 18,
-            "needTiming": 0,
+            "needTiming": 22,
             "confidenceRiskAdjustment": -18,
             "tierDropRisk": 19,
             "futureAvailability": 4,
@@ -964,16 +962,16 @@
           "recommendationRank": 2,
           "displayName": "Christian McCaffrey",
           "position": "RB",
-          "recommendationScore": 66.8,
-          "recommendationTier": "solid_target",
+          "recommendationScore": 88.8,
+          "recommendationTier": "strong_target",
           "status": "watch_only",
-          "needTimingAction": "monitor",
+          "needTimingAction": "fill_now",
           "componentBreakdown": {
             "projectionValue": 26.9,
             "marketAdpValue": 11,
             "positionalScarcity": 7.9,
             "rosterNeed": 20,
-            "needTiming": 0,
+            "needTiming": 22,
             "confidenceRiskAdjustment": -18,
             "tierDropRisk": 19,
             "futureAvailability": 5,
@@ -993,16 +991,16 @@
           "recommendationRank": 3,
           "displayName": "Puka Nacua",
           "position": "WR",
-          "recommendationScore": 60.1,
-          "recommendationTier": "solid_target",
+          "recommendationScore": 82.1,
+          "recommendationTier": "strong_target",
           "status": "watch_only",
-          "needTimingAction": "monitor",
+          "needTimingAction": "fill_now",
           "componentBreakdown": {
             "projectionValue": 27.3,
             "marketAdpValue": 10,
             "positionalScarcity": 1.8,
             "rosterNeed": 20,
-            "needTiming": 0,
+            "needTiming": 22,
             "confidenceRiskAdjustment": -18,
             "tierDropRisk": 19,
             "futureAvailability": 4,
@@ -1022,160 +1020,15 @@
           "recommendationRank": 4,
           "displayName": "Bijan Robinson",
           "position": "RB",
-          "recommendationScore": 38.9,
-          "recommendationTier": "avoid_for_now",
+          "recommendationScore": 46.9,
+          "recommendationTier": "watchlist",
           "status": "watch_only",
-          "needTimingAction": "wait_one_turn",
+          "needTimingAction": "monitor",
           "componentBreakdown": {
             "projectionValue": 18,
             "marketAdpValue": 10,
             "positionalScarcity": 7.9,
             "rosterNeed": 20,
-            "needTiming": -8,
-            "confidenceRiskAdjustment": -18,
-            "tierDropRisk": 9,
-            "futureAvailability": 4,
-            "opportunityCost": 8
-          },
-          "dominantComponents": [],
-          "explanationQuality": {
-            "hasValueReason": true,
-            "hasNeedReason": true,
-            "hasTimingReason": true,
-            "hasRiskCaveat": true,
-            "bannedLanguage": []
-          },
-          "guardrailFindings": []
-        },
-        {
-          "recommendationRank": 5,
-          "displayName": "Jahmyr Gibbs",
-          "position": "RB",
-          "recommendationScore": 36.7,
-          "recommendationTier": "avoid_for_now",
-          "status": "watch_only",
-          "needTimingAction": "wait_one_turn",
-          "componentBreakdown": {
-            "projectionValue": 17.8,
-            "marketAdpValue": 8,
-            "positionalScarcity": 7.9,
-            "rosterNeed": 20,
-            "needTiming": -8,
-            "confidenceRiskAdjustment": -18,
-            "tierDropRisk": 9,
-            "futureAvailability": 2,
-            "opportunityCost": 8
-          },
-          "dominantComponents": [],
-          "explanationQuality": {
-            "hasValueReason": true,
-            "hasNeedReason": true,
-            "hasTimingReason": true,
-            "hasRiskCaveat": true,
-            "bannedLanguage": []
-          },
-          "guardrailFindings": []
-        },
-        {
-          "recommendationRank": 6,
-          "displayName": "Jonathan Taylor",
-          "position": "RB",
-          "recommendationScore": 36.1,
-          "recommendationTier": "avoid_for_now",
-          "status": "watch_only",
-          "needTimingAction": "wait_one_turn",
-          "componentBreakdown": {
-            "projectionValue": 17.2,
-            "marketAdpValue": 8,
-            "positionalScarcity": 7.9,
-            "rosterNeed": 20,
-            "needTiming": -8,
-            "confidenceRiskAdjustment": -18,
-            "tierDropRisk": 9,
-            "futureAvailability": 2,
-            "opportunityCost": 8
-          },
-          "dominantComponents": [],
-          "explanationQuality": {
-            "hasValueReason": true,
-            "hasNeedReason": true,
-            "hasTimingReason": true,
-            "hasRiskCaveat": true,
-            "bannedLanguage": []
-          },
-          "guardrailFindings": []
-        },
-        {
-          "recommendationRank": 7,
-          "displayName": "Jaxon Smith-Njigba",
-          "position": "WR",
-          "recommendationScore": 33.7,
-          "recommendationTier": "avoid_for_now",
-          "status": "watch_only",
-          "needTimingAction": "wait_one_turn",
-          "componentBreakdown": {
-            "projectionValue": 20.9,
-            "marketAdpValue": 8,
-            "positionalScarcity": 1.8,
-            "rosterNeed": 20,
-            "needTiming": -8,
-            "confidenceRiskAdjustment": -18,
-            "tierDropRisk": 9,
-            "futureAvailability": 2,
-            "opportunityCost": 8
-          },
-          "dominantComponents": [],
-          "explanationQuality": {
-            "hasValueReason": true,
-            "hasNeedReason": true,
-            "hasTimingReason": true,
-            "hasRiskCaveat": true,
-            "bannedLanguage": []
-          },
-          "guardrailFindings": []
-        },
-        {
-          "recommendationRank": 8,
-          "displayName": "Kyle Pitts",
-          "position": "TE",
-          "recommendationScore": 33.2,
-          "recommendationTier": "avoid_for_now",
-          "status": "watch_only",
-          "needTimingAction": "wait_one_turn",
-          "componentBreakdown": {
-            "projectionValue": 6.2,
-            "marketAdpValue": 10,
-            "positionalScarcity": 11,
-            "rosterNeed": 18,
-            "needTiming": -8,
-            "confidenceRiskAdjustment": -18,
-            "tierDropRisk": 14,
-            "futureAvailability": 4,
-            "opportunityCost": 8
-          },
-          "dominantComponents": [],
-          "explanationQuality": {
-            "hasValueReason": true,
-            "hasNeedReason": true,
-            "hasTimingReason": true,
-            "hasRiskCaveat": true,
-            "bannedLanguage": []
-          },
-          "guardrailFindings": []
-        },
-        {
-          "recommendationRank": 9,
-          "displayName": "Josh Allen",
-          "position": "QB",
-          "recommendationScore": 32,
-          "recommendationTier": "avoid_for_now",
-          "status": "watch_only",
-          "needTimingAction": "monitor",
-          "componentBreakdown": {
-            "projectionValue": 12,
-            "marketAdpValue": 10,
-            "positionalScarcity": 1,
-            "rosterNeed": 18,
             "needTiming": 0,
             "confidenceRiskAdjustment": -18,
             "tierDropRisk": 9,
@@ -1193,23 +1046,168 @@
           "guardrailFindings": []
         },
         {
-          "recommendationRank": 10,
-          "displayName": "Amon-Ra St. Brown",
-          "position": "WR",
-          "recommendationScore": 30.6,
+          "recommendationRank": 5,
+          "displayName": "Jahmyr Gibbs",
+          "position": "RB",
+          "recommendationScore": 44.7,
+          "recommendationTier": "watchlist",
+          "status": "watch_only",
+          "needTimingAction": "monitor",
+          "componentBreakdown": {
+            "projectionValue": 17.8,
+            "marketAdpValue": 8,
+            "positionalScarcity": 7.9,
+            "rosterNeed": 20,
+            "needTiming": 0,
+            "confidenceRiskAdjustment": -18,
+            "tierDropRisk": 9,
+            "futureAvailability": 2,
+            "opportunityCost": 0
+          },
+          "dominantComponents": [],
+          "explanationQuality": {
+            "hasValueReason": true,
+            "hasNeedReason": true,
+            "hasTimingReason": true,
+            "hasRiskCaveat": true,
+            "bannedLanguage": []
+          },
+          "guardrailFindings": []
+        },
+        {
+          "recommendationRank": 6,
+          "displayName": "Jonathan Taylor",
+          "position": "RB",
+          "recommendationScore": 44.1,
+          "recommendationTier": "watchlist",
+          "status": "watch_only",
+          "needTimingAction": "monitor",
+          "componentBreakdown": {
+            "projectionValue": 17.2,
+            "marketAdpValue": 8,
+            "positionalScarcity": 7.9,
+            "rosterNeed": 20,
+            "needTiming": 0,
+            "confidenceRiskAdjustment": -18,
+            "tierDropRisk": 9,
+            "futureAvailability": 2,
+            "opportunityCost": 0
+          },
+          "dominantComponents": [],
+          "explanationQuality": {
+            "hasValueReason": true,
+            "hasNeedReason": true,
+            "hasTimingReason": true,
+            "hasRiskCaveat": true,
+            "bannedLanguage": []
+          },
+          "guardrailFindings": []
+        },
+        {
+          "recommendationRank": 7,
+          "displayName": "Kyle Pitts",
+          "position": "TE",
+          "recommendationScore": 41.2,
           "recommendationTier": "avoid_for_now",
           "status": "watch_only",
-          "needTimingAction": "wait_one_turn",
+          "needTimingAction": "monitor",
+          "componentBreakdown": {
+            "projectionValue": 6.2,
+            "marketAdpValue": 10,
+            "positionalScarcity": 11,
+            "rosterNeed": 18,
+            "needTiming": 0,
+            "confidenceRiskAdjustment": -18,
+            "tierDropRisk": 14,
+            "futureAvailability": 4,
+            "opportunityCost": 0
+          },
+          "dominantComponents": [],
+          "explanationQuality": {
+            "hasValueReason": true,
+            "hasNeedReason": true,
+            "hasTimingReason": true,
+            "hasRiskCaveat": true,
+            "bannedLanguage": []
+          },
+          "guardrailFindings": []
+        },
+        {
+          "recommendationRank": 8,
+          "displayName": "Amon-Ra St. Brown",
+          "position": "WR",
+          "recommendationScore": 38.6,
+          "recommendationTier": "avoid_for_now",
+          "status": "watch_only",
+          "needTimingAction": "monitor",
           "componentBreakdown": {
             "projectionValue": 17.9,
             "marketAdpValue": 8,
             "positionalScarcity": 1.8,
             "rosterNeed": 20,
-            "needTiming": -8,
+            "needTiming": 0,
             "confidenceRiskAdjustment": -18,
             "tierDropRisk": 9,
             "futureAvailability": 2,
-            "opportunityCost": 8
+            "opportunityCost": 0
+          },
+          "dominantComponents": [],
+          "explanationQuality": {
+            "hasValueReason": true,
+            "hasNeedReason": true,
+            "hasTimingReason": true,
+            "hasRiskCaveat": true,
+            "bannedLanguage": []
+          },
+          "guardrailFindings": []
+        },
+        {
+          "recommendationRank": 9,
+          "displayName": "Dallas Goedert",
+          "position": "TE",
+          "recommendationScore": 38.2,
+          "recommendationTier": "avoid_for_now",
+          "status": "watch_only",
+          "needTimingAction": "monitor",
+          "componentBreakdown": {
+            "projectionValue": 4.2,
+            "marketAdpValue": 9,
+            "positionalScarcity": 11,
+            "rosterNeed": 18,
+            "needTiming": 0,
+            "confidenceRiskAdjustment": -18,
+            "tierDropRisk": 14,
+            "futureAvailability": 3,
+            "opportunityCost": 0
+          },
+          "dominantComponents": [],
+          "explanationQuality": {
+            "hasValueReason": true,
+            "hasNeedReason": true,
+            "hasTimingReason": true,
+            "hasRiskCaveat": true,
+            "bannedLanguage": []
+          },
+          "guardrailFindings": []
+        },
+        {
+          "recommendationRank": 10,
+          "displayName": "Ja'Marr Chase",
+          "position": "WR",
+          "recommendationScore": 37.5,
+          "recommendationTier": "avoid_for_now",
+          "status": "watch_only",
+          "needTimingAction": "monitor",
+          "componentBreakdown": {
+            "projectionValue": 16.7,
+            "marketAdpValue": 8,
+            "positionalScarcity": 1.8,
+            "rosterNeed": 20,
+            "needTiming": 0,
+            "confidenceRiskAdjustment": -18,
+            "tierDropRisk": 9,
+            "futureAvailability": 2,
+            "opportunityCost": 0
           },
           "dominantComponents": [],
           "explanationQuality": {
@@ -1225,23 +1223,23 @@
       "topExplanationExamples": [
         {
           "displayName": "Trey McBride",
-          "explanation": "High league value: +73.1 points above replacement. Roster need: TE starter depth still matters in this format. Scarcity: TE scarcity is low in this league. TE timing action: monitor."
+          "explanation": "High league value: +73.1 points above replacement. Roster need: TE starter depth still matters in this format. Scarcity: TE scarcity is low in this league. TE timing action: fill_now."
         },
         {
           "displayName": "Christian McCaffrey",
-          "explanation": "High league value: +60.7 points above replacement. Roster need: RB starter depth still matters in this format. Tier cliff: few players remain in this tier. RB timing action: monitor."
+          "explanation": "High league value: +60.7 points above replacement. Roster need: RB starter depth still matters in this format. Tier cliff: few players remain in this tier. RB timing action: fill_now."
         },
         {
           "displayName": "Puka Nacua",
-          "explanation": "High league value: +64.7 points above replacement. Roster need: WR starter depth still matters in this format. Tier cliff: few players remain in this tier. WR timing action: monitor."
+          "explanation": "High league value: +64.7 points above replacement. Roster need: WR starter depth still matters in this format. Tier cliff: few players remain in this tier. WR timing action: fill_now."
         },
         {
           "displayName": "Bijan Robinson",
-          "explanation": "League value: +31.1 points above replacement. Roster need: RB starter depth still matters in this format. Tier cliff: few players remain in this tier. RB timing action: wait_one_turn."
+          "explanation": "League value: +31.1 points above replacement. Roster need: RB starter depth still matters in this format. Tier cliff: few players remain in this tier. RB timing action: monitor."
         },
         {
           "displayName": "Jahmyr Gibbs",
-          "explanation": "League value: +30.5 points above replacement. Roster need: RB starter depth still matters in this format. Tier cliff: few players remain in this tier. RB timing action: wait_one_turn."
+          "explanation": "League value: +30.5 points above replacement. Roster need: RB starter depth still matters in this format. Tier cliff: few players remain in this tier. RB timing action: monitor."
         }
       ],
       "confidenceRiskFindings": [],
@@ -1259,61 +1257,32 @@
       "leagueName": "🪓 Chopped",
       "rowCount": 15,
       "componentAverages": {
-        "projectionValue": 14.9,
-        "marketAdpValue": 8.7,
+        "projectionValue": 14.8,
+        "marketAdpValue": 8.5,
         "positionalScarcity": 5.8,
         "rosterNeed": 19.5,
-        "needTiming": -4.7,
+        "needTiming": 3.1,
         "confidenceRiskAdjustment": -18,
-        "tierDropRisk": 12.1,
-        "futureAvailability": 2.7,
-        "opportunityCost": 5.9
+        "tierDropRisk": 12.5,
+        "futureAvailability": 2.5,
+        "opportunityCost": 4.8
       },
       "dominantComponentCounts": {},
       "topRecommendationExamples": [
         {
           "recommendationRank": 1,
-          "displayName": "Christian McCaffrey",
-          "position": "RB",
-          "recommendationScore": 63.9,
-          "recommendationTier": "solid_target",
-          "status": "watch_only",
-          "needTimingAction": "monitor",
-          "componentBreakdown": {
-            "projectionValue": 26.5,
-            "marketAdpValue": 10,
-            "positionalScarcity": 6.4,
-            "rosterNeed": 20,
-            "needTiming": 0,
-            "confidenceRiskAdjustment": -18,
-            "tierDropRisk": 19,
-            "futureAvailability": 4,
-            "opportunityCost": 0
-          },
-          "dominantComponents": [],
-          "explanationQuality": {
-            "hasValueReason": true,
-            "hasNeedReason": true,
-            "hasTimingReason": true,
-            "hasRiskCaveat": true,
-            "bannedLanguage": []
-          },
-          "guardrailFindings": []
-        },
-        {
-          "recommendationRank": 2,
           "displayName": "Trey McBride",
           "position": "TE",
-          "recommendationScore": 62,
-          "recommendationTier": "solid_target",
+          "recommendationScore": 89,
+          "recommendationTier": "strong_target",
           "status": "watch_only",
-          "needTimingAction": "wait_one_turn",
+          "needTimingAction": "fill_now",
           "componentBreakdown": {
             "projectionValue": 28,
             "marketAdpValue": 9,
             "positionalScarcity": 11,
             "rosterNeed": 18,
-            "needTiming": -5,
+            "needTiming": 22,
             "confidenceRiskAdjustment": -18,
             "tierDropRisk": 19,
             "futureAvailability": 3,
@@ -1330,7 +1299,94 @@
           "guardrailFindings": []
         },
         {
+          "recommendationRank": 2,
+          "displayName": "Christian McCaffrey",
+          "position": "RB",
+          "recommendationScore": 85.9,
+          "recommendationTier": "strong_target",
+          "status": "watch_only",
+          "needTimingAction": "fill_now",
+          "componentBreakdown": {
+            "projectionValue": 26.5,
+            "marketAdpValue": 10,
+            "positionalScarcity": 6.4,
+            "rosterNeed": 20,
+            "needTiming": 22,
+            "confidenceRiskAdjustment": -18,
+            "tierDropRisk": 19,
+            "futureAvailability": 4,
+            "opportunityCost": 0
+          },
+          "dominantComponents": [],
+          "explanationQuality": {
+            "hasValueReason": true,
+            "hasNeedReason": true,
+            "hasTimingReason": true,
+            "hasRiskCaveat": true,
+            "bannedLanguage": []
+          },
+          "guardrailFindings": []
+        },
+        {
           "recommendationRank": 3,
+          "displayName": "Puka Nacua",
+          "position": "WR",
+          "recommendationScore": 73.3,
+          "recommendationTier": "strong_target",
+          "status": "watch_only",
+          "needTimingAction": "fill_now",
+          "componentBreakdown": {
+            "projectionValue": 20.3,
+            "marketAdpValue": 9,
+            "positionalScarcity": 1,
+            "rosterNeed": 20,
+            "needTiming": 22,
+            "confidenceRiskAdjustment": -18,
+            "tierDropRisk": 19,
+            "futureAvailability": 3,
+            "opportunityCost": 0
+          },
+          "dominantComponents": [],
+          "explanationQuality": {
+            "hasValueReason": true,
+            "hasNeedReason": true,
+            "hasTimingReason": true,
+            "hasRiskCaveat": true,
+            "bannedLanguage": []
+          },
+          "guardrailFindings": []
+        },
+        {
+          "recommendationRank": 4,
+          "displayName": "Kyle Pitts",
+          "position": "TE",
+          "recommendationScore": 56.1,
+          "recommendationTier": "watchlist",
+          "status": "watch_only",
+          "needTimingAction": "fill_now",
+          "componentBreakdown": {
+            "projectionValue": 9.1,
+            "marketAdpValue": 9,
+            "positionalScarcity": 11,
+            "rosterNeed": 18,
+            "needTiming": 8,
+            "confidenceRiskAdjustment": -18,
+            "tierDropRisk": 19,
+            "futureAvailability": 3,
+            "opportunityCost": 0
+          },
+          "dominantComponents": [],
+          "explanationQuality": {
+            "hasValueReason": true,
+            "hasNeedReason": true,
+            "hasTimingReason": true,
+            "hasRiskCaveat": true,
+            "bannedLanguage": []
+          },
+          "guardrailFindings": []
+        },
+        {
+          "recommendationRank": 5,
           "displayName": "Josh Allen",
           "position": "QB",
           "recommendationScore": 53.9,
@@ -1359,23 +1415,23 @@
           "guardrailFindings": []
         },
         {
-          "recommendationRank": 4,
-          "displayName": "Puka Nacua",
+          "recommendationRank": 6,
+          "displayName": "Ja'Marr Chase",
           "position": "WR",
-          "recommendationScore": 43.3,
+          "recommendationScore": 52.1,
           "recommendationTier": "watchlist",
           "status": "watch_only",
-          "needTimingAction": "wait_one_turn",
+          "needTimingAction": "fill_now",
           "componentBreakdown": {
-            "projectionValue": 20.3,
-            "marketAdpValue": 9,
+            "projectionValue": 11.1,
+            "marketAdpValue": 7,
             "positionalScarcity": 1,
             "rosterNeed": 20,
-            "needTiming": -8,
+            "needTiming": 22,
             "confidenceRiskAdjustment": -18,
-            "tierDropRisk": 19,
-            "futureAvailability": 3,
-            "opportunityCost": 8
+            "tierDropRisk": 9,
+            "futureAvailability": 1,
+            "opportunityCost": 0
           },
           "dominantComponents": [],
           "explanationQuality": {
@@ -1388,36 +1444,7 @@
           "guardrailFindings": []
         },
         {
-          "recommendationRank": 5,
-          "displayName": "Kyle Pitts",
-          "position": "TE",
-          "recommendationScore": 40.1,
-          "recommendationTier": "avoid_for_now",
-          "status": "watch_only",
-          "needTimingAction": "wait_one_turn",
-          "componentBreakdown": {
-            "projectionValue": 9.1,
-            "marketAdpValue": 9,
-            "positionalScarcity": 11,
-            "rosterNeed": 18,
-            "needTiming": -8,
-            "confidenceRiskAdjustment": -18,
-            "tierDropRisk": 19,
-            "futureAvailability": 3,
-            "opportunityCost": 8
-          },
-          "dominantComponents": [],
-          "explanationQuality": {
-            "hasValueReason": true,
-            "hasNeedReason": true,
-            "hasTimingReason": true,
-            "hasRiskCaveat": true,
-            "bannedLanguage": []
-          },
-          "guardrailFindings": []
-        },
-        {
-          "recommendationRank": 6,
+          "recommendationRank": 7,
           "displayName": "Jonathan Taylor",
           "position": "RB",
           "recommendationScore": 35.9,
@@ -1446,7 +1473,7 @@
           "guardrailFindings": []
         },
         {
-          "recommendationRank": 7,
+          "recommendationRank": 8,
           "displayName": "James Cook",
           "position": "RB",
           "recommendationScore": 35.6,
@@ -1475,7 +1502,7 @@
           "guardrailFindings": []
         },
         {
-          "recommendationRank": 8,
+          "recommendationRank": 9,
           "displayName": "Bijan Robinson",
           "position": "RB",
           "recommendationScore": 35.2,
@@ -1504,7 +1531,7 @@
           "guardrailFindings": []
         },
         {
-          "recommendationRank": 9,
+          "recommendationRank": 10,
           "displayName": "De'Von Achane",
           "position": "RB",
           "recommendationScore": 35.2,
@@ -1531,65 +1558,34 @@
             "bannedLanguage": []
           },
           "guardrailFindings": []
-        },
-        {
-          "recommendationRank": 10,
-          "displayName": "Jahmyr Gibbs",
-          "position": "RB",
-          "recommendationScore": 31.5,
-          "recommendationTier": "avoid_for_now",
-          "status": "watch_only",
-          "needTimingAction": "wait_one_turn",
-          "componentBreakdown": {
-            "projectionValue": 15.2,
-            "marketAdpValue": 7,
-            "positionalScarcity": 6.4,
-            "rosterNeed": 20,
-            "needTiming": -8,
-            "confidenceRiskAdjustment": -18,
-            "tierDropRisk": 9,
-            "futureAvailability": 1,
-            "opportunityCost": 8
-          },
-          "dominantComponents": [],
-          "explanationQuality": {
-            "hasValueReason": true,
-            "hasNeedReason": true,
-            "hasTimingReason": true,
-            "hasRiskCaveat": true,
-            "bannedLanguage": []
-          },
-          "guardrailFindings": []
         }
       ],
       "topExplanationExamples": [
         {
-          "displayName": "Christian McCaffrey",
-          "explanation": "High league value: +72.8 points above replacement. Roster need: RB starter depth still matters in this format. Tier cliff: few players remain in this tier. RB timing action: monitor."
+          "displayName": "Trey McBride",
+          "explanation": "High league value: +94 points above replacement. Roster need: TE starter depth still matters in this format. Scarcity: TE scarcity is low in this league. TE timing action: fill_now."
         },
         {
-          "displayName": "Trey McBride",
-          "explanation": "High league value: +94 points above replacement. Roster need: TE starter depth still matters in this format. Scarcity: TE scarcity is low in this league. TE timing action: wait_one_turn."
+          "displayName": "Christian McCaffrey",
+          "explanation": "High league value: +72.8 points above replacement. Roster need: RB starter depth still matters in this format. Tier cliff: few players remain in this tier. RB timing action: fill_now."
+        },
+        {
+          "displayName": "Puka Nacua",
+          "explanation": "High league value: +41.3 points above replacement. Roster need: WR starter depth still matters in this format. Tier cliff: few players remain in this tier. WR timing action: fill_now."
+        },
+        {
+          "displayName": "Kyle Pitts",
+          "explanation": "League value: +0 points above replacement. Roster need: TE starter depth still matters in this format. Scarcity: TE scarcity is low in this league. TE timing action: fill_now."
         },
         {
           "displayName": "Josh Allen",
           "explanation": "League value: +22.7 points above replacement. Roster need: QB starter depth still matters in this format. Risk: low-confidence baseline; range is wide. QB timing action: fill_now."
-        },
-        {
-          "displayName": "Puka Nacua",
-          "explanation": "High league value: +41.3 points above replacement. Roster need: WR starter depth still matters in this format. Tier cliff: few players remain in this tier. WR timing action: wait_one_turn."
-        },
-        {
-          "displayName": "Kyle Pitts",
-          "explanation": "League value: +0 points above replacement. Roster need: TE starter depth still matters in this format. Scarcity: TE scarcity is low in this league. TE timing action: wait_one_turn."
         }
       ],
       "confidenceRiskFindings": [],
       "specialTeamsCautionFindings": [],
       "idpCautionFindings": [],
-      "stabilityFindings": [
-        "Top recommendation margin is 1.9 points; treat top-row ordering as close."
-      ],
+      "stabilityFindings": [],
       "safetyFindings": []
     },
     {
@@ -1599,34 +1595,34 @@
       "leagueName": "BestBalls in Hand IDP Dynasty ",
       "rowCount": 15,
       "componentAverages": {
-        "projectionValue": 24.7,
+        "projectionValue": 24.6,
         "marketAdpValue": 4,
         "positionalScarcity": 6,
-        "rosterNeed": 20,
-        "needTiming": -5,
+        "rosterNeed": 14,
+        "needTiming": 0,
         "confidenceRiskAdjustment": -14,
         "tierDropRisk": 2,
         "futureAvailability": 1,
         "opportunityCost": 0
       },
       "dominantComponentCounts": {
-        "projectionValue": 3
+        "projectionValue": 13
       },
       "topRecommendationExamples": [
         {
           "recommendationRank": 1,
           "displayName": "Jamel Dean",
           "position": "DB",
-          "recommendationScore": 43,
+          "recommendationScore": 42,
           "recommendationTier": "watchlist",
           "status": "watch_only",
-          "needTimingAction": "wait_one_turn",
+          "needTimingAction": "monitor",
           "componentBreakdown": {
             "projectionValue": 30,
             "marketAdpValue": 4,
             "positionalScarcity": 6,
-            "rosterNeed": 20,
-            "needTiming": -5,
+            "rosterNeed": 14,
+            "needTiming": 0,
             "confidenceRiskAdjustment": -14,
             "tierDropRisk": 2,
             "futureAvailability": 1,
@@ -1648,16 +1644,16 @@
           "recommendationRank": 2,
           "displayName": "Kevin Byard",
           "position": "DB",
-          "recommendationScore": 41.3,
+          "recommendationScore": 40.3,
           "recommendationTier": "avoid_for_now",
           "status": "watch_only",
-          "needTimingAction": "wait_one_turn",
+          "needTimingAction": "monitor",
           "componentBreakdown": {
             "projectionValue": 28.3,
             "marketAdpValue": 4,
             "positionalScarcity": 6,
-            "rosterNeed": 20,
-            "needTiming": -5,
+            "rosterNeed": 14,
+            "needTiming": 0,
             "confidenceRiskAdjustment": -14,
             "tierDropRisk": 2,
             "futureAvailability": 1,
@@ -1679,16 +1675,16 @@
           "recommendationRank": 3,
           "displayName": "Derek Stingley",
           "position": "DB",
-          "recommendationScore": 40.3,
+          "recommendationScore": 39.3,
           "recommendationTier": "avoid_for_now",
           "status": "watch_only",
-          "needTimingAction": "wait_one_turn",
+          "needTimingAction": "monitor",
           "componentBreakdown": {
             "projectionValue": 27.3,
             "marketAdpValue": 4,
             "positionalScarcity": 6,
-            "rosterNeed": 20,
-            "needTiming": -5,
+            "rosterNeed": 14,
+            "needTiming": 0,
             "confidenceRiskAdjustment": -14,
             "tierDropRisk": 2,
             "futureAvailability": 1,
@@ -1710,22 +1706,24 @@
           "recommendationRank": 4,
           "displayName": "Marlon Humphrey",
           "position": "DB",
-          "recommendationScore": 39.3,
+          "recommendationScore": 38.3,
           "recommendationTier": "avoid_for_now",
           "status": "watch_only",
-          "needTimingAction": "wait_one_turn",
+          "needTimingAction": "monitor",
           "componentBreakdown": {
             "projectionValue": 26.3,
             "marketAdpValue": 4,
             "positionalScarcity": 6,
-            "rosterNeed": 20,
-            "needTiming": -5,
+            "rosterNeed": 14,
+            "needTiming": 0,
             "confidenceRiskAdjustment": -14,
             "tierDropRisk": 2,
             "futureAvailability": 1,
             "opportunityCost": 0
           },
-          "dominantComponents": [],
+          "dominantComponents": [
+            "projectionValue"
+          ],
           "explanationQuality": {
             "hasValueReason": true,
             "hasNeedReason": true,
@@ -1739,22 +1737,24 @@
           "recommendationRank": 5,
           "displayName": "Jaylinn Hawkins",
           "position": "DB",
-          "recommendationScore": 38.6,
+          "recommendationScore": 37.6,
           "recommendationTier": "avoid_for_now",
           "status": "watch_only",
-          "needTimingAction": "wait_one_turn",
+          "needTimingAction": "monitor",
           "componentBreakdown": {
             "projectionValue": 25.6,
             "marketAdpValue": 4,
             "positionalScarcity": 6,
-            "rosterNeed": 20,
-            "needTiming": -5,
+            "rosterNeed": 14,
+            "needTiming": 0,
             "confidenceRiskAdjustment": -14,
             "tierDropRisk": 2,
             "futureAvailability": 1,
             "opportunityCost": 0
           },
-          "dominantComponents": [],
+          "dominantComponents": [
+            "projectionValue"
+          ],
           "explanationQuality": {
             "hasValueReason": true,
             "hasNeedReason": true,
@@ -1768,22 +1768,24 @@
           "recommendationRank": 6,
           "displayName": "Mike Jackson",
           "position": "DB",
-          "recommendationScore": 38.3,
+          "recommendationScore": 37.3,
           "recommendationTier": "avoid_for_now",
           "status": "watch_only",
-          "needTimingAction": "wait_one_turn",
+          "needTimingAction": "monitor",
           "componentBreakdown": {
             "projectionValue": 25.3,
             "marketAdpValue": 4,
             "positionalScarcity": 6,
-            "rosterNeed": 20,
-            "needTiming": -5,
+            "rosterNeed": 14,
+            "needTiming": 0,
             "confidenceRiskAdjustment": -14,
             "tierDropRisk": 2,
             "futureAvailability": 1,
             "opportunityCost": 0
           },
-          "dominantComponents": [],
+          "dominantComponents": [
+            "projectionValue"
+          ],
           "explanationQuality": {
             "hasValueReason": true,
             "hasNeedReason": true,
@@ -1797,22 +1799,24 @@
           "recommendationRank": 7,
           "displayName": "Jaycee Horn",
           "position": "DB",
-          "recommendationScore": 37.2,
+          "recommendationScore": 36.2,
           "recommendationTier": "avoid_for_now",
           "status": "watch_only",
-          "needTimingAction": "wait_one_turn",
+          "needTimingAction": "monitor",
           "componentBreakdown": {
             "projectionValue": 24.2,
             "marketAdpValue": 4,
             "positionalScarcity": 6,
-            "rosterNeed": 20,
-            "needTiming": -5,
+            "rosterNeed": 14,
+            "needTiming": 0,
             "confidenceRiskAdjustment": -14,
             "tierDropRisk": 2,
             "futureAvailability": 1,
             "opportunityCost": 0
           },
-          "dominantComponents": [],
+          "dominantComponents": [
+            "projectionValue"
+          ],
           "explanationQuality": {
             "hasValueReason": true,
             "hasNeedReason": true,
@@ -1826,22 +1830,24 @@
           "recommendationRank": 8,
           "displayName": "C.J. Gardner-Johnson",
           "position": "DB",
-          "recommendationScore": 36.7,
+          "recommendationScore": 35.7,
           "recommendationTier": "avoid_for_now",
           "status": "watch_only",
-          "needTimingAction": "wait_one_turn",
+          "needTimingAction": "monitor",
           "componentBreakdown": {
             "projectionValue": 23.7,
             "marketAdpValue": 4,
             "positionalScarcity": 6,
-            "rosterNeed": 20,
-            "needTiming": -5,
+            "rosterNeed": 14,
+            "needTiming": 0,
             "confidenceRiskAdjustment": -14,
             "tierDropRisk": 2,
             "futureAvailability": 1,
             "opportunityCost": 0
           },
-          "dominantComponents": [],
+          "dominantComponents": [
+            "projectionValue"
+          ],
           "explanationQuality": {
             "hasValueReason": true,
             "hasNeedReason": true,
@@ -1853,24 +1859,26 @@
         },
         {
           "recommendationRank": 9,
-          "displayName": "Derwin James",
+          "displayName": "Marcus Jones",
           "position": "DB",
-          "recommendationScore": 36.4,
+          "recommendationScore": 35.4,
           "recommendationTier": "avoid_for_now",
           "status": "watch_only",
-          "needTimingAction": "wait_one_turn",
+          "needTimingAction": "monitor",
           "componentBreakdown": {
             "projectionValue": 23.4,
             "marketAdpValue": 4,
             "positionalScarcity": 6,
-            "rosterNeed": 20,
-            "needTiming": -5,
+            "rosterNeed": 14,
+            "needTiming": 0,
             "confidenceRiskAdjustment": -14,
             "tierDropRisk": 2,
             "futureAvailability": 1,
             "opportunityCost": 0
           },
-          "dominantComponents": [],
+          "dominantComponents": [
+            "projectionValue"
+          ],
           "explanationQuality": {
             "hasValueReason": true,
             "hasNeedReason": true,
@@ -1882,24 +1890,26 @@
         },
         {
           "recommendationRank": 10,
-          "displayName": "Marcus Jones",
+          "displayName": "Kenny Moore",
           "position": "DB",
-          "recommendationScore": 36.4,
+          "recommendationScore": 35,
           "recommendationTier": "avoid_for_now",
           "status": "watch_only",
-          "needTimingAction": "wait_one_turn",
+          "needTimingAction": "monitor",
           "componentBreakdown": {
-            "projectionValue": 23.4,
+            "projectionValue": 23,
             "marketAdpValue": 4,
             "positionalScarcity": 6,
-            "rosterNeed": 20,
-            "needTiming": -5,
+            "rosterNeed": 14,
+            "needTiming": 0,
             "confidenceRiskAdjustment": -14,
             "tierDropRisk": 2,
             "futureAvailability": 1,
             "opportunityCost": 0
           },
-          "dominantComponents": [],
+          "dominantComponents": [
+            "projectionValue"
+          ],
           "explanationQuality": {
             "hasValueReason": true,
             "hasNeedReason": true,
@@ -1913,23 +1923,23 @@
       "topExplanationExamples": [
         {
           "displayName": "Jamel Dean",
-          "explanation": "High league value: +0.5 points above replacement. Roster need: DB starter depth still matters in this format. Risk: low-confidence baseline; range is wide. DB timing action: wait_one_turn."
+          "explanation": "High league value: +0.5 points above replacement. Roster need: DB bench depth is still useful in this format. Risk: low-confidence baseline; range is wide. DB timing action: monitor."
         },
         {
           "displayName": "Kevin Byard",
-          "explanation": "High league value: +0.2 points above replacement. Roster need: DB starter depth still matters in this format. Risk: low-confidence baseline; range is wide. DB timing action: wait_one_turn."
+          "explanation": "High league value: +0.2 points above replacement. Roster need: DB bench depth is still useful in this format. Risk: low-confidence baseline; range is wide. DB timing action: monitor."
         },
         {
           "displayName": "Derek Stingley",
-          "explanation": "League value: -0.1 points above replacement. Roster need: DB starter depth still matters in this format. Risk: low-confidence baseline; range is wide. DB timing action: wait_one_turn."
+          "explanation": "League value: -0.1 points above replacement. Roster need: DB bench depth is still useful in this format. Risk: low-confidence baseline; range is wide. DB timing action: monitor."
         },
         {
           "displayName": "Marlon Humphrey",
-          "explanation": "League value: -0.3 points above replacement. Roster need: DB starter depth still matters in this format. Risk: low-confidence baseline; range is wide. DB timing action: wait_one_turn."
+          "explanation": "League value: -0.3 points above replacement. Roster need: DB bench depth is still useful in this format. Risk: low-confidence baseline; range is wide. DB timing action: monitor."
         },
         {
           "displayName": "Jaylinn Hawkins",
-          "explanation": "League value: -0.5 points above replacement. Roster need: DB starter depth still matters in this format. Risk: low-confidence baseline; range is wide. DB timing action: wait_one_turn."
+          "explanation": "League value: -0.5 points above replacement. Roster need: DB bench depth is still useful in this format. Risk: low-confidence baseline; range is wide. DB timing action: monitor."
         }
       ],
       "confidenceRiskFindings": [],
@@ -2550,12 +2560,12 @@
     "rowsAudited": 95,
     "dominantComponentCounts": {
       "rosterNeed": 8,
-      "projectionValue": 3
+      "projectionValue": 13
     },
     "confidenceRiskFindingCount": 0,
     "specialTeamsCautionFindingCount": 0,
     "idpCautionFindingCount": 0,
-    "stabilityFindingCount": 6,
+    "stabilityFindingCount": 4,
     "safetyFindingCount": 0,
     "verdict": "ready"
   },

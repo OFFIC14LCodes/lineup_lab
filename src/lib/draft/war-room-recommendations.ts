@@ -67,10 +67,27 @@ export type WarRoomRecommendationRow = {
   rosterNeedStatus: RosterNeedStatus;
   needUrgency: NeedUrgency;
   futureAvailability: FutureAvailability;
-  tierDropRisk: TierDropRisk;
-  opportunityCost: OpportunityCost;
-  needTimingAction: NeedTimingAction;
-  needTimingReasons: string[];
+    tierDropRisk: TierDropRisk;
+    opportunityCost: OpportunityCost;
+    needTimingAction: NeedTimingAction;
+    needTimingReasons: string[];
+    survivalConfidence: ReturnType<typeof buildNeedTimingDiagnostic>["survivalConfidence"];
+    survivalConfidenceScore: number;
+    comparableOptionsNow: number;
+    comparableOptionsLikelyNextPick: number;
+    comparableOptionsLikelyNextTwoPicks: number;
+    waitRisk: ReturnType<typeof buildNeedTimingDiagnostic>["waitRisk"];
+    waitRiskReasons: string[];
+    needTimingAdjustedBySurvival: boolean;
+    waitPlanTargets: ReturnType<typeof buildNeedTimingDiagnostic>["waitPlanTargets"];
+    waitPlanTargetCount: number;
+    waitPlanStrongTargetCount: number;
+    waitPlanSurvivalSummary: string;
+    waitPlanRisk: ReturnType<typeof buildNeedTimingDiagnostic>["waitPlanRisk"];
+    waitPlanReason: string;
+    waitPlanBacked: boolean;
+    waitPlanFallbackAction: NeedTimingAction | null;
+    needTimingAdjustedByWaitPlan: boolean;
   status: WarRoomRecommendationStatus;
 };
 
@@ -346,6 +363,23 @@ function buildRecommendationRow({
     opportunityCost: needTiming.opportunityCost,
     needTimingAction: needTiming.needTimingAction,
     needTimingReasons: needTiming.needTimingReasons,
+    survivalConfidence: needTiming.survivalConfidence,
+    survivalConfidenceScore: needTiming.survivalConfidenceScore,
+    comparableOptionsNow: needTiming.comparableOptionsNow,
+    comparableOptionsLikelyNextPick: needTiming.comparableOptionsLikelyNextPick,
+    comparableOptionsLikelyNextTwoPicks: needTiming.comparableOptionsLikelyNextTwoPicks,
+    waitRisk: needTiming.waitRisk,
+    waitRiskReasons: needTiming.waitRiskReasons,
+    needTimingAdjustedBySurvival: needTiming.needTimingAdjustedBySurvival,
+    waitPlanTargets: needTiming.waitPlanTargets,
+    waitPlanTargetCount: needTiming.waitPlanTargetCount,
+    waitPlanStrongTargetCount: needTiming.waitPlanStrongTargetCount,
+    waitPlanSurvivalSummary: needTiming.waitPlanSurvivalSummary,
+    waitPlanRisk: needTiming.waitPlanRisk,
+    waitPlanReason: needTiming.waitPlanReason,
+    waitPlanBacked: needTiming.waitPlanBacked,
+    waitPlanFallbackAction: needTiming.waitPlanFallbackAction,
+    needTimingAdjustedByWaitPlan: needTiming.needTimingAdjustedByWaitPlan,
     status: finalStatus,
   };
 }

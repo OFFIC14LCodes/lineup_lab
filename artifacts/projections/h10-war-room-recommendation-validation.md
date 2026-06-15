@@ -1,6 +1,6 @@
 # H10.8 War Room Recommendation Validation
 
-Generated: 2026-06-15T15:50:23.093Z
+Generated: 2026-06-15T17:46:26.516Z
 
 Readiness verdict: ready
 
@@ -47,21 +47,21 @@ Readiness verdict: ready
 - Experiment readiness: {"legacyReady":false,"blackbirdPreviewReady":true,"blackbirdExperimentEligible":true,"failedExperimentGates":[]}
 - Legacy changed: false
 - Remaining order changed: false
-- Top rows: Myles Garrett DL watchlist 56; Aidan Hutchinson DL avoid_for_now 41; Danielle Hunter DL avoid_for_now 32.2; Chase Young DL avoid_for_now 24.5; Brian Burns LB avoid_for_now 24.3
+- Top rows: Myles Garrett DL watchlist 56; Aidan Hutchinson DL avoid_for_now 41; Danielle Hunter DL avoid_for_now 37.2; Chase Young DL avoid_for_now 29.5; Brian Burns LB avoid_for_now 29.3
 
 ### 🪓 Chopped (b386e78a-c7ff-4688-828e-6b48cbca863e)
 
 - Formats: Superflex, Shallow roster, Uploaded rankings
 - Loaded: 20 remaining, 20 overlay rows, 20 recommendations
 - Match rate: 1
-- Rows by tier: {"solid_target":2,"watchlist":2,"avoid_for_now":16}
+- Rows by tier: {"strong_target":3,"solid_target":1,"watchlist":2,"avoid_for_now":14}
 - Rows by status: {"watch_only":20}
 - Warnings: {"SINGLE_SEASON_OFFENSIVE_BASELINE":20,"Superflex mismatch: snapshot=false, league=true — QB tiers differ":20,"Team count difference (12 vs 18) — positional scarcity shifts":20,"Team count difference: snapshot=12, league=18":20,"Superflex mismatch — QB tier values diverge (snapshot=false, league=true)":4}
 - Thresholds: {"matchRatePass":true,"insufficientDataPass":true,"invariantPass":true,"legacyUnchangedPass":true,"remainingOrderUnchangedPass":true,"forbiddenLanguagePass":true,"offensiveTargetTierPass":true,"superflexQbUrgencyPass":false,"kEarlySuppressionPass":null,"dstEarlySuppressionPass":null}
 - Experiment readiness: {"legacyReady":false,"blackbirdPreviewReady":true,"blackbirdExperimentEligible":true,"failedExperimentGates":[]}
 - Legacy changed: false
 - Remaining order changed: false
-- Top rows: Christian McCaffrey RB solid_target 64.7; Trey McBride TE solid_target 64; Josh Allen QB watchlist 54.5; Puka Nacua WR watchlist 52; Kyle Pitts TE avoid_for_now 41.6
+- Top rows: Trey McBride TE strong_target 91; Christian McCaffrey RB strong_target 86.7; Puka Nacua WR strong_target 74; Kyle Pitts TE solid_target 71.6; Josh Allen QB watchlist 54.5
 
 ### Legacy League (2f62d6e3-d309-4d50-8e7e-2ef05a83771c)
 
@@ -82,28 +82,28 @@ Readiness verdict: ready
 - Formats: 1QB offense, Kicker, DST, Shallow roster, Uploaded rankings
 - Loaded: 22 remaining, 22 overlay rows, 22 recommendations
 - Match rate: 1
-- Rows by tier: {"solid_target":3,"avoid_for_now":19}
+- Rows by tier: {"strong_target":3,"watchlist":3,"avoid_for_now":16}
 - Rows by status: {"watch_only":22}
 - Warnings: {"SINGLE_SEASON_OFFENSIVE_BASELINE":14,"K_EARLY_ROUND_SUPPRESSION":8,"LOW_PROJECTION_CONFIDENCE":8,"MARKET_NOT_IMPLEMENTED":8}
 - Thresholds: {"matchRatePass":true,"insufficientDataPass":true,"invariantPass":true,"legacyUnchangedPass":true,"remainingOrderUnchangedPass":true,"forbiddenLanguagePass":true,"offensiveTargetTierPass":true,"superflexQbUrgencyPass":null,"kEarlySuppressionPass":true,"dstEarlySuppressionPass":null}
 - Experiment readiness: {"legacyReady":false,"blackbirdPreviewReady":true,"blackbirdExperimentEligible":true,"failedExperimentGates":[]}
 - Legacy changed: false
 - Remaining order changed: false
-- Top rows: Trey McBride TE solid_target 68.3; Christian McCaffrey RB solid_target 66.8; Puka Nacua WR solid_target 60.1; Bijan Robinson RB avoid_for_now 38.9; Jahmyr Gibbs RB avoid_for_now 36.7
+- Top rows: Trey McBride TE strong_target 90.3; Christian McCaffrey RB strong_target 88.8; Puka Nacua WR strong_target 82.1; Bijan Robinson RB watchlist 46.9; Jahmyr Gibbs RB watchlist 44.7
 
 ### 🪓 Chopped (f131b67c-c646-4e01-a925-c7d9f3eab4b0)
 
 - Formats: Superflex, Shallow roster, Uploaded rankings
 - Loaded: 26 remaining, 26 overlay rows, 26 recommendations
 - Match rate: 1
-- Rows by tier: {"solid_target":2,"watchlist":2,"avoid_for_now":22}
+- Rows by tier: {"strong_target":3,"watchlist":3,"avoid_for_now":20}
 - Rows by status: {"watch_only":26}
 - Warnings: {"SINGLE_SEASON_OFFENSIVE_BASELINE":26,"Superflex mismatch: snapshot=false, league=true — QB tiers differ":26,"Team count difference (12 vs 18) — positional scarcity shifts":26,"Team count difference: snapshot=12, league=18":26,"Superflex mismatch — QB tier values diverge (snapshot=false, league=true)":10}
 - Thresholds: {"matchRatePass":true,"insufficientDataPass":true,"invariantPass":true,"legacyUnchangedPass":true,"remainingOrderUnchangedPass":true,"forbiddenLanguagePass":true,"offensiveTargetTierPass":true,"superflexQbUrgencyPass":true,"kEarlySuppressionPass":null,"dstEarlySuppressionPass":null}
 - Experiment readiness: {"legacyReady":false,"blackbirdPreviewReady":true,"blackbirdExperimentEligible":true,"failedExperimentGates":[]}
 - Legacy changed: false
 - Remaining order changed: false
-- Top rows: Christian McCaffrey RB solid_target 63.9; Trey McBride TE solid_target 62; Josh Allen QB watchlist 53.9; Puka Nacua WR watchlist 43.3; Kyle Pitts TE avoid_for_now 40.1
+- Top rows: Trey McBride TE strong_target 89; Christian McCaffrey RB strong_target 85.9; Puka Nacua WR strong_target 73.3; Kyle Pitts TE watchlist 56.1; Josh Allen QB watchlist 53.9
 
 ### BestBalls in Hand IDP Dynasty  (f85238ff-b2ee-4053-8493-e38c4cb63bd3)
 
@@ -117,7 +117,7 @@ Readiness verdict: ready
 - Experiment readiness: {"legacyReady":false,"blackbirdPreviewReady":true,"blackbirdExperimentEligible":true,"failedExperimentGates":[]}
 - Legacy changed: false
 - Remaining order changed: false
-- Top rows: Jamel Dean DB watchlist 43; Kevin Byard DB avoid_for_now 41.3; Derek Stingley DB avoid_for_now 40.3; Marlon Humphrey DB avoid_for_now 39.3; Jaylinn Hawkins DB avoid_for_now 38.6
+- Top rows: Jamel Dean DB watchlist 42; Kevin Byard DB avoid_for_now 40.3; Derek Stingley DB avoid_for_now 39.3; Marlon Humphrey DB avoid_for_now 38.3; Jaylinn Hawkins DB avoid_for_now 37.6
 
 ### [Fixture] 1QB Offense (fixture-one-qb-offense)
 

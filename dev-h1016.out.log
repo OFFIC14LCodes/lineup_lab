@@ -1,0 +1,22 @@
+
+> blackbird-gm@0.1.0 dev
+> next dev --hostname 127.0.0.1 --port 3007
+
+   ▲ Next.js 15.5.19
+   - Local:        http://127.0.0.1:3007
+   - Network:      http://127.0.0.1:3007
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 1987ms
+ ○ Compiling / ...
+ ✓ Compiled / in 904ms (635 modules)
+ GET / 200 in 1349ms
+ GET / 200 in 86ms
+ GET / 200 in 159ms
+ ✓ Compiled in 1895ms (248 modules)
+ ✓ Compiled in 362ms (248 modules)
+ ✓ Compiled in 314ms (248 modules)
+ ✓ Compiled in 233ms (248 modules)
+ ✓ Compiled in 277ms (248 modules)
+ ✓ Compiled in 188ms (234 modules)

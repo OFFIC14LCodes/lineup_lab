@@ -22,6 +22,23 @@ describe("need timing intelligence", () => {
     expect(result.futureAvailability).toBe("unlikely_available_next_pick");
     expect(result.tierDropRisk).toBe("high");
     expect(result.needTimingAction).toBe("fill_now");
+    expect(result.needTimingAdjustedBySurvival).toBe(false);
+  });
+
+  it("converts weak wait evidence to monitor instead of optimistic wait_one_turn", () => {
+    const result = timing({
+      position: "WR",
+      rosterSlots: ["WR", "WR", "FLEX", "BN"],
+      positionCounts: { WR: 1 },
+      players: [player("wr1", "WR", 55), player("wr2", "WR", 30), player("rb1", "RB", 20)],
+      overlays: [overlay("wr1", "WR", 20, 2), overlay("wr2", "WR", 18, 2), overlay("rb1", "RB", 50, 1)],
+      picksUntilMyNextPick: 12,
+    });
+
+    expect(result.survivalConfidence).toBe("low");
+    expect(result.waitRisk).toMatch(/high|severe/);
+    expect(result.comparableOptionsLikelyNextPick).toBe(0);
+    expect(result.needTimingAction).not.toBe("wait_one_turn");
   });
 
   it("waits one turn when a DL need exists but comparable options should remain", () => {
@@ -37,6 +54,8 @@ describe("need timing intelligence", () => {
     expect(result.futureAvailability).toBe("likely_available_next_pick");
     expect(result.tierDropRisk).toBe("low");
     expect(result.opportunityCost).toBe("high");
+    expect(result.survivalConfidence).not.toBe("low");
+    expect(result.comparableOptionsLikelyNextPick).toBeGreaterThanOrEqual(2);
     expect(result.needTimingAction).toBe("wait_one_turn");
   });
 
@@ -55,7 +74,7 @@ describe("need timing intelligence", () => {
 
     const dl = recommendations.rows.find((row) => row.entityId === "dl1")!;
     expect(recommendations.rows[0].entityId).toBe("wr1");
-    expect(dl.needTimingAction).toBe("wait_one_turn");
+    expect(dl.needTimingAction).not.toBe("fill_now");
   });
 
   it("lets critical need override modest value", () => {
@@ -73,6 +92,21 @@ describe("need timing intelligence", () => {
 
     expect(recommendations.rows[0].entityId).toBe("lb1");
     expect(recommendations.rows[0].needTimingAction).toBe("fill_now");
+    expect(recommendations.rows[0].waitRisk).toMatch(/high|severe/);
+  });
+
+  it("blocks waiting when tier cliff risk is high", () => {
+    const result = timing({
+      position: "TE",
+      rosterSlots: ["TE", "BN"],
+      positionCounts: { TE: 0 },
+      players: [player("te1", "TE", 40), player("te2", "TE", 42), player("wr1", "WR", 18)],
+      overlays: [overlay("te1", "TE", 35, 1), overlay("te2", "TE", 20, 3), overlay("wr1", "WR", 50, 1)],
+      picksUntilMyNextPick: 12,
+    });
+
+    expect(result.tierDropRisk).toBe("high");
+    expect(result.needTimingAction).not.toMatch(/^wait_/);
   });
 
   it("allows elite value at a filled position to remain monitored instead of suppressed", () => {
@@ -99,7 +133,7 @@ describe("need timing intelligence", () => {
 
     expect(result.rosterNeedStatus).toBe("bench_depth_need");
     expect(result.needUrgency).toBe("low");
-    expect(result.needTimingAction).toBe("wait_multiple_turns");
+    expect(result.needTimingAction).not.toBe("fill_now");
   });
 
   it("normalizes IDP subpositions without collapsing DL/LB/DB together", () => {
@@ -116,7 +150,26 @@ describe("need timing intelligence", () => {
 
     expect(kicker.needUrgency).toBe("low");
     expect(kicker.needTimingAction).toBe("wait_multiple_turns");
+    expect(kicker.waitRiskReasons.join(" ")).toContain("special-position");
     expect(dst.needTimingAction).toBe("wait_multiple_turns");
+  });
+
+  it("keeps low-confidence IDP from overstating weak survival", () => {
+    const result = timing({
+      position: "LB",
+      rosterSlots: ["LB", "IDP_FLEX", "BN"],
+      positionCounts: { LB: 0 },
+      players: [player("lb1", "LB", 55), player("lb2", "LB", 30)],
+      overlays: [
+        overlay("lb1", "LB", 42, 1, { confidenceLabel: "low", warningCodes: ["LOW_PROJECTION_CONFIDENCE"] }),
+        overlay("lb2", "LB", 22, 2),
+      ],
+      picksUntilMyNextPick: 12,
+    });
+
+    expect(result.survivalConfidence).toBe("low");
+    expect(result.waitRiskReasons.join(" ")).toContain("confidence is low");
+    expect(result.needTimingAction).not.toBe("wait_one_turn");
   });
 });
 
@@ -168,7 +221,7 @@ function player(id: string, position: string, adp: number): DraftTargetScorePlay
   };
 }
 
-function overlay(id: string, position: string, value: number, tier: number): WarRoomValueOverlayRow {
+function overlay(id: string, position: string, value: number, tier: number, overrides: Partial<WarRoomValueOverlayRow> = {}): WarRoomValueOverlayRow {
   return {
     leagueId: "league",
     entityId: id,
@@ -194,5 +247,6 @@ function overlay(id: string, position: string, value: number, tier: number): War
     reasonCodes: [],
     draftRelevance: "draft_relevant",
     overlayStatus: "available",
+    ...overrides,
   };
 }

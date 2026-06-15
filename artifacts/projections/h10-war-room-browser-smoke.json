@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-15T15:52:35.465Z",
+  "generatedAt": "2026-06-15T17:48:43.364Z",
   "verdict": "passed",
   "authMethod": "server-only local e2e auth bypass via signed-in test user id env and http cookie",
   "browserEngine": "chromium",
@@ -255,7 +255,7 @@
       "flagCase": "preview_only",
       "loaded": true,
       "legacyDefault": true,
-      "previewVisible": true,
+      "previewVisible": false,
       "selectorVisible": true,
       "sourceSwitchWorked": true,
       "switchedBackToLegacy": true,

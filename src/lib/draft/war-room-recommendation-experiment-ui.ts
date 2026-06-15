@@ -30,7 +30,7 @@ export function buildH10RecommendationExperimentUiState(input: BuildH10Recommend
   const previewEnabled = Boolean(input.previewEnabled);
   const recommendationRows = filterBlackbirdRecommendationRows(input.rows);
   const diagnosticsRows = filterBlackbirdDiagnosticsRows(input.rows);
-  const blackbirdPanelEnabled = Boolean(input.experimentDiagnostics?.blackbirdExperimentEligible);
+  const blackbirdPanelEnabled = Boolean(input.experimentDiagnostics?.blackbirdPreviewReady ?? recommendationRows.length > 0);
 
   return {
     selectedSource,

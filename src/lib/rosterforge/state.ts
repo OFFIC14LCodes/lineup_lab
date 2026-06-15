@@ -6,6 +6,7 @@ import { filterFallbackPlayers, type FallbackRelevanceDiagnostics } from "@/lib/
 import { buildH10RecommendationPreviewPayload } from "@/lib/draft/war-room-recommendation-preview-state";
 import { normalizePlayerName, normalizePrimaryPosition } from "@/lib/players/normalize";
 import { buildDraftTargetScore, type DraftTargetScorePlayer } from "@/lib/draft/scoring";
+import { buildDraftPositionContext } from "@/lib/rosterforge/draft-position";
 import {
   buildNormalizedRosterRequirements,
   buildPositionNeeds,
@@ -60,6 +61,14 @@ type PlayerRow = {
   fantasy_positions_json: string[] | null;
   eligible_positions_json: string[] | null;
   normalized_name: string | null;
+};
+
+type LeagueRosterRow = {
+  platform_roster_id: string;
+  owner_platform_user_id: string | null;
+  owner_display_name: string | null;
+  players_json?: unknown;
+  metadata_json?: unknown;
 };
 
 const POSITION_ORDER: Record<string, number> = {
@@ -151,12 +160,21 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
         .limit(1000)
     ]);
 
+  const rosterRows = (rosters ?? []) as LeagueRosterRow[];
   const rostersById = new Map(
-    (rosters ?? []).map((roster) => [
+    rosterRows.map((roster) => [
       roster.platform_roster_id,
       (roster.owner_display_name as string | null) ?? `Roster ${roster.platform_roster_id}`
     ])
   );
+  const draftBoardTeams = rosterRows
+    .map((roster) => ({
+      rosterId: roster.platform_roster_id,
+      label: roster.owner_display_name ?? `Roster ${roster.platform_roster_id}`,
+      ownerPlatformUserId: roster.owner_platform_user_id,
+      draftSlot: Number(roster.platform_roster_id),
+    }))
+    .sort((a, b) => a.draftSlot - b.draftSlot || a.label.localeCompare(b.label));
   const draftPicks = ((picks ?? []) as DraftPickRow[])
     .filter((pick) => Boolean(pick.player_name || pick.sleeper_player_id))
     .map((pick) => ({
@@ -166,7 +184,7 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
   const draftedIds = new Set(draftPicks.map((pick) => pick.sleeper_player_id).filter(Boolean));
   const draftedNames = new Set(draftPicks.map((pick) => normalizePlayerName(pick.player_name ?? "")).filter(Boolean));
   const myPlatformUserId = account?.platform_user_id as string | undefined;
-  const myRoster = rosters?.find((roster) => roster.owner_platform_user_id === myPlatformUserId);
+  const myRoster = rosterRows.find((roster) => roster.owner_platform_user_id === myPlatformUserId);
   const myRosterId = myRoster?.platform_roster_id as string | undefined;
 
   const myPicks = draftPicks.filter((pick) => {
@@ -269,7 +287,15 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
   }, {});
   const issueCount = (statusCounts.unmatched ?? 0) + (statusCounts.ambiguous ?? 0);
   const lastPick = draftPicks.at(-1) ?? null;
-  const currentPickNumber = (lastPick?.pick_no ?? 0) + 1;
+  const draftPosition = buildDraftPositionContext({
+    picks: draftPicks,
+    settings: room.settings_json,
+    myRosterId,
+    myPlatformUserId,
+    teamCountFallback: Number(room.leagues?.total_teams ?? draftBoardTeams.length) || null,
+    roundsFallback: Array.isArray(room.leagues?.roster_positions_json) ? room.leagues.roster_positions_json.length : null,
+  });
+  const currentPickNumber = draftPosition.currentPickNumber;
   const warnings = [
     !hasRankings ? "no_rankings_uploaded" : null,
     issueCount > 0 ? "unmatched_rankings_present" : null,
@@ -283,7 +309,7 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
     rosterRequirements.hasKicker && !hasActiveGroup(fallbackPlayers, ["K"]) ? "no_kicker_players_synced" : null,
     rosterRequirements.hasTeamDefense && !hasActiveGroup(fallbackPlayers, ["DEF"]) ? "no_team_defense_players_synced" : null
   ].filter((warning): warning is string => Boolean(warning));
-  const picksUntilMyNextPick = getPicksUntilMyNextPick(room.settings_json, myRosterId, currentPickNumber);
+  const picksUntilMyNextPick = draftPosition.picksUntilMyNextPick;
   const scoring = buildDraftTargetScore({
     players: remainingPlayers as DraftTargetScorePlayer[],
     league: {
@@ -311,7 +337,7 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
         fallbackPlayers,
       })
     : {};
-  const h10RecommendationPreviewEnabled = getBooleanEnv(H10_WAR_ROOM_RECOMMENDATIONS_PREVIEW_FEATURE_FLAG, false);
+  const h10RecommendationPreviewEnabled = getBooleanEnv(H10_WAR_ROOM_RECOMMENDATIONS_PREVIEW_FEATURE_FLAG, true);
   const h10RecommendationExperimentEnabled = getBooleanEnv(H10_WAR_ROOM_RECOMMENDATIONS_EXPERIMENT_FEATURE_FLAG, false);
   const recommendationPreviewPayload = h10RecommendationPreviewEnabled || h10RecommendationExperimentEnabled
     ? buildOptionalH10RecommendationPreview({
@@ -325,7 +351,7 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
         myRoster: myPicks,
         picks: draftPicks,
         currentPickNumber,
-        currentRound: lastPick?.round ?? 1,
+        currentRound: draftPosition.currentRound,
         picksUntilMyNextPick,
         draftedPlayerIds: Array.from(draftedIds).filter((id): id is string => Boolean(id)),
         positionCounts: counts,
@@ -337,8 +363,11 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
     room,
     league: room.leagues,
     picks: draftPicks,
+    draftBoardTeams,
+    myDraftSlot: draftPosition.myDraftSlot,
+    teamCount: draftPosition.teamCount,
     currentPickNumber,
-    currentRound: lastPick?.round ?? 1,
+    currentRound: draftPosition.currentRound,
     picksUntilMyNextPick,
     lastPick,
     myRoster: myPicks,
@@ -553,25 +582,4 @@ function hasActiveGroup(players: PlayerRow[], groups: PositionGroup[]) {
     const group = player.position_group ?? player.primary_position ?? player.position;
     return group ? groups.includes(group as PositionGroup) : false;
   });
-}
-
-function getPicksUntilMyNextPick(settings: unknown, myRosterId: string | undefined, currentPickNumber: number) {
-  if (!myRosterId || !settings || typeof settings !== "object") return null;
-  const draftSettings = settings as Record<string, unknown>;
-  const teams = Number(draftSettings.teams);
-  const rounds = Number(draftSettings.rounds);
-  const slot = Number(myRosterId);
-
-  if (!Number.isFinite(teams) || !Number.isFinite(rounds) || !Number.isFinite(slot) || teams <= 0 || rounds <= 0) {
-    return null;
-  }
-
-  for (let pick = currentPickNumber; pick <= teams * rounds; pick += 1) {
-    const round = Math.ceil(pick / teams);
-    const pickInRound = ((pick - 1) % teams) + 1;
-    const rosterSlot = round % 2 === 0 ? teams - pickInRound + 1 : pickInRound;
-    if (rosterSlot === slot) return pick - currentPickNumber;
-  }
-
-  return null;
 }

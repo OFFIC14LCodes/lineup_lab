@@ -134,7 +134,7 @@ const CLASSIFICATIONS: H10SideBySideDifferenceClassification[] = [
   "FORMAT_OR_CONFIDENCE_SUPPRESSION",
 ];
 
-const BANNED_RECOMMENDATION_LANGUAGE = /\b(ai says|guaranteed|must draft|lock|best pick)\b/i;
+const BANNED_RECOMMENDATION_LANGUAGE = /\b(ai says|ai advice|guaranteed|must draft|lock|best pick|can't miss|can’t miss|you should draft|final recommendation)\b/i;
 const AI_ADVICE_LANGUAGE = /\b(ai advice|ai-generated advice|machine says|model says)\b/i;
 
 export function buildH10WarRoomSideBySideDiagnostics(input: {
