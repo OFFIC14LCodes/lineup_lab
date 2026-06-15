@@ -5,9 +5,11 @@ import path from "node:path";
 import { chromium, type Browser, type Page } from "@playwright/test";
 
 import { buildBlackbirdBoard, findBannedBoardLanguage } from "@/lib/draft/blackbird-board";
+import { buildProjectionCoverageAudit } from "@/lib/draft/projection-coverage";
 import type { WarRoomValueOverlayRow } from "@/lib/draft/h10-war-room-overlay";
 import type { ScoredDraftTarget } from "@/lib/draft/scoring";
 import type { WarRoomRecommendationRow } from "@/lib/draft/war-room-recommendations";
+import type { H10LeagueValueRow } from "@/lib/projections/h10-league-value";
 import { E2E_AUTH_COOKIE } from "@/lib/supabase/auth";
 
 const PORT = 3023;
@@ -35,6 +37,12 @@ type Artifact = {
     mutationSafety: {
       draftStateUnchanged: boolean;
       availablePlayerOrderUnchanged: boolean;
+    };
+    projectionCoverage: {
+      verdict: "passed" | "failed" | "not_evaluated";
+      failureReasons: string[];
+      boardRowsByPosition: Record<string, number>;
+      missingProjectionPositions: string[];
     };
     screenshots: string[];
     error: string | null;
@@ -115,6 +123,7 @@ async function smokeBoard(browser: Browser, draftRoomId: string): Promise<Artifa
     await page.getByText("Blackbird Board").waitFor({ timeout: 20_000 });
 
     const visible = await page.getByText("Blackbird Board").first().isVisible();
+    const projectionCoverage = buildBrowserProjectionCoverage(draftRoomId, recordOrNull(beforeState.body));
     const projectionColumnVisible = await page.getByRole("columnheader", { name: "Proj" }).isVisible().catch(() => false);
     const adpColumnVisible = await page.getByRole("columnheader", { name: "ADP" }).isVisible().catch(() => false);
     const valueColumnVisible = await page.getByRole("columnheader", { name: "Value" }).isVisible().catch(() => false);
@@ -169,8 +178,9 @@ async function smokeBoard(browser: Browser, draftRoomId: string): Promise<Artifa
         draftStateUnchanged: stateSignature(beforeState.body) === stateSignature(afterState.body),
         availablePlayerOrderUnchanged: playerOrderSignature(recordOrNull(beforeState.body)?.remainingPlayers) === playerOrderSignature(recordOrNull(afterState.body)?.remainingPlayers),
       },
+      projectionCoverage,
       screenshots,
-      error: visible && projectionColumnVisible && adpColumnVisible && valueColumnVisible && loadedMore && positionFilterWorks && mobileUsable ? null : "Blackbird board browser assertions failed.",
+      error: visible && projectionColumnVisible && adpColumnVisible && valueColumnVisible && loadedMore && positionFilterWorks && mobileUsable && projectionCoverage.verdict !== "failed" ? null : "Blackbird board browser assertions failed.",
     };
   } catch (error) {
     return {
@@ -185,6 +195,7 @@ async function smokeBoard(browser: Browser, draftRoomId: string): Promise<Artifa
       mobileUsable: false,
       bannedLanguageFound: [],
       mutationSafety: { draftStateUnchanged: false, availablePlayerOrderUnchanged: false },
+      projectionCoverage: { verdict: "not_evaluated", failureReasons: [], boardRowsByPosition: {}, missingProjectionPositions: [] },
       screenshots,
       error: error instanceof Error ? error.message : String(error),
     };
@@ -316,6 +327,9 @@ function renderMarkdown(artifact: Artifact): string {
     `- Mobile usable: ${artifact.browserSmoke.mobileUsable}`,
     `- Banned language: ${artifact.browserSmoke.bannedLanguageFound.join(", ") || "none"}`,
     `- Mutation safety: ${JSON.stringify(artifact.browserSmoke.mutationSafety)}`,
+    `- Projection coverage: ${artifact.browserSmoke.projectionCoverage.verdict}`,
+    `- Projection coverage failures: ${artifact.browserSmoke.projectionCoverage.failureReasons.join("; ") || "none"}`,
+    `- Board rows by position: ${JSON.stringify(artifact.browserSmoke.projectionCoverage.boardRowsByPosition)}`,
     `- Screenshots: ${artifact.browserSmoke.screenshots.join(", ")}`,
     `- Error: ${artifact.browserSmoke.error ?? "none"}`,
     "",
@@ -344,6 +358,7 @@ function blockedArtifact(message: string): Artifact {
       mobileUsable: false,
       bannedLanguageFound: [],
       mutationSafety: { draftStateUnchanged: false, availablePlayerOrderUnchanged: false },
+      projectionCoverage: { verdict: "not_evaluated", failureReasons: [], boardRowsByPosition: {}, missingProjectionPositions: [] },
       screenshots: [],
       error: message,
     },
@@ -471,6 +486,51 @@ function playerOrderSignature(players: unknown) {
 
 function recordOrNull(value: unknown): Record<string, unknown> | null {
   return value && typeof value === "object" && !Array.isArray(value) ? value as Record<string, unknown> : null;
+}
+
+function buildBrowserProjectionCoverage(draftRoomId: string, state: Record<string, unknown> | null): Artifact["browserSmoke"]["projectionCoverage"] {
+  if (!state) {
+    return { verdict: "not_evaluated", failureReasons: ["state response unavailable"], boardRowsByPosition: {}, missingProjectionPositions: [] };
+  }
+  const room = recordOrNull(state.room);
+  const league = recordOrNull(state.league);
+  const leagueId = String(room?.league_id ?? "");
+  const remainingPlayers = Array.isArray(state.remainingPlayers) ? (state.remainingPlayers as ScoredDraftTarget[]) : [];
+  const recommendations = Array.isArray(state.h10RecommendationPreview) ? (state.h10RecommendationPreview as WarRoomRecommendationRow[]) : [];
+  const board = buildBlackbirdBoard({
+    players: remainingPlayers,
+    overlays: Array.isArray(state.h10ValueOverlay) ? (state.h10ValueOverlay as WarRoomValueOverlayRow[]) : [],
+    recommendations,
+    draftedPlayerIds: Array.isArray(state.draftedPlayerIds) ? state.draftedPlayerIds.filter((id): id is string => typeof id === "string") : [],
+  });
+  const rosterRequirements = recordOrNull(state.rosterRequirements);
+  if (!rosterRequirements) {
+    return { verdict: "not_evaluated", failureReasons: ["roster requirements unavailable"], boardRowsByPosition: {}, missingProjectionPositions: [] };
+  }
+  const audit = buildProjectionCoverageAudit({
+    draftRoomId,
+    leagueId,
+    scoringSettings: recordOrNull(league?.scoring_settings_json),
+    rosterPositions: Array.isArray(league?.roster_positions_json) ? league.roster_positions_json.filter((slot): slot is string => typeof slot === "string") : [],
+    rosterRequirements: rosterRequirements as Parameters<typeof buildProjectionCoverageAudit>[0]["rosterRequirements"],
+    projectionRows: loadH10ValueRows().filter((row) => row.leagueId === leagueId),
+    availablePlayers: remainingPlayers,
+    boardRows: board.rows,
+    recommendationRows: recommendations,
+  });
+  return {
+    verdict: audit.verdict,
+    failureReasons: audit.failureReasons,
+    boardRowsByPosition: audit.boardRowsByPosition,
+    missingProjectionPositions: audit.missingProjectionPositions,
+  };
+}
+
+function loadH10ValueRows(): H10LeagueValueRow[] {
+  const artifactPath = path.join(OUTPUT_DIR, "h10-league-value.json");
+  if (!existsSync(artifactPath)) return [];
+  const parsed = JSON.parse(readFileSync(artifactPath, "utf8")) as { rows?: H10LeagueValueRow[] } | H10LeagueValueRow[];
+  return Array.isArray(parsed) ? parsed : parsed.rows ?? [];
 }
 
 function loadLocalEnv() {

@@ -12,6 +12,11 @@ import {
   type H10RecommendationSource,
 } from "@/lib/draft/war-room-recommendation-experiment-ui";
 import { buildBlackbirdBoard, type BlackbirdBoardRow, type BlackbirdBoardSortKey } from "@/lib/draft/blackbird-board";
+import {
+  draftBoardPositionBadgeClass,
+  draftBoardPositionCardClass,
+  normalizeDraftBoardPosition,
+} from "@/lib/draft/draft-board-display";
 import { buildPreDraftStrategyUiViewModel } from "@/lib/draft/pre-draft-strategy-ui";
 import type { WarRoomRecommendationResult, WarRoomRecommendationRow, WarRoomRecommendationTier } from "@/lib/draft/war-room-recommendations";
 
@@ -75,6 +80,7 @@ type DraftBoardTeam = {
   label: string;
   ownerPlatformUserId: string | null;
   draftSlot: number;
+  mappingSource?: string;
 };
 
 type DraftState = {
@@ -694,11 +700,11 @@ function SleeperStyleDraftBoard({
 }
 
 function PositionLegend() {
-  const positions = ["QB", "RB", "WR", "TE", "K", "DEF", "DL", "LB", "DB"];
+  const positions = ["QB", "RB", "WR", "TE", "K", "DST", "DL", "LB", "DB"];
   return (
     <div className="flex flex-wrap gap-2 text-[11px]">
       {positions.map((position) => (
-        <span key={position} className={`rounded-full border px-2 py-1 font-bold ${positionBadgeClass(position)}`}>
+        <span key={position} className={`rounded-full border px-2 py-1 font-bold ${draftBoardPositionBadgeClass(position)}`}>
           {position}
         </span>
       ))}
@@ -716,11 +722,12 @@ function DraftPickCard({ pick, expectedPickNo, isCurrent }: { pick: PickLine | n
     );
   }
 
+  const position = normalizeDraftBoardPosition(pick.position);
   return (
-    <div className={`min-h-[78px] border-l-4 p-2 ${positionCardClass(pick.position)}`}>
+    <div className={`min-h-[78px] border-l-4 p-2 ${draftBoardPositionCardClass(pick.position)}`}>
       <div className="flex items-center justify-between gap-2 text-[11px]">
         <span className="font-semibold text-slate-300">#{pick.pick_no}</span>
-        <span className="rounded-full bg-background/50 px-2 py-0.5 font-bold text-slate-100">{pick.position ?? "UNK"}</span>
+        <span className="rounded-full bg-background/50 px-2 py-0.5 font-bold text-slate-100">{position}</span>
       </div>
       <div className="mt-2 line-clamp-2 text-sm font-black leading-tight text-slate-50">{pick.player_name ?? "Unknown"}</div>
       <div className="mt-1 truncate text-[11px] text-slate-300">{pick.team ?? pick.roster_label ?? "-"}</div>
@@ -730,7 +737,7 @@ function DraftPickCard({ pick, expectedPickNo, isCurrent }: { pick: PickLine | n
 
 function TeamRosterStrip({ team, picks }: { team: DraftBoardTeam; picks: PickLine[] }) {
   const grouped = picks.reduce<Record<string, PickLine[]>>((acc, pick) => {
-    const position = pick.position ?? "UNK";
+    const position = normalizeDraftBoardPosition(pick.position);
     acc[position] = acc[position] ?? [];
     acc[position].push(pick);
     return acc;
@@ -746,7 +753,7 @@ function TeamRosterStrip({ team, picks }: { team: DraftBoardTeam; picks: PickLin
         </div>
         <div className="flex flex-wrap gap-1">
           {positions.map((position) => (
-            <span key={position} className={`rounded-full border px-2 py-1 text-[11px] font-bold ${positionBadgeClass(position)}`}>
+            <span key={position} className={`rounded-full border px-2 py-1 text-[11px] font-bold ${draftBoardPositionBadgeClass(position)}`}>
               {position} {grouped[position].length}
             </span>
           ))}
@@ -757,7 +764,7 @@ function TeamRosterStrip({ team, picks }: { team: DraftBoardTeam; picks: PickLin
           <div key={pick.pick_no} className="rounded-md border border-line bg-background/60 px-3 py-2 text-xs">
             <div className="flex items-center justify-between gap-2">
               <span className="font-bold text-slate-100">{pick.player_name ?? "Unknown"}</span>
-              <span className={`rounded-full border px-2 py-0.5 font-bold ${positionBadgeClass(pick.position)}`}>{pick.position ?? "UNK"}</span>
+              <span className={`rounded-full border px-2 py-0.5 font-bold ${draftBoardPositionBadgeClass(pick.position)}`}>{normalizeDraftBoardPosition(pick.position)}</span>
             </div>
             <div className="mt-1 text-slate-500">Pick {pick.pick_no} · Round {pick.round ?? "-"}</div>
           </div>
@@ -1161,7 +1168,7 @@ function PriorityMapPreview({ priorities }: { priorities: PreDraftStrategyRespon
       {rows.map(([position, value]) => (
         <div key={position} className="rounded-md border border-line bg-panel2 px-2 py-2">
           <div className="flex items-center justify-between gap-2">
-            <span className={`rounded-full border px-2 py-1 text-[11px] font-bold ${positionBadgeClass(position)}`}>{position}</span>
+            <span className={`rounded-full border px-2 py-1 text-[11px] font-bold ${draftBoardPositionBadgeClass(position)}`}>{normalizeDraftBoardPosition(position)}</span>
             <span className="text-xs text-slate-400">{value.score}</span>
           </div>
           <div className="mt-2 truncate text-xs text-slate-300">{value.priority}</div>
@@ -1255,7 +1262,7 @@ function RecommendationList({
         <p className="mt-2 text-slate-400">
           {rankingsUploaded
             ? "Review unmatched rows, sync draft picks, or broaden available ranked players to restore recommendations."
-            : "Upload matched rankings to unlock Draft Target Score recommendations. If rankings are absent, the War Room falls back to the Sleeper player pool only."}
+            : "Upload matched rankings to enable Draft Target Score recommendations. If rankings are absent, the War Room falls back to the Sleeper player pool only."}
         </p>
         {usesLimitedDataPositions && rankingsUploaded ? (
           <p className="mt-2 text-xs text-slate-500">
@@ -2015,37 +2022,6 @@ function inferDraftSlotForPick(pickNo: number, teamCount: number) {
   const round = Math.ceil(pickNo / teamCount);
   const pickInRound = ((pickNo - 1) % teamCount) + 1;
   return round % 2 === 0 ? teamCount - pickInRound + 1 : pickInRound;
-}
-
-function positionCardClass(position: string | null | undefined) {
-  const base = "border-line bg-panel2 text-slate-100";
-  const classes: Record<string, string> = {
-    QB: "border-red-400 bg-red-500/20",
-    RB: "border-emerald-400 bg-emerald-500/18",
-    WR: "border-sky-400 bg-sky-500/18",
-    TE: "border-orange-300 bg-orange-500/18",
-    K: "border-fuchsia-300 bg-fuchsia-500/16",
-    DEF: "border-zinc-300 bg-zinc-500/18",
-    DL: "border-violet-300 bg-violet-500/18",
-    LB: "border-lime-300 bg-lime-500/16",
-    DB: "border-cyan-300 bg-cyan-500/16",
-  };
-  return classes[position ?? ""] ?? base;
-}
-
-function positionBadgeClass(position: string | null | undefined) {
-  const classes: Record<string, string> = {
-    QB: "border-red-300/40 bg-red-500/15 text-red-100",
-    RB: "border-emerald-300/40 bg-emerald-500/15 text-emerald-100",
-    WR: "border-sky-300/40 bg-sky-500/15 text-sky-100",
-    TE: "border-orange-300/40 bg-orange-500/15 text-orange-100",
-    K: "border-fuchsia-300/40 bg-fuchsia-500/15 text-fuchsia-100",
-    DEF: "border-zinc-300/40 bg-zinc-500/15 text-zinc-100",
-    DL: "border-violet-300/40 bg-violet-500/15 text-violet-100",
-    LB: "border-lime-300/40 bg-lime-500/15 text-lime-100",
-    DB: "border-cyan-300/40 bg-cyan-500/15 text-cyan-100",
-  };
-  return classes[position ?? ""] ?? "border-line bg-background text-slate-300";
 }
 
 // TODO: Extend War Room display logic for IDP roster slots and defensive positions.

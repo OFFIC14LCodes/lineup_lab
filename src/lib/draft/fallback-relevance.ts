@@ -1,5 +1,6 @@
 import type { DraftTargetScorePlayer } from "@/lib/draft/scoring";
 import type { NormalizedRosterRequirements } from "@/lib/draft/roster-slots";
+import { normalizePlayerName, normalizePrimaryPosition } from "@/lib/players/normalize";
 import type { H10LeagueValueRow } from "@/lib/projections/h10-league-value";
 
 export type FallbackRelevanceLevel =
@@ -59,8 +60,14 @@ export function filterFallbackPlayers(input: FilterFallbackPlayersInput): {
   diagnostics: FallbackRelevanceDiagnostics;
 } {
   const valueEntityIds = new Set(input.valueRows.filter((row) => row.leagueId === input.leagueId).map((row) => row.entityId));
+  const valueNamePositionTeamKeys = new Set(
+    input.valueRows
+      .filter((row) => row.leagueId === input.leagueId)
+      .flatMap((row) => namePositionTeamKeys(row.displayName, row.positionGroup || row.position, row.team))
+  );
   const rows = input.players.map((player) => {
-    const hasH10Value = Boolean(player.matched_player_id && valueEntityIds.has(player.matched_player_id));
+    const hasH10Value = Boolean(player.matched_player_id && valueEntityIds.has(player.matched_player_id)) ||
+      namePositionTeamKeys(player.player_name, player.position, player.team).some((key) => valueNamePositionTeamKeys.has(key));
     const isRosterRelevant = isPositionRosterRelevant(player.position, input.rosterRequirements);
     const relevance = classifyFallbackPlayer(player, hasH10Value, isRosterRelevant);
     const included = shouldInclude(relevance, Boolean(input.includeDiagnosticFallbacks));
@@ -129,9 +136,16 @@ function isPositionRosterRelevant(position: string | null, requirements: Normali
 }
 
 function normalizePosition(position: string | null): string {
-  const normalized = (position ?? "").trim().toUpperCase();
-  if (normalized === "D/ST" || normalized === "DST") return "DEF";
-  return normalized;
+  const normalized = normalizePrimaryPosition(position);
+  return normalized ?? (position ?? "").trim().toUpperCase();
+}
+
+function namePositionTeamKeys(name: string | null | undefined, position: string | null | undefined, team: string | null | undefined): string[] {
+  const normalizedName = normalizePlayerName(name ?? "");
+  const normalizedPosition = normalizePosition(position ?? null);
+  if (!normalizedName || !normalizedPosition) return [];
+  const normalizedTeam = (team ?? "").trim().toUpperCase();
+  return normalizedTeam ? [`${normalizedName}|${normalizedPosition}|${normalizedTeam}`] : [];
 }
 
 function countBy(values: string[]): Record<string, number> {

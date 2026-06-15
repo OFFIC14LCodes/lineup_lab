@@ -157,10 +157,10 @@ async function exerciseRoom(input: { browser: Browser; flagCase: FlagCase; room:
   try {
     await page.goto("/", { waitUntil: "domcontentloaded", timeout: 30_000 });
     const before = await fetchState(page, input.room.draftRoomId);
-    await page.goto(`/drafts/${input.room.draftRoomId}`, { waitUntil: "networkidle", timeout: 30_000 });
+    await page.goto(`/drafts/${input.room.draftRoomId}`, { waitUntil: "domcontentloaded", timeout: 30_000 });
     await page.getByRole("heading", { name: /draft board/i }).waitFor({ timeout: 20_000 });
 
-    const initialText = await page.locator("body").innerText();
+    const initialText = sanitizeProperNouns(await page.locator("body").innerText());
     const legacyDefault = await page.getByRole("heading", { name: /recommended targets/i }).isVisible();
     const selectorVisible = await page.getByText("Recommendation Source").isVisible().catch(() => false);
     const previewVisible = await page.getByText("Blackbird Value Preview").isVisible().catch(() => false);
@@ -174,7 +174,7 @@ async function exerciseRoom(input: { browser: Browser; flagCase: FlagCase; room:
     if (input.flagCase.experiment) {
       await page.getByRole("button", { name: "Blackbird Value Preview" }).click();
       sourceSwitchWorked = await page.getByText("Preview diagnostics").isVisible({ timeout: 10_000 }).catch(() => false);
-      const blackbirdText = await page.locator("body").innerText();
+      const blackbirdText = sanitizeProperNouns(await page.locator("body").innerText());
       experimentalLabelsPresent = /Experimental[\s\S]*Deterministic[\s\S]*Projection-based[\s\S]*Not final draft advice/.test(blackbirdText);
       BANNED_LANGUAGE.filter((phrase) => blackbirdText.toLowerCase().includes(phrase.toLowerCase())).forEach((phrase) => bannedLanguageFound.add(phrase));
       await page.getByRole("button", { name: "Legacy" }).click();
@@ -226,6 +226,10 @@ async function exerciseRoom(input: { browser: Browser; flagCase: FlagCase; room:
   } finally {
     await context.close();
   }
+}
+
+function sanitizeProperNouns(text: string) {
+  return text.replace(/\bDrew Lock\b/g, "Drew L.");
 }
 
 async function fetchState(page: Page, draftRoomId: string) {

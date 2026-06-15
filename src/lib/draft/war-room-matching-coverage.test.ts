@@ -119,11 +119,24 @@ describe("buildWarRoomMatchingCoverage", () => {
   it("does not fuzzy match by name only", () => {
     const result = build({
       players: [player({ matched_player_id: null, sleeper_player_id: null, player_name: "Same Name" })],
-      valueRows: [valueRow({ entityId: "different-id", displayName: "Same Name" })],
+      valueRows: [valueRow({ entityId: "different-id", displayName: "Same Name", team: "BUF" })],
     });
 
     expect(result.rows[0].classification).toBe("MISSING_CANONICAL_ID");
     expect(result.rows[0].matchedEntityId).toBeNull();
+  });
+
+  it("matches fallback rows by exact normalized name, position, and team", () => {
+    const result = build({
+      players: [player({ matched_player_id: "local-id", sleeper_player_id: "s1", player_name: "Same Name", position: "RB", team: "DAL", is_fallback: true })],
+      valueRows: [valueRow({ entityId: "h10-id", displayName: "Same Name", position: "RB", positionGroup: "RB", team: "DAL" })],
+    });
+
+    expect(result.rows[0]).toMatchObject({
+      classification: "MATCHED_BY_NAME_POSITION_TEAM",
+      matchedEntityId: "h10-id",
+      matchedBy: "name_position_team",
+    });
   });
 
   it("classifies missing reasons, match rates, and high-priority examples", () => {

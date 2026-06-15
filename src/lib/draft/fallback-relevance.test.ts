@@ -86,7 +86,7 @@ describe("fallback relevance", () => {
   });
 
   it("improves H10 overlay match rate by filtering projectionless fallback rows", () => {
-    const players = [player({ matched_player_id: "missing" }), player({ matched_player_id: "p1" })];
+    const players = [player({ matched_player_id: "missing", player_name: "Projectionless", team: "NYJ" }), player({ matched_player_id: "p1" })];
     const valueRows = [valueRow({ entityId: "p1" })];
     const rosterRequirements = requirements(["RB"]);
     const before = buildWarRoomValueOverlay({ leagueId: "l1", players, valueRows, rosterRequirements });
@@ -98,7 +98,7 @@ describe("fallback relevance", () => {
   });
 
   it("recommendation preview receives fewer insufficient data rows after filtering", () => {
-    const players = [player({ matched_player_id: "missing" }), player({ matched_player_id: "p1" })];
+    const players = [player({ matched_player_id: "missing", player_name: "Projectionless", team: "NYJ" }), player({ matched_player_id: "p1" })];
     const valueRows = [valueRow({ entityId: "p1" })];
     const rosterRequirements = requirements(["RB"]);
     const beforeOverlay = buildWarRoomValueOverlay({ leagueId: "l1", players, valueRows, rosterRequirements });

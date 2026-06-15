@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-15T19:48:01.390Z",
+  "generatedAt": "2026-06-15T20:31:21.439Z",
   "artifactVersion": "h10.8-war-room-recommendation-validation-v3",
   "args": {
     "includeLive": true,
@@ -155,7 +155,13 @@
       "fallback_row_count": 150,
       "ranked_row_count": 0,
       "positions_present": [
-        "DB"
+        "DB",
+        "DL",
+        "LB",
+        "QB",
+        "RB",
+        "TE",
+        "WR"
       ],
       "hasIDP": true,
       "hasKicker": false,
@@ -10879,55 +10885,68 @@
       "remainingPlayersLoaded": 150,
       "overlayRowsLoaded": 150,
       "recommendationsGenerated": 150,
-      "matchRate": 1,
+      "matchRate": 0.967,
       "rowsByTier": {
-        "watchlist": 1,
-        "avoid_for_now": 149
+        "watchlist": 16,
+        "avoid_for_now": 129,
+        "insufficient_data": 5
       },
       "rowsByStatus": {
-        "watch_only": 150
+        "watch_only": 145,
+        "missing_projection": 5
       },
       "rowsByPosition": {
-        "DB": 150
+        "DL": 21,
+        "DB": 21,
+        "LB": 21,
+        "TE": 21,
+        "WR": 22,
+        "RB": 22,
+        "QB": 22
       },
       "warningCounts": {
-        "LOW_PROJECTION_CONFIDENCE": 150,
-        "MARKET_NOT_IMPLEMENTED": 150
+        "LOW_PROJECTION_CONFIDENCE": 93,
+        "MARKET_NOT_IMPLEMENTED": 58,
+        "Best-ball and managed-league ADP are not blended.": 87,
+        "NO_COMPATIBLE_MARKET": 87,
+        "SINGLE_SEASON_OFFENSIVE_BASELINE": 87,
+        "H10_VALUE_OVERLAY_MISSING_PROJECTION": 5
       },
       "contextLimitations": [],
       "invariantFailures": [],
       "topRecommendations": [
         {
           "recommendationRank": 1,
-          "displayName": "Jamel Dean",
-          "position": "DB",
-          "team": "PIT",
+          "displayName": "Al-Quadin Muhammad",
+          "position": "DL",
+          "team": "TB",
           "recommendationTier": "watchlist",
-          "recommendationScore": 42,
+          "recommendationScore": 43.6,
           "status": "watch_only",
-          "primaryReason": "High league value: +0.5 points above replacement.",
+          "primaryReason": "League value: -0.7 points above replacement.",
           "explanationFragments": [
-            "High league value: +0.5 points above replacement.",
-            "Roster need: DB bench depth is still useful in this format.",
+            "League value: -0.7 points above replacement.",
+            "Roster need: DL starter depth still matters in this format.",
             "Risk: low-confidence baseline; range is wide.",
-            "Timing signal: DB is monitored without overriding the broader value signal."
+            "Timing signal: DL is monitored without overriding the broader value signal."
           ],
           "warningCodes": [
             "LOW_PROJECTION_CONFIDENCE",
             "MARKET_NOT_IMPLEMENTED"
           ],
           "reasonCodes": [
-            "BENCH_DEPTH_NEED",
+            "DRAFT_CONTEXT_PRESSURE",
             "IDP_BIG_PLAY_REGRESSION",
             "IDP_DEFENSIVE_TD_VOLATILITY",
             "IDP_POSITION_GROUP_COMPATIBLE",
             "IDP_TACKLE_VOLUME_PROJECTED",
-            "IDP_UNRESOLVED_ROWS_EXCLUDED"
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
           ],
           "scoreComponents": {
-            "leagueValue": 30,
-            "rosterNeed": 14,
-            "scarcity": 6,
+            "leagueValue": 29.9,
+            "rosterNeed": 20,
+            "scarcity": 1.7,
             "tierCliff": 2,
             "marketValue": 3,
             "availabilityRisk": 1,
@@ -10936,9 +10955,9 @@
             "formatPenalty": 0
           },
           "h10": {
-            "medianPoints": 6.91,
-            "pointsAboveReplacement": 0.54,
-            "riskAdjustedValue": 0.24,
+            "medianPoints": 7.05,
+            "pointsAboveReplacement": -0.74,
+            "riskAdjustedValue": -0.33,
             "tier": 1,
             "marketValueSignal": "not_implemented",
             "confidenceLabel": "low",
@@ -10948,32 +10967,32 @@
             "currentRound": 20,
             "currentPick": 234,
             "picksUntilNextUserPick": 0,
-            "positionNeedLevel": "moderate",
-            "starterSlotNeed": false,
-            "benchDepthNeed": true,
+            "positionNeedLevel": "urgent",
+            "starterSlotNeed": true,
+            "benchDepthNeed": false,
             "tierDropBeforeNextPick": false
           },
-          "rosterNeedStatus": "flex_need_open",
-          "needUrgency": "medium",
+          "rosterNeedStatus": "starter_need_open",
+          "needUrgency": "high",
           "futureAvailability": "likely_available_next_pick",
           "tierDropRisk": "low",
           "opportunityCost": "low",
           "needTimingAction": "monitor",
           "needTimingReasons": [
-            "DB timing action: monitor.",
-            "Comparable DB options are likely to be available near the next pick.",
-            "DB survival confidence is medium (148 likely next-pick comparables).",
-            "Wait plan fallback: monitor.",
-            "DB timing was adjusted by survival risk."
+            "DL timing action: monitor.",
+            "DL remains a starter need.",
+            "Comparable DL options are likely to be available near the next pick.",
+            "DL survival confidence is medium (16 likely next-pick comparables).",
+            "Wait plan fallback: monitor."
           ],
           "survivalConfidence": "medium",
-          "survivalConfidenceScore": 65,
-          "comparableOptionsNow": 149,
-          "comparableOptionsLikelyNextPick": 148,
-          "comparableOptionsLikelyNextTwoPicks": 148,
+          "survivalConfidenceScore": 58,
+          "comparableOptionsNow": 17,
+          "comparableOptionsLikelyNextPick": 16,
+          "comparableOptionsLikelyNextTwoPicks": 16,
           "waitRisk": "low",
           "waitRiskReasons": [
-            "DB projection confidence is low."
+            "DL projection confidence is low."
           ],
           "needTimingAdjustedBySurvival": false,
           "waitPlanTargets": [],
@@ -10981,42 +11000,43 @@
           "waitPlanStrongTargetCount": 0,
           "waitPlanSurvivalSummary": "0 likely, 0 uncertain wait targets.",
           "waitPlanRisk": "severe",
-          "waitPlanReason": "Wait risk severe; only 0 comparable DB targets support waiting.",
+          "waitPlanReason": "Wait risk severe; only 0 comparable DL targets support waiting.",
           "waitPlanBacked": false,
           "waitPlanFallbackAction": "monitor",
           "needTimingAdjustedByWaitPlan": true
         },
         {
           "recommendationRank": 2,
-          "displayName": "Kevin Byard",
-          "position": "DB",
-          "team": "NE",
-          "recommendationTier": "avoid_for_now",
-          "recommendationScore": 40.3,
+          "displayName": "Chase Young",
+          "position": "DL",
+          "team": "NO",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 43.6,
           "status": "watch_only",
-          "primaryReason": "High league value: +0.2 points above replacement.",
+          "primaryReason": "High league value: +0 points above replacement.",
           "explanationFragments": [
-            "High league value: +0.2 points above replacement.",
-            "Roster need: DB bench depth is still useful in this format.",
+            "High league value: +0 points above replacement.",
+            "Roster need: DL starter depth still matters in this format.",
             "Risk: low-confidence baseline; range is wide.",
-            "Timing signal: DB is monitored without overriding the broader value signal."
+            "Timing signal: DL is monitored without overriding the broader value signal."
           ],
           "warningCodes": [
             "LOW_PROJECTION_CONFIDENCE",
             "MARKET_NOT_IMPLEMENTED"
           ],
           "reasonCodes": [
-            "BENCH_DEPTH_NEED",
+            "DRAFT_CONTEXT_PRESSURE",
             "IDP_BIG_PLAY_REGRESSION",
             "IDP_DEFENSIVE_TD_VOLATILITY",
             "IDP_POSITION_GROUP_COMPATIBLE",
             "IDP_TACKLE_VOLUME_PROJECTED",
-            "IDP_UNRESOLVED_ROWS_EXCLUDED"
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
           ],
           "scoreComponents": {
-            "leagueValue": 28.3,
-            "rosterNeed": 14,
-            "scarcity": 6,
+            "leagueValue": 29.9,
+            "rosterNeed": 20,
+            "scarcity": 1.7,
             "tierCliff": 2,
             "marketValue": 3,
             "availabilityRisk": 1,
@@ -11025,9 +11045,9 @@
             "formatPenalty": 0
           },
           "h10": {
-            "medianPoints": 6.53,
-            "pointsAboveReplacement": 0.16,
-            "riskAdjustedValue": 0.07,
+            "medianPoints": 7.83,
+            "pointsAboveReplacement": 0.04,
+            "riskAdjustedValue": 0.02,
             "tier": 1,
             "marketValueSignal": "not_implemented",
             "confidenceLabel": "low",
@@ -11037,32 +11057,32 @@
             "currentRound": 20,
             "currentPick": 234,
             "picksUntilNextUserPick": 0,
-            "positionNeedLevel": "moderate",
-            "starterSlotNeed": false,
-            "benchDepthNeed": true,
+            "positionNeedLevel": "urgent",
+            "starterSlotNeed": true,
+            "benchDepthNeed": false,
             "tierDropBeforeNextPick": false
           },
-          "rosterNeedStatus": "flex_need_open",
-          "needUrgency": "medium",
+          "rosterNeedStatus": "starter_need_open",
+          "needUrgency": "high",
           "futureAvailability": "likely_available_next_pick",
           "tierDropRisk": "low",
           "opportunityCost": "low",
           "needTimingAction": "monitor",
           "needTimingReasons": [
-            "DB timing action: monitor.",
-            "Comparable DB options are likely to be available near the next pick.",
-            "DB survival confidence is medium (148 likely next-pick comparables).",
-            "Wait plan fallback: monitor.",
-            "DB timing was adjusted by survival risk."
+            "DL timing action: monitor.",
+            "DL remains a starter need.",
+            "Comparable DL options are likely to be available near the next pick.",
+            "DL survival confidence is medium (16 likely next-pick comparables).",
+            "Wait plan fallback: monitor."
           ],
           "survivalConfidence": "medium",
-          "survivalConfidenceScore": 65,
-          "comparableOptionsNow": 149,
-          "comparableOptionsLikelyNextPick": 148,
-          "comparableOptionsLikelyNextTwoPicks": 148,
+          "survivalConfidenceScore": 58,
+          "comparableOptionsNow": 17,
+          "comparableOptionsLikelyNextPick": 16,
+          "comparableOptionsLikelyNextTwoPicks": 16,
           "waitRisk": "low",
           "waitRiskReasons": [
-            "DB projection confidence is low."
+            "DL projection confidence is low."
           ],
           "needTimingAdjustedBySurvival": false,
           "waitPlanTargets": [],
@@ -11070,309 +11090,43 @@
           "waitPlanStrongTargetCount": 0,
           "waitPlanSurvivalSummary": "0 likely, 0 uncertain wait targets.",
           "waitPlanRisk": "severe",
-          "waitPlanReason": "Wait risk severe; only 0 comparable DB targets support waiting.",
+          "waitPlanReason": "Wait risk severe; only 0 comparable DL targets support waiting.",
           "waitPlanBacked": false,
           "waitPlanFallbackAction": "monitor",
           "needTimingAdjustedByWaitPlan": true
         },
         {
           "recommendationRank": 3,
-          "displayName": "Derek Stingley",
-          "position": "DB",
-          "team": "HOU",
-          "recommendationTier": "avoid_for_now",
-          "recommendationScore": 39.3,
+          "displayName": "Brandon Dorlus",
+          "position": "DL",
+          "team": "ATL",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 43.5,
           "status": "watch_only",
-          "primaryReason": "League value: -0.1 points above replacement.",
+          "primaryReason": "League value: -1.9 points above replacement.",
           "explanationFragments": [
-            "League value: -0.1 points above replacement.",
-            "Roster need: DB bench depth is still useful in this format.",
+            "League value: -1.9 points above replacement.",
+            "Roster need: DL starter depth still matters in this format.",
             "Risk: low-confidence baseline; range is wide.",
-            "Timing signal: DB is monitored without overriding the broader value signal."
+            "Timing signal: DL is monitored without overriding the broader value signal."
           ],
           "warningCodes": [
             "LOW_PROJECTION_CONFIDENCE",
             "MARKET_NOT_IMPLEMENTED"
           ],
           "reasonCodes": [
-            "BENCH_DEPTH_NEED",
+            "DRAFT_CONTEXT_PRESSURE",
             "IDP_BIG_PLAY_REGRESSION",
             "IDP_DEFENSIVE_TD_VOLATILITY",
             "IDP_POSITION_GROUP_COMPATIBLE",
             "IDP_TACKLE_VOLUME_PROJECTED",
-            "IDP_UNRESOLVED_ROWS_EXCLUDED"
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
           ],
           "scoreComponents": {
-            "leagueValue": 27.3,
-            "rosterNeed": 14,
-            "scarcity": 6,
-            "tierCliff": 2,
-            "marketValue": 3,
-            "availabilityRisk": 1,
-            "needTiming": 0,
-            "confidencePenalty": -14,
-            "formatPenalty": 0
-          },
-          "h10": {
-            "medianPoints": 6.3,
-            "pointsAboveReplacement": -0.07,
-            "riskAdjustedValue": -0.03,
-            "tier": 1,
-            "marketValueSignal": "not_implemented",
-            "confidenceLabel": "low",
-            "valueReadiness": "LOW_CONFIDENCE_BASELINE"
-          },
-          "draftContext": {
-            "currentRound": 20,
-            "currentPick": 234,
-            "picksUntilNextUserPick": 0,
-            "positionNeedLevel": "moderate",
-            "starterSlotNeed": false,
-            "benchDepthNeed": true,
-            "tierDropBeforeNextPick": false
-          },
-          "rosterNeedStatus": "flex_need_open",
-          "needUrgency": "medium",
-          "futureAvailability": "likely_available_next_pick",
-          "tierDropRisk": "low",
-          "opportunityCost": "low",
-          "needTimingAction": "monitor",
-          "needTimingReasons": [
-            "DB timing action: monitor.",
-            "Comparable DB options are likely to be available near the next pick.",
-            "DB survival confidence is medium (148 likely next-pick comparables).",
-            "Wait plan fallback: monitor.",
-            "DB timing was adjusted by survival risk."
-          ],
-          "survivalConfidence": "medium",
-          "survivalConfidenceScore": 65,
-          "comparableOptionsNow": 149,
-          "comparableOptionsLikelyNextPick": 148,
-          "comparableOptionsLikelyNextTwoPicks": 148,
-          "waitRisk": "low",
-          "waitRiskReasons": [
-            "DB projection confidence is low."
-          ],
-          "needTimingAdjustedBySurvival": false,
-          "waitPlanTargets": [],
-          "waitPlanTargetCount": 0,
-          "waitPlanStrongTargetCount": 0,
-          "waitPlanSurvivalSummary": "0 likely, 0 uncertain wait targets.",
-          "waitPlanRisk": "severe",
-          "waitPlanReason": "Wait risk severe; only 0 comparable DB targets support waiting.",
-          "waitPlanBacked": false,
-          "waitPlanFallbackAction": "monitor",
-          "needTimingAdjustedByWaitPlan": true
-        },
-        {
-          "recommendationRank": 4,
-          "displayName": "Marlon Humphrey",
-          "position": "DB",
-          "team": "BAL",
-          "recommendationTier": "avoid_for_now",
-          "recommendationScore": 38.3,
-          "status": "watch_only",
-          "primaryReason": "League value: -0.3 points above replacement.",
-          "explanationFragments": [
-            "League value: -0.3 points above replacement.",
-            "Roster need: DB bench depth is still useful in this format.",
-            "Risk: low-confidence baseline; range is wide.",
-            "Timing signal: DB is monitored without overriding the broader value signal."
-          ],
-          "warningCodes": [
-            "LOW_PROJECTION_CONFIDENCE",
-            "MARKET_NOT_IMPLEMENTED"
-          ],
-          "reasonCodes": [
-            "BENCH_DEPTH_NEED",
-            "IDP_BIG_PLAY_REGRESSION",
-            "IDP_DEFENSIVE_TD_VOLATILITY",
-            "IDP_POSITION_GROUP_COMPATIBLE",
-            "IDP_TACKLE_VOLUME_PROJECTED",
-            "IDP_UNRESOLVED_ROWS_EXCLUDED"
-          ],
-          "scoreComponents": {
-            "leagueValue": 26.3,
-            "rosterNeed": 14,
-            "scarcity": 6,
-            "tierCliff": 2,
-            "marketValue": 3,
-            "availabilityRisk": 1,
-            "needTiming": 0,
-            "confidencePenalty": -14,
-            "formatPenalty": 0
-          },
-          "h10": {
-            "medianPoints": 6.08,
-            "pointsAboveReplacement": -0.29,
-            "riskAdjustedValue": -0.13,
-            "tier": 1,
-            "marketValueSignal": "not_implemented",
-            "confidenceLabel": "low",
-            "valueReadiness": "LOW_CONFIDENCE_BASELINE"
-          },
-          "draftContext": {
-            "currentRound": 20,
-            "currentPick": 234,
-            "picksUntilNextUserPick": 0,
-            "positionNeedLevel": "moderate",
-            "starterSlotNeed": false,
-            "benchDepthNeed": true,
-            "tierDropBeforeNextPick": false
-          },
-          "rosterNeedStatus": "flex_need_open",
-          "needUrgency": "medium",
-          "futureAvailability": "likely_available_next_pick",
-          "tierDropRisk": "low",
-          "opportunityCost": "low",
-          "needTimingAction": "monitor",
-          "needTimingReasons": [
-            "DB timing action: monitor.",
-            "Comparable DB options are likely to be available near the next pick.",
-            "DB survival confidence is medium (148 likely next-pick comparables).",
-            "Wait plan fallback: monitor.",
-            "DB timing was adjusted by survival risk."
-          ],
-          "survivalConfidence": "medium",
-          "survivalConfidenceScore": 65,
-          "comparableOptionsNow": 149,
-          "comparableOptionsLikelyNextPick": 148,
-          "comparableOptionsLikelyNextTwoPicks": 148,
-          "waitRisk": "low",
-          "waitRiskReasons": [
-            "DB projection confidence is low."
-          ],
-          "needTimingAdjustedBySurvival": false,
-          "waitPlanTargets": [],
-          "waitPlanTargetCount": 0,
-          "waitPlanStrongTargetCount": 0,
-          "waitPlanSurvivalSummary": "0 likely, 0 uncertain wait targets.",
-          "waitPlanRisk": "severe",
-          "waitPlanReason": "Wait risk severe; only 0 comparable DB targets support waiting.",
-          "waitPlanBacked": false,
-          "waitPlanFallbackAction": "monitor",
-          "needTimingAdjustedByWaitPlan": true
-        },
-        {
-          "recommendationRank": 5,
-          "displayName": "Jaylinn Hawkins",
-          "position": "DB",
-          "team": "BAL",
-          "recommendationTier": "avoid_for_now",
-          "recommendationScore": 37.6,
-          "status": "watch_only",
-          "primaryReason": "League value: -0.5 points above replacement.",
-          "explanationFragments": [
-            "League value: -0.5 points above replacement.",
-            "Roster need: DB bench depth is still useful in this format.",
-            "Risk: low-confidence baseline; range is wide.",
-            "Timing signal: DB is monitored without overriding the broader value signal."
-          ],
-          "warningCodes": [
-            "LOW_PROJECTION_CONFIDENCE",
-            "MARKET_NOT_IMPLEMENTED"
-          ],
-          "reasonCodes": [
-            "BENCH_DEPTH_NEED",
-            "IDP_BIG_PLAY_REGRESSION",
-            "IDP_DEFENSIVE_TD_VOLATILITY",
-            "IDP_POSITION_GROUP_COMPATIBLE",
-            "IDP_TACKLE_VOLUME_PROJECTED",
-            "IDP_UNRESOLVED_ROWS_EXCLUDED"
-          ],
-          "scoreComponents": {
-            "leagueValue": 25.6,
-            "rosterNeed": 14,
-            "scarcity": 6,
-            "tierCliff": 2,
-            "marketValue": 3,
-            "availabilityRisk": 1,
-            "needTiming": 0,
-            "confidencePenalty": -14,
-            "formatPenalty": 0
-          },
-          "h10": {
-            "medianPoints": 5.91,
-            "pointsAboveReplacement": -0.46,
-            "riskAdjustedValue": -0.21,
-            "tier": 1,
-            "marketValueSignal": "not_implemented",
-            "confidenceLabel": "low",
-            "valueReadiness": "LOW_CONFIDENCE_BASELINE"
-          },
-          "draftContext": {
-            "currentRound": 20,
-            "currentPick": 234,
-            "picksUntilNextUserPick": 0,
-            "positionNeedLevel": "moderate",
-            "starterSlotNeed": false,
-            "benchDepthNeed": true,
-            "tierDropBeforeNextPick": false
-          },
-          "rosterNeedStatus": "flex_need_open",
-          "needUrgency": "medium",
-          "futureAvailability": "likely_available_next_pick",
-          "tierDropRisk": "low",
-          "opportunityCost": "low",
-          "needTimingAction": "monitor",
-          "needTimingReasons": [
-            "DB timing action: monitor.",
-            "Comparable DB options are likely to be available near the next pick.",
-            "DB survival confidence is medium (148 likely next-pick comparables).",
-            "Wait plan fallback: monitor.",
-            "DB timing was adjusted by survival risk."
-          ],
-          "survivalConfidence": "medium",
-          "survivalConfidenceScore": 65,
-          "comparableOptionsNow": 149,
-          "comparableOptionsLikelyNextPick": 148,
-          "comparableOptionsLikelyNextTwoPicks": 148,
-          "waitRisk": "low",
-          "waitRiskReasons": [
-            "DB projection confidence is low."
-          ],
-          "needTimingAdjustedBySurvival": false,
-          "waitPlanTargets": [],
-          "waitPlanTargetCount": 0,
-          "waitPlanStrongTargetCount": 0,
-          "waitPlanSurvivalSummary": "0 likely, 0 uncertain wait targets.",
-          "waitPlanRisk": "severe",
-          "waitPlanReason": "Wait risk severe; only 0 comparable DB targets support waiting.",
-          "waitPlanBacked": false,
-          "waitPlanFallbackAction": "monitor",
-          "needTimingAdjustedByWaitPlan": true
-        },
-        {
-          "recommendationRank": 6,
-          "displayName": "Mike Jackson",
-          "position": "DB",
-          "team": "CAR",
-          "recommendationTier": "avoid_for_now",
-          "recommendationScore": 37.3,
-          "status": "watch_only",
-          "primaryReason": "League value: -0.5 points above replacement.",
-          "explanationFragments": [
-            "League value: -0.5 points above replacement.",
-            "Roster need: DB bench depth is still useful in this format.",
-            "Risk: low-confidence baseline; range is wide.",
-            "Timing signal: DB is monitored without overriding the broader value signal."
-          ],
-          "warningCodes": [
-            "LOW_PROJECTION_CONFIDENCE",
-            "MARKET_NOT_IMPLEMENTED"
-          ],
-          "reasonCodes": [
-            "BENCH_DEPTH_NEED",
-            "IDP_BIG_PLAY_REGRESSION",
-            "IDP_DEFENSIVE_TD_VOLATILITY",
-            "IDP_POSITION_GROUP_COMPATIBLE",
-            "IDP_TACKLE_VOLUME_PROJECTED",
-            "IDP_UNRESOLVED_ROWS_EXCLUDED"
-          ],
-          "scoreComponents": {
-            "leagueValue": 25.3,
-            "rosterNeed": 14,
-            "scarcity": 6,
+            "leagueValue": 29.8,
+            "rosterNeed": 20,
+            "scarcity": 1.7,
             "tierCliff": 2,
             "marketValue": 3,
             "availabilityRisk": 1,
@@ -11382,8 +11136,8 @@
           },
           "h10": {
             "medianPoints": 5.84,
-            "pointsAboveReplacement": -0.53,
-            "riskAdjustedValue": -0.24,
+            "pointsAboveReplacement": -1.95,
+            "riskAdjustedValue": -0.87,
             "tier": 1,
             "marketValueSignal": "not_implemented",
             "confidenceLabel": "low",
@@ -11393,32 +11147,32 @@
             "currentRound": 20,
             "currentPick": 234,
             "picksUntilNextUserPick": 0,
-            "positionNeedLevel": "moderate",
-            "starterSlotNeed": false,
-            "benchDepthNeed": true,
+            "positionNeedLevel": "urgent",
+            "starterSlotNeed": true,
+            "benchDepthNeed": false,
             "tierDropBeforeNextPick": false
           },
-          "rosterNeedStatus": "flex_need_open",
-          "needUrgency": "medium",
+          "rosterNeedStatus": "starter_need_open",
+          "needUrgency": "high",
           "futureAvailability": "likely_available_next_pick",
           "tierDropRisk": "low",
           "opportunityCost": "low",
           "needTimingAction": "monitor",
           "needTimingReasons": [
-            "DB timing action: monitor.",
-            "Comparable DB options are likely to be available near the next pick.",
-            "DB survival confidence is medium (148 likely next-pick comparables).",
-            "Wait plan fallback: monitor.",
-            "DB timing was adjusted by survival risk."
+            "DL timing action: monitor.",
+            "DL remains a starter need.",
+            "Comparable DL options are likely to be available near the next pick.",
+            "DL survival confidence is medium (16 likely next-pick comparables).",
+            "Wait plan fallback: monitor."
           ],
           "survivalConfidence": "medium",
-          "survivalConfidenceScore": 65,
-          "comparableOptionsNow": 149,
-          "comparableOptionsLikelyNextPick": 148,
-          "comparableOptionsLikelyNextTwoPicks": 148,
+          "survivalConfidenceScore": 58,
+          "comparableOptionsNow": 17,
+          "comparableOptionsLikelyNextPick": 16,
+          "comparableOptionsLikelyNextTwoPicks": 16,
           "waitRisk": "low",
           "waitRiskReasons": [
-            "DB projection confidence is low."
+            "DL projection confidence is low."
           ],
           "needTimingAdjustedBySurvival": false,
           "waitPlanTargets": [],
@@ -11426,309 +11180,43 @@
           "waitPlanStrongTargetCount": 0,
           "waitPlanSurvivalSummary": "0 likely, 0 uncertain wait targets.",
           "waitPlanRisk": "severe",
-          "waitPlanReason": "Wait risk severe; only 0 comparable DB targets support waiting.",
+          "waitPlanReason": "Wait risk severe; only 0 comparable DL targets support waiting.",
           "waitPlanBacked": false,
           "waitPlanFallbackAction": "monitor",
           "needTimingAdjustedByWaitPlan": true
         },
         {
-          "recommendationRank": 7,
-          "displayName": "Jaycee Horn",
-          "position": "DB",
-          "team": "CAR",
-          "recommendationTier": "avoid_for_now",
-          "recommendationScore": 36.2,
-          "status": "watch_only",
-          "primaryReason": "League value: -0.8 points above replacement.",
-          "explanationFragments": [
-            "League value: -0.8 points above replacement.",
-            "Roster need: DB bench depth is still useful in this format.",
-            "Risk: low-confidence baseline; range is wide.",
-            "Timing signal: DB is monitored without overriding the broader value signal."
-          ],
-          "warningCodes": [
-            "LOW_PROJECTION_CONFIDENCE",
-            "MARKET_NOT_IMPLEMENTED"
-          ],
-          "reasonCodes": [
-            "BENCH_DEPTH_NEED",
-            "IDP_BIG_PLAY_REGRESSION",
-            "IDP_DEFENSIVE_TD_VOLATILITY",
-            "IDP_POSITION_GROUP_COMPATIBLE",
-            "IDP_TACKLE_VOLUME_PROJECTED",
-            "IDP_UNRESOLVED_ROWS_EXCLUDED"
-          ],
-          "scoreComponents": {
-            "leagueValue": 24.2,
-            "rosterNeed": 14,
-            "scarcity": 6,
-            "tierCliff": 2,
-            "marketValue": 3,
-            "availabilityRisk": 1,
-            "needTiming": 0,
-            "confidencePenalty": -14,
-            "formatPenalty": 0
-          },
-          "h10": {
-            "medianPoints": 5.58,
-            "pointsAboveReplacement": -0.79,
-            "riskAdjustedValue": -0.35,
-            "tier": 1,
-            "marketValueSignal": "not_implemented",
-            "confidenceLabel": "low",
-            "valueReadiness": "LOW_CONFIDENCE_BASELINE"
-          },
-          "draftContext": {
-            "currentRound": 20,
-            "currentPick": 234,
-            "picksUntilNextUserPick": 0,
-            "positionNeedLevel": "moderate",
-            "starterSlotNeed": false,
-            "benchDepthNeed": true,
-            "tierDropBeforeNextPick": false
-          },
-          "rosterNeedStatus": "flex_need_open",
-          "needUrgency": "medium",
-          "futureAvailability": "likely_available_next_pick",
-          "tierDropRisk": "low",
-          "opportunityCost": "low",
-          "needTimingAction": "monitor",
-          "needTimingReasons": [
-            "DB timing action: monitor.",
-            "Comparable DB options are likely to be available near the next pick.",
-            "DB survival confidence is medium (148 likely next-pick comparables).",
-            "Wait plan fallback: monitor.",
-            "DB timing was adjusted by survival risk."
-          ],
-          "survivalConfidence": "medium",
-          "survivalConfidenceScore": 65,
-          "comparableOptionsNow": 149,
-          "comparableOptionsLikelyNextPick": 148,
-          "comparableOptionsLikelyNextTwoPicks": 148,
-          "waitRisk": "low",
-          "waitRiskReasons": [
-            "DB projection confidence is low."
-          ],
-          "needTimingAdjustedBySurvival": false,
-          "waitPlanTargets": [],
-          "waitPlanTargetCount": 0,
-          "waitPlanStrongTargetCount": 0,
-          "waitPlanSurvivalSummary": "0 likely, 0 uncertain wait targets.",
-          "waitPlanRisk": "severe",
-          "waitPlanReason": "Wait risk severe; only 0 comparable DB targets support waiting.",
-          "waitPlanBacked": false,
-          "waitPlanFallbackAction": "monitor",
-          "needTimingAdjustedByWaitPlan": true
-        },
-        {
-          "recommendationRank": 8,
-          "displayName": "C.J. Gardner-Johnson",
-          "position": "DB",
-          "team": "BUF",
-          "recommendationTier": "avoid_for_now",
-          "recommendationScore": 35.7,
-          "status": "watch_only",
-          "primaryReason": "League value: -0.9 points above replacement.",
-          "explanationFragments": [
-            "League value: -0.9 points above replacement.",
-            "Roster need: DB bench depth is still useful in this format.",
-            "Risk: low-confidence baseline; range is wide.",
-            "Timing signal: DB is monitored without overriding the broader value signal."
-          ],
-          "warningCodes": [
-            "LOW_PROJECTION_CONFIDENCE",
-            "MARKET_NOT_IMPLEMENTED"
-          ],
-          "reasonCodes": [
-            "BENCH_DEPTH_NEED",
-            "IDP_BIG_PLAY_REGRESSION",
-            "IDP_DEFENSIVE_TD_VOLATILITY",
-            "IDP_POSITION_GROUP_COMPATIBLE",
-            "IDP_TACKLE_VOLUME_PROJECTED",
-            "IDP_UNRESOLVED_ROWS_EXCLUDED"
-          ],
-          "scoreComponents": {
-            "leagueValue": 23.7,
-            "rosterNeed": 14,
-            "scarcity": 6,
-            "tierCliff": 2,
-            "marketValue": 3,
-            "availabilityRisk": 1,
-            "needTiming": 0,
-            "confidencePenalty": -14,
-            "formatPenalty": 0
-          },
-          "h10": {
-            "medianPoints": 5.48,
-            "pointsAboveReplacement": -0.89,
-            "riskAdjustedValue": -0.4,
-            "tier": 1,
-            "marketValueSignal": "not_implemented",
-            "confidenceLabel": "low",
-            "valueReadiness": "LOW_CONFIDENCE_BASELINE"
-          },
-          "draftContext": {
-            "currentRound": 20,
-            "currentPick": 234,
-            "picksUntilNextUserPick": 0,
-            "positionNeedLevel": "moderate",
-            "starterSlotNeed": false,
-            "benchDepthNeed": true,
-            "tierDropBeforeNextPick": false
-          },
-          "rosterNeedStatus": "flex_need_open",
-          "needUrgency": "medium",
-          "futureAvailability": "likely_available_next_pick",
-          "tierDropRisk": "low",
-          "opportunityCost": "low",
-          "needTimingAction": "monitor",
-          "needTimingReasons": [
-            "DB timing action: monitor.",
-            "Comparable DB options are likely to be available near the next pick.",
-            "DB survival confidence is medium (148 likely next-pick comparables).",
-            "Wait plan fallback: monitor.",
-            "DB timing was adjusted by survival risk."
-          ],
-          "survivalConfidence": "medium",
-          "survivalConfidenceScore": 65,
-          "comparableOptionsNow": 149,
-          "comparableOptionsLikelyNextPick": 148,
-          "comparableOptionsLikelyNextTwoPicks": 148,
-          "waitRisk": "low",
-          "waitRiskReasons": [
-            "DB projection confidence is low."
-          ],
-          "needTimingAdjustedBySurvival": false,
-          "waitPlanTargets": [],
-          "waitPlanTargetCount": 0,
-          "waitPlanStrongTargetCount": 0,
-          "waitPlanSurvivalSummary": "0 likely, 0 uncertain wait targets.",
-          "waitPlanRisk": "severe",
-          "waitPlanReason": "Wait risk severe; only 0 comparable DB targets support waiting.",
-          "waitPlanBacked": false,
-          "waitPlanFallbackAction": "monitor",
-          "needTimingAdjustedByWaitPlan": true
-        },
-        {
-          "recommendationRank": 9,
-          "displayName": "Marcus Jones",
-          "position": "DB",
-          "team": "NE",
-          "recommendationTier": "avoid_for_now",
-          "recommendationScore": 35.4,
-          "status": "watch_only",
-          "primaryReason": "League value: -1 points above replacement.",
-          "explanationFragments": [
-            "League value: -1 points above replacement.",
-            "Roster need: DB bench depth is still useful in this format.",
-            "Risk: low-confidence baseline; range is wide.",
-            "Timing signal: DB is monitored without overriding the broader value signal."
-          ],
-          "warningCodes": [
-            "LOW_PROJECTION_CONFIDENCE",
-            "MARKET_NOT_IMPLEMENTED"
-          ],
-          "reasonCodes": [
-            "BENCH_DEPTH_NEED",
-            "IDP_BIG_PLAY_REGRESSION",
-            "IDP_DEFENSIVE_TD_VOLATILITY",
-            "IDP_POSITION_GROUP_COMPATIBLE",
-            "IDP_TACKLE_VOLUME_PROJECTED",
-            "IDP_UNRESOLVED_ROWS_EXCLUDED"
-          ],
-          "scoreComponents": {
-            "leagueValue": 23.4,
-            "rosterNeed": 14,
-            "scarcity": 6,
-            "tierCliff": 2,
-            "marketValue": 3,
-            "availabilityRisk": 1,
-            "needTiming": 0,
-            "confidencePenalty": -14,
-            "formatPenalty": 0
-          },
-          "h10": {
-            "medianPoints": 5.4,
-            "pointsAboveReplacement": -0.97,
-            "riskAdjustedValue": -0.43,
-            "tier": 1,
-            "marketValueSignal": "not_implemented",
-            "confidenceLabel": "low",
-            "valueReadiness": "LOW_CONFIDENCE_BASELINE"
-          },
-          "draftContext": {
-            "currentRound": 20,
-            "currentPick": 234,
-            "picksUntilNextUserPick": 0,
-            "positionNeedLevel": "moderate",
-            "starterSlotNeed": false,
-            "benchDepthNeed": true,
-            "tierDropBeforeNextPick": false
-          },
-          "rosterNeedStatus": "flex_need_open",
-          "needUrgency": "medium",
-          "futureAvailability": "likely_available_next_pick",
-          "tierDropRisk": "low",
-          "opportunityCost": "low",
-          "needTimingAction": "monitor",
-          "needTimingReasons": [
-            "DB timing action: monitor.",
-            "Comparable DB options are likely to be available near the next pick.",
-            "DB survival confidence is medium (148 likely next-pick comparables).",
-            "Wait plan fallback: monitor.",
-            "DB timing was adjusted by survival risk."
-          ],
-          "survivalConfidence": "medium",
-          "survivalConfidenceScore": 65,
-          "comparableOptionsNow": 149,
-          "comparableOptionsLikelyNextPick": 148,
-          "comparableOptionsLikelyNextTwoPicks": 148,
-          "waitRisk": "low",
-          "waitRiskReasons": [
-            "DB projection confidence is low."
-          ],
-          "needTimingAdjustedBySurvival": false,
-          "waitPlanTargets": [],
-          "waitPlanTargetCount": 0,
-          "waitPlanStrongTargetCount": 0,
-          "waitPlanSurvivalSummary": "0 likely, 0 uncertain wait targets.",
-          "waitPlanRisk": "severe",
-          "waitPlanReason": "Wait risk severe; only 0 comparable DB targets support waiting.",
-          "waitPlanBacked": false,
-          "waitPlanFallbackAction": "monitor",
-          "needTimingAdjustedByWaitPlan": true
-        },
-        {
-          "recommendationRank": 10,
-          "displayName": "Kenny Moore",
-          "position": "DB",
+          "recommendationRank": 4,
+          "displayName": "Cameron Jordan",
+          "position": "DL",
           "team": null,
-          "recommendationTier": "avoid_for_now",
-          "recommendationScore": 35,
+          "recommendationTier": "watchlist",
+          "recommendationScore": 43.5,
           "status": "watch_only",
-          "primaryReason": "League value: -1 points above replacement.",
+          "primaryReason": "League value: -1.3 points above replacement.",
           "explanationFragments": [
-            "League value: -1 points above replacement.",
-            "Roster need: DB bench depth is still useful in this format.",
+            "League value: -1.3 points above replacement.",
+            "Roster need: DL starter depth still matters in this format.",
             "Risk: low-confidence baseline; range is wide.",
-            "Timing signal: DB is monitored without overriding the broader value signal."
+            "Timing signal: DL is monitored without overriding the broader value signal."
           ],
           "warningCodes": [
             "LOW_PROJECTION_CONFIDENCE",
             "MARKET_NOT_IMPLEMENTED"
           ],
           "reasonCodes": [
-            "BENCH_DEPTH_NEED",
+            "DRAFT_CONTEXT_PRESSURE",
             "IDP_BIG_PLAY_REGRESSION",
             "IDP_DEFENSIVE_TD_VOLATILITY",
             "IDP_POSITION_GROUP_COMPATIBLE",
             "IDP_TACKLE_VOLUME_PROJECTED",
-            "IDP_UNRESOLVED_ROWS_EXCLUDED"
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
           ],
           "scoreComponents": {
-            "leagueValue": 23,
-            "rosterNeed": 14,
-            "scarcity": 6,
+            "leagueValue": 29.8,
+            "rosterNeed": 20,
+            "scarcity": 1.7,
             "tierCliff": 2,
             "marketValue": 3,
             "availabilityRisk": 1,
@@ -11737,9 +11225,9 @@
             "formatPenalty": 0
           },
           "h10": {
-            "medianPoints": 5.32,
-            "pointsAboveReplacement": -1.05,
-            "riskAdjustedValue": -0.47,
+            "medianPoints": 6.49,
+            "pointsAboveReplacement": -1.3,
+            "riskAdjustedValue": -0.58,
             "tier": 1,
             "marketValueSignal": "not_implemented",
             "confidenceLabel": "low",
@@ -11749,32 +11237,32 @@
             "currentRound": 20,
             "currentPick": 234,
             "picksUntilNextUserPick": 0,
-            "positionNeedLevel": "moderate",
-            "starterSlotNeed": false,
-            "benchDepthNeed": true,
+            "positionNeedLevel": "urgent",
+            "starterSlotNeed": true,
+            "benchDepthNeed": false,
             "tierDropBeforeNextPick": false
           },
-          "rosterNeedStatus": "flex_need_open",
-          "needUrgency": "medium",
+          "rosterNeedStatus": "starter_need_open",
+          "needUrgency": "high",
           "futureAvailability": "likely_available_next_pick",
           "tierDropRisk": "low",
           "opportunityCost": "low",
           "needTimingAction": "monitor",
           "needTimingReasons": [
-            "DB timing action: monitor.",
-            "Comparable DB options are likely to be available near the next pick.",
-            "DB survival confidence is medium (148 likely next-pick comparables).",
-            "Wait plan fallback: monitor.",
-            "DB timing was adjusted by survival risk."
+            "DL timing action: monitor.",
+            "DL remains a starter need.",
+            "Comparable DL options are likely to be available near the next pick.",
+            "DL survival confidence is medium (16 likely next-pick comparables).",
+            "Wait plan fallback: monitor."
           ],
           "survivalConfidence": "medium",
-          "survivalConfidenceScore": 65,
-          "comparableOptionsNow": 149,
-          "comparableOptionsLikelyNextPick": 148,
-          "comparableOptionsLikelyNextTwoPicks": 148,
+          "survivalConfidenceScore": 58,
+          "comparableOptionsNow": 17,
+          "comparableOptionsLikelyNextPick": 16,
+          "comparableOptionsLikelyNextTwoPicks": 16,
           "waitRisk": "low",
           "waitRiskReasons": [
-            "DB projection confidence is low."
+            "DL projection confidence is low."
           ],
           "needTimingAdjustedBySurvival": false,
           "waitPlanTargets": [],
@@ -11782,131 +11270,43 @@
           "waitPlanStrongTargetCount": 0,
           "waitPlanSurvivalSummary": "0 likely, 0 uncertain wait targets.",
           "waitPlanRisk": "severe",
-          "waitPlanReason": "Wait risk severe; only 0 comparable DB targets support waiting.",
+          "waitPlanReason": "Wait risk severe; only 0 comparable DL targets support waiting.",
           "waitPlanBacked": false,
           "waitPlanFallbackAction": "monitor",
           "needTimingAdjustedByWaitPlan": true
         },
         {
-          "recommendationRank": 11,
-          "displayName": "Jalen Pitre",
-          "position": "DB",
-          "team": "HOU",
-          "recommendationTier": "avoid_for_now",
-          "recommendationScore": 34.7,
-          "status": "watch_only",
-          "primaryReason": "League value: -1.1 points above replacement.",
-          "explanationFragments": [
-            "League value: -1.1 points above replacement.",
-            "Roster need: DB bench depth is still useful in this format.",
-            "Risk: low-confidence baseline; range is wide.",
-            "Timing signal: DB is monitored without overriding the broader value signal."
-          ],
-          "warningCodes": [
-            "LOW_PROJECTION_CONFIDENCE",
-            "MARKET_NOT_IMPLEMENTED"
-          ],
-          "reasonCodes": [
-            "BENCH_DEPTH_NEED",
-            "IDP_BIG_PLAY_REGRESSION",
-            "IDP_DEFENSIVE_TD_VOLATILITY",
-            "IDP_POSITION_GROUP_COMPATIBLE",
-            "IDP_TACKLE_VOLUME_PROJECTED",
-            "IDP_UNRESOLVED_ROWS_EXCLUDED"
-          ],
-          "scoreComponents": {
-            "leagueValue": 22.7,
-            "rosterNeed": 14,
-            "scarcity": 6,
-            "tierCliff": 2,
-            "marketValue": 3,
-            "availabilityRisk": 1,
-            "needTiming": 0,
-            "confidencePenalty": -14,
-            "formatPenalty": 0
-          },
-          "h10": {
-            "medianPoints": 5.26,
-            "pointsAboveReplacement": -1.11,
-            "riskAdjustedValue": -0.5,
-            "tier": 1,
-            "marketValueSignal": "not_implemented",
-            "confidenceLabel": "low",
-            "valueReadiness": "LOW_CONFIDENCE_BASELINE"
-          },
-          "draftContext": {
-            "currentRound": 20,
-            "currentPick": 234,
-            "picksUntilNextUserPick": 0,
-            "positionNeedLevel": "moderate",
-            "starterSlotNeed": false,
-            "benchDepthNeed": true,
-            "tierDropBeforeNextPick": false
-          },
-          "rosterNeedStatus": "flex_need_open",
-          "needUrgency": "medium",
-          "futureAvailability": "likely_available_next_pick",
-          "tierDropRisk": "low",
-          "opportunityCost": "low",
-          "needTimingAction": "monitor",
-          "needTimingReasons": [
-            "DB timing action: monitor.",
-            "Comparable DB options are likely to be available near the next pick.",
-            "DB survival confidence is medium (148 likely next-pick comparables).",
-            "Wait plan fallback: monitor.",
-            "DB timing was adjusted by survival risk."
-          ],
-          "survivalConfidence": "medium",
-          "survivalConfidenceScore": 65,
-          "comparableOptionsNow": 149,
-          "comparableOptionsLikelyNextPick": 148,
-          "comparableOptionsLikelyNextTwoPicks": 148,
-          "waitRisk": "low",
-          "waitRiskReasons": [
-            "DB projection confidence is low."
-          ],
-          "needTimingAdjustedBySurvival": false,
-          "waitPlanTargets": [],
-          "waitPlanTargetCount": 0,
-          "waitPlanStrongTargetCount": 0,
-          "waitPlanSurvivalSummary": "0 likely, 0 uncertain wait targets.",
-          "waitPlanRisk": "severe",
-          "waitPlanReason": "Wait risk severe; only 0 comparable DB targets support waiting.",
-          "waitPlanBacked": false,
-          "waitPlanFallbackAction": "monitor",
-          "needTimingAdjustedByWaitPlan": true
-        },
-        {
-          "recommendationRank": 12,
-          "displayName": "Jessie Bates",
-          "position": "DB",
+          "recommendationRank": 5,
+          "displayName": "James Pearce",
+          "position": "DL",
           "team": "ATL",
-          "recommendationTier": "avoid_for_now",
-          "recommendationScore": 34.6,
+          "recommendationTier": "watchlist",
+          "recommendationScore": 43.5,
           "status": "watch_only",
           "primaryReason": "League value: -1.1 points above replacement.",
           "explanationFragments": [
             "League value: -1.1 points above replacement.",
-            "Roster need: DB bench depth is still useful in this format.",
+            "Roster need: DL starter depth still matters in this format.",
             "Risk: low-confidence baseline; range is wide.",
-            "Timing signal: DB is monitored without overriding the broader value signal."
+            "Timing signal: DL is monitored without overriding the broader value signal."
           ],
           "warningCodes": [
             "LOW_PROJECTION_CONFIDENCE",
             "MARKET_NOT_IMPLEMENTED"
           ],
           "reasonCodes": [
-            "BENCH_DEPTH_NEED",
+            "DRAFT_CONTEXT_PRESSURE",
             "IDP_BIG_PLAY_REGRESSION",
             "IDP_DEFENSIVE_TD_VOLATILITY",
             "IDP_POSITION_GROUP_COMPATIBLE",
             "IDP_TACKLE_VOLUME_PROJECTED",
-            "IDP_UNRESOLVED_ROWS_EXCLUDED"
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
           ],
           "scoreComponents": {
-            "leagueValue": 22.6,
-            "rosterNeed": 14,
-            "scarcity": 6,
+            "leagueValue": 29.8,
+            "rosterNeed": 20,
+            "scarcity": 1.7,
             "tierCliff": 2,
             "marketValue": 3,
             "availabilityRisk": 1,
@@ -11915,8 +11315,8 @@
             "formatPenalty": 0
           },
           "h10": {
-            "medianPoints": 5.24,
-            "pointsAboveReplacement": -1.13,
+            "medianPoints": 6.65,
+            "pointsAboveReplacement": -1.14,
             "riskAdjustedValue": -0.51,
             "tier": 1,
             "marketValueSignal": "not_implemented",
@@ -11927,32 +11327,32 @@
             "currentRound": 20,
             "currentPick": 234,
             "picksUntilNextUserPick": 0,
-            "positionNeedLevel": "moderate",
-            "starterSlotNeed": false,
-            "benchDepthNeed": true,
+            "positionNeedLevel": "urgent",
+            "starterSlotNeed": true,
+            "benchDepthNeed": false,
             "tierDropBeforeNextPick": false
           },
-          "rosterNeedStatus": "flex_need_open",
-          "needUrgency": "medium",
+          "rosterNeedStatus": "starter_need_open",
+          "needUrgency": "high",
           "futureAvailability": "likely_available_next_pick",
           "tierDropRisk": "low",
           "opportunityCost": "low",
           "needTimingAction": "monitor",
           "needTimingReasons": [
-            "DB timing action: monitor.",
-            "Comparable DB options are likely to be available near the next pick.",
-            "DB survival confidence is medium (148 likely next-pick comparables).",
-            "Wait plan fallback: monitor.",
-            "DB timing was adjusted by survival risk."
+            "DL timing action: monitor.",
+            "DL remains a starter need.",
+            "Comparable DL options are likely to be available near the next pick.",
+            "DL survival confidence is medium (16 likely next-pick comparables).",
+            "Wait plan fallback: monitor."
           ],
           "survivalConfidence": "medium",
-          "survivalConfidenceScore": 65,
-          "comparableOptionsNow": 149,
-          "comparableOptionsLikelyNextPick": 148,
-          "comparableOptionsLikelyNextTwoPicks": 148,
+          "survivalConfidenceScore": 58,
+          "comparableOptionsNow": 17,
+          "comparableOptionsLikelyNextPick": 16,
+          "comparableOptionsLikelyNextTwoPicks": 16,
           "waitRisk": "low",
           "waitRiskReasons": [
-            "DB projection confidence is low."
+            "DL projection confidence is low."
           ],
           "needTimingAdjustedBySurvival": false,
           "waitPlanTargets": [],
@@ -11960,42 +11360,673 @@
           "waitPlanStrongTargetCount": 0,
           "waitPlanSurvivalSummary": "0 likely, 0 uncertain wait targets.",
           "waitPlanRisk": "severe",
-          "waitPlanReason": "Wait risk severe; only 0 comparable DB targets support waiting.",
+          "waitPlanReason": "Wait risk severe; only 0 comparable DL targets support waiting.",
+          "waitPlanBacked": false,
+          "waitPlanFallbackAction": "monitor",
+          "needTimingAdjustedByWaitPlan": true
+        },
+        {
+          "recommendationRank": 6,
+          "displayName": "Montez Sweat",
+          "position": "DL",
+          "team": "CHI",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 43.5,
+          "status": "watch_only",
+          "primaryReason": "League value: -1.1 points above replacement.",
+          "explanationFragments": [
+            "League value: -1.1 points above replacement.",
+            "Roster need: DL starter depth still matters in this format.",
+            "Risk: low-confidence baseline; range is wide.",
+            "Timing signal: DL is monitored without overriding the broader value signal."
+          ],
+          "warningCodes": [
+            "LOW_PROJECTION_CONFIDENCE",
+            "MARKET_NOT_IMPLEMENTED"
+          ],
+          "reasonCodes": [
+            "DRAFT_CONTEXT_PRESSURE",
+            "IDP_BIG_PLAY_REGRESSION",
+            "IDP_DEFENSIVE_TD_VOLATILITY",
+            "IDP_POSITION_GROUP_COMPATIBLE",
+            "IDP_TACKLE_VOLUME_PROJECTED",
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 29.8,
+            "rosterNeed": 20,
+            "scarcity": 1.7,
+            "tierCliff": 2,
+            "marketValue": 3,
+            "availabilityRisk": 1,
+            "needTiming": 0,
+            "confidencePenalty": -14,
+            "formatPenalty": 0
+          },
+          "h10": {
+            "medianPoints": 6.64,
+            "pointsAboveReplacement": -1.15,
+            "riskAdjustedValue": -0.51,
+            "tier": 1,
+            "marketValueSignal": "not_implemented",
+            "confidenceLabel": "low",
+            "valueReadiness": "LOW_CONFIDENCE_BASELINE"
+          },
+          "draftContext": {
+            "currentRound": 20,
+            "currentPick": 234,
+            "picksUntilNextUserPick": 0,
+            "positionNeedLevel": "urgent",
+            "starterSlotNeed": true,
+            "benchDepthNeed": false,
+            "tierDropBeforeNextPick": false
+          },
+          "rosterNeedStatus": "starter_need_open",
+          "needUrgency": "high",
+          "futureAvailability": "likely_available_next_pick",
+          "tierDropRisk": "low",
+          "opportunityCost": "low",
+          "needTimingAction": "monitor",
+          "needTimingReasons": [
+            "DL timing action: monitor.",
+            "DL remains a starter need.",
+            "Comparable DL options are likely to be available near the next pick.",
+            "DL survival confidence is medium (16 likely next-pick comparables).",
+            "Wait plan fallback: monitor."
+          ],
+          "survivalConfidence": "medium",
+          "survivalConfidenceScore": 58,
+          "comparableOptionsNow": 17,
+          "comparableOptionsLikelyNextPick": 16,
+          "comparableOptionsLikelyNextTwoPicks": 16,
+          "waitRisk": "low",
+          "waitRiskReasons": [
+            "DL projection confidence is low."
+          ],
+          "needTimingAdjustedBySurvival": false,
+          "waitPlanTargets": [],
+          "waitPlanTargetCount": 0,
+          "waitPlanStrongTargetCount": 0,
+          "waitPlanSurvivalSummary": "0 likely, 0 uncertain wait targets.",
+          "waitPlanRisk": "severe",
+          "waitPlanReason": "Wait risk severe; only 0 comparable DL targets support waiting.",
+          "waitPlanBacked": false,
+          "waitPlanFallbackAction": "monitor",
+          "needTimingAdjustedByWaitPlan": true
+        },
+        {
+          "recommendationRank": 7,
+          "displayName": "Will McDonald",
+          "position": "DL",
+          "team": "NYJ",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 43.5,
+          "status": "watch_only",
+          "primaryReason": "League value: -1.6 points above replacement.",
+          "explanationFragments": [
+            "League value: -1.6 points above replacement.",
+            "Roster need: DL starter depth still matters in this format.",
+            "Risk: low-confidence baseline; range is wide.",
+            "Timing signal: DL is monitored without overriding the broader value signal."
+          ],
+          "warningCodes": [
+            "LOW_PROJECTION_CONFIDENCE",
+            "MARKET_NOT_IMPLEMENTED"
+          ],
+          "reasonCodes": [
+            "DRAFT_CONTEXT_PRESSURE",
+            "IDP_BIG_PLAY_REGRESSION",
+            "IDP_DEFENSIVE_TD_VOLATILITY",
+            "IDP_POSITION_GROUP_COMPATIBLE",
+            "IDP_TACKLE_VOLUME_PROJECTED",
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 29.8,
+            "rosterNeed": 20,
+            "scarcity": 1.7,
+            "tierCliff": 2,
+            "marketValue": 3,
+            "availabilityRisk": 1,
+            "needTiming": 0,
+            "confidencePenalty": -14,
+            "formatPenalty": 0
+          },
+          "h10": {
+            "medianPoints": 6.14,
+            "pointsAboveReplacement": -1.65,
+            "riskAdjustedValue": -0.74,
+            "tier": 1,
+            "marketValueSignal": "not_implemented",
+            "confidenceLabel": "low",
+            "valueReadiness": "LOW_CONFIDENCE_BASELINE"
+          },
+          "draftContext": {
+            "currentRound": 20,
+            "currentPick": 234,
+            "picksUntilNextUserPick": 0,
+            "positionNeedLevel": "urgent",
+            "starterSlotNeed": true,
+            "benchDepthNeed": false,
+            "tierDropBeforeNextPick": false
+          },
+          "rosterNeedStatus": "starter_need_open",
+          "needUrgency": "high",
+          "futureAvailability": "likely_available_next_pick",
+          "tierDropRisk": "low",
+          "opportunityCost": "low",
+          "needTimingAction": "monitor",
+          "needTimingReasons": [
+            "DL timing action: monitor.",
+            "DL remains a starter need.",
+            "Comparable DL options are likely to be available near the next pick.",
+            "DL survival confidence is medium (16 likely next-pick comparables).",
+            "Wait plan fallback: monitor."
+          ],
+          "survivalConfidence": "medium",
+          "survivalConfidenceScore": 58,
+          "comparableOptionsNow": 17,
+          "comparableOptionsLikelyNextPick": 16,
+          "comparableOptionsLikelyNextTwoPicks": 16,
+          "waitRisk": "low",
+          "waitRiskReasons": [
+            "DL projection confidence is low."
+          ],
+          "needTimingAdjustedBySurvival": false,
+          "waitPlanTargets": [],
+          "waitPlanTargetCount": 0,
+          "waitPlanStrongTargetCount": 0,
+          "waitPlanSurvivalSummary": "0 likely, 0 uncertain wait targets.",
+          "waitPlanRisk": "severe",
+          "waitPlanReason": "Wait risk severe; only 0 comparable DL targets support waiting.",
+          "waitPlanBacked": false,
+          "waitPlanFallbackAction": "monitor",
+          "needTimingAdjustedByWaitPlan": true
+        },
+        {
+          "recommendationRank": 8,
+          "displayName": "Alex Wright",
+          "position": "DL",
+          "team": "CLE",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 43.4,
+          "status": "watch_only",
+          "primaryReason": "League value: -2.5 points above replacement.",
+          "explanationFragments": [
+            "League value: -2.5 points above replacement.",
+            "Roster need: DL starter depth still matters in this format.",
+            "Risk: low-confidence baseline; range is wide.",
+            "Timing signal: DL is monitored without overriding the broader value signal."
+          ],
+          "warningCodes": [
+            "LOW_PROJECTION_CONFIDENCE",
+            "MARKET_NOT_IMPLEMENTED"
+          ],
+          "reasonCodes": [
+            "DRAFT_CONTEXT_PRESSURE",
+            "IDP_BIG_PLAY_REGRESSION",
+            "IDP_DEFENSIVE_TD_VOLATILITY",
+            "IDP_POSITION_GROUP_COMPATIBLE",
+            "IDP_TACKLE_VOLUME_PROJECTED",
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 29.7,
+            "rosterNeed": 20,
+            "scarcity": 1.7,
+            "tierCliff": 2,
+            "marketValue": 3,
+            "availabilityRisk": 1,
+            "needTiming": 0,
+            "confidencePenalty": -14,
+            "formatPenalty": 0
+          },
+          "h10": {
+            "medianPoints": 5.3,
+            "pointsAboveReplacement": -2.49,
+            "riskAdjustedValue": -1.11,
+            "tier": 1,
+            "marketValueSignal": "not_implemented",
+            "confidenceLabel": "low",
+            "valueReadiness": "LOW_CONFIDENCE_BASELINE"
+          },
+          "draftContext": {
+            "currentRound": 20,
+            "currentPick": 234,
+            "picksUntilNextUserPick": 0,
+            "positionNeedLevel": "urgent",
+            "starterSlotNeed": true,
+            "benchDepthNeed": false,
+            "tierDropBeforeNextPick": false
+          },
+          "rosterNeedStatus": "starter_need_open",
+          "needUrgency": "high",
+          "futureAvailability": "likely_available_next_pick",
+          "tierDropRisk": "low",
+          "opportunityCost": "low",
+          "needTimingAction": "monitor",
+          "needTimingReasons": [
+            "DL timing action: monitor.",
+            "DL remains a starter need.",
+            "Comparable DL options are likely to be available near the next pick.",
+            "DL survival confidence is medium (16 likely next-pick comparables).",
+            "Wait plan fallback: monitor."
+          ],
+          "survivalConfidence": "medium",
+          "survivalConfidenceScore": 58,
+          "comparableOptionsNow": 17,
+          "comparableOptionsLikelyNextPick": 16,
+          "comparableOptionsLikelyNextTwoPicks": 16,
+          "waitRisk": "low",
+          "waitRiskReasons": [
+            "DL projection confidence is low."
+          ],
+          "needTimingAdjustedBySurvival": false,
+          "waitPlanTargets": [],
+          "waitPlanTargetCount": 0,
+          "waitPlanStrongTargetCount": 0,
+          "waitPlanSurvivalSummary": "0 likely, 0 uncertain wait targets.",
+          "waitPlanRisk": "severe",
+          "waitPlanReason": "Wait risk severe; only 0 comparable DL targets support waiting.",
+          "waitPlanBacked": false,
+          "waitPlanFallbackAction": "monitor",
+          "needTimingAdjustedByWaitPlan": true
+        },
+        {
+          "recommendationRank": 9,
+          "displayName": "Austin Booker",
+          "position": "DL",
+          "team": "CHI",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 43.4,
+          "status": "watch_only",
+          "primaryReason": "League value: -2.2 points above replacement.",
+          "explanationFragments": [
+            "League value: -2.2 points above replacement.",
+            "Roster need: DL starter depth still matters in this format.",
+            "Risk: low-confidence baseline; range is wide.",
+            "Timing signal: DL is monitored without overriding the broader value signal."
+          ],
+          "warningCodes": [
+            "LOW_PROJECTION_CONFIDENCE",
+            "MARKET_NOT_IMPLEMENTED"
+          ],
+          "reasonCodes": [
+            "DRAFT_CONTEXT_PRESSURE",
+            "IDP_BIG_PLAY_REGRESSION",
+            "IDP_DEFENSIVE_TD_VOLATILITY",
+            "IDP_POSITION_GROUP_COMPATIBLE",
+            "IDP_TACKLE_VOLUME_PROJECTED",
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 29.8,
+            "rosterNeed": 20,
+            "scarcity": 1.7,
+            "tierCliff": 2,
+            "marketValue": 3,
+            "availabilityRisk": 1,
+            "needTiming": 0,
+            "confidencePenalty": -14,
+            "formatPenalty": 0
+          },
+          "h10": {
+            "medianPoints": 5.55,
+            "pointsAboveReplacement": -2.24,
+            "riskAdjustedValue": -1,
+            "tier": 1,
+            "marketValueSignal": "not_implemented",
+            "confidenceLabel": "low",
+            "valueReadiness": "LOW_CONFIDENCE_BASELINE"
+          },
+          "draftContext": {
+            "currentRound": 20,
+            "currentPick": 234,
+            "picksUntilNextUserPick": 0,
+            "positionNeedLevel": "urgent",
+            "starterSlotNeed": true,
+            "benchDepthNeed": false,
+            "tierDropBeforeNextPick": false
+          },
+          "rosterNeedStatus": "starter_need_open",
+          "needUrgency": "high",
+          "futureAvailability": "likely_available_next_pick",
+          "tierDropRisk": "low",
+          "opportunityCost": "low",
+          "needTimingAction": "monitor",
+          "needTimingReasons": [
+            "DL timing action: monitor.",
+            "DL remains a starter need.",
+            "Comparable DL options are likely to be available near the next pick.",
+            "DL survival confidence is medium (16 likely next-pick comparables).",
+            "Wait plan fallback: monitor."
+          ],
+          "survivalConfidence": "medium",
+          "survivalConfidenceScore": 58,
+          "comparableOptionsNow": 17,
+          "comparableOptionsLikelyNextPick": 16,
+          "comparableOptionsLikelyNextTwoPicks": 16,
+          "waitRisk": "low",
+          "waitRiskReasons": [
+            "DL projection confidence is low."
+          ],
+          "needTimingAdjustedBySurvival": false,
+          "waitPlanTargets": [],
+          "waitPlanTargetCount": 0,
+          "waitPlanStrongTargetCount": 0,
+          "waitPlanSurvivalSummary": "0 likely, 0 uncertain wait targets.",
+          "waitPlanRisk": "severe",
+          "waitPlanReason": "Wait risk severe; only 0 comparable DL targets support waiting.",
+          "waitPlanBacked": false,
+          "waitPlanFallbackAction": "monitor",
+          "needTimingAdjustedByWaitPlan": true
+        },
+        {
+          "recommendationRank": 10,
+          "displayName": "Byron Murphy",
+          "position": "DL",
+          "team": "SEA",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 43.4,
+          "status": "watch_only",
+          "primaryReason": "League value: -2.8 points above replacement.",
+          "explanationFragments": [
+            "League value: -2.8 points above replacement.",
+            "Roster need: DL starter depth still matters in this format.",
+            "Risk: low-confidence baseline; range is wide.",
+            "Timing signal: DL is monitored without overriding the broader value signal."
+          ],
+          "warningCodes": [
+            "LOW_PROJECTION_CONFIDENCE",
+            "MARKET_NOT_IMPLEMENTED"
+          ],
+          "reasonCodes": [
+            "DRAFT_CONTEXT_PRESSURE",
+            "IDP_BIG_PLAY_REGRESSION",
+            "IDP_DEFENSIVE_TD_VOLATILITY",
+            "IDP_POSITION_GROUP_COMPATIBLE",
+            "IDP_TACKLE_VOLUME_PROJECTED",
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 29.7,
+            "rosterNeed": 20,
+            "scarcity": 1.7,
+            "tierCliff": 2,
+            "marketValue": 3,
+            "availabilityRisk": 1,
+            "needTiming": 0,
+            "confidencePenalty": -14,
+            "formatPenalty": 0
+          },
+          "h10": {
+            "medianPoints": 4.98,
+            "pointsAboveReplacement": -2.81,
+            "riskAdjustedValue": -1.26,
+            "tier": 1,
+            "marketValueSignal": "not_implemented",
+            "confidenceLabel": "low",
+            "valueReadiness": "LOW_CONFIDENCE_BASELINE"
+          },
+          "draftContext": {
+            "currentRound": 20,
+            "currentPick": 234,
+            "picksUntilNextUserPick": 0,
+            "positionNeedLevel": "urgent",
+            "starterSlotNeed": true,
+            "benchDepthNeed": false,
+            "tierDropBeforeNextPick": false
+          },
+          "rosterNeedStatus": "starter_need_open",
+          "needUrgency": "high",
+          "futureAvailability": "likely_available_next_pick",
+          "tierDropRisk": "low",
+          "opportunityCost": "low",
+          "needTimingAction": "monitor",
+          "needTimingReasons": [
+            "DL timing action: monitor.",
+            "DL remains a starter need.",
+            "Comparable DL options are likely to be available near the next pick.",
+            "DL survival confidence is medium (16 likely next-pick comparables).",
+            "Wait plan fallback: monitor."
+          ],
+          "survivalConfidence": "medium",
+          "survivalConfidenceScore": 58,
+          "comparableOptionsNow": 17,
+          "comparableOptionsLikelyNextPick": 16,
+          "comparableOptionsLikelyNextTwoPicks": 16,
+          "waitRisk": "low",
+          "waitRiskReasons": [
+            "DL projection confidence is low."
+          ],
+          "needTimingAdjustedBySurvival": false,
+          "waitPlanTargets": [],
+          "waitPlanTargetCount": 0,
+          "waitPlanStrongTargetCount": 0,
+          "waitPlanSurvivalSummary": "0 likely, 0 uncertain wait targets.",
+          "waitPlanRisk": "severe",
+          "waitPlanReason": "Wait risk severe; only 0 comparable DL targets support waiting.",
+          "waitPlanBacked": false,
+          "waitPlanFallbackAction": "monitor",
+          "needTimingAdjustedByWaitPlan": true
+        },
+        {
+          "recommendationRank": 11,
+          "displayName": "Carl Granderson",
+          "position": "DL",
+          "team": "NO",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 43.4,
+          "status": "watch_only",
+          "primaryReason": "League value: -2.5 points above replacement.",
+          "explanationFragments": [
+            "League value: -2.5 points above replacement.",
+            "Roster need: DL starter depth still matters in this format.",
+            "Risk: low-confidence baseline; range is wide.",
+            "Timing signal: DL is monitored without overriding the broader value signal."
+          ],
+          "warningCodes": [
+            "LOW_PROJECTION_CONFIDENCE",
+            "MARKET_NOT_IMPLEMENTED"
+          ],
+          "reasonCodes": [
+            "DRAFT_CONTEXT_PRESSURE",
+            "IDP_BIG_PLAY_REGRESSION",
+            "IDP_DEFENSIVE_TD_VOLATILITY",
+            "IDP_POSITION_GROUP_COMPATIBLE",
+            "IDP_TACKLE_VOLUME_PROJECTED",
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 29.7,
+            "rosterNeed": 20,
+            "scarcity": 1.7,
+            "tierCliff": 2,
+            "marketValue": 3,
+            "availabilityRisk": 1,
+            "needTiming": 0,
+            "confidencePenalty": -14,
+            "formatPenalty": 0
+          },
+          "h10": {
+            "medianPoints": 5.3,
+            "pointsAboveReplacement": -2.49,
+            "riskAdjustedValue": -1.11,
+            "tier": 1,
+            "marketValueSignal": "not_implemented",
+            "confidenceLabel": "low",
+            "valueReadiness": "LOW_CONFIDENCE_BASELINE"
+          },
+          "draftContext": {
+            "currentRound": 20,
+            "currentPick": 234,
+            "picksUntilNextUserPick": 0,
+            "positionNeedLevel": "urgent",
+            "starterSlotNeed": true,
+            "benchDepthNeed": false,
+            "tierDropBeforeNextPick": false
+          },
+          "rosterNeedStatus": "starter_need_open",
+          "needUrgency": "high",
+          "futureAvailability": "likely_available_next_pick",
+          "tierDropRisk": "low",
+          "opportunityCost": "low",
+          "needTimingAction": "monitor",
+          "needTimingReasons": [
+            "DL timing action: monitor.",
+            "DL remains a starter need.",
+            "Comparable DL options are likely to be available near the next pick.",
+            "DL survival confidence is medium (16 likely next-pick comparables).",
+            "Wait plan fallback: monitor."
+          ],
+          "survivalConfidence": "medium",
+          "survivalConfidenceScore": 58,
+          "comparableOptionsNow": 17,
+          "comparableOptionsLikelyNextPick": 16,
+          "comparableOptionsLikelyNextTwoPicks": 16,
+          "waitRisk": "low",
+          "waitRiskReasons": [
+            "DL projection confidence is low."
+          ],
+          "needTimingAdjustedBySurvival": false,
+          "waitPlanTargets": [],
+          "waitPlanTargetCount": 0,
+          "waitPlanStrongTargetCount": 0,
+          "waitPlanSurvivalSummary": "0 likely, 0 uncertain wait targets.",
+          "waitPlanRisk": "severe",
+          "waitPlanReason": "Wait risk severe; only 0 comparable DL targets support waiting.",
+          "waitPlanBacked": false,
+          "waitPlanFallbackAction": "monitor",
+          "needTimingAdjustedByWaitPlan": true
+        },
+        {
+          "recommendationRank": 12,
+          "displayName": "DaQuan Jones",
+          "position": "DL",
+          "team": null,
+          "recommendationTier": "watchlist",
+          "recommendationScore": 43.4,
+          "status": "watch_only",
+          "primaryReason": "League value: -2.5 points above replacement.",
+          "explanationFragments": [
+            "League value: -2.5 points above replacement.",
+            "Roster need: DL starter depth still matters in this format.",
+            "Risk: low-confidence baseline; range is wide.",
+            "Timing signal: DL is monitored without overriding the broader value signal."
+          ],
+          "warningCodes": [
+            "LOW_PROJECTION_CONFIDENCE",
+            "MARKET_NOT_IMPLEMENTED"
+          ],
+          "reasonCodes": [
+            "DRAFT_CONTEXT_PRESSURE",
+            "IDP_BIG_PLAY_REGRESSION",
+            "IDP_DEFENSIVE_TD_VOLATILITY",
+            "IDP_POSITION_GROUP_COMPATIBLE",
+            "IDP_TACKLE_VOLUME_PROJECTED",
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 29.7,
+            "rosterNeed": 20,
+            "scarcity": 1.7,
+            "tierCliff": 2,
+            "marketValue": 3,
+            "availabilityRisk": 1,
+            "needTiming": 0,
+            "confidencePenalty": -14,
+            "formatPenalty": 0
+          },
+          "h10": {
+            "medianPoints": 5.3,
+            "pointsAboveReplacement": -2.49,
+            "riskAdjustedValue": -1.11,
+            "tier": 1,
+            "marketValueSignal": "not_implemented",
+            "confidenceLabel": "low",
+            "valueReadiness": "LOW_CONFIDENCE_BASELINE"
+          },
+          "draftContext": {
+            "currentRound": 20,
+            "currentPick": 234,
+            "picksUntilNextUserPick": 0,
+            "positionNeedLevel": "urgent",
+            "starterSlotNeed": true,
+            "benchDepthNeed": false,
+            "tierDropBeforeNextPick": false
+          },
+          "rosterNeedStatus": "starter_need_open",
+          "needUrgency": "high",
+          "futureAvailability": "likely_available_next_pick",
+          "tierDropRisk": "low",
+          "opportunityCost": "low",
+          "needTimingAction": "monitor",
+          "needTimingReasons": [
+            "DL timing action: monitor.",
+            "DL remains a starter need.",
+            "Comparable DL options are likely to be available near the next pick.",
+            "DL survival confidence is medium (16 likely next-pick comparables).",
+            "Wait plan fallback: monitor."
+          ],
+          "survivalConfidence": "medium",
+          "survivalConfidenceScore": 58,
+          "comparableOptionsNow": 17,
+          "comparableOptionsLikelyNextPick": 16,
+          "comparableOptionsLikelyNextTwoPicks": 16,
+          "waitRisk": "low",
+          "waitRiskReasons": [
+            "DL projection confidence is low."
+          ],
+          "needTimingAdjustedBySurvival": false,
+          "waitPlanTargets": [],
+          "waitPlanTargetCount": 0,
+          "waitPlanStrongTargetCount": 0,
+          "waitPlanSurvivalSummary": "0 likely, 0 uncertain wait targets.",
+          "waitPlanRisk": "severe",
+          "waitPlanReason": "Wait risk severe; only 0 comparable DL targets support waiting.",
           "waitPlanBacked": false,
           "waitPlanFallbackAction": "monitor",
           "needTimingAdjustedByWaitPlan": true
         },
         {
           "recommendationRank": 13,
-          "displayName": "Geno Stone",
-          "position": "DB",
-          "team": "BUF",
-          "recommendationTier": "avoid_for_now",
-          "recommendationScore": 34.1,
+          "displayName": "Jalon Walker",
+          "position": "DL",
+          "team": "ATL",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 43.4,
           "status": "watch_only",
-          "primaryReason": "League value: -1.3 points above replacement.",
+          "primaryReason": "League value: -2.3 points above replacement.",
           "explanationFragments": [
-            "League value: -1.3 points above replacement.",
-            "Roster need: DB bench depth is still useful in this format.",
+            "League value: -2.3 points above replacement.",
+            "Roster need: DL starter depth still matters in this format.",
             "Risk: low-confidence baseline; range is wide.",
-            "Timing signal: DB is monitored without overriding the broader value signal."
+            "Timing signal: DL is monitored without overriding the broader value signal."
           ],
           "warningCodes": [
             "LOW_PROJECTION_CONFIDENCE",
             "MARKET_NOT_IMPLEMENTED"
           ],
           "reasonCodes": [
-            "BENCH_DEPTH_NEED",
+            "DRAFT_CONTEXT_PRESSURE",
             "IDP_BIG_PLAY_REGRESSION",
             "IDP_DEFENSIVE_TD_VOLATILITY",
             "IDP_POSITION_GROUP_COMPATIBLE",
             "IDP_TACKLE_VOLUME_PROJECTED",
-            "IDP_UNRESOLVED_ROWS_EXCLUDED"
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
           ],
           "scoreComponents": {
-            "leagueValue": 22.1,
-            "rosterNeed": 14,
-            "scarcity": 6,
+            "leagueValue": 29.7,
+            "rosterNeed": 20,
+            "scarcity": 1.7,
             "tierCliff": 2,
             "marketValue": 3,
             "availabilityRisk": 1,
@@ -12004,9 +12035,9 @@
             "formatPenalty": 0
           },
           "h10": {
-            "medianPoints": 5.11,
-            "pointsAboveReplacement": -1.26,
-            "riskAdjustedValue": -0.56,
+            "medianPoints": 5.48,
+            "pointsAboveReplacement": -2.31,
+            "riskAdjustedValue": -1.03,
             "tier": 1,
             "marketValueSignal": "not_implemented",
             "confidenceLabel": "low",
@@ -12016,32 +12047,32 @@
             "currentRound": 20,
             "currentPick": 234,
             "picksUntilNextUserPick": 0,
-            "positionNeedLevel": "moderate",
-            "starterSlotNeed": false,
-            "benchDepthNeed": true,
+            "positionNeedLevel": "urgent",
+            "starterSlotNeed": true,
+            "benchDepthNeed": false,
             "tierDropBeforeNextPick": false
           },
-          "rosterNeedStatus": "flex_need_open",
-          "needUrgency": "medium",
+          "rosterNeedStatus": "starter_need_open",
+          "needUrgency": "high",
           "futureAvailability": "likely_available_next_pick",
           "tierDropRisk": "low",
           "opportunityCost": "low",
           "needTimingAction": "monitor",
           "needTimingReasons": [
-            "DB timing action: monitor.",
-            "Comparable DB options are likely to be available near the next pick.",
-            "DB survival confidence is medium (148 likely next-pick comparables).",
-            "Wait plan fallback: monitor.",
-            "DB timing was adjusted by survival risk."
+            "DL timing action: monitor.",
+            "DL remains a starter need.",
+            "Comparable DL options are likely to be available near the next pick.",
+            "DL survival confidence is medium (16 likely next-pick comparables).",
+            "Wait plan fallback: monitor."
           ],
           "survivalConfidence": "medium",
-          "survivalConfidenceScore": 65,
-          "comparableOptionsNow": 149,
-          "comparableOptionsLikelyNextPick": 148,
-          "comparableOptionsLikelyNextTwoPicks": 148,
+          "survivalConfidenceScore": 58,
+          "comparableOptionsNow": 17,
+          "comparableOptionsLikelyNextPick": 16,
+          "comparableOptionsLikelyNextTwoPicks": 16,
           "waitRisk": "low",
           "waitRiskReasons": [
-            "DB projection confidence is low."
+            "DL projection confidence is low."
           ],
           "needTimingAdjustedBySurvival": false,
           "waitPlanTargets": [],
@@ -12049,42 +12080,43 @@
           "waitPlanStrongTargetCount": 0,
           "waitPlanSurvivalSummary": "0 likely, 0 uncertain wait targets.",
           "waitPlanRisk": "severe",
-          "waitPlanReason": "Wait risk severe; only 0 comparable DB targets support waiting.",
+          "waitPlanReason": "Wait risk severe; only 0 comparable DL targets support waiting.",
           "waitPlanBacked": false,
           "waitPlanFallbackAction": "monitor",
           "needTimingAdjustedByWaitPlan": true
         },
         {
           "recommendationRank": 14,
-          "displayName": "Donte Jackson",
-          "position": "DB",
-          "team": "LAC",
-          "recommendationTier": "avoid_for_now",
-          "recommendationScore": 33.9,
+          "displayName": "Jer'Zhan Newton",
+          "position": "DL",
+          "team": "WAS",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 43.4,
           "status": "watch_only",
-          "primaryReason": "League value: -1.3 points above replacement.",
+          "primaryReason": "League value: -2.7 points above replacement.",
           "explanationFragments": [
-            "League value: -1.3 points above replacement.",
-            "Roster need: DB bench depth is still useful in this format.",
+            "League value: -2.7 points above replacement.",
+            "Roster need: DL starter depth still matters in this format.",
             "Risk: low-confidence baseline; range is wide.",
-            "Timing signal: DB is monitored without overriding the broader value signal."
+            "Timing signal: DL is monitored without overriding the broader value signal."
           ],
           "warningCodes": [
             "LOW_PROJECTION_CONFIDENCE",
             "MARKET_NOT_IMPLEMENTED"
           ],
           "reasonCodes": [
-            "BENCH_DEPTH_NEED",
+            "DRAFT_CONTEXT_PRESSURE",
             "IDP_BIG_PLAY_REGRESSION",
             "IDP_DEFENSIVE_TD_VOLATILITY",
             "IDP_POSITION_GROUP_COMPATIBLE",
             "IDP_TACKLE_VOLUME_PROJECTED",
-            "IDP_UNRESOLVED_ROWS_EXCLUDED"
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
           ],
           "scoreComponents": {
-            "leagueValue": 21.9,
-            "rosterNeed": 14,
-            "scarcity": 6,
+            "leagueValue": 29.7,
+            "rosterNeed": 20,
+            "scarcity": 1.7,
             "tierCliff": 2,
             "marketValue": 3,
             "availabilityRisk": 1,
@@ -12093,9 +12125,9 @@
             "formatPenalty": 0
           },
           "h10": {
-            "medianPoints": 5.07,
-            "pointsAboveReplacement": -1.3,
-            "riskAdjustedValue": -0.58,
+            "medianPoints": 5.1,
+            "pointsAboveReplacement": -2.69,
+            "riskAdjustedValue": -1.2,
             "tier": 1,
             "marketValueSignal": "not_implemented",
             "confidenceLabel": "low",
@@ -12105,32 +12137,32 @@
             "currentRound": 20,
             "currentPick": 234,
             "picksUntilNextUserPick": 0,
-            "positionNeedLevel": "moderate",
-            "starterSlotNeed": false,
-            "benchDepthNeed": true,
+            "positionNeedLevel": "urgent",
+            "starterSlotNeed": true,
+            "benchDepthNeed": false,
             "tierDropBeforeNextPick": false
           },
-          "rosterNeedStatus": "flex_need_open",
-          "needUrgency": "medium",
+          "rosterNeedStatus": "starter_need_open",
+          "needUrgency": "high",
           "futureAvailability": "likely_available_next_pick",
           "tierDropRisk": "low",
           "opportunityCost": "low",
           "needTimingAction": "monitor",
           "needTimingReasons": [
-            "DB timing action: monitor.",
-            "Comparable DB options are likely to be available near the next pick.",
-            "DB survival confidence is medium (148 likely next-pick comparables).",
-            "Wait plan fallback: monitor.",
-            "DB timing was adjusted by survival risk."
+            "DL timing action: monitor.",
+            "DL remains a starter need.",
+            "Comparable DL options are likely to be available near the next pick.",
+            "DL survival confidence is medium (16 likely next-pick comparables).",
+            "Wait plan fallback: monitor."
           ],
           "survivalConfidence": "medium",
-          "survivalConfidenceScore": 65,
-          "comparableOptionsNow": 149,
-          "comparableOptionsLikelyNextPick": 148,
-          "comparableOptionsLikelyNextTwoPicks": 148,
+          "survivalConfidenceScore": 58,
+          "comparableOptionsNow": 17,
+          "comparableOptionsLikelyNextPick": 16,
+          "comparableOptionsLikelyNextTwoPicks": 16,
           "waitRisk": "low",
           "waitRiskReasons": [
-            "DB projection confidence is low."
+            "DL projection confidence is low."
           ],
           "needTimingAdjustedBySurvival": false,
           "waitPlanTargets": [],
@@ -12138,42 +12170,43 @@
           "waitPlanStrongTargetCount": 0,
           "waitPlanSurvivalSummary": "0 likely, 0 uncertain wait targets.",
           "waitPlanRisk": "severe",
-          "waitPlanReason": "Wait risk severe; only 0 comparable DB targets support waiting.",
+          "waitPlanReason": "Wait risk severe; only 0 comparable DL targets support waiting.",
           "waitPlanBacked": false,
           "waitPlanFallbackAction": "monitor",
           "needTimingAdjustedByWaitPlan": true
         },
         {
           "recommendationRank": 15,
-          "displayName": "Kyle Dugger",
-          "position": "DB",
-          "team": "CIN",
-          "recommendationTier": "avoid_for_now",
-          "recommendationScore": 33.9,
+          "displayName": "John Franklin-Myers",
+          "position": "DL",
+          "team": "TEN",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 43.4,
           "status": "watch_only",
-          "primaryReason": "League value: -1.3 points above replacement.",
+          "primaryReason": "League value: -2.1 points above replacement.",
           "explanationFragments": [
-            "League value: -1.3 points above replacement.",
-            "Roster need: DB bench depth is still useful in this format.",
+            "League value: -2.1 points above replacement.",
+            "Roster need: DL starter depth still matters in this format.",
             "Risk: low-confidence baseline; range is wide.",
-            "Timing signal: DB is monitored without overriding the broader value signal."
+            "Timing signal: DL is monitored without overriding the broader value signal."
           ],
           "warningCodes": [
             "LOW_PROJECTION_CONFIDENCE",
             "MARKET_NOT_IMPLEMENTED"
           ],
           "reasonCodes": [
-            "BENCH_DEPTH_NEED",
+            "DRAFT_CONTEXT_PRESSURE",
             "IDP_BIG_PLAY_REGRESSION",
             "IDP_DEFENSIVE_TD_VOLATILITY",
             "IDP_POSITION_GROUP_COMPATIBLE",
             "IDP_TACKLE_VOLUME_PROJECTED",
-            "IDP_UNRESOLVED_ROWS_EXCLUDED"
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
           ],
           "scoreComponents": {
-            "leagueValue": 21.9,
-            "rosterNeed": 14,
-            "scarcity": 6,
+            "leagueValue": 29.8,
+            "rosterNeed": 20,
+            "scarcity": 1.7,
             "tierCliff": 2,
             "marketValue": 3,
             "availabilityRisk": 1,
@@ -12182,9 +12215,9 @@
             "formatPenalty": 0
           },
           "h10": {
-            "medianPoints": 5.07,
-            "pointsAboveReplacement": -1.3,
-            "riskAdjustedValue": -0.58,
+            "medianPoints": 5.68,
+            "pointsAboveReplacement": -2.11,
+            "riskAdjustedValue": -0.94,
             "tier": 1,
             "marketValueSignal": "not_implemented",
             "confidenceLabel": "low",
@@ -12194,32 +12227,32 @@
             "currentRound": 20,
             "currentPick": 234,
             "picksUntilNextUserPick": 0,
-            "positionNeedLevel": "moderate",
-            "starterSlotNeed": false,
-            "benchDepthNeed": true,
+            "positionNeedLevel": "urgent",
+            "starterSlotNeed": true,
+            "benchDepthNeed": false,
             "tierDropBeforeNextPick": false
           },
-          "rosterNeedStatus": "flex_need_open",
-          "needUrgency": "medium",
+          "rosterNeedStatus": "starter_need_open",
+          "needUrgency": "high",
           "futureAvailability": "likely_available_next_pick",
           "tierDropRisk": "low",
           "opportunityCost": "low",
           "needTimingAction": "monitor",
           "needTimingReasons": [
-            "DB timing action: monitor.",
-            "Comparable DB options are likely to be available near the next pick.",
-            "DB survival confidence is medium (148 likely next-pick comparables).",
-            "Wait plan fallback: monitor.",
-            "DB timing was adjusted by survival risk."
+            "DL timing action: monitor.",
+            "DL remains a starter need.",
+            "Comparable DL options are likely to be available near the next pick.",
+            "DL survival confidence is medium (16 likely next-pick comparables).",
+            "Wait plan fallback: monitor."
           ],
           "survivalConfidence": "medium",
-          "survivalConfidenceScore": 65,
-          "comparableOptionsNow": 149,
-          "comparableOptionsLikelyNextPick": 148,
-          "comparableOptionsLikelyNextTwoPicks": 148,
+          "survivalConfidenceScore": 58,
+          "comparableOptionsNow": 17,
+          "comparableOptionsLikelyNextPick": 16,
+          "comparableOptionsLikelyNextTwoPicks": 16,
           "waitRisk": "low",
           "waitRiskReasons": [
-            "DB projection confidence is low."
+            "DL projection confidence is low."
           ],
           "needTimingAdjustedBySurvival": false,
           "waitPlanTargets": [],
@@ -12227,7 +12260,7 @@
           "waitPlanStrongTargetCount": 0,
           "waitPlanSurvivalSummary": "0 likely, 0 uncertain wait targets.",
           "waitPlanRisk": "severe",
-          "waitPlanReason": "Wait risk severe; only 0 comparable DB targets support waiting.",
+          "waitPlanReason": "Wait risk severe; only 0 comparable DL targets support waiting.",
           "waitPlanBacked": false,
           "waitPlanFallbackAction": "monitor",
           "needTimingAdjustedByWaitPlan": true
@@ -12236,35 +12269,36 @@
       "watchlistExamples": [
         {
           "recommendationRank": 1,
-          "displayName": "Jamel Dean",
-          "position": "DB",
-          "team": "PIT",
+          "displayName": "Al-Quadin Muhammad",
+          "position": "DL",
+          "team": "TB",
           "recommendationTier": "watchlist",
-          "recommendationScore": 42,
+          "recommendationScore": 43.6,
           "status": "watch_only",
-          "primaryReason": "High league value: +0.5 points above replacement.",
+          "primaryReason": "League value: -0.7 points above replacement.",
           "explanationFragments": [
-            "High league value: +0.5 points above replacement.",
-            "Roster need: DB bench depth is still useful in this format.",
+            "League value: -0.7 points above replacement.",
+            "Roster need: DL starter depth still matters in this format.",
             "Risk: low-confidence baseline; range is wide.",
-            "Timing signal: DB is monitored without overriding the broader value signal."
+            "Timing signal: DL is monitored without overriding the broader value signal."
           ],
           "warningCodes": [
             "LOW_PROJECTION_CONFIDENCE",
             "MARKET_NOT_IMPLEMENTED"
           ],
           "reasonCodes": [
-            "BENCH_DEPTH_NEED",
+            "DRAFT_CONTEXT_PRESSURE",
             "IDP_BIG_PLAY_REGRESSION",
             "IDP_DEFENSIVE_TD_VOLATILITY",
             "IDP_POSITION_GROUP_COMPATIBLE",
             "IDP_TACKLE_VOLUME_PROJECTED",
-            "IDP_UNRESOLVED_ROWS_EXCLUDED"
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
           ],
           "scoreComponents": {
-            "leagueValue": 30,
-            "rosterNeed": 14,
-            "scarcity": 6,
+            "leagueValue": 29.9,
+            "rosterNeed": 20,
+            "scarcity": 1.7,
             "tierCliff": 2,
             "marketValue": 3,
             "availabilityRisk": 1,
@@ -12273,9 +12307,9 @@
             "formatPenalty": 0
           },
           "h10": {
-            "medianPoints": 6.91,
-            "pointsAboveReplacement": 0.54,
-            "riskAdjustedValue": 0.24,
+            "medianPoints": 7.05,
+            "pointsAboveReplacement": -0.74,
+            "riskAdjustedValue": -0.33,
             "tier": 1,
             "marketValueSignal": "not_implemented",
             "confidenceLabel": "low",
@@ -12285,32 +12319,32 @@
             "currentRound": 20,
             "currentPick": 234,
             "picksUntilNextUserPick": 0,
-            "positionNeedLevel": "moderate",
-            "starterSlotNeed": false,
-            "benchDepthNeed": true,
+            "positionNeedLevel": "urgent",
+            "starterSlotNeed": true,
+            "benchDepthNeed": false,
             "tierDropBeforeNextPick": false
           },
-          "rosterNeedStatus": "flex_need_open",
-          "needUrgency": "medium",
+          "rosterNeedStatus": "starter_need_open",
+          "needUrgency": "high",
           "futureAvailability": "likely_available_next_pick",
           "tierDropRisk": "low",
           "opportunityCost": "low",
           "needTimingAction": "monitor",
           "needTimingReasons": [
-            "DB timing action: monitor.",
-            "Comparable DB options are likely to be available near the next pick.",
-            "DB survival confidence is medium (148 likely next-pick comparables).",
-            "Wait plan fallback: monitor.",
-            "DB timing was adjusted by survival risk."
+            "DL timing action: monitor.",
+            "DL remains a starter need.",
+            "Comparable DL options are likely to be available near the next pick.",
+            "DL survival confidence is medium (16 likely next-pick comparables).",
+            "Wait plan fallback: monitor."
           ],
           "survivalConfidence": "medium",
-          "survivalConfidenceScore": 65,
-          "comparableOptionsNow": 149,
-          "comparableOptionsLikelyNextPick": 148,
-          "comparableOptionsLikelyNextTwoPicks": 148,
+          "survivalConfidenceScore": 58,
+          "comparableOptionsNow": 17,
+          "comparableOptionsLikelyNextPick": 16,
+          "comparableOptionsLikelyNextTwoPicks": 16,
           "waitRisk": "low",
           "waitRiskReasons": [
-            "DB projection confidence is low."
+            "DL projection confidence is low."
           ],
           "needTimingAdjustedBySurvival": false,
           "waitPlanTargets": [],
@@ -12318,13 +12352,1231 @@
           "waitPlanStrongTargetCount": 0,
           "waitPlanSurvivalSummary": "0 likely, 0 uncertain wait targets.",
           "waitPlanRisk": "severe",
-          "waitPlanReason": "Wait risk severe; only 0 comparable DB targets support waiting.",
+          "waitPlanReason": "Wait risk severe; only 0 comparable DL targets support waiting.",
+          "waitPlanBacked": false,
+          "waitPlanFallbackAction": "monitor",
+          "needTimingAdjustedByWaitPlan": true
+        },
+        {
+          "recommendationRank": 2,
+          "displayName": "Chase Young",
+          "position": "DL",
+          "team": "NO",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 43.6,
+          "status": "watch_only",
+          "primaryReason": "High league value: +0 points above replacement.",
+          "explanationFragments": [
+            "High league value: +0 points above replacement.",
+            "Roster need: DL starter depth still matters in this format.",
+            "Risk: low-confidence baseline; range is wide.",
+            "Timing signal: DL is monitored without overriding the broader value signal."
+          ],
+          "warningCodes": [
+            "LOW_PROJECTION_CONFIDENCE",
+            "MARKET_NOT_IMPLEMENTED"
+          ],
+          "reasonCodes": [
+            "DRAFT_CONTEXT_PRESSURE",
+            "IDP_BIG_PLAY_REGRESSION",
+            "IDP_DEFENSIVE_TD_VOLATILITY",
+            "IDP_POSITION_GROUP_COMPATIBLE",
+            "IDP_TACKLE_VOLUME_PROJECTED",
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 29.9,
+            "rosterNeed": 20,
+            "scarcity": 1.7,
+            "tierCliff": 2,
+            "marketValue": 3,
+            "availabilityRisk": 1,
+            "needTiming": 0,
+            "confidencePenalty": -14,
+            "formatPenalty": 0
+          },
+          "h10": {
+            "medianPoints": 7.83,
+            "pointsAboveReplacement": 0.04,
+            "riskAdjustedValue": 0.02,
+            "tier": 1,
+            "marketValueSignal": "not_implemented",
+            "confidenceLabel": "low",
+            "valueReadiness": "LOW_CONFIDENCE_BASELINE"
+          },
+          "draftContext": {
+            "currentRound": 20,
+            "currentPick": 234,
+            "picksUntilNextUserPick": 0,
+            "positionNeedLevel": "urgent",
+            "starterSlotNeed": true,
+            "benchDepthNeed": false,
+            "tierDropBeforeNextPick": false
+          },
+          "rosterNeedStatus": "starter_need_open",
+          "needUrgency": "high",
+          "futureAvailability": "likely_available_next_pick",
+          "tierDropRisk": "low",
+          "opportunityCost": "low",
+          "needTimingAction": "monitor",
+          "needTimingReasons": [
+            "DL timing action: monitor.",
+            "DL remains a starter need.",
+            "Comparable DL options are likely to be available near the next pick.",
+            "DL survival confidence is medium (16 likely next-pick comparables).",
+            "Wait plan fallback: monitor."
+          ],
+          "survivalConfidence": "medium",
+          "survivalConfidenceScore": 58,
+          "comparableOptionsNow": 17,
+          "comparableOptionsLikelyNextPick": 16,
+          "comparableOptionsLikelyNextTwoPicks": 16,
+          "waitRisk": "low",
+          "waitRiskReasons": [
+            "DL projection confidence is low."
+          ],
+          "needTimingAdjustedBySurvival": false,
+          "waitPlanTargets": [],
+          "waitPlanTargetCount": 0,
+          "waitPlanStrongTargetCount": 0,
+          "waitPlanSurvivalSummary": "0 likely, 0 uncertain wait targets.",
+          "waitPlanRisk": "severe",
+          "waitPlanReason": "Wait risk severe; only 0 comparable DL targets support waiting.",
+          "waitPlanBacked": false,
+          "waitPlanFallbackAction": "monitor",
+          "needTimingAdjustedByWaitPlan": true
+        },
+        {
+          "recommendationRank": 3,
+          "displayName": "Brandon Dorlus",
+          "position": "DL",
+          "team": "ATL",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 43.5,
+          "status": "watch_only",
+          "primaryReason": "League value: -1.9 points above replacement.",
+          "explanationFragments": [
+            "League value: -1.9 points above replacement.",
+            "Roster need: DL starter depth still matters in this format.",
+            "Risk: low-confidence baseline; range is wide.",
+            "Timing signal: DL is monitored without overriding the broader value signal."
+          ],
+          "warningCodes": [
+            "LOW_PROJECTION_CONFIDENCE",
+            "MARKET_NOT_IMPLEMENTED"
+          ],
+          "reasonCodes": [
+            "DRAFT_CONTEXT_PRESSURE",
+            "IDP_BIG_PLAY_REGRESSION",
+            "IDP_DEFENSIVE_TD_VOLATILITY",
+            "IDP_POSITION_GROUP_COMPATIBLE",
+            "IDP_TACKLE_VOLUME_PROJECTED",
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 29.8,
+            "rosterNeed": 20,
+            "scarcity": 1.7,
+            "tierCliff": 2,
+            "marketValue": 3,
+            "availabilityRisk": 1,
+            "needTiming": 0,
+            "confidencePenalty": -14,
+            "formatPenalty": 0
+          },
+          "h10": {
+            "medianPoints": 5.84,
+            "pointsAboveReplacement": -1.95,
+            "riskAdjustedValue": -0.87,
+            "tier": 1,
+            "marketValueSignal": "not_implemented",
+            "confidenceLabel": "low",
+            "valueReadiness": "LOW_CONFIDENCE_BASELINE"
+          },
+          "draftContext": {
+            "currentRound": 20,
+            "currentPick": 234,
+            "picksUntilNextUserPick": 0,
+            "positionNeedLevel": "urgent",
+            "starterSlotNeed": true,
+            "benchDepthNeed": false,
+            "tierDropBeforeNextPick": false
+          },
+          "rosterNeedStatus": "starter_need_open",
+          "needUrgency": "high",
+          "futureAvailability": "likely_available_next_pick",
+          "tierDropRisk": "low",
+          "opportunityCost": "low",
+          "needTimingAction": "monitor",
+          "needTimingReasons": [
+            "DL timing action: monitor.",
+            "DL remains a starter need.",
+            "Comparable DL options are likely to be available near the next pick.",
+            "DL survival confidence is medium (16 likely next-pick comparables).",
+            "Wait plan fallback: monitor."
+          ],
+          "survivalConfidence": "medium",
+          "survivalConfidenceScore": 58,
+          "comparableOptionsNow": 17,
+          "comparableOptionsLikelyNextPick": 16,
+          "comparableOptionsLikelyNextTwoPicks": 16,
+          "waitRisk": "low",
+          "waitRiskReasons": [
+            "DL projection confidence is low."
+          ],
+          "needTimingAdjustedBySurvival": false,
+          "waitPlanTargets": [],
+          "waitPlanTargetCount": 0,
+          "waitPlanStrongTargetCount": 0,
+          "waitPlanSurvivalSummary": "0 likely, 0 uncertain wait targets.",
+          "waitPlanRisk": "severe",
+          "waitPlanReason": "Wait risk severe; only 0 comparable DL targets support waiting.",
+          "waitPlanBacked": false,
+          "waitPlanFallbackAction": "monitor",
+          "needTimingAdjustedByWaitPlan": true
+        },
+        {
+          "recommendationRank": 4,
+          "displayName": "Cameron Jordan",
+          "position": "DL",
+          "team": null,
+          "recommendationTier": "watchlist",
+          "recommendationScore": 43.5,
+          "status": "watch_only",
+          "primaryReason": "League value: -1.3 points above replacement.",
+          "explanationFragments": [
+            "League value: -1.3 points above replacement.",
+            "Roster need: DL starter depth still matters in this format.",
+            "Risk: low-confidence baseline; range is wide.",
+            "Timing signal: DL is monitored without overriding the broader value signal."
+          ],
+          "warningCodes": [
+            "LOW_PROJECTION_CONFIDENCE",
+            "MARKET_NOT_IMPLEMENTED"
+          ],
+          "reasonCodes": [
+            "DRAFT_CONTEXT_PRESSURE",
+            "IDP_BIG_PLAY_REGRESSION",
+            "IDP_DEFENSIVE_TD_VOLATILITY",
+            "IDP_POSITION_GROUP_COMPATIBLE",
+            "IDP_TACKLE_VOLUME_PROJECTED",
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 29.8,
+            "rosterNeed": 20,
+            "scarcity": 1.7,
+            "tierCliff": 2,
+            "marketValue": 3,
+            "availabilityRisk": 1,
+            "needTiming": 0,
+            "confidencePenalty": -14,
+            "formatPenalty": 0
+          },
+          "h10": {
+            "medianPoints": 6.49,
+            "pointsAboveReplacement": -1.3,
+            "riskAdjustedValue": -0.58,
+            "tier": 1,
+            "marketValueSignal": "not_implemented",
+            "confidenceLabel": "low",
+            "valueReadiness": "LOW_CONFIDENCE_BASELINE"
+          },
+          "draftContext": {
+            "currentRound": 20,
+            "currentPick": 234,
+            "picksUntilNextUserPick": 0,
+            "positionNeedLevel": "urgent",
+            "starterSlotNeed": true,
+            "benchDepthNeed": false,
+            "tierDropBeforeNextPick": false
+          },
+          "rosterNeedStatus": "starter_need_open",
+          "needUrgency": "high",
+          "futureAvailability": "likely_available_next_pick",
+          "tierDropRisk": "low",
+          "opportunityCost": "low",
+          "needTimingAction": "monitor",
+          "needTimingReasons": [
+            "DL timing action: monitor.",
+            "DL remains a starter need.",
+            "Comparable DL options are likely to be available near the next pick.",
+            "DL survival confidence is medium (16 likely next-pick comparables).",
+            "Wait plan fallback: monitor."
+          ],
+          "survivalConfidence": "medium",
+          "survivalConfidenceScore": 58,
+          "comparableOptionsNow": 17,
+          "comparableOptionsLikelyNextPick": 16,
+          "comparableOptionsLikelyNextTwoPicks": 16,
+          "waitRisk": "low",
+          "waitRiskReasons": [
+            "DL projection confidence is low."
+          ],
+          "needTimingAdjustedBySurvival": false,
+          "waitPlanTargets": [],
+          "waitPlanTargetCount": 0,
+          "waitPlanStrongTargetCount": 0,
+          "waitPlanSurvivalSummary": "0 likely, 0 uncertain wait targets.",
+          "waitPlanRisk": "severe",
+          "waitPlanReason": "Wait risk severe; only 0 comparable DL targets support waiting.",
+          "waitPlanBacked": false,
+          "waitPlanFallbackAction": "monitor",
+          "needTimingAdjustedByWaitPlan": true
+        },
+        {
+          "recommendationRank": 5,
+          "displayName": "James Pearce",
+          "position": "DL",
+          "team": "ATL",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 43.5,
+          "status": "watch_only",
+          "primaryReason": "League value: -1.1 points above replacement.",
+          "explanationFragments": [
+            "League value: -1.1 points above replacement.",
+            "Roster need: DL starter depth still matters in this format.",
+            "Risk: low-confidence baseline; range is wide.",
+            "Timing signal: DL is monitored without overriding the broader value signal."
+          ],
+          "warningCodes": [
+            "LOW_PROJECTION_CONFIDENCE",
+            "MARKET_NOT_IMPLEMENTED"
+          ],
+          "reasonCodes": [
+            "DRAFT_CONTEXT_PRESSURE",
+            "IDP_BIG_PLAY_REGRESSION",
+            "IDP_DEFENSIVE_TD_VOLATILITY",
+            "IDP_POSITION_GROUP_COMPATIBLE",
+            "IDP_TACKLE_VOLUME_PROJECTED",
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 29.8,
+            "rosterNeed": 20,
+            "scarcity": 1.7,
+            "tierCliff": 2,
+            "marketValue": 3,
+            "availabilityRisk": 1,
+            "needTiming": 0,
+            "confidencePenalty": -14,
+            "formatPenalty": 0
+          },
+          "h10": {
+            "medianPoints": 6.65,
+            "pointsAboveReplacement": -1.14,
+            "riskAdjustedValue": -0.51,
+            "tier": 1,
+            "marketValueSignal": "not_implemented",
+            "confidenceLabel": "low",
+            "valueReadiness": "LOW_CONFIDENCE_BASELINE"
+          },
+          "draftContext": {
+            "currentRound": 20,
+            "currentPick": 234,
+            "picksUntilNextUserPick": 0,
+            "positionNeedLevel": "urgent",
+            "starterSlotNeed": true,
+            "benchDepthNeed": false,
+            "tierDropBeforeNextPick": false
+          },
+          "rosterNeedStatus": "starter_need_open",
+          "needUrgency": "high",
+          "futureAvailability": "likely_available_next_pick",
+          "tierDropRisk": "low",
+          "opportunityCost": "low",
+          "needTimingAction": "monitor",
+          "needTimingReasons": [
+            "DL timing action: monitor.",
+            "DL remains a starter need.",
+            "Comparable DL options are likely to be available near the next pick.",
+            "DL survival confidence is medium (16 likely next-pick comparables).",
+            "Wait plan fallback: monitor."
+          ],
+          "survivalConfidence": "medium",
+          "survivalConfidenceScore": 58,
+          "comparableOptionsNow": 17,
+          "comparableOptionsLikelyNextPick": 16,
+          "comparableOptionsLikelyNextTwoPicks": 16,
+          "waitRisk": "low",
+          "waitRiskReasons": [
+            "DL projection confidence is low."
+          ],
+          "needTimingAdjustedBySurvival": false,
+          "waitPlanTargets": [],
+          "waitPlanTargetCount": 0,
+          "waitPlanStrongTargetCount": 0,
+          "waitPlanSurvivalSummary": "0 likely, 0 uncertain wait targets.",
+          "waitPlanRisk": "severe",
+          "waitPlanReason": "Wait risk severe; only 0 comparable DL targets support waiting.",
+          "waitPlanBacked": false,
+          "waitPlanFallbackAction": "monitor",
+          "needTimingAdjustedByWaitPlan": true
+        },
+        {
+          "recommendationRank": 6,
+          "displayName": "Montez Sweat",
+          "position": "DL",
+          "team": "CHI",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 43.5,
+          "status": "watch_only",
+          "primaryReason": "League value: -1.1 points above replacement.",
+          "explanationFragments": [
+            "League value: -1.1 points above replacement.",
+            "Roster need: DL starter depth still matters in this format.",
+            "Risk: low-confidence baseline; range is wide.",
+            "Timing signal: DL is monitored without overriding the broader value signal."
+          ],
+          "warningCodes": [
+            "LOW_PROJECTION_CONFIDENCE",
+            "MARKET_NOT_IMPLEMENTED"
+          ],
+          "reasonCodes": [
+            "DRAFT_CONTEXT_PRESSURE",
+            "IDP_BIG_PLAY_REGRESSION",
+            "IDP_DEFENSIVE_TD_VOLATILITY",
+            "IDP_POSITION_GROUP_COMPATIBLE",
+            "IDP_TACKLE_VOLUME_PROJECTED",
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 29.8,
+            "rosterNeed": 20,
+            "scarcity": 1.7,
+            "tierCliff": 2,
+            "marketValue": 3,
+            "availabilityRisk": 1,
+            "needTiming": 0,
+            "confidencePenalty": -14,
+            "formatPenalty": 0
+          },
+          "h10": {
+            "medianPoints": 6.64,
+            "pointsAboveReplacement": -1.15,
+            "riskAdjustedValue": -0.51,
+            "tier": 1,
+            "marketValueSignal": "not_implemented",
+            "confidenceLabel": "low",
+            "valueReadiness": "LOW_CONFIDENCE_BASELINE"
+          },
+          "draftContext": {
+            "currentRound": 20,
+            "currentPick": 234,
+            "picksUntilNextUserPick": 0,
+            "positionNeedLevel": "urgent",
+            "starterSlotNeed": true,
+            "benchDepthNeed": false,
+            "tierDropBeforeNextPick": false
+          },
+          "rosterNeedStatus": "starter_need_open",
+          "needUrgency": "high",
+          "futureAvailability": "likely_available_next_pick",
+          "tierDropRisk": "low",
+          "opportunityCost": "low",
+          "needTimingAction": "monitor",
+          "needTimingReasons": [
+            "DL timing action: monitor.",
+            "DL remains a starter need.",
+            "Comparable DL options are likely to be available near the next pick.",
+            "DL survival confidence is medium (16 likely next-pick comparables).",
+            "Wait plan fallback: monitor."
+          ],
+          "survivalConfidence": "medium",
+          "survivalConfidenceScore": 58,
+          "comparableOptionsNow": 17,
+          "comparableOptionsLikelyNextPick": 16,
+          "comparableOptionsLikelyNextTwoPicks": 16,
+          "waitRisk": "low",
+          "waitRiskReasons": [
+            "DL projection confidence is low."
+          ],
+          "needTimingAdjustedBySurvival": false,
+          "waitPlanTargets": [],
+          "waitPlanTargetCount": 0,
+          "waitPlanStrongTargetCount": 0,
+          "waitPlanSurvivalSummary": "0 likely, 0 uncertain wait targets.",
+          "waitPlanRisk": "severe",
+          "waitPlanReason": "Wait risk severe; only 0 comparable DL targets support waiting.",
+          "waitPlanBacked": false,
+          "waitPlanFallbackAction": "monitor",
+          "needTimingAdjustedByWaitPlan": true
+        },
+        {
+          "recommendationRank": 7,
+          "displayName": "Will McDonald",
+          "position": "DL",
+          "team": "NYJ",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 43.5,
+          "status": "watch_only",
+          "primaryReason": "League value: -1.6 points above replacement.",
+          "explanationFragments": [
+            "League value: -1.6 points above replacement.",
+            "Roster need: DL starter depth still matters in this format.",
+            "Risk: low-confidence baseline; range is wide.",
+            "Timing signal: DL is monitored without overriding the broader value signal."
+          ],
+          "warningCodes": [
+            "LOW_PROJECTION_CONFIDENCE",
+            "MARKET_NOT_IMPLEMENTED"
+          ],
+          "reasonCodes": [
+            "DRAFT_CONTEXT_PRESSURE",
+            "IDP_BIG_PLAY_REGRESSION",
+            "IDP_DEFENSIVE_TD_VOLATILITY",
+            "IDP_POSITION_GROUP_COMPATIBLE",
+            "IDP_TACKLE_VOLUME_PROJECTED",
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 29.8,
+            "rosterNeed": 20,
+            "scarcity": 1.7,
+            "tierCliff": 2,
+            "marketValue": 3,
+            "availabilityRisk": 1,
+            "needTiming": 0,
+            "confidencePenalty": -14,
+            "formatPenalty": 0
+          },
+          "h10": {
+            "medianPoints": 6.14,
+            "pointsAboveReplacement": -1.65,
+            "riskAdjustedValue": -0.74,
+            "tier": 1,
+            "marketValueSignal": "not_implemented",
+            "confidenceLabel": "low",
+            "valueReadiness": "LOW_CONFIDENCE_BASELINE"
+          },
+          "draftContext": {
+            "currentRound": 20,
+            "currentPick": 234,
+            "picksUntilNextUserPick": 0,
+            "positionNeedLevel": "urgent",
+            "starterSlotNeed": true,
+            "benchDepthNeed": false,
+            "tierDropBeforeNextPick": false
+          },
+          "rosterNeedStatus": "starter_need_open",
+          "needUrgency": "high",
+          "futureAvailability": "likely_available_next_pick",
+          "tierDropRisk": "low",
+          "opportunityCost": "low",
+          "needTimingAction": "monitor",
+          "needTimingReasons": [
+            "DL timing action: monitor.",
+            "DL remains a starter need.",
+            "Comparable DL options are likely to be available near the next pick.",
+            "DL survival confidence is medium (16 likely next-pick comparables).",
+            "Wait plan fallback: monitor."
+          ],
+          "survivalConfidence": "medium",
+          "survivalConfidenceScore": 58,
+          "comparableOptionsNow": 17,
+          "comparableOptionsLikelyNextPick": 16,
+          "comparableOptionsLikelyNextTwoPicks": 16,
+          "waitRisk": "low",
+          "waitRiskReasons": [
+            "DL projection confidence is low."
+          ],
+          "needTimingAdjustedBySurvival": false,
+          "waitPlanTargets": [],
+          "waitPlanTargetCount": 0,
+          "waitPlanStrongTargetCount": 0,
+          "waitPlanSurvivalSummary": "0 likely, 0 uncertain wait targets.",
+          "waitPlanRisk": "severe",
+          "waitPlanReason": "Wait risk severe; only 0 comparable DL targets support waiting.",
+          "waitPlanBacked": false,
+          "waitPlanFallbackAction": "monitor",
+          "needTimingAdjustedByWaitPlan": true
+        },
+        {
+          "recommendationRank": 8,
+          "displayName": "Alex Wright",
+          "position": "DL",
+          "team": "CLE",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 43.4,
+          "status": "watch_only",
+          "primaryReason": "League value: -2.5 points above replacement.",
+          "explanationFragments": [
+            "League value: -2.5 points above replacement.",
+            "Roster need: DL starter depth still matters in this format.",
+            "Risk: low-confidence baseline; range is wide.",
+            "Timing signal: DL is monitored without overriding the broader value signal."
+          ],
+          "warningCodes": [
+            "LOW_PROJECTION_CONFIDENCE",
+            "MARKET_NOT_IMPLEMENTED"
+          ],
+          "reasonCodes": [
+            "DRAFT_CONTEXT_PRESSURE",
+            "IDP_BIG_PLAY_REGRESSION",
+            "IDP_DEFENSIVE_TD_VOLATILITY",
+            "IDP_POSITION_GROUP_COMPATIBLE",
+            "IDP_TACKLE_VOLUME_PROJECTED",
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 29.7,
+            "rosterNeed": 20,
+            "scarcity": 1.7,
+            "tierCliff": 2,
+            "marketValue": 3,
+            "availabilityRisk": 1,
+            "needTiming": 0,
+            "confidencePenalty": -14,
+            "formatPenalty": 0
+          },
+          "h10": {
+            "medianPoints": 5.3,
+            "pointsAboveReplacement": -2.49,
+            "riskAdjustedValue": -1.11,
+            "tier": 1,
+            "marketValueSignal": "not_implemented",
+            "confidenceLabel": "low",
+            "valueReadiness": "LOW_CONFIDENCE_BASELINE"
+          },
+          "draftContext": {
+            "currentRound": 20,
+            "currentPick": 234,
+            "picksUntilNextUserPick": 0,
+            "positionNeedLevel": "urgent",
+            "starterSlotNeed": true,
+            "benchDepthNeed": false,
+            "tierDropBeforeNextPick": false
+          },
+          "rosterNeedStatus": "starter_need_open",
+          "needUrgency": "high",
+          "futureAvailability": "likely_available_next_pick",
+          "tierDropRisk": "low",
+          "opportunityCost": "low",
+          "needTimingAction": "monitor",
+          "needTimingReasons": [
+            "DL timing action: monitor.",
+            "DL remains a starter need.",
+            "Comparable DL options are likely to be available near the next pick.",
+            "DL survival confidence is medium (16 likely next-pick comparables).",
+            "Wait plan fallback: monitor."
+          ],
+          "survivalConfidence": "medium",
+          "survivalConfidenceScore": 58,
+          "comparableOptionsNow": 17,
+          "comparableOptionsLikelyNextPick": 16,
+          "comparableOptionsLikelyNextTwoPicks": 16,
+          "waitRisk": "low",
+          "waitRiskReasons": [
+            "DL projection confidence is low."
+          ],
+          "needTimingAdjustedBySurvival": false,
+          "waitPlanTargets": [],
+          "waitPlanTargetCount": 0,
+          "waitPlanStrongTargetCount": 0,
+          "waitPlanSurvivalSummary": "0 likely, 0 uncertain wait targets.",
+          "waitPlanRisk": "severe",
+          "waitPlanReason": "Wait risk severe; only 0 comparable DL targets support waiting.",
+          "waitPlanBacked": false,
+          "waitPlanFallbackAction": "monitor",
+          "needTimingAdjustedByWaitPlan": true
+        },
+        {
+          "recommendationRank": 9,
+          "displayName": "Austin Booker",
+          "position": "DL",
+          "team": "CHI",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 43.4,
+          "status": "watch_only",
+          "primaryReason": "League value: -2.2 points above replacement.",
+          "explanationFragments": [
+            "League value: -2.2 points above replacement.",
+            "Roster need: DL starter depth still matters in this format.",
+            "Risk: low-confidence baseline; range is wide.",
+            "Timing signal: DL is monitored without overriding the broader value signal."
+          ],
+          "warningCodes": [
+            "LOW_PROJECTION_CONFIDENCE",
+            "MARKET_NOT_IMPLEMENTED"
+          ],
+          "reasonCodes": [
+            "DRAFT_CONTEXT_PRESSURE",
+            "IDP_BIG_PLAY_REGRESSION",
+            "IDP_DEFENSIVE_TD_VOLATILITY",
+            "IDP_POSITION_GROUP_COMPATIBLE",
+            "IDP_TACKLE_VOLUME_PROJECTED",
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 29.8,
+            "rosterNeed": 20,
+            "scarcity": 1.7,
+            "tierCliff": 2,
+            "marketValue": 3,
+            "availabilityRisk": 1,
+            "needTiming": 0,
+            "confidencePenalty": -14,
+            "formatPenalty": 0
+          },
+          "h10": {
+            "medianPoints": 5.55,
+            "pointsAboveReplacement": -2.24,
+            "riskAdjustedValue": -1,
+            "tier": 1,
+            "marketValueSignal": "not_implemented",
+            "confidenceLabel": "low",
+            "valueReadiness": "LOW_CONFIDENCE_BASELINE"
+          },
+          "draftContext": {
+            "currentRound": 20,
+            "currentPick": 234,
+            "picksUntilNextUserPick": 0,
+            "positionNeedLevel": "urgent",
+            "starterSlotNeed": true,
+            "benchDepthNeed": false,
+            "tierDropBeforeNextPick": false
+          },
+          "rosterNeedStatus": "starter_need_open",
+          "needUrgency": "high",
+          "futureAvailability": "likely_available_next_pick",
+          "tierDropRisk": "low",
+          "opportunityCost": "low",
+          "needTimingAction": "monitor",
+          "needTimingReasons": [
+            "DL timing action: monitor.",
+            "DL remains a starter need.",
+            "Comparable DL options are likely to be available near the next pick.",
+            "DL survival confidence is medium (16 likely next-pick comparables).",
+            "Wait plan fallback: monitor."
+          ],
+          "survivalConfidence": "medium",
+          "survivalConfidenceScore": 58,
+          "comparableOptionsNow": 17,
+          "comparableOptionsLikelyNextPick": 16,
+          "comparableOptionsLikelyNextTwoPicks": 16,
+          "waitRisk": "low",
+          "waitRiskReasons": [
+            "DL projection confidence is low."
+          ],
+          "needTimingAdjustedBySurvival": false,
+          "waitPlanTargets": [],
+          "waitPlanTargetCount": 0,
+          "waitPlanStrongTargetCount": 0,
+          "waitPlanSurvivalSummary": "0 likely, 0 uncertain wait targets.",
+          "waitPlanRisk": "severe",
+          "waitPlanReason": "Wait risk severe; only 0 comparable DL targets support waiting.",
+          "waitPlanBacked": false,
+          "waitPlanFallbackAction": "monitor",
+          "needTimingAdjustedByWaitPlan": true
+        },
+        {
+          "recommendationRank": 10,
+          "displayName": "Byron Murphy",
+          "position": "DL",
+          "team": "SEA",
+          "recommendationTier": "watchlist",
+          "recommendationScore": 43.4,
+          "status": "watch_only",
+          "primaryReason": "League value: -2.8 points above replacement.",
+          "explanationFragments": [
+            "League value: -2.8 points above replacement.",
+            "Roster need: DL starter depth still matters in this format.",
+            "Risk: low-confidence baseline; range is wide.",
+            "Timing signal: DL is monitored without overriding the broader value signal."
+          ],
+          "warningCodes": [
+            "LOW_PROJECTION_CONFIDENCE",
+            "MARKET_NOT_IMPLEMENTED"
+          ],
+          "reasonCodes": [
+            "DRAFT_CONTEXT_PRESSURE",
+            "IDP_BIG_PLAY_REGRESSION",
+            "IDP_DEFENSIVE_TD_VOLATILITY",
+            "IDP_POSITION_GROUP_COMPATIBLE",
+            "IDP_TACKLE_VOLUME_PROJECTED",
+            "IDP_UNRESOLVED_ROWS_EXCLUDED",
+            "STARTER_NEED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 29.7,
+            "rosterNeed": 20,
+            "scarcity": 1.7,
+            "tierCliff": 2,
+            "marketValue": 3,
+            "availabilityRisk": 1,
+            "needTiming": 0,
+            "confidencePenalty": -14,
+            "formatPenalty": 0
+          },
+          "h10": {
+            "medianPoints": 4.98,
+            "pointsAboveReplacement": -2.81,
+            "riskAdjustedValue": -1.26,
+            "tier": 1,
+            "marketValueSignal": "not_implemented",
+            "confidenceLabel": "low",
+            "valueReadiness": "LOW_CONFIDENCE_BASELINE"
+          },
+          "draftContext": {
+            "currentRound": 20,
+            "currentPick": 234,
+            "picksUntilNextUserPick": 0,
+            "positionNeedLevel": "urgent",
+            "starterSlotNeed": true,
+            "benchDepthNeed": false,
+            "tierDropBeforeNextPick": false
+          },
+          "rosterNeedStatus": "starter_need_open",
+          "needUrgency": "high",
+          "futureAvailability": "likely_available_next_pick",
+          "tierDropRisk": "low",
+          "opportunityCost": "low",
+          "needTimingAction": "monitor",
+          "needTimingReasons": [
+            "DL timing action: monitor.",
+            "DL remains a starter need.",
+            "Comparable DL options are likely to be available near the next pick.",
+            "DL survival confidence is medium (16 likely next-pick comparables).",
+            "Wait plan fallback: monitor."
+          ],
+          "survivalConfidence": "medium",
+          "survivalConfidenceScore": 58,
+          "comparableOptionsNow": 17,
+          "comparableOptionsLikelyNextPick": 16,
+          "comparableOptionsLikelyNextTwoPicks": 16,
+          "waitRisk": "low",
+          "waitRiskReasons": [
+            "DL projection confidence is low."
+          ],
+          "needTimingAdjustedBySurvival": false,
+          "waitPlanTargets": [],
+          "waitPlanTargetCount": 0,
+          "waitPlanStrongTargetCount": 0,
+          "waitPlanSurvivalSummary": "0 likely, 0 uncertain wait targets.",
+          "waitPlanRisk": "severe",
+          "waitPlanReason": "Wait risk severe; only 0 comparable DL targets support waiting.",
           "waitPlanBacked": false,
           "waitPlanFallbackAction": "monitor",
           "needTimingAdjustedByWaitPlan": true
         }
       ],
-      "insufficientDataExamples": [],
+      "insufficientDataExamples": [
+        {
+          "recommendationRank": 146,
+          "displayName": "DeMarcus Lawrence",
+          "position": "DL",
+          "team": "SEA",
+          "recommendationTier": "insufficient_data",
+          "recommendationScore": 29,
+          "status": "missing_projection",
+          "primaryReason": "Insufficient data: no H10 projection is available for this row.",
+          "explanationFragments": [
+            "Insufficient data: no H10 projection is available for this row.",
+            "Roster need: DL starter depth still matters in this format.",
+            "Timing signal: DL urgency is high, and preview leans toward addressing the need in this window."
+          ],
+          "warningCodes": [
+            "H10_VALUE_OVERLAY_MISSING_PROJECTION"
+          ],
+          "reasonCodes": [
+            "DRAFT_CONTEXT_PRESSURE",
+            "STARTER_NEED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 0,
+            "rosterNeed": 20,
+            "scarcity": 0,
+            "tierCliff": 0,
+            "marketValue": 0,
+            "availabilityRisk": 1,
+            "needTiming": 8,
+            "confidencePenalty": 0,
+            "formatPenalty": 0
+          },
+          "h10": {
+            "medianPoints": null,
+            "pointsAboveReplacement": null,
+            "riskAdjustedValue": null,
+            "tier": null,
+            "marketValueSignal": null,
+            "confidenceLabel": null,
+            "valueReadiness": null
+          },
+          "draftContext": {
+            "currentRound": 20,
+            "currentPick": 234,
+            "picksUntilNextUserPick": 0,
+            "positionNeedLevel": "urgent",
+            "starterSlotNeed": true,
+            "benchDepthNeed": false,
+            "tierDropBeforeNextPick": null
+          },
+          "rosterNeedStatus": "starter_need_open",
+          "needUrgency": "high",
+          "futureAvailability": "likely_available_next_pick",
+          "tierDropRisk": "high",
+          "opportunityCost": "low",
+          "needTimingAction": "fill_now",
+          "needTimingReasons": [
+            "DL timing action: fill_now.",
+            "DL remains a starter need.",
+            "Comparable DL options are likely to be available near the next pick.",
+            "DL survival confidence is medium (17 likely next-pick comparables).",
+            "Wait plan fallback: fill_now."
+          ],
+          "survivalConfidence": "medium",
+          "survivalConfidenceScore": 50,
+          "comparableOptionsNow": 18,
+          "comparableOptionsLikelyNextPick": 17,
+          "comparableOptionsLikelyNextTwoPicks": 17,
+          "waitRisk": "severe",
+          "waitRiskReasons": [
+            "DL tier drop risk is high."
+          ],
+          "needTimingAdjustedBySurvival": true,
+          "waitPlanTargets": [],
+          "waitPlanTargetCount": 0,
+          "waitPlanStrongTargetCount": 0,
+          "waitPlanSurvivalSummary": "0 likely, 0 uncertain wait targets.",
+          "waitPlanRisk": "severe",
+          "waitPlanReason": "Wait risk severe; only 0 comparable DL targets support waiting.",
+          "waitPlanBacked": false,
+          "waitPlanFallbackAction": "fill_now",
+          "needTimingAdjustedByWaitPlan": false
+        },
+        {
+          "recommendationRank": 147,
+          "displayName": "Jadeveon Clowney",
+          "position": "DL",
+          "team": null,
+          "recommendationTier": "insufficient_data",
+          "recommendationScore": 29,
+          "status": "missing_projection",
+          "primaryReason": "Insufficient data: no H10 projection is available for this row.",
+          "explanationFragments": [
+            "Insufficient data: no H10 projection is available for this row.",
+            "Roster need: DL starter depth still matters in this format.",
+            "Timing signal: DL urgency is high, and preview leans toward addressing the need in this window."
+          ],
+          "warningCodes": [
+            "H10_VALUE_OVERLAY_MISSING_PROJECTION"
+          ],
+          "reasonCodes": [
+            "DRAFT_CONTEXT_PRESSURE",
+            "STARTER_NEED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 0,
+            "rosterNeed": 20,
+            "scarcity": 0,
+            "tierCliff": 0,
+            "marketValue": 0,
+            "availabilityRisk": 1,
+            "needTiming": 8,
+            "confidencePenalty": 0,
+            "formatPenalty": 0
+          },
+          "h10": {
+            "medianPoints": null,
+            "pointsAboveReplacement": null,
+            "riskAdjustedValue": null,
+            "tier": null,
+            "marketValueSignal": null,
+            "confidenceLabel": null,
+            "valueReadiness": null
+          },
+          "draftContext": {
+            "currentRound": 20,
+            "currentPick": 234,
+            "picksUntilNextUserPick": 0,
+            "positionNeedLevel": "urgent",
+            "starterSlotNeed": true,
+            "benchDepthNeed": false,
+            "tierDropBeforeNextPick": null
+          },
+          "rosterNeedStatus": "starter_need_open",
+          "needUrgency": "high",
+          "futureAvailability": "likely_available_next_pick",
+          "tierDropRisk": "high",
+          "opportunityCost": "low",
+          "needTimingAction": "fill_now",
+          "needTimingReasons": [
+            "DL timing action: fill_now.",
+            "DL remains a starter need.",
+            "Comparable DL options are likely to be available near the next pick.",
+            "DL survival confidence is medium (17 likely next-pick comparables).",
+            "Wait plan fallback: fill_now."
+          ],
+          "survivalConfidence": "medium",
+          "survivalConfidenceScore": 50,
+          "comparableOptionsNow": 18,
+          "comparableOptionsLikelyNextPick": 17,
+          "comparableOptionsLikelyNextTwoPicks": 17,
+          "waitRisk": "severe",
+          "waitRiskReasons": [
+            "DL tier drop risk is high."
+          ],
+          "needTimingAdjustedBySurvival": true,
+          "waitPlanTargets": [],
+          "waitPlanTargetCount": 0,
+          "waitPlanStrongTargetCount": 0,
+          "waitPlanSurvivalSummary": "0 likely, 0 uncertain wait targets.",
+          "waitPlanRisk": "severe",
+          "waitPlanReason": "Wait risk severe; only 0 comparable DL targets support waiting.",
+          "waitPlanBacked": false,
+          "waitPlanFallbackAction": "fill_now",
+          "needTimingAdjustedByWaitPlan": false
+        },
+        {
+          "recommendationRank": 148,
+          "displayName": "Josh Sweat",
+          "position": "DL",
+          "team": "ARI",
+          "recommendationTier": "insufficient_data",
+          "recommendationScore": 29,
+          "status": "missing_projection",
+          "primaryReason": "Insufficient data: no H10 projection is available for this row.",
+          "explanationFragments": [
+            "Insufficient data: no H10 projection is available for this row.",
+            "Roster need: DL starter depth still matters in this format.",
+            "Timing signal: DL urgency is high, and preview leans toward addressing the need in this window."
+          ],
+          "warningCodes": [
+            "H10_VALUE_OVERLAY_MISSING_PROJECTION"
+          ],
+          "reasonCodes": [
+            "DRAFT_CONTEXT_PRESSURE",
+            "STARTER_NEED"
+          ],
+          "scoreComponents": {
+            "leagueValue": 0,
+            "rosterNeed": 20,
+            "scarcity": 0,
+            "tierCliff": 0,
+            "marketValue": 0,
+            "availabilityRisk": 1,
+            "needTiming": 8,
+            "confidencePenalty": 0,
+            "formatPenalty": 0
+          },
+          "h10": {
+            "medianPoints": null,
+            "pointsAboveReplacement": null,
+            "riskAdjustedValue": null,
+            "tier": null,
+            "marketValueSignal": null,
+            "confidenceLabel": null,
+            "valueReadiness": null
+          },
+          "draftContext": {
+            "currentRound": 20,
+            "currentPick": 234,
+            "picksUntilNextUserPick": 0,
+            "positionNeedLevel": "urgent",
+            "starterSlotNeed": true,
+            "benchDepthNeed": false,
+            "tierDropBeforeNextPick": null
+          },
+          "rosterNeedStatus": "starter_need_open",
+          "needUrgency": "high",
+          "futureAvailability": "likely_available_next_pick",
+          "tierDropRisk": "high",
+          "opportunityCost": "low",
+          "needTimingAction": "fill_now",
+          "needTimingReasons": [
+            "DL timing action: fill_now.",
+            "DL remains a starter need.",
+            "Comparable DL options are likely to be available near the next pick.",
+            "DL survival confidence is medium (17 likely next-pick comparables).",
+            "Wait plan fallback: fill_now."
+          ],
+          "survivalConfidence": "medium",
+          "survivalConfidenceScore": 50,
+          "comparableOptionsNow": 18,
+          "comparableOptionsLikelyNextPick": 17,
+          "comparableOptionsLikelyNextTwoPicks": 17,
+          "waitRisk": "severe",
+          "waitRiskReasons": [
+            "DL tier drop risk is high."
+          ],
+          "needTimingAdjustedBySurvival": true,
+          "waitPlanTargets": [],
+          "waitPlanTargetCount": 0,
+          "waitPlanStrongTargetCount": 0,
+          "waitPlanSurvivalSummary": "0 likely, 0 uncertain wait targets.",
+          "waitPlanRisk": "severe",
+          "waitPlanReason": "Wait risk severe; only 0 comparable DL targets support waiting.",
+          "waitPlanBacked": false,
+          "waitPlanFallbackAction": "fill_now",
+          "needTimingAdjustedByWaitPlan": false
+        },
+        {
+          "recommendationRank": 149,
+          "displayName": "Joey Bosa",
+          "position": "LB",
+          "team": null,
+          "recommendationTier": "insufficient_data",
+          "recommendationScore": 16,
+          "status": "missing_projection",
+          "primaryReason": "Insufficient data: no H10 projection is available for this row.",
+          "explanationFragments": [
+            "Insufficient data: no H10 projection is available for this row.",
+            "Timing signal: LB urgency is medium, and preview leans toward addressing the need in this window."
+          ],
+          "warningCodes": [
+            "H10_VALUE_OVERLAY_MISSING_PROJECTION"
+          ],
+          "reasonCodes": [],
+          "scoreComponents": {
+            "leagueValue": 0,
+            "rosterNeed": 7,
+            "scarcity": 0,
+            "tierCliff": 0,
+            "marketValue": 0,
+            "availabilityRisk": 1,
+            "needTiming": 8,
+            "confidencePenalty": 0,
+            "formatPenalty": 0
+          },
+          "h10": {
+            "medianPoints": null,
+            "pointsAboveReplacement": null,
+            "riskAdjustedValue": null,
+            "tier": null,
+            "marketValueSignal": null,
+            "confidenceLabel": null,
+            "valueReadiness": null
+          },
+          "draftContext": {
+            "currentRound": 20,
+            "currentPick": 234,
+            "picksUntilNextUserPick": 0,
+            "positionNeedLevel": "low",
+            "starterSlotNeed": false,
+            "benchDepthNeed": false,
+            "tierDropBeforeNextPick": null
+          },
+          "rosterNeedStatus": "bench_depth_need",
+          "needUrgency": "medium",
+          "futureAvailability": "likely_available_next_pick",
+          "tierDropRisk": "high",
+          "opportunityCost": "low",
+          "needTimingAction": "fill_now",
+          "needTimingReasons": [
+            "LB timing action: fill_now.",
+            "LB is a depth need, not a starter need.",
+            "Comparable LB options are likely to be available near the next pick.",
+            "LB survival confidence is medium (18 likely next-pick comparables).",
+            "Wait plan fallback: fill_now."
+          ],
+          "survivalConfidence": "medium",
+          "survivalConfidenceScore": 65,
+          "comparableOptionsNow": 19,
+          "comparableOptionsLikelyNextPick": 18,
+          "comparableOptionsLikelyNextTwoPicks": 18,
+          "waitRisk": "low",
+          "waitRiskReasons": [
+            "LB tier drop risk is high."
+          ],
+          "needTimingAdjustedBySurvival": false,
+          "waitPlanTargets": [],
+          "waitPlanTargetCount": 0,
+          "waitPlanStrongTargetCount": 0,
+          "waitPlanSurvivalSummary": "0 likely, 0 uncertain wait targets.",
+          "waitPlanRisk": "severe",
+          "waitPlanReason": "Wait risk severe; only 0 comparable LB targets support waiting.",
+          "waitPlanBacked": false,
+          "waitPlanFallbackAction": "fill_now",
+          "needTimingAdjustedByWaitPlan": true
+        },
+        {
+          "recommendationRank": 150,
+          "displayName": "Rashan Gary",
+          "position": "LB",
+          "team": "DAL",
+          "recommendationTier": "insufficient_data",
+          "recommendationScore": 16,
+          "status": "missing_projection",
+          "primaryReason": "Insufficient data: no H10 projection is available for this row.",
+          "explanationFragments": [
+            "Insufficient data: no H10 projection is available for this row.",
+            "Timing signal: LB urgency is medium, and preview leans toward addressing the need in this window."
+          ],
+          "warningCodes": [
+            "H10_VALUE_OVERLAY_MISSING_PROJECTION"
+          ],
+          "reasonCodes": [],
+          "scoreComponents": {
+            "leagueValue": 0,
+            "rosterNeed": 7,
+            "scarcity": 0,
+            "tierCliff": 0,
+            "marketValue": 0,
+            "availabilityRisk": 1,
+            "needTiming": 8,
+            "confidencePenalty": 0,
+            "formatPenalty": 0
+          },
+          "h10": {
+            "medianPoints": null,
+            "pointsAboveReplacement": null,
+            "riskAdjustedValue": null,
+            "tier": null,
+            "marketValueSignal": null,
+            "confidenceLabel": null,
+            "valueReadiness": null
+          },
+          "draftContext": {
+            "currentRound": 20,
+            "currentPick": 234,
+            "picksUntilNextUserPick": 0,
+            "positionNeedLevel": "low",
+            "starterSlotNeed": false,
+            "benchDepthNeed": false,
+            "tierDropBeforeNextPick": null
+          },
+          "rosterNeedStatus": "bench_depth_need",
+          "needUrgency": "medium",
+          "futureAvailability": "likely_available_next_pick",
+          "tierDropRisk": "high",
+          "opportunityCost": "low",
+          "needTimingAction": "fill_now",
+          "needTimingReasons": [
+            "LB timing action: fill_now.",
+            "LB is a depth need, not a starter need.",
+            "Comparable LB options are likely to be available near the next pick.",
+            "LB survival confidence is medium (18 likely next-pick comparables).",
+            "Wait plan fallback: fill_now."
+          ],
+          "survivalConfidence": "medium",
+          "survivalConfidenceScore": 65,
+          "comparableOptionsNow": 19,
+          "comparableOptionsLikelyNextPick": 18,
+          "comparableOptionsLikelyNextTwoPicks": 18,
+          "waitRisk": "low",
+          "waitRiskReasons": [
+            "LB tier drop risk is high."
+          ],
+          "needTimingAdjustedBySurvival": false,
+          "waitPlanTargets": [],
+          "waitPlanTargetCount": 0,
+          "waitPlanStrongTargetCount": 0,
+          "waitPlanSurvivalSummary": "0 likely, 0 uncertain wait targets.",
+          "waitPlanRisk": "severe",
+          "waitPlanReason": "Wait risk severe; only 0 comparable LB targets support waiting.",
+          "waitPlanBacked": false,
+          "waitPlanFallbackAction": "fill_now",
+          "needTimingAdjustedByWaitPlan": true
+        }
+      ],
       "legacyRecommendationCount": 0,
       "legacyRecommendationTopRows": [],
       "legacyRowsChanged": false,
@@ -12336,8 +13588,8 @@
         "legacyUnchangedPass": true,
         "remainingOrderUnchangedPass": true,
         "forbiddenLanguagePass": true,
-        "offensiveTargetTierPass": null,
-        "superflexQbUrgencyPass": null,
+        "offensiveTargetTierPass": false,
+        "superflexQbUrgencyPass": false,
         "kEarlySuppressionPass": null,
         "dstEarlySuppressionPass": null
       },
@@ -12347,27 +13599,33 @@
         "blackbirdExperimentEligible": true,
         "failedExperimentGates": [],
         "blackbirdRowsGenerated": 150,
-        "blackbirdRowsShown": 150,
+        "blackbirdRowsShown": 145,
         "rowsByTier": {
-          "watchlist": 1,
-          "avoid_for_now": 149
+          "watchlist": 16,
+          "avoid_for_now": 129,
+          "insufficient_data": 5
         },
         "rowsByStatus": {
-          "watch_only": 150
+          "watch_only": 145,
+          "missing_projection": 5
         },
-        "matchRate": 1,
-        "insufficientDataRate": 0,
+        "matchRate": 0.967,
+        "insufficientDataRate": 0.033,
         "warningCounts": {
-          "LOW_PROJECTION_CONFIDENCE": 150,
-          "MARKET_NOT_IMPLEMENTED": 150
+          "LOW_PROJECTION_CONFIDENCE": 93,
+          "MARKET_NOT_IMPLEMENTED": 58,
+          "Best-ball and managed-league ADP are not blended.": 87,
+          "NO_COMPATIBLE_MARKET": 87,
+          "SINGLE_SEASON_OFFENSIVE_BASELINE": 87,
+          "H10_VALUE_OVERLAY_MISSING_PROJECTION": 5
         },
         "contextLimitations": []
       },
       "formatDiagnostics": {
-        "superflexQbUrgencyApplied": null,
-        "qbAverageRosterNeed": 0,
-        "nonQbAverageRosterNeed": 0,
-        "idpRows": 150,
+        "superflexQbUrgencyApplied": false,
+        "qbAverageRosterNeed": 1,
+        "nonQbAverageRosterNeed": 5.6,
+        "idpRows": 63,
         "kickerRows": 0,
         "dstRows": 0
       }

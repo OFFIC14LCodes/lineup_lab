@@ -22,11 +22,11 @@ describe("buildWarRoomValueOverlay", () => {
     });
   });
 
-  it("returns missing_projection without fuzzy name matching", () => {
+  it("returns missing_projection without name-only matching", () => {
     const result = buildWarRoomValueOverlay({
       leagueId: "l1",
       players: [player({ matched_player_id: null, sleeper_player_id: null, player_name: "Same Name" })],
-      valueRows: [valueRow({ entityId: "different-id", displayName: "Same Name" })],
+      valueRows: [valueRow({ entityId: "different-id", displayName: "Same Name", team: "BUF" })],
       rosterRequirements: requirements(["QB", "RB"]),
     });
 

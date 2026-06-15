@@ -1,11 +1,13 @@
 import type { DraftTargetScorePlayer } from "@/lib/draft/scoring";
 import type { NormalizedRosterRequirements } from "@/lib/draft/roster-slots";
 import { getIdpPositionCompatibility, isIdpPosition } from "@/lib/draft/idp-position-compatibility";
+import { normalizePlayerName, normalizePrimaryPosition } from "@/lib/players/normalize";
 import type { H10LeagueValueRow } from "@/lib/projections/h10-league-value";
 
 export type WarRoomMatchClassification =
   | "MATCHED_BY_CANONICAL_ID"
   | "MATCHED_BY_SLEEPER_ID"
+  | "MATCHED_BY_NAME_POSITION_TEAM"
   | "MATCHED_BY_DST_TEAM"
   | "MATCHED_BUT_FORMAT_EXCLUDED"
   | "MISSING_CANONICAL_ID"
@@ -41,7 +43,7 @@ export type WarRoomMatchingCoverageRow = {
   is_fallback: boolean;
   classification: WarRoomMatchClassification;
   matchedEntityId: string | null;
-  matchedBy: "canonical_id" | "sleeper_id" | "dst_team" | null;
+  matchedBy: "canonical_id" | "sleeper_id" | "name_position_team" | "dst_team" | null;
   missingReason: string | null;
   reasonCodes: string[];
   candidate_canonical_players: WarRoomCanonicalCandidate[];
@@ -86,6 +88,7 @@ const IDP_POSITIONS = new Set(["DL", "LB", "DB"]);
 const MATCHED_CLASSIFICATIONS = new Set<WarRoomMatchClassification>([
   "MATCHED_BY_CANONICAL_ID",
   "MATCHED_BY_SLEEPER_ID",
+  "MATCHED_BY_NAME_POSITION_TEAM",
   "MATCHED_BY_DST_TEAM",
   "MATCHED_BUT_FORMAT_EXCLUDED",
 ]);
@@ -93,6 +96,7 @@ const MATCHED_CLASSIFICATIONS = new Set<WarRoomMatchClassification>([
 export function buildWarRoomMatchingCoverage(input: BuildWarRoomMatchingCoverageInput): WarRoomMatchingCoverageResult {
   const leagueRows = input.valueRows.filter((row) => row.leagueId === input.leagueId);
   const byEntityId = new Map(leagueRows.map((row) => [row.entityId, row]));
+  const byNamePositionTeam = buildNamePositionTeamIndex(leagueRows);
   const dstRows = leagueRows.filter((row) => row.entityType === "TEAM_DEFENSE");
   const projectedPositions = new Set(leagueRows.map((row) => normalizePosition(row.positionGroup || row.position)));
 
@@ -100,6 +104,7 @@ export function buildWarRoomMatchingCoverage(input: BuildWarRoomMatchingCoverage
     classifyPlayer({
       player,
       byEntityId,
+      byNamePositionTeam,
       dstRows,
       projectedPositions,
       rosterRequirements: input.rosterRequirements,
@@ -120,6 +125,7 @@ export function matchedEntityIdForCoverage(row: WarRoomMatchingCoverageRow): str
 function classifyPlayer(input: {
   player: DraftTargetScorePlayer;
   byEntityId: Map<string, H10LeagueValueRow>;
+  byNamePositionTeam: Map<string, H10LeagueValueRow[]>;
   dstRows: H10LeagueValueRow[];
   projectedPositions: Set<string>;
   rosterRequirements?: NormalizedRosterRequirements;
@@ -131,6 +137,7 @@ function classifyPlayer(input: {
   const { player } = input;
   const base = baseRow(player);
   const playerPosition = normalizePosition(player.position);
+  let deferredMissingCanonicalId: WarRoomMatchingCoverageRow | null = null;
 
   if (player.is_fallback && !player.sleeper_player_id && !player.matched_player_id) {
     return missing(base, "FALLBACK_ROW_UNMATCHED", "FALLBACK_ROW_WITHOUT_IDENTIFIERS", "Sync or upload rankings with Sleeper/canonical identifiers.");
@@ -142,10 +149,13 @@ function classifyPlayer(input: {
 
   if (player.matched_player_id) {
     const row = input.byEntityId.get(player.matched_player_id);
-    if (!row) return missing(base, "MISSING_H10_VALUE_ROW", "CANONICAL_ID_HAS_NO_H10_VALUE_ROW", "Add or repair the H10 projection/value row for this canonical entity.");
-    const compatibility = compatibilityCheck(player, row);
-    if (compatibility.rejectionReason) return missing(base, "LOW_CONFIDENCE_MATCH", compatibility.rejectionReason, "Review the canonical identity; do not use this projection until position/team compatibility is exact.");
-    return matched(base, classificationForMatchedRow(row, "MATCHED_BY_CANONICAL_ID", input), row.entityId, "canonical_id", [], compatibility.reasonCodes);
+    if (!row) {
+      deferredMissingCanonicalId = missing(base, "MISSING_H10_VALUE_ROW", "CANONICAL_ID_HAS_NO_H10_VALUE_ROW", "Add or repair the H10 projection/value row for this canonical entity.");
+    } else {
+      const compatibility = compatibilityCheck(player, row);
+      if (compatibility.rejectionReason) return missing(base, "LOW_CONFIDENCE_MATCH", compatibility.rejectionReason, "Review the canonical identity; do not use this projection until position/team compatibility is exact.");
+      return matched(base, classificationForMatchedRow(row, "MATCHED_BY_CANONICAL_ID", input), row.entityId, "canonical_id", [], compatibility.reasonCodes);
+    }
   }
 
   const sleeperCandidates = candidatesForSleeper(player.sleeper_player_id, input);
@@ -182,6 +192,27 @@ function classifyPlayer(input: {
     if (matches.length > 1) return missing(base, "AMBIGUOUS_MATCH_REJECTED", "DST_TEAM_MATCH_AMBIGUOUS", "Keep DST unmatched until team-defense identity rows are unique.");
     return missing(base, "TEAM_DEFENSE_ID_MISMATCH", "NO_TEAM_DEFENSE_VALUE_ROW_FOR_TEAM", "Add or repair a TEAM_DEFENSE H10 row keyed to the normalized team abbreviation.");
   }
+
+  const nameMatch = findNamePositionTeamMatch(player, input.byNamePositionTeam);
+  if (nameMatch.status === "matched") {
+    const compatibility = compatibilityCheck(player, nameMatch.row);
+    if (compatibility.rejectionReason) {
+      return missing(base, "LOW_CONFIDENCE_MATCH", compatibility.rejectionReason, "Review the name/position/team match before using this projection.");
+    }
+    return matched(
+      base,
+      classificationForMatchedRow(nameMatch.row, "MATCHED_BY_NAME_POSITION_TEAM", input),
+      nameMatch.row.entityId,
+      "name_position_team",
+      [],
+      compatibility.reasonCodes
+    );
+  }
+  if (nameMatch.status === "ambiguous") {
+    return missing(base, "AMBIGUOUS_MATCH_REJECTED", "NAME_POSITION_TEAM_MATCH_AMBIGUOUS", "Repair canonical identity before using this projection.");
+  }
+
+  if (deferredMissingCanonicalId) return deferredMissingCanonicalId;
 
   if (playerPosition && !input.projectedPositions.has(playerPosition)) {
     return missing(base, "POSITION_NOT_PROJECTED", "POSITION_NOT_IN_H10_VALUE_MODEL", "Accept as out of scope or add deterministic projections for this position.");
@@ -228,7 +259,7 @@ function isFormatExcluded(row: H10LeagueValueRow, requirements: NormalizedRoster
 function summarize(leagueId: string, rows: WarRoomMatchingCoverageRow[]): WarRoomMatchingCoverageSummary {
   const matchedRows = rows.filter((row) => isMatchedClassification(row.classification));
   const unmatchedRows = rows.filter((row) => !isMatchedClassification(row.classification));
-  const missingRows = rows.filter((row) => row.classification !== "MATCHED_BY_CANONICAL_ID" && row.classification !== "MATCHED_BY_SLEEPER_ID" && row.classification !== "MATCHED_BY_DST_TEAM");
+  const missingRows = rows.filter((row) => !isMatchedClassification(row.classification));
   return {
     leagueId,
     rowsLoaded: rows.length,
@@ -401,4 +432,35 @@ function countBy(values: string[]): Record<string, number> {
 function rate(numerator: number, denominator: number): number {
   if (denominator === 0) return 0;
   return Math.round((numerator / denominator) * 1000) / 1000;
+}
+
+function buildNamePositionTeamIndex(rows: H10LeagueValueRow[]): Map<string, H10LeagueValueRow[]> {
+  const index = new Map<string, H10LeagueValueRow[]>();
+  for (const row of rows) {
+    for (const key of namePositionTeamKeys(row.displayName, row.positionGroup || row.position, row.team)) {
+      index.set(key, [...(index.get(key) ?? []), row]);
+    }
+  }
+  return index;
+}
+
+function findNamePositionTeamMatch(
+  player: DraftTargetScorePlayer,
+  index: Map<string, H10LeagueValueRow[]>
+): { status: "matched"; row: H10LeagueValueRow } | { status: "ambiguous" | "missing" } {
+  for (const key of namePositionTeamKeys(player.player_name, player.position, player.team)) {
+    const matches = index.get(key) ?? [];
+    if (matches.length === 1) return { status: "matched", row: matches[0] };
+    if (matches.length > 1) return { status: "ambiguous" };
+  }
+  return { status: "missing" };
+}
+
+function namePositionTeamKeys(name: string | null | undefined, position: string | null | undefined, team: string | null | undefined): string[] {
+  const normalizedName = normalizePlayerName(name ?? "");
+  const normalizedPrimaryPosition = normalizePrimaryPosition(position);
+  const normalizedPosition = normalizedPrimaryPosition === "DEF" ? "DST" : normalizedPrimaryPosition;
+  if (!normalizedName || !normalizedPosition) return [];
+  const normalizedTeam = normalizeTeam(team);
+  return normalizedTeam ? [`${normalizedName}|${normalizedPosition}|${normalizedTeam}`] : [];
 }

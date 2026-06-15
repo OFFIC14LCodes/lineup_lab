@@ -92,11 +92,15 @@ export function buildBlackbirdBoard(input: {
 }
 
 export function findBannedBoardLanguage(text: string): string[] {
-  const normalized = text.toLowerCase();
+  const normalized = sanitizeProperNouns(text).toLowerCase();
   return BANNED_BOARD_TERMS.filter((phrase) => {
     const escaped = phrase.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     return new RegExp(`(^|\\W)${escaped}(\\W|$)`, "i").test(normalized);
   });
+}
+
+function sanitizeProperNouns(text: string): string {
+  return text.replace(/\bDrew Lock\b/g, "Drew L.");
 }
 
 function buildRow(input: {

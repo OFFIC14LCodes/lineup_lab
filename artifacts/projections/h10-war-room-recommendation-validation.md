@@ -1,6 +1,6 @@
 # H10.8 War Room Recommendation Validation
 
-Generated: 2026-06-15T19:48:01.390Z
+Generated: 2026-06-15T20:31:21.439Z
 
 Readiness verdict: ready
 
@@ -26,7 +26,7 @@ Readiness verdict: ready
 | validation_seed:2f62d6e3-d309-4d50-8e7e-2ef05a83771c | Legacy League | 2026 | yes | 6 | 0 | 6 | DEF | K, DST, shallow |
 | validation_seed:2a5c27ce-1a26-4473-95cc-9da9ed78520a | Legacy League | 2026 | yes | 22 | 0 | 22 | K, QB, RB, TE, WR | K, DST, shallow |
 | validation_seed:f131b67c-c646-4e01-a925-c7d9f3eab4b0 | 🪓 Chopped | 2026 | yes | 26 | 0 | 26 | QB, RB, TE, WR | Superflex, shallow |
-| live:f85238ff-b2ee-4053-8493-e38c4cb63bd3 | BestBalls in Hand IDP Dynasty  | 2026 | no | 150 | 150 | 0 | DB | Superflex, IDP, deep |
+| live:f85238ff-b2ee-4053-8493-e38c4cb63bd3 | BestBalls in Hand IDP Dynasty  | 2026 | no | 150 | 150 | 0 | DB, DL, LB, QB, RB, TE, WR | Superflex, IDP, deep |
 | fixture:fixture-one-qb-offense | [Fixture] 1QB Offense | 2026 | yes | 4 | 0 | 4 | QB, RB, TE, WR | shallow |
 | fixture:fixture-superflex-qb | [Fixture] Superflex QB | 2026 | yes | 3 | 0 | 3 | QB, RB, WR | Superflex, shallow |
 | fixture:fixture-te-premium | [Fixture] TE Premium | 2026 | yes | 2 | 0 | 2 | TE, WR | TE premium, shallow |
@@ -109,15 +109,15 @@ Readiness verdict: ready
 
 - Formats: Superflex, IDP, Deep roster, Fallback pool
 - Loaded: 150 remaining, 150 overlay rows, 150 recommendations
-- Match rate: 1
-- Rows by tier: {"watchlist":1,"avoid_for_now":149}
-- Rows by status: {"watch_only":150}
-- Warnings: {"LOW_PROJECTION_CONFIDENCE":150,"MARKET_NOT_IMPLEMENTED":150}
-- Thresholds: {"matchRatePass":true,"insufficientDataPass":true,"invariantPass":true,"legacyUnchangedPass":true,"remainingOrderUnchangedPass":true,"forbiddenLanguagePass":true,"offensiveTargetTierPass":null,"superflexQbUrgencyPass":null,"kEarlySuppressionPass":null,"dstEarlySuppressionPass":null}
+- Match rate: 0.967
+- Rows by tier: {"watchlist":16,"avoid_for_now":129,"insufficient_data":5}
+- Rows by status: {"watch_only":145,"missing_projection":5}
+- Warnings: {"LOW_PROJECTION_CONFIDENCE":93,"MARKET_NOT_IMPLEMENTED":58,"Best-ball and managed-league ADP are not blended.":87,"NO_COMPATIBLE_MARKET":87,"SINGLE_SEASON_OFFENSIVE_BASELINE":87,"H10_VALUE_OVERLAY_MISSING_PROJECTION":5}
+- Thresholds: {"matchRatePass":true,"insufficientDataPass":true,"invariantPass":true,"legacyUnchangedPass":true,"remainingOrderUnchangedPass":true,"forbiddenLanguagePass":true,"offensiveTargetTierPass":false,"superflexQbUrgencyPass":false,"kEarlySuppressionPass":null,"dstEarlySuppressionPass":null}
 - Experiment readiness: {"legacyReady":false,"blackbirdPreviewReady":true,"blackbirdExperimentEligible":true,"failedExperimentGates":[]}
 - Legacy changed: false
 - Remaining order changed: false
-- Top rows: Jamel Dean DB watchlist 42; Kevin Byard DB avoid_for_now 40.3; Derek Stingley DB avoid_for_now 39.3; Marlon Humphrey DB avoid_for_now 38.3; Jaylinn Hawkins DB avoid_for_now 37.6
+- Top rows: Al-Quadin Muhammad DL watchlist 43.6; Chase Young DL watchlist 43.6; Brandon Dorlus DL watchlist 43.5; Cameron Jordan DL watchlist 43.5; James Pearce DL watchlist 43.5
 
 ### [Fixture] 1QB Offense (fixture-one-qb-offense)
 

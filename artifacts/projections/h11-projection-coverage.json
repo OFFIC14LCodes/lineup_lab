@@ -1,0 +1,108 @@
+{
+  "draftRoomId": "f85238ff-b2ee-4053-8493-e38c4cb63bd3",
+  "leagueId": "95c929b9-cc55-411e-8493-06fd85308c1c",
+  "scoringFingerprint": "6d2483a4",
+  "rosterPositions": [
+    "QB",
+    "RB",
+    "RB",
+    "WR",
+    "WR",
+    "TE",
+    "TE",
+    "WRRB_FLEX",
+    "WRRB_FLEX",
+    "SUPER_FLEX",
+    "SUPER_FLEX",
+    "DL",
+    "DL",
+    "LB",
+    "LB",
+    "DB",
+    "DB",
+    "IDP_FLEX",
+    "BN",
+    "BN",
+    "BN",
+    "BN",
+    "BN",
+    "BN",
+    "BN",
+    "BN",
+    "BN",
+    "BN",
+    "BN",
+    "BN",
+    "BN",
+    "BN",
+    "BN",
+    "BN",
+    "BN",
+    "BN"
+  ],
+  "enabledPositions": [
+    "QB",
+    "RB",
+    "WR",
+    "TE",
+    "DL",
+    "LB",
+    "DB"
+  ],
+  "projectionRunIdsUsed": [],
+  "totalProjectionRows": 1405,
+  "projectionRowsByPosition": {
+    "DB": 345,
+    "DL": 269,
+    "LB": 198,
+    "QB": 81,
+    "RB": 147,
+    "TE": 132,
+    "WR": 233
+  },
+  "availablePlayersByPosition": {
+    "QB": 22,
+    "RB": 22,
+    "WR": 22,
+    "TE": 21,
+    "DL": 21,
+    "LB": 21,
+    "DB": 21
+  },
+  "boardRowsByPosition": {
+    "DL": 21,
+    "DB": 21,
+    "LB": 21,
+    "TE": 21,
+    "WR": 22,
+    "RB": 22,
+    "QB": 22
+  },
+  "recommendationRowsByPosition": {
+    "DL": 21,
+    "DB": 21,
+    "LB": 21,
+    "TE": 21,
+    "WR": 22,
+    "RB": 22,
+    "QB": 22
+  },
+  "missingProjectionPositions": [],
+  "excludedPositionsWithReason": [
+    {
+      "position": "K",
+      "reason": "kicker is not enabled by roster settings"
+    },
+    {
+      "position": "DST",
+      "reason": "team defense is not enabled by roster settings"
+    }
+  ],
+  "suspiciousLowProjectionCount": 2,
+  "suspiciousSinglePositionOnly": false,
+  "providerCountDistribution": {
+    "0": 1405
+  },
+  "failureReasons": [],
+  "verdict": "passed"
+}

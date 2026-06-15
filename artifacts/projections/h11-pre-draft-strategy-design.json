@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-15T19:47:51.646Z",
+  "generatedAt": "2026-06-15T20:27:32.483Z",
   "artifactVersion": "h11.0-pre-draft-strategy-design-v1",
   "sourceArtifact": "artifacts\\projections\\h10-war-room-recommendation-validation.json",
   "dataAvailabilityAudit": {
@@ -370,7 +370,7 @@
           "averagePicksBetweenTurns": 13.3,
           "maxWaitUntilNextPick": 18,
           "turnPairingRisk": "medium",
-          "slotStrategySummary": "Strategy preview uses generic slot timing because exact slot context is partial.",
+          "slotStrategySummary": "Early-middle slot strategy preview: blend anchor value with flexibility across a 18-pick max wait.",
           "projectedUserPicks": [
             {
               "round": 1,
@@ -592,7 +592,7 @@
             }
           ],
           "timingSignals": [
-            "Slot timing signal: monitor value pockets and contingency paths.",
+            "Early-middle timing signal: balance anchor value with flexibility on the return.",
             "Max wait until the next user pick is about 18 picks."
           ],
           "positionsAtRiskBeforeNextTurn": [
@@ -1396,7 +1396,7 @@
           "averagePicksBetweenTurns": 10,
           "maxWaitUntilNextPick": 14,
           "turnPairingRisk": "low",
-          "slotStrategySummary": "Strategy preview uses generic slot timing because exact slot context is partial.",
+          "slotStrategySummary": "Late-middle slot strategy preview: prepare contingency pairs before turn pressure rises across a 14-pick max wait.",
           "projectedUserPicks": [
             {
               "round": 1,
@@ -1618,7 +1618,7 @@
             }
           ],
           "timingSignals": [
-            "Slot timing signal: monitor value pockets and contingency paths.",
+            "Late-middle timing signal: prepare contingency pairs before the board approaches the turn.",
             "Max wait until the next user pick is about 14 picks."
           ],
           "positionsAtRiskBeforeNextTurn": [

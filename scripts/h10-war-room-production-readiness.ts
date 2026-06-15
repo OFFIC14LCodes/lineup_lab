@@ -361,7 +361,7 @@ async function captureViewportScreenshot(input: {
   const context = await newAuthedContext(input.browser, input.flagCase, input.viewport);
   try {
     const page = await context.newPage();
-    await page.goto(`/drafts/${input.room.draftRoomId}`, { waitUntil: "networkidle", timeout: 30_000 });
+    await page.goto(`/drafts/${input.room.draftRoomId}`, { waitUntil: "domcontentloaded", timeout: 30_000 });
     await page.getByRole("heading", { name: /draft board/i }).waitFor({ timeout: 20_000 });
     const screenshotPath = screenshotFile(`${input.viewport.name}-war-room-${input.room.draftRoomId}.png`);
     await page.screenshot({ path: screenshotPath, fullPage: true });
@@ -474,7 +474,11 @@ function findEmptyStates(text: string) {
 }
 
 function findBannedLanguage(text: string) {
-  return BANNED_LANGUAGE.filter((entry) => entry.pattern.test(text)).map((entry) => entry.label);
+  return BANNED_LANGUAGE.filter((entry) => entry.pattern.test(sanitizeProperNouns(text))).map((entry) => entry.label);
+}
+
+function sanitizeProperNouns(text: string) {
+  return text.replace(/\bDrew Lock\b/g, "Drew L.");
 }
 
 function allSafetyPassed(result: RoomResult) {

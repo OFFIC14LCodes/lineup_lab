@@ -380,7 +380,11 @@ function loadValidationArtifact() {
 }
 
 function findBannedLanguage(text: string) {
-  return BANNED_LANGUAGE.filter((entry) => entry.pattern.test(text)).map((entry) => entry.label);
+  return BANNED_LANGUAGE.filter((entry) => entry.pattern.test(sanitizeProperNouns(text))).map((entry) => entry.label);
+}
+
+function sanitizeProperNouns(text: string) {
+  return text.replace(/\bDrew Lock\b/g, "Drew L.");
 }
 
 function buildBlockedArtifact(reason: string): Artifact {

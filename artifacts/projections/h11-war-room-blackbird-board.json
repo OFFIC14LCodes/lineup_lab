@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-15T19:57:19.608Z",
+  "generatedAt": "2026-06-15T20:30:59.467Z",
   "verdict": "passed",
   "boardOrderingMethod": "available players -> H10 recommendation/value rank -> projection/value score -> market/ADP value -> ADP/market rank -> projected points -> position/name",
   "syntheticAudit": {
@@ -100,6 +100,16 @@
     "mutationSafety": {
       "draftStateUnchanged": true,
       "availablePlayerOrderUnchanged": true
+    },
+    "projectionCoverage": {
+      "verdict": "passed",
+      "failureReasons": [],
+      "boardRowsByPosition": {
+        "DL": 8,
+        "LB": 8,
+        "DB": 8
+      },
+      "missingProjectionPositions": []
     },
     "screenshots": [
       "C:\\Projects\\lineup_lab\\artifacts\\projections\\h11-war-room-blackbird-board-screenshots\\desktop-c82aef89-ce90-40f0-936f-545656045554.png",

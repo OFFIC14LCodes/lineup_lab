@@ -1,6 +1,6 @@
 # H11.3 War Room Blackbird Board
 
-Generated: 2026-06-15T19:57:19.608Z
+Generated: 2026-06-15T20:30:59.467Z
 Verdict: passed
 
 ## Ordering
@@ -34,6 +34,9 @@ available players -> H10 recommendation/value rank -> projection/value score -> 
 - Mobile usable: true
 - Banned language: none
 - Mutation safety: {"draftStateUnchanged":true,"availablePlayerOrderUnchanged":true}
+- Projection coverage: passed
+- Projection coverage failures: none
+- Board rows by position: {"DL":8,"LB":8,"DB":8}
 - Screenshots: C:\Projects\lineup_lab\artifacts\projections\h11-war-room-blackbird-board-screenshots\desktop-c82aef89-ce90-40f0-936f-545656045554.png, C:\Projects\lineup_lab\artifacts\projections\h11-war-room-blackbird-board-screenshots\mobile-c82aef89-ce90-40f0-936f-545656045554.png
 - Error: none
 

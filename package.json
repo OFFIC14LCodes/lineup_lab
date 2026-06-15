@@ -63,6 +63,8 @@
     "smoke:h11-pre-draft-strategy-ui": "tsx scripts/h11-pre-draft-strategy-ui.ts",
     "diagnose:h11-draft-slot-strategy": "tsx scripts/h11-draft-slot-strategy.ts",
     "diagnose:h11-war-room-blackbird-board": "tsx scripts/h11-war-room-blackbird-board.ts",
+    "diagnose:h11-projection-coverage": "tsx scripts/h11-projection-coverage.ts",
+    "diagnose:h11-draft-board-mapping": "tsx scripts/h11-draft-board-mapping.ts",
     "seed:h10-validation-rooms": "tsx scripts/seed-h10-validation-draft-rooms.ts",
     "repair:sleeper-player-identities": "tsx scripts/repair-sleeper-player-identities.ts",
     "test:watch": "vitest",

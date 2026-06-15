@@ -6,6 +6,7 @@ import { filterFallbackPlayers, type FallbackRelevanceDiagnostics } from "@/lib/
 import { buildH10RecommendationPreviewPayload } from "@/lib/draft/war-room-recommendation-preview-state";
 import { normalizePlayerName, normalizePrimaryPosition } from "@/lib/players/normalize";
 import { buildDraftTargetScore, type DraftTargetScorePlayer } from "@/lib/draft/scoring";
+import { buildDraftBoardTeams } from "@/lib/rosterforge/draft-board-teams";
 import { buildDraftPositionContext } from "@/lib/rosterforge/draft-position";
 import {
   buildNormalizedRosterRequirements,
@@ -135,7 +136,7 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
     rankingsQuery = rankingsQuery.neq("source", "h10_validation");
   }
 
-  const [{ data: picks }, { data: account }, { data: rosters }, { data: rankings }, { data: players }] =
+  const [{ data: picks }, { data: account }, { data: rosters }, { data: rankings }, players] =
     await Promise.all([
       supabase
         .from("draft_room_picks")
@@ -150,13 +151,7 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
         .maybeSingle(),
       supabase.from("league_rosters").select("*").eq("league_id", room.league_id),
       rankingsQuery,
-      supabase
-        .from("players")
-        .select(
-          "id,sleeper_player_id,full_name,position,primary_position,position_group,team,fantasy_positions_json,eligible_positions_json,normalized_name"
-        )
-        .eq("active", true)
-        .limit(1000)
+      loadActivePlayerRows(supabase)
     ]);
 
   const rosterRows = (rosters ?? []) as LeagueRosterRow[];
@@ -166,20 +161,18 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
       (roster.owner_display_name as string | null) ?? `Roster ${roster.platform_roster_id}`
     ])
   );
-  const draftBoardTeams = rosterRows
-    .map((roster) => ({
-      rosterId: roster.platform_roster_id,
-      label: roster.owner_display_name ?? `Roster ${roster.platform_roster_id}`,
-      ownerPlatformUserId: roster.owner_platform_user_id,
-      draftSlot: Number(roster.platform_roster_id),
-    }))
-    .sort((a, b) => a.draftSlot - b.draftSlot || a.label.localeCompare(b.label));
   const draftPicks = ((picks ?? []) as DraftPickRow[])
     .filter((pick) => Boolean(pick.player_name || pick.sleeper_player_id))
     .map((pick) => ({
       ...pick,
       roster_label: pick.platform_roster_id ? rostersById.get(pick.platform_roster_id) ?? pick.platform_roster_id : null
     }));
+  const draftBoardTeams = buildDraftBoardTeams({
+    rosters: rosterRows,
+    roomMetadata: room.metadata_json,
+    picks: draftPicks,
+    teamCount: Number(room.leagues?.total_teams ?? rosterRows.length) || null,
+  });
   const draftedIds = new Set(draftPicks.map((pick) => pick.sleeper_player_id).filter(Boolean));
   const draftedNames = new Set(draftPicks.map((pick) => normalizePlayerName(pick.player_name ?? "")).filter(Boolean));
   const myPlatformUserId = account?.platform_user_id as string | undefined;
@@ -274,7 +267,7 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
         }))
         .sort((a, b) => (a.rank ?? 99999) - (b.rank ?? 99999))
         .slice(0, 150)
-    : fallbackRelevance.players.slice(0, 150);
+    : selectBalancedFallbackPlayers(fallbackRelevance.players, rosterRequirements, fallbackValueRows, 150);
   const counts = countPositions(myPicks, playerRowsBySleeperId);
   const positionNeeds = buildPositionNeeds(counts, rosterRequirements);
   const topNeeds = buildTopNeeds(positionNeeds);
@@ -424,6 +417,24 @@ function buildOptionalH10Overlay(input: {
   };
 }
 
+async function loadActivePlayerRows(supabase: ReturnType<typeof createAdminClient>): Promise<PlayerRow[]> {
+  const pageSize = 1000;
+  const rows: PlayerRow[] = [];
+  for (let from = 0; ; from += pageSize) {
+    const { data, error } = await supabase
+      .from("players")
+      .select(
+        "id,sleeper_player_id,full_name,position,primary_position,position_group,team,fantasy_positions_json,eligible_positions_json,normalized_name"
+      )
+      .eq("active", true)
+      .range(from, from + pageSize - 1);
+    if (error) throw error;
+    rows.push(...((data ?? []) as PlayerRow[]));
+    if (!data || data.length < pageSize) break;
+  }
+  return rows;
+}
+
 function buildOptionalH10RecommendationPreview(input: {
   leagueId: string;
   draftRoomId: string;
@@ -529,6 +540,78 @@ function loadH10ValueRowsFromArtifact(leagueId: string): H10LeagueValueRow[] {
   } catch {
     return [];
   }
+}
+
+function selectBalancedFallbackPlayers(
+  players: DraftTargetScorePlayer[],
+  rosterRequirements: ReturnType<typeof buildNormalizedRosterRequirements>,
+  valueRows: H10LeagueValueRow[],
+  limit: number
+): DraftTargetScorePlayer[] {
+  const enabledPositions = enabledRosterPositions(rosterRequirements);
+  const valueByKey = buildFallbackValueIndex(valueRows);
+  const groups = new Map<string, DraftTargetScorePlayer[]>();
+  for (const player of players) {
+    const position = normalizePrimaryPosition(player.position);
+    if (!position || !enabledPositions.includes(position)) continue;
+    groups.set(position, [...(groups.get(position) ?? []), player]);
+  }
+  for (const [position, rows] of groups.entries()) {
+    groups.set(position, rows.sort((a, b) => fallbackValueFor(b, valueByKey) - fallbackValueFor(a, valueByKey) || (a.player_name ?? "").localeCompare(b.player_name ?? "")));
+  }
+
+  const selected: DraftTargetScorePlayer[] = [];
+  const seen = new Set<string>();
+  let cursor = 0;
+  while (selected.length < limit && groups.size > 0) {
+    let addedInPass = false;
+    for (const position of enabledPositions) {
+      const group = groups.get(position);
+      if (!group?.length) continue;
+      const player = group[cursor];
+      if (!player) continue;
+      const key = player.sleeper_player_id ?? player.matched_player_id ?? `${player.player_name}|${player.position}|${player.team}`;
+      if (!seen.has(key)) {
+        selected.push(player);
+        seen.add(key);
+        addedInPass = true;
+        if (selected.length >= limit) break;
+      }
+    }
+    cursor += 1;
+    if (!addedInPass) break;
+  }
+
+  return selected;
+}
+
+function enabledRosterPositions(requirements: ReturnType<typeof buildNormalizedRosterRequirements>): string[] {
+  const enabled = new Set<string>();
+  for (const position of POSITION_GROUPS) {
+    if (requirements.directStarters[position] > 0) enabled.add(position);
+  }
+  if (requirements.offensiveFlexCount > 0) ["RB", "WR", "TE"].forEach((position) => enabled.add(position));
+  if (requirements.superflexCount > 0) ["QB", "RB", "WR", "TE"].forEach((position) => enabled.add(position));
+  if (requirements.idpFlexCount > 0) ["DL", "LB", "DB"].forEach((position) => enabled.add(position));
+  return POSITION_GROUPS.filter((position) => enabled.has(position));
+}
+
+function buildFallbackValueIndex(rows: H10LeagueValueRow[]): Map<string, number> {
+  const index = new Map<string, number>();
+  for (const row of rows) {
+    const value = row.riskAdjustedValue ?? row.pointsAboveReplacement ?? row.medianPoints ?? 0;
+    index.set(`id:${row.entityId}`, value);
+    index.set(`name:${normalizePlayerName(row.displayName)}|${normalizePrimaryPosition(row.positionGroup || row.position) ?? row.position}|${row.team ?? ""}`, value);
+  }
+  return index;
+}
+
+function fallbackValueFor(player: DraftTargetScorePlayer, index: Map<string, number>): number {
+  return (
+    (player.matched_player_id ? index.get(`id:${player.matched_player_id}`) : undefined) ??
+    index.get(`name:${normalizePlayerName(player.player_name ?? "")}|${normalizePrimaryPosition(player.position) ?? player.position}|${player.team ?? ""}`) ??
+    0
+  );
 }
 
 function emptyFallbackDiagnostics(includeDiagnosticFallbacks: boolean): FallbackRelevanceDiagnostics {
