@@ -1,15 +1,20 @@
 import { writeDiagnostic } from "./h9-projection-hardening-utils";
-import { createPlayerProfileRepository } from "@/lib/player-profiles";
+import { createPlayerProfileRepository } from "@/lib/player-profiles/player-profile-repository";
 
 const repository = createPlayerProfileRepository();
 const examples = lookupExamplesByPosition(repository);
+const runtimeDiagnostics = repository.runtimeDiagnostics();
 
 const report = {
   generatedAt: new Date().toISOString(),
   dryRun: true,
   readOnly: true,
   artifactPath: repository.artifactPath,
+  cwd: runtimeDiagnostics.cwd,
   artifactExists: repository.exists,
+  artifactStatus: repository.status,
+  artifactSizeBytes: repository.artifactSizeBytes,
+  loadError: repository.loadError,
   totalProfiles: repository.indexStats.totalProfiles,
   profilesIndexedBySleeperId: repository.indexStats.bySleeperId,
   profilesIndexedByGsisId: repository.indexStats.byGsisId,
@@ -20,6 +25,10 @@ const report = {
   profilesIndexedByNamePosition: repository.indexStats.byNamePosition,
   duplicateIdsFound: repository.indexStats.duplicateIds.length,
   duplicateIdExamples: repository.indexStats.duplicateIds.slice(0, 20),
+  knownLookups: runtimeDiagnostics.knownLookups,
+  cmcLookupStatus: runtimeDiagnostics.knownLookups.christianMcCaffreyBySleeperId4034,
+  cmcGsisLookupStatus: runtimeDiagnostics.knownLookups.christianMcCaffreyByGsisId000033280,
+  calebWilliamsLookupStatus: runtimeDiagnostics.knownLookups.calebWilliamsByNamePosition,
   lookupSuccessExamplesByPosition: examples.success,
   lookupFailures: examples.failures,
   limitations: [
@@ -34,7 +43,11 @@ writeDiagnostic("player-profile-read-model-diagnostics", report);
 console.log("Blackbird Player Profile Read Model Diagnostics");
 console.log(`  dry run: ${report.dryRun}`);
 console.log(`  read only: ${report.readOnly}`);
+console.log(`  artifact path: ${report.artifactPath}`);
+console.log(`  cwd: ${report.cwd}`);
 console.log(`  artifact exists: ${report.artifactExists}`);
+console.log(`  artifact status: ${report.artifactStatus}`);
+console.log(`  artifact size bytes: ${report.artifactSizeBytes ?? "n/a"}`);
 console.log(`  total profiles: ${report.totalProfiles}`);
 console.log(`  profiles indexed by sleeper_id: ${report.profilesIndexedBySleeperId}`);
 console.log(`  profiles indexed by gsis_id: ${report.profilesIndexedByGsisId}`);
@@ -43,6 +56,9 @@ console.log(`  profiles indexed by nfl_id: ${report.profilesIndexedByNflId}`);
 console.log(`  profiles indexed by espn_id: ${report.profilesIndexedByEspnId}`);
 console.log(`  profiles indexed by pfr_id: ${report.profilesIndexedByPfrId}`);
 console.log(`  duplicate IDs found: ${report.duplicateIdsFound}`);
+console.log(`  CMC sleeper lookup found: ${report.cmcLookupStatus.found}`);
+console.log(`  CMC GSIS lookup found: ${report.cmcGsisLookupStatus.found}`);
+console.log(`  Caleb Williams name+position lookup found: ${report.calebWilliamsLookupStatus.found}`);
 console.log(`  lookup failures: ${report.lookupFailures.length}`);
 console.log("  artifacts:");
 console.log("    artifacts/projections/player-profile-read-model-diagnostics.json");

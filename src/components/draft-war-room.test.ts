@@ -108,6 +108,8 @@ describe("DraftWarRoom H11 strategy UI wiring", () => {
       "Historical Profile",
       "Loading historical profile...",
       "Historical profile not available yet.",
+      "Historical profile data is not available in this deployment yet.",
+      "Historical profile lookup is ambiguous and needs review.",
       "League projection profile is not available for this player yet.",
       "Profile match confidence:",
       "Review may be needed.",

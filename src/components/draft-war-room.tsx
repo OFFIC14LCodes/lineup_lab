@@ -269,6 +269,7 @@ type SelectedPlayerSummary = {
 };
 
 type HistoricalPlayerProfileResponse = {
+  status?: string;
   profile: {
     header: {
       name: string;
@@ -354,6 +355,7 @@ type HistoricalProfileLoadState = {
   status: "idle" | "loading" | "ready" | "empty" | "error";
   profile: HistoricalPlayerProfileResponse["profile"] | null;
   error: string | null;
+  reason: "artifact_unavailable" | "not_found" | "ambiguous" | "error" | null;
 };
 
 type PreDraftStrategyResponse = {
@@ -480,6 +482,7 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
     status: "idle",
     profile: null,
     error: null,
+    reason: null,
   });
   const [recommendationSource, setRecommendationSource] = useState<H10RecommendationSource>(DEFAULT_H10_RECOMMENDATION_SOURCE);
   const [strategyState, setStrategyState] = useState<StrategyLoadState>({
@@ -539,11 +542,11 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
   const loadHistoricalPlayerProfile = useCallback(async (row: BlackbirdBoardRow) => {
     const lookupId = row.playerId ?? row.playerName;
     if (!lookupId) {
-      setSelectedHistoricalProfile({ status: "empty", profile: null, error: null });
+      setSelectedHistoricalProfile({ status: "empty", profile: null, error: null, reason: "not_found" });
       return;
     }
 
-    setSelectedHistoricalProfile({ status: "loading", profile: null, error: null });
+    setSelectedHistoricalProfile({ status: "loading", profile: null, error: null, reason: null });
     const params = new URLSearchParams({ weeklyLimit: "8" });
     if (row.position) params.set("position", row.position);
 
@@ -551,27 +554,41 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
       const response = await fetch(`/api/player-profiles/${encodeURIComponent(lookupId)}?${params.toString()}`, {
         cache: "no-store",
       });
-      if (response.status === 404) {
-        setSelectedHistoricalProfile({ status: "empty", profile: null, error: null });
+      const payload = (await response.json()) as Partial<HistoricalPlayerProfileResponse> & { error?: string };
+      if (response.status === 404 && payload.status === "ambiguous_duplicate_lookup") {
+        setSelectedHistoricalProfile({ status: "empty", profile: null, error: null, reason: "ambiguous" });
         return;
       }
-
-      const payload = (await response.json()) as Partial<HistoricalPlayerProfileResponse> & { error?: string };
+      if (response.status === 404) {
+        setSelectedHistoricalProfile({ status: "empty", profile: null, error: null, reason: "not_found" });
+        return;
+      }
+      if (payload.status === "artifact_missing" || payload.status === "artifact_unreadable" || payload.status === "artifact_invalid") {
+        setSelectedHistoricalProfile({
+          status: "empty",
+          profile: null,
+          error: null,
+          reason: "artifact_unavailable",
+        });
+        return;
+      }
       if (!response.ok || !payload.profile) {
         setSelectedHistoricalProfile({
           status: "error",
           profile: null,
           error: payload.error ?? "Historical profile not available yet.",
+          reason: "error",
         });
         return;
       }
 
-      setSelectedHistoricalProfile({ status: "ready", profile: payload.profile, error: null });
+      setSelectedHistoricalProfile({ status: "ready", profile: payload.profile, error: null, reason: null });
     } catch {
       setSelectedHistoricalProfile({
         status: "error",
         profile: null,
         error: "Historical profile not available yet.",
+        reason: "error",
       });
     }
   }, []);
@@ -615,7 +632,7 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
   const closePlayerProfile = useCallback(() => {
     setSelectedPlayerProfile({ status: "idle", profile: null, error: null });
     setSelectedPlayerSummary(null);
-    setSelectedHistoricalProfile({ status: "idle", profile: null, error: null });
+    setSelectedHistoricalProfile({ status: "idle", profile: null, error: null, reason: null });
   }, []);
 
   useEffect(() => {
@@ -1691,10 +1708,16 @@ function HistoricalPlayerProfilePanel({ state }: { state: HistoricalProfileLoadS
   }
 
   if (!profile || state.status === "empty" || state.status === "error") {
+    const message =
+      state.reason === "artifact_unavailable"
+        ? "Historical profile data is not available in this deployment yet."
+        : state.reason === "ambiguous"
+          ? "Historical profile lookup is ambiguous and needs review."
+          : "Historical profile not available yet.";
     return (
       <section className="rounded-md border border-line bg-panel2 px-3 py-3">
         <h3 className="text-sm font-black uppercase tracking-wide text-slate-300">Historical Profile</h3>
-        <p className="mt-3 text-sm text-slate-400">Historical profile not available yet.</p>
+        <p className="mt-3 text-sm text-slate-400">{message}</p>
       </section>
     );
   }

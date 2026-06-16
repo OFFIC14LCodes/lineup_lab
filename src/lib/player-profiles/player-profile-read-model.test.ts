@@ -61,6 +61,35 @@ describe("player profile read model repository", () => {
     expect(repo.lookupProfile({ playerId: "missing" }).profile).toBeNull();
   });
 
+  it("reports a missing artifact explicitly", async () => {
+    const root = await mkdtemp(path.join(os.tmpdir(), "blackbird-profile-missing-"));
+    const repo = createPlayerProfileRepository({ artifactPath: path.join(root, "missing-player-profiles.json") });
+
+    expect(repo.exists).toBe(false);
+    expect(repo.status).toBe("artifact_missing");
+    expect(repo.artifactSizeBytes).toBeNull();
+    expect(repo.indexStats.totalProfiles).toBe(0);
+    expect(repo.runtimeDiagnostics()).toMatchObject({
+      artifactExists: false,
+      artifactStatus: "artifact_missing",
+      profilesLoadedCount: 0,
+    });
+  });
+
+  it("reports an invalid artifact explicitly", async () => {
+    const root = await mkdtemp(path.join(os.tmpdir(), "blackbird-profile-invalid-"));
+    const artifactPath = path.join(root, "player-profiles.json");
+    mkdirSync(path.dirname(artifactPath), { recursive: true });
+    writeFileSync(artifactPath, "{not valid json", "utf8");
+
+    const repo = createPlayerProfileRepository({ artifactPath });
+
+    expect(repo.exists).toBe(true);
+    expect(repo.status).toBe("artifact_invalid");
+    expect(repo.loadError).toBeTruthy();
+    expect(repo.profiles).toEqual([]);
+  });
+
   it("builds a UI-facing shape with warnings and capped weekly stats", () => {
     const readModel = toPlayerProfileReadModel(profile({
       warnings: ["weak_identity_match"],

@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
 
 import { normalizePlayerName } from "@/lib/players/normalize";
@@ -14,10 +14,16 @@ export type PlayerProfileLookupKey =
 export type PlayerProfileRepository = {
   artifactPath: string;
   exists: boolean;
+  artifactSizeBytes: number | null;
+  status: PlayerProfileArtifactStatus;
+  loadError: string | null;
   profiles: HistoricalPlayerProfileSnapshot[];
   indexStats: PlayerProfileIndexStats;
   lookupProfile: (key: PlayerProfileLookupKey) => PlayerProfileLookupResult;
+  runtimeDiagnostics: () => PlayerProfileRuntimeDiagnostics;
 };
+
+export type PlayerProfileArtifactStatus = "ready" | "artifact_missing" | "artifact_unreadable" | "artifact_invalid";
 
 export type PlayerProfileLookupResult = {
   profile: HistoricalPlayerProfileSnapshot | null;
@@ -37,28 +43,113 @@ export type PlayerProfileIndexStats = {
   duplicateIds: Array<{ index: string; key: string; count: number }>;
 };
 
+export type PlayerProfileRuntimeDiagnostics = {
+  artifactPath: string;
+  cwd: string;
+  artifactExists: boolean;
+  artifactSizeBytes: number | null;
+  artifactStatus: PlayerProfileArtifactStatus;
+  loadError: string | null;
+  profilesLoadedCount: number;
+  knownLookups: {
+    christianMcCaffreyBySleeperId4034: PlayerProfileKnownLookupStatus;
+    christianMcCaffreyByGsisId000033280: PlayerProfileKnownLookupStatus;
+    calebWilliamsByNamePosition: PlayerProfileKnownLookupStatus;
+  };
+};
+
+export type PlayerProfileKnownLookupStatus = {
+  found: boolean;
+  matchedBy: string | null;
+  duplicateKey: string | null;
+  playerName: string | null;
+  position: string | null;
+};
+
 type IndexName = "sleeper_id" | "gsis_id" | "blackbird_player_id" | "nfl_id" | "espn_id" | "pfr_id" | "name_position";
 
 export function createPlayerProfileRepository(input: { artifactPath?: string; projectRoot?: string } = {}): PlayerProfileRepository {
   const artifactPath = path.isAbsolute(input.artifactPath ?? "")
     ? input.artifactPath as string
     : path.join(input.projectRoot ?? process.cwd(), input.artifactPath ?? DEFAULT_PLAYER_PROFILES_ARTIFACT_PATH);
-  const profiles = loadProfiles(artifactPath);
+  const loaded = loadProfiles(artifactPath);
+  const profiles = loaded.profiles;
   const indexes = buildIndexes(profiles);
+  const stats = buildIndexStats(profiles, indexes);
 
   return {
     artifactPath,
-    exists: existsSync(artifactPath),
+    exists: loaded.exists,
+    artifactSizeBytes: loaded.artifactSizeBytes,
+    status: loaded.status,
+    loadError: loaded.loadError,
     profiles,
-    indexStats: buildIndexStats(profiles, indexes),
+    indexStats: stats,
     lookupProfile: (key) => lookupProfile(key, indexes),
+    runtimeDiagnostics: () => buildRuntimeDiagnostics({
+      artifactPath,
+      artifactSizeBytes: loaded.artifactSizeBytes,
+      exists: loaded.exists,
+      indexes,
+      loadError: loaded.loadError,
+      profiles,
+      status: loaded.status,
+    }),
   };
 }
 
-function loadProfiles(artifactPath: string): HistoricalPlayerProfileSnapshot[] {
-  if (!existsSync(artifactPath)) return [];
-  const parsed = JSON.parse(readFileSync(artifactPath, "utf8")) as unknown;
-  return Array.isArray(parsed) ? parsed as HistoricalPlayerProfileSnapshot[] : [];
+function loadProfiles(artifactPath: string): {
+  exists: boolean;
+  artifactSizeBytes: number | null;
+  status: PlayerProfileArtifactStatus;
+  loadError: string | null;
+  profiles: HistoricalPlayerProfileSnapshot[];
+} {
+  if (!existsSync(artifactPath)) {
+    return { exists: false, artifactSizeBytes: null, status: "artifact_missing", loadError: null, profiles: [] };
+  }
+
+  let artifactSizeBytes: number | null = null;
+  try {
+    artifactSizeBytes = statSync(artifactPath).size;
+  } catch (error) {
+    return {
+      exists: true,
+      artifactSizeBytes,
+      status: "artifact_unreadable",
+      loadError: error instanceof Error ? error.message : "Unable to stat artifact.",
+      profiles: [],
+    };
+  }
+
+  let raw: string;
+  try {
+    raw = readFileSync(artifactPath, "utf8");
+  } catch (error) {
+    return {
+      exists: true,
+      artifactSizeBytes,
+      status: "artifact_unreadable",
+      loadError: error instanceof Error ? error.message : "Unable to read artifact.",
+      profiles: [],
+    };
+  }
+
+  try {
+    const parsed = JSON.parse(raw) as unknown;
+    if (!Array.isArray(parsed)) {
+      return { exists: true, artifactSizeBytes, status: "artifact_invalid", loadError: "Artifact root is not an array.", profiles: [] };
+    }
+    return { exists: true, artifactSizeBytes, status: "ready", loadError: null, profiles: parsed as HistoricalPlayerProfileSnapshot[] };
+  } catch (error) {
+    return {
+      exists: true,
+      artifactSizeBytes,
+      status: "artifact_invalid",
+      loadError: error instanceof Error ? error.message : "Artifact JSON is invalid.",
+      profiles: [],
+    };
+  }
 }
 
 function buildIndexes(profiles: HistoricalPlayerProfileSnapshot[]) {
@@ -144,4 +235,39 @@ function add(index: Map<string, HistoricalPlayerProfileSnapshot[]>, key: string 
 
 function namePositionKey(name: string, position: string) {
   return `${normalizePlayerName(name)}|${position.toUpperCase()}`;
+}
+
+function buildRuntimeDiagnostics(input: {
+  artifactPath: string;
+  artifactSizeBytes: number | null;
+  exists: boolean;
+  indexes: ReturnType<typeof buildIndexes>;
+  loadError: string | null;
+  profiles: HistoricalPlayerProfileSnapshot[];
+  status: PlayerProfileArtifactStatus;
+}): PlayerProfileRuntimeDiagnostics {
+  return {
+    artifactPath: input.artifactPath,
+    cwd: process.cwd(),
+    artifactExists: input.exists,
+    artifactSizeBytes: input.artifactSizeBytes,
+    artifactStatus: input.status,
+    loadError: input.loadError,
+    profilesLoadedCount: input.profiles.length,
+    knownLookups: {
+      christianMcCaffreyBySleeperId4034: knownLookup(lookupProfile({ playerId: "4034" }, input.indexes)),
+      christianMcCaffreyByGsisId000033280: knownLookup(lookupProfile({ playerId: "00-0033280" }, input.indexes)),
+      calebWilliamsByNamePosition: knownLookup(lookupProfile({ normalizedName: "Caleb Williams", position: "QB" }, input.indexes)),
+    },
+  };
+}
+
+function knownLookup(result: PlayerProfileLookupResult): PlayerProfileKnownLookupStatus {
+  return {
+    found: Boolean(result.profile),
+    matchedBy: result.matchedBy,
+    duplicateKey: result.duplicateKey,
+    playerName: result.profile?.bio.name ?? null,
+    position: result.profile?.bio.position ?? null,
+  };
 }

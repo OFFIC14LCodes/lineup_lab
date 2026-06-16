@@ -8,6 +8,11 @@ const nextConfig: NextConfig = {
       "./data/**/*",
     ],
   },
+  outputFileTracingIncludes: {
+    "/api/player-profiles/[playerId]": [
+      "./artifacts/projections/player-profiles.json",
+    ],
+  },
 };
 
 export default nextConfig;

@@ -2,11 +2,15 @@
 
 ```json
 {
-  "generatedAt": "2026-06-16T21:19:05.232Z",
+  "generatedAt": "2026-06-16T22:29:53.111Z",
   "dryRun": true,
   "readOnly": true,
   "artifactPath": "C:\\Projects\\lineup_lab\\artifacts\\projections\\player-profiles.json",
+  "cwd": "C:\\Projects\\lineup_lab",
   "artifactExists": true,
+  "artifactStatus": "ready",
+  "artifactSizeBytes": 37944227,
+  "loadError": null,
   "totalProfiles": 7511,
   "profilesIndexedBySleeperId": 7511,
   "profilesIndexedByGsisId": 7478,
@@ -118,6 +122,50 @@
       "count": 2
     }
   ],
+  "knownLookups": {
+    "christianMcCaffreyBySleeperId4034": {
+      "found": true,
+      "matchedBy": "sleeper_id",
+      "duplicateKey": null,
+      "playerName": "Christian McCaffrey",
+      "position": "RB"
+    },
+    "christianMcCaffreyByGsisId000033280": {
+      "found": true,
+      "matchedBy": "gsis_id",
+      "duplicateKey": null,
+      "playerName": "Christian McCaffrey",
+      "position": "RB"
+    },
+    "calebWilliamsByNamePosition": {
+      "found": true,
+      "matchedBy": "name_position",
+      "duplicateKey": null,
+      "playerName": "Caleb Williams",
+      "position": "QB"
+    }
+  },
+  "cmcLookupStatus": {
+    "found": true,
+    "matchedBy": "sleeper_id",
+    "duplicateKey": null,
+    "playerName": "Christian McCaffrey",
+    "position": "RB"
+  },
+  "cmcGsisLookupStatus": {
+    "found": true,
+    "matchedBy": "gsis_id",
+    "duplicateKey": null,
+    "playerName": "Christian McCaffrey",
+    "position": "RB"
+  },
+  "calebWilliamsLookupStatus": {
+    "found": true,
+    "matchedBy": "name_position",
+    "duplicateKey": null,
+    "playerName": "Caleb Williams",
+    "position": "QB"
+  },
   "lookupSuccessExamplesByPosition": {
     "QB": [
       {

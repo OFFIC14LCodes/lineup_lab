@@ -1,6 +1,6 @@
 # Historical Player Profiles
 
-Generated: 2026-06-16T21:08:59.488Z
+Generated: 2026-06-16T22:29:33.629Z
 
 Dry-run only. No Supabase writes were performed.
 
