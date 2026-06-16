@@ -6,8 +6,8 @@ const mocks = vi.hoisted(() => ({
   createPlayerProfileRepository: vi.fn(),
 }));
 
-vi.mock("@/lib/player-profiles", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("@/lib/player-profiles")>();
+vi.mock("@/lib/player-profiles/player-profile-repository", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/lib/player-profiles/player-profile-repository")>();
   return {
     ...actual,
     createPlayerProfileRepository: mocks.createPlayerProfileRepository,

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
-import { createPlayerProfileRepository, toPlayerProfileReadModel } from "@/lib/player-profiles";
+import { createPlayerProfileRepository } from "@/lib/player-profiles/player-profile-repository";
+import { toPlayerProfileReadModel } from "@/lib/player-profiles/player-profile-read-model";
 
 export async function GET(request: Request, { params }: { params: Promise<{ playerId: string }> }) {
   const { playerId } = await params;
