@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-16T03:18:00.966Z",
+  "generatedAt": "2026-06-16T03:41:17.264Z",
   "verdict": "passed",
   "boardOrderingMethod": "static Blackbird league rank; ADP external reference only",
   "syntheticAudit": {
@@ -101,9 +101,9 @@
       "verdict": "passed",
       "failureReasons": [],
       "boardRowsByPosition": {
-        "DL": 8,
-        "LB": 8,
-        "DB": 8
+        "DB": 346,
+        "LB": 194,
+        "DL": 269
       },
       "missingProjectionPositions": []
     },

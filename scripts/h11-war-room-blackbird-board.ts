@@ -545,12 +545,14 @@ function buildBrowserProjectionCoverage(draftRoomId: string, state: Record<strin
   const league = recordOrNull(state.league);
   const leagueId = String(room?.league_id ?? "");
   const remainingPlayers = Array.isArray(state.remainingPlayers) ? (state.remainingPlayers as ScoredDraftTarget[]) : [];
+  const blackbirdRankPlayers = Array.isArray(state.blackbirdRankPlayers) ? (state.blackbirdRankPlayers as ScoredDraftTarget[]) : remainingPlayers;
   const recommendations = Array.isArray(state.h10RecommendationPreview) ? (state.h10RecommendationPreview as WarRoomRecommendationRow[]) : [];
   const board = buildBlackbirdBoard({
-    players: remainingPlayers,
+    players: blackbirdRankPlayers,
     overlays: Array.isArray(state.h10ValueOverlay) ? (state.h10ValueOverlay as WarRoomValueOverlayRow[]) : [],
     recommendations,
     draftedPlayerIds: Array.isArray(state.draftedPlayerIds) ? state.draftedPlayerIds.filter((id): id is string => typeof id === "string") : [],
+    includeDrafted: true,
   });
   const rosterRequirements = recordOrNull(state.rosterRequirements);
   if (!rosterRequirements) {
@@ -563,7 +565,7 @@ function buildBrowserProjectionCoverage(draftRoomId: string, state: Record<strin
     rosterPositions: Array.isArray(league?.roster_positions_json) ? league.roster_positions_json.filter((slot): slot is string => typeof slot === "string") : [],
     rosterRequirements: rosterRequirements as Parameters<typeof buildProjectionCoverageAudit>[0]["rosterRequirements"],
     projectionRows: loadH10ValueRows().filter((row) => row.leagueId === leagueId),
-    availablePlayers: remainingPlayers,
+    availablePlayers: blackbirdRankPlayers,
     boardRows: board.rows,
     recommendationRows: recommendations,
   });

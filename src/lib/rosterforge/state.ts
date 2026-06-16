@@ -200,7 +200,8 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
   });
 
   const rankingRows = (rankings ?? []) as RankingRow[];
-  const playerRows = (players ?? []) as PlayerRow[];
+  const draftedPlayerRows = await loadPlayerRowsForDraftPicks(supabase, draftPicks);
+  const playerRows = mergePlayerRows((players ?? []) as PlayerRow[], draftedPlayerRows);
   const fallbackPlayers = playerRows.filter((player) =>
     FALLBACK_POSITION_GROUPS.includes(player.position_group ?? player.primary_position ?? player.position ?? "")
   );
@@ -210,6 +211,7 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
       .map((player) => [player.sleeper_player_id as string, player])
   );
   const playerRowsById = new Map(fallbackPlayers.map((player) => [player.id, player]));
+  const draftedPlayersForBlackbirdRank = buildDraftedPickPlayers(draftPicks, fallbackPlayers);
   const hasRankings = rankingRows.length > 0;
   const rosterRequirements = buildNormalizedRosterRequirements(
     Array.isArray(room.leagues?.roster_positions_json) ? room.leagues.roster_positions_json : []
@@ -404,6 +406,7 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
     projectionOverlays: persistedProjectionOverlays,
     playerRows,
     rankedPlayers: draftablePlayers,
+    draftedPlayers: draftedPlayersForBlackbirdRank,
   });
   const blackbirdRankScoring = buildDraftTargetScore({
     players: blackbirdRankPlayers as DraftTargetScorePlayer[],
@@ -637,6 +640,7 @@ function buildBlackbirdRankPlayerUniverse(input: {
   projectionOverlays: WarRoomValueOverlayRow[];
   playerRows: PlayerRow[];
   rankedPlayers: DraftTargetScorePlayer[];
+  draftedPlayers?: DraftTargetScorePlayer[];
 }): DraftTargetScorePlayer[] {
   const rankedByCanonicalId = new Map(
     input.rankedPlayers
@@ -675,7 +679,55 @@ function buildBlackbirdRankPlayerUniverse(input: {
     })
     .filter((row): row is DraftTargetScorePlayer => row !== null)
     .sort((a, b) => (b.projected_points ?? 0) - (a.projected_points ?? 0) || (a.player_name ?? "").localeCompare(b.player_name ?? ""));
-  return mergeDraftableAndRemainingPlayers(rows, input.rankedPlayers);
+  return mergeDraftableAndRemainingPlayers(mergeDraftableAndRemainingPlayers(rows, input.rankedPlayers), input.draftedPlayers ?? []);
+}
+
+function buildDraftedPickPlayers(draftPicks: DraftPickRow[], playerRows: PlayerRow[]): DraftTargetScorePlayer[] {
+  const bySleeperId = new Map(
+    playerRows
+      .filter((player) => player.sleeper_player_id)
+      .map((player) => [player.sleeper_player_id as string, player])
+  );
+  const byName = new Map(
+    playerRows
+      .filter((player) => player.normalized_name)
+      .map((player) => [
+        player.normalized_name as string,
+        player,
+      ])
+  );
+
+  return draftPicks
+    .map((pick): DraftTargetScorePlayer | null => {
+      const normalizedPickName = normalizePlayerName(pick.player_name ?? "");
+      const player =
+        (pick.sleeper_player_id ? bySleeperId.get(pick.sleeper_player_id) : null) ??
+        (normalizedPickName ? byName.get(normalizedPickName) : null) ??
+        null;
+      const position = normalizePrimaryPosition(pick.position ?? player?.position_group ?? player?.primary_position ?? player?.position);
+      if (!position || !FALLBACK_POSITION_GROUPS.includes(position)) return null;
+      return {
+        sleeper_player_id: pick.sleeper_player_id ?? player?.sleeper_player_id ?? null,
+        matched_player_id: player?.id ?? null,
+        player_name: pick.player_name ?? player?.full_name ?? null,
+        position,
+        team: pick.team ?? player?.team ?? null,
+        rank: null,
+        adp: null,
+        projected_points: null,
+        dynasty_value: null,
+        best_ball_value: null,
+        superflex_value: null,
+        te_premium_value: null,
+        age: player?.age ?? null,
+        years_exp: player?.years_exp ?? null,
+        match_status: player ? "draft_pick_player" : "draft_pick_unmatched",
+        match_confidence: player ? 1 : 0.4,
+        is_ranked: false,
+        is_fallback: !player,
+      };
+    })
+    .filter((player): player is DraftTargetScorePlayer => player !== null);
 }
 
 function buildProjectionUniverseCandidates(playerRows: PlayerRow[]): DraftTargetScorePlayer[] {
@@ -723,6 +775,58 @@ async function loadActivePlayerRows(supabase: ReturnType<typeof createAdminClien
     if (!data || data.length < pageSize) break;
   }
   return rows;
+}
+
+async function loadPlayerRowsForDraftPicks(
+  supabase: ReturnType<typeof createAdminClient>,
+  draftPicks: DraftPickRow[]
+): Promise<PlayerRow[]> {
+  const sleeperIds = Array.from(new Set(draftPicks.map((pick) => pick.sleeper_player_id).filter((id): id is string => Boolean(id))));
+  const normalizedNames = Array.from(
+    new Set(
+      draftPicks
+        .map((pick) => normalizePlayerName(pick.player_name ?? ""))
+        .filter(Boolean)
+    )
+  );
+  const rows: PlayerRow[] = [];
+  const selectColumns = "id,sleeper_player_id,full_name,position,primary_position,position_group,team,age,years_exp,fantasy_positions_json,eligible_positions_json,normalized_name";
+
+  for (let index = 0; index < sleeperIds.length; index += 100) {
+    const batch = sleeperIds.slice(index, index + 100);
+    if (!batch.length) continue;
+    const { data, error } = await supabase.from("players").select(selectColumns).in("sleeper_player_id", batch);
+    if (error) throw error;
+    rows.push(...((data ?? []) as PlayerRow[]));
+  }
+
+  for (let index = 0; index < normalizedNames.length; index += 100) {
+    const batch = normalizedNames.slice(index, index + 100);
+    if (!batch.length) continue;
+    const { data, error } = await supabase.from("players").select(selectColumns).in("normalized_name", batch);
+    if (error) throw error;
+    rows.push(...((data ?? []) as PlayerRow[]));
+  }
+
+  return mergePlayerRows(rows);
+}
+
+function mergePlayerRows(...groups: PlayerRow[][]): PlayerRow[] {
+  const merged: PlayerRow[] = [];
+  const seen = new Set<string>();
+  for (const rows of groups) {
+    for (const row of rows) {
+      const keys = [
+        row.id ? `id:${row.id}` : null,
+        row.sleeper_player_id ? `sleeper:${row.sleeper_player_id}` : null,
+        row.normalized_name ? `name:${row.normalized_name}|${normalizePrimaryPosition(row.position_group ?? row.primary_position ?? row.position) ?? ""}|${row.team ?? ""}` : null,
+      ].filter((key): key is string => Boolean(key));
+      if (keys.some((key) => seen.has(key))) continue;
+      merged.push(row);
+      keys.forEach((key) => seen.add(key));
+    }
+  }
+  return merged;
 }
 
 function buildOptionalH10RecommendationPreview(input: {

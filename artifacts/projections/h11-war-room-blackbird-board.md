@@ -1,6 +1,6 @@
 # H11.3 War Room Blackbird Board
 
-Generated: 2026-06-16T03:18:00.966Z
+Generated: 2026-06-16T03:41:17.264Z
 Verdict: passed
 
 ## Ordering
@@ -35,7 +35,7 @@ static Blackbird league rank; ADP external reference only
 - Mutation safety: {"draftStateUnchanged":true,"availablePlayerOrderUnchanged":true}
 - Projection coverage: passed
 - Projection coverage failures: none
-- Board rows by position: {"DL":8,"LB":8,"DB":8}
+- Board rows by position: {"DB":346,"LB":194,"DL":269}
 - Screenshots: C:\Projects\lineup_lab\artifacts\projections\h11-war-room-blackbird-board-screenshots\desktop-c82aef89-ce90-40f0-936f-545656045554.png, C:\Projects\lineup_lab\artifacts\projections\h11-war-room-blackbird-board-screenshots\mobile-c82aef89-ce90-40f0-936f-545656045554.png
 - Error: none
 
