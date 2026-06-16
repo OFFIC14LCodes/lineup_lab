@@ -4,22 +4,23 @@
    - Environments: .env.local
 
  ✓ Starting...
- ✓ Ready in 14.6s
+ ✓ Ready in 7.8s
  ○ Compiling / ...
- ✓ Compiled / in 2.1s (635 modules)
- GET / 200 in 2125ms
- GET / 200 in 346ms
- GET / 200 in 292ms
+ ✓ Compiled / in 4.4s (635 modules)
+ GET / 200 in 2036ms
+ GET / 200 in 345ms
+ GET / 200 in 806ms
  ○ Compiling /api/draft-rooms/[draftRoomId]/state ...
- ✓ Compiled /api/draft-rooms/[draftRoomId]/state in 1956ms (744 modules)
- GET /api/draft-rooms/c82aef89-ce90-40f0-936f-545656045554/state 200 in 5976ms
+ ✓ Compiled /api/draft-rooms/[draftRoomId]/state in 3.6s (744 modules)
+ GET /api/draft-rooms/c82aef89-ce90-40f0-936f-545656045554/state 200 in 10565ms
  ○ Compiling /drafts/[draftRoomId] ...
- ✓ Compiled /drafts/[draftRoomId] in 1500ms (796 modules)
- GET /drafts/c82aef89-ce90-40f0-936f-545656045554 200 in 3886ms
+ ✓ Compiled /drafts/[draftRoomId] in 2.5s (796 modules)
+ GET /drafts/c82aef89-ce90-40f0-936f-545656045554 200 in 7839ms
  ○ Compiling /api/draft-rooms/[draftRoomId]/pre-draft-strategy ...
- ✓ Compiled /api/draft-rooms/[draftRoomId]/pre-draft-strategy in 886ms (802 modules)
- GET /api/draft-rooms/c82aef89-ce90-40f0-936f-545656045554/state 200 in 3082ms
- GET /api/draft-rooms/c82aef89-ce90-40f0-936f-545656045554/pre-draft-strategy 200 in 5070ms
- GET /api/draft-rooms/c82aef89-ce90-40f0-936f-545656045554/state 200 in 1632ms
- GET /api/draft-rooms/c82aef89-ce90-40f0-936f-545656045554/state 200 in 1831ms
- GET /api/draft-rooms/c82aef89-ce90-40f0-936f-545656045554/state 200 in 2084ms
+ ✓ Compiled /api/draft-rooms/[draftRoomId]/pre-draft-strategy in 2.1s (802 modules)
+ GET /api/draft-rooms/c82aef89-ce90-40f0-936f-545656045554/state 200 in 5438ms
+ GET /api/draft-rooms/c82aef89-ce90-40f0-936f-545656045554/state 200 in 2659ms
+ GET /api/draft-rooms/c82aef89-ce90-40f0-936f-545656045554/pre-draft-strategy 200 in 9933ms
+ GET /api/draft-rooms/c82aef89-ce90-40f0-936f-545656045554/state 200 in 2821ms
+ GET /api/draft-rooms/c82aef89-ce90-40f0-936f-545656045554/state 200 in 2258ms
+ GET /api/draft-rooms/c82aef89-ce90-40f0-936f-545656045554/state 200 in 296ms

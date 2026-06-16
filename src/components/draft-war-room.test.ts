@@ -76,6 +76,7 @@ describe("DraftWarRoom H11 strategy UI wiring", () => {
       "Season Projection",
       "Blackbird Rank",
       "Draft Suggestion",
+      "withFallbackDraftSuggestionRanks",
       "Filters and sort are local to this browser view.",
     ].forEach((text) => expect(source).toContain(text));
   });

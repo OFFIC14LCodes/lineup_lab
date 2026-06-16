@@ -569,7 +569,7 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
         livePlanStatus,
       });
       const suggestionById = new Map(suggestions.rows.map((row) => [row.playerId, row]));
-      return applyLivePlanFitToBoardRows(blackbirdBoard.rows, livePlanStatus).map((row) => {
+      const rowsWithLiveSuggestions = applyLivePlanFitToBoardRows(blackbirdBoard.rows, livePlanStatus).map((row) => {
         const suggestion = row.playerId ? suggestionById.get(row.playerId) : undefined;
         return suggestion
           ? {
@@ -581,6 +581,7 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
             }
           : row;
       });
+      return withFallbackDraftSuggestionRanks(rowsWithLiveSuggestions);
     },
     [blackbirdBoard.rows, blackbirdPlayerPool, livePlanStatus, state]
   );
@@ -2618,6 +2619,35 @@ function playerMergeKeys(player: AvailablePlayer, index: number, source: "drafta
     .join("|");
   if (nameKey.replaceAll("|", "")) keys.push(`name:${nameKey}`);
   return keys.length ? keys : [`fallback:${source}:${index}`];
+}
+
+function withFallbackDraftSuggestionRanks(rows: BlackbirdBoardRow[]): BlackbirdBoardRow[] {
+  const rankedRows = rows
+    .filter((row) => !row.drafted && row.draftSuggestionRank !== null)
+    .sort((a, b) => (a.draftSuggestionRank ?? 999999) - (b.draftSuggestionRank ?? 999999));
+  const fallbackRows = rows
+    .filter((row) => !row.drafted && row.draftSuggestionRank === null)
+    .sort((a, b) => a.blackbirdBoardRank - b.blackbirdBoardRank || a.playerName.localeCompare(b.playerName));
+  const fallbackRankByKey = new Map<string, number>();
+  fallbackRows.forEach((row, index) => {
+    fallbackRankByKey.set(boardRowKey(row), rankedRows.length + index + 1);
+  });
+
+  return rows.map((row) => {
+    const fallbackRank = fallbackRankByKey.get(boardRowKey(row));
+    if (!fallbackRank) return row;
+    return {
+      ...row,
+      draftSuggestionRank: fallbackRank,
+      draftSuggestionScore: row.blackbirdValueScore,
+      draftSuggestionType: row.dataStatus.projection === "unavailable" ? "insufficient_data" : "value",
+      needTimingAction: row.needTimingAction ?? "value available",
+    };
+  });
+}
+
+function boardRowKey(row: BlackbirdBoardRow): string {
+  return `${row.playerId ?? ""}|${row.playerName}|${row.position ?? ""}|${row.team ?? ""}`;
 }
 
 function formatTimingAction(value: string | null | undefined) {

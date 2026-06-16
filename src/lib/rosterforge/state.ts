@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 
-import { buildWarRoomValueOverlay } from "@/lib/draft/h10-war-room-overlay";
+import { buildWarRoomValueOverlay, type WarRoomValueOverlayRow } from "@/lib/draft/h10-war-room-overlay";
 import { filterFallbackPlayers, type FallbackRelevanceDiagnostics } from "@/lib/draft/fallback-relevance";
 import { buildH10RecommendationPreviewPayload } from "@/lib/draft/war-room-recommendation-preview-state";
 import { normalizePlayerName, normalizePrimaryPosition } from "@/lib/players/normalize";
@@ -65,6 +65,17 @@ type PlayerRow = {
   fantasy_positions_json: string[] | null;
   eligible_positions_json: string[] | null;
   normalized_name: string | null;
+};
+
+type ProjectionOutputOverlayRow = {
+  canonical_player_id: string;
+  projection_run_id: string;
+  position: string | null;
+  floor_points: number | string | null;
+  median_points: number | string | null;
+  ceiling_points: number | string | null;
+  projection_confidence_label: string | null;
+  created_at: string | null;
 };
 
 type LeagueRosterRow = {
@@ -382,6 +393,11 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
           : null
     }
   });
+  const persistedProjectionOverlays = await loadPersistedProjectionOverlays({
+    supabase,
+    leagueId: room.league_id as string,
+    players: fullDraftableScoring.scoredPlayers,
+  });
 
   const idpDetected = rosterRequirements.hasIDP;
   const overlayPayload = getBooleanEnv(H10_WAR_ROOM_OVERLAY_FEATURE_FLAG, false)
@@ -390,8 +406,11 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
         players: scoring.scoredPlayers,
         rosterRequirements,
         fallbackPlayers,
+        persistedProjectionOverlays,
       })
-    : {};
+    : persistedProjectionOverlays.length
+      ? { h10ValueOverlay: persistedProjectionOverlays }
+      : {};
   const h10ModeState = buildH10WarRoomModeState({ userId });
   const recommendationPreviewPayload =
     h10ModeState.h10RecommendationPreviewEnabled ||
@@ -459,6 +478,7 @@ function buildOptionalH10Overlay(input: {
   players: DraftTargetScorePlayer[];
   rosterRequirements: ReturnType<typeof buildNormalizedRosterRequirements>;
   fallbackPlayers: PlayerRow[];
+  persistedProjectionOverlays?: WarRoomValueOverlayRow[];
 }) {
   const valueRows = loadH10ValueRowsFromArtifact(input.leagueId);
   const sleeperToCanonicalId = Object.fromEntries(
@@ -475,10 +495,117 @@ function buildOptionalH10Overlay(input: {
     includeAllPositions: false,
     sleeperToCanonicalId,
   });
+  const rows = mergePersistedProjectionOverlays(overlay.rows, input.persistedProjectionOverlays ?? []);
   return {
-    h10ValueOverlay: overlay.rows,
-    h10ValueOverlayDiagnostics: overlay.diagnostics,
+    h10ValueOverlay: rows,
+    h10ValueOverlayDiagnostics: {
+      ...overlay.diagnostics,
+      matchedRows: rows.filter((row) => row.overlayStatus !== "missing_projection").length,
+      unmatchedRows: rows.filter((row) => row.overlayStatus === "missing_projection").length,
+      rowsByOverlayStatus: countValues(rows.map((row) => row.overlayStatus)),
+      rowsByPosition: countValues(rows.map((row) => normalizePrimaryPosition(row.position) ?? "UNK")),
+    },
   };
+}
+
+async function loadPersistedProjectionOverlays(input: {
+  supabase: ReturnType<typeof createAdminClient>;
+  leagueId: string;
+  players: DraftTargetScorePlayer[];
+}): Promise<WarRoomValueOverlayRow[]> {
+  const playerByCanonicalId = new Map(
+    input.players
+      .filter((player) => player.matched_player_id)
+      .map((player) => [player.matched_player_id as string, player])
+  );
+  const canonicalIds = Array.from(playerByCanonicalId.keys());
+  if (!canonicalIds.length) return [];
+
+  const { data, error } = await input.supabase
+    .from("player_projection_outputs")
+    .select("canonical_player_id,projection_run_id,position,floor_points,median_points,ceiling_points,projection_confidence_label,created_at")
+    .eq("league_id", input.leagueId)
+    .in("canonical_player_id", canonicalIds)
+    .order("created_at", { ascending: false })
+    .limit(Math.max(1000, canonicalIds.length * 3));
+
+  if (error || !data) return [];
+
+  const latestByPlayer = new Map<string, ProjectionOutputOverlayRow>();
+  for (const row of data as ProjectionOutputOverlayRow[]) {
+    if (!latestByPlayer.has(row.canonical_player_id)) latestByPlayer.set(row.canonical_player_id, row);
+  }
+
+  return Array.from(latestByPlayer.values())
+    .map((row): WarRoomValueOverlayRow | null => {
+      const player = playerByCanonicalId.get(row.canonical_player_id);
+      const medianPoints = numberOrNull(row.median_points);
+      if (!player || medianPoints === null) return null;
+      return {
+        leagueId: input.leagueId,
+        entityId: row.canonical_player_id,
+        entityType: "PLAYER" as const,
+        displayName: player.player_name ?? "Unknown",
+        team: player.team,
+        position: player.position ?? row.position,
+        floorPoints: numberOrNull(row.floor_points),
+        medianPoints,
+        ceilingPoints: numberOrNull(row.ceiling_points),
+        pointsAboveReplacement: null,
+        pointsAboveStarterCutline: null,
+        riskAdjustedValue: null,
+        confidenceAdjustedValue: null,
+        tier: null,
+        tierLabel: null,
+        positionScarcityScore: null,
+        scarcityLabel: null,
+        marketValueSignal: null,
+        marketRankDelta: null,
+        confidenceLabel: row.projection_confidence_label,
+        riskLabel: null,
+        valueReadiness: "PERSISTED_PROJECTION_OUTPUT",
+        warningCodes: [],
+        reasonCodes: [`persisted_projection_output:${row.projection_run_id}`],
+        draftRelevance: "draft_relevant" as const,
+        overlayStatus: "available" as const,
+      };
+    })
+    .filter((row): row is WarRoomValueOverlayRow => row !== null);
+}
+
+function mergePersistedProjectionOverlays(existingRows: WarRoomValueOverlayRow[], persistedRows: WarRoomValueOverlayRow[]): WarRoomValueOverlayRow[] {
+  if (!persistedRows.length) return existingRows;
+  const persistedByEntityId = new Map(persistedRows.filter((row) => row.entityId).map((row) => [row.entityId as string, row]));
+  const merged = existingRows.map((row) => {
+    const persisted = row.entityId ? persistedByEntityId.get(row.entityId) : null;
+    if (!persisted || !shouldUsePersistedProjection(row, persisted)) return row;
+    return {
+      ...row,
+      floorPoints: persisted.floorPoints,
+      medianPoints: persisted.medianPoints,
+      ceilingPoints: persisted.ceilingPoints,
+      confidenceLabel: persisted.confidenceLabel ?? row.confidenceLabel,
+      valueReadiness: row.valueReadiness ?? persisted.valueReadiness,
+      warningCodes: row.warningCodes.filter((code) => code !== "H10_VALUE_OVERLAY_MISSING_PROJECTION"),
+      reasonCodes: Array.from(new Set([...row.reasonCodes, ...persisted.reasonCodes, "surface_projection_from_persisted_output"])).sort(),
+      draftRelevance: row.draftRelevance === "missing_projection" ? "draft_relevant" as const : row.draftRelevance,
+      overlayStatus: row.overlayStatus === "missing_projection" ? "available" as const : row.overlayStatus,
+    };
+  });
+  const existingKeys = new Set(existingRows.flatMap((row) => [row.entityId ? `id:${row.entityId}` : null, `name:${normalizePlayerName(row.displayName)}|${normalizePrimaryPosition(row.position) ?? row.position}|${row.team ?? ""}`].filter((key): key is string => Boolean(key))));
+  const appended = persistedRows.filter((row) => {
+    const keys = [row.entityId ? `id:${row.entityId}` : null, `name:${normalizePlayerName(row.displayName)}|${normalizePrimaryPosition(row.position) ?? row.position}|${row.team ?? ""}`].filter((key): key is string => Boolean(key));
+    return keys.every((key) => !existingKeys.has(key));
+  });
+  return [...merged, ...appended];
+}
+
+function shouldUsePersistedProjection(existing: WarRoomValueOverlayRow, persisted: WarRoomValueOverlayRow): boolean {
+  if (persisted.medianPoints === null) return false;
+  if (existing.medianPoints === null) return true;
+  const position = normalizePrimaryPosition(existing.position ?? persisted.position);
+  if ((position === "DL" || position === "LB" || position === "DB") && existing.medianPoints < 25 && persisted.medianPoints > 50) return true;
+  return false;
 }
 
 async function loadActivePlayerRows(supabase: ReturnType<typeof createAdminClient>): Promise<PlayerRow[]> {
@@ -705,6 +832,22 @@ function fallbackValueFor(player: DraftTargetScorePlayer, index: Map<string, num
     index.get(`name:${normalizePlayerName(player.player_name ?? "")}|${normalizePrimaryPosition(player.position) ?? player.position}|${player.team ?? ""}`) ??
     0
   );
+}
+
+function numberOrNull(value: number | string | null | undefined): number | null {
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  if (typeof value === "string" && value.trim() !== "") {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : null;
+  }
+  return null;
+}
+
+function countValues(values: string[]): Record<string, number> {
+  return values.reduce<Record<string, number>>((counts, value) => {
+    counts[value] = (counts[value] ?? 0) + 1;
+    return counts;
+  }, {});
 }
 
 function emptyFallbackDiagnostics(includeDiagnosticFallbacks: boolean): FallbackRelevanceDiagnostics {
