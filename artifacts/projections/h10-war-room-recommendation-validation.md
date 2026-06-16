@@ -1,6 +1,6 @@
 # H10.8 War Room Recommendation Validation
 
-Generated: 2026-06-15T23:26:16.428Z
+Generated: 2026-06-16T00:07:21.046Z
 
 Readiness verdict: ready
 

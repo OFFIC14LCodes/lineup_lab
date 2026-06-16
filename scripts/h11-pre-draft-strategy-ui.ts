@@ -146,10 +146,11 @@ async function exerciseRoom(browser: Browser, room: ReturnType<typeof selectRoom
       if (await page.getByText(section).first().isVisible().catch(() => false)) sectionsRendered.push(section);
     }
 
+    const strategyPanelText = await page.getByTestId("pre-draft-strategy-panel").first().innerText().catch(() => "");
     const safetyCaveatsVisible =
-      (await page.getByText("Read-only").first().isVisible().catch(() => false)) &&
-      (await page.getByText("Experimental").first().isVisible().catch(() => false)) &&
-      (await page.getByText("Historical outcome validation is not yet available.").first().isVisible().catch(() => false));
+      strategyPanelText.includes("Read-only") &&
+      strategyPanelText.includes("Experimental") &&
+      /historical outcome validation/i.test(strategyPanelText);
     const dataGapsRendered = await page.getByText("Strategy preview is partial because some draft context is missing.").isVisible().catch(() => false);
     const bodyText = await page.locator("body").innerText();
     const bannedLanguageFound = findBannedStrategyUiLanguage(bodyText);

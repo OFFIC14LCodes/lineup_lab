@@ -7,6 +7,7 @@ import {
 import type { WarRoomValueOverlayRow } from "@/lib/draft/h10-war-room-overlay";
 import type { ScoredDraftTarget } from "@/lib/draft/scoring";
 import type { WarRoomRecommendationRow } from "@/lib/draft/war-room-recommendations";
+import type { LivePlanFit } from "@/lib/draft/live-plan-status";
 
 export type BlackbirdBoardSortKey = "blackbird" | "projection" | "value";
 
@@ -30,6 +31,8 @@ export type BlackbirdBoardRow = {
   valueScoreComponents: BlackbirdContextualValue["valueScoreComponents"] | null;
   contextualReasons: string[];
   contextualDataGaps: string[];
+  planFit: LivePlanFit;
+  planFitReasons: string[];
   needTimingAction: string | null;
   waitPlanTargetCount: number | null;
   drafted: boolean;
@@ -341,6 +344,8 @@ function buildRow(input: {
     valueScoreComponents: null,
     contextualReasons: [],
     contextualDataGaps: [],
+    planFit: "insufficient_data",
+    planFitReasons: ["Live plan status has not been applied."],
     needTimingAction: input.recommendation?.needTimingAction ?? null,
     waitPlanTargetCount: input.recommendation?.waitPlanTargetCount ?? null,
     drafted,

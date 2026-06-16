@@ -12,6 +12,7 @@ import {
   type H10RecommendationSource,
 } from "@/lib/draft/war-room-recommendation-experiment-ui";
 import { buildBlackbirdBoard, type BlackbirdBoardRow, type BlackbirdBoardSortKey } from "@/lib/draft/blackbird-board";
+import { applyLivePlanFitToBoardRows, buildLivePlanStatus, type LivePlanStatus, type LivePlanFit } from "@/lib/draft/live-plan-status";
 import {
   draftBoardPositionBadgeClass,
   draftBoardPositionCardClass,
@@ -502,9 +503,30 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
     state?.hasTeamDefense,
   ]);
 
+  const livePlanStatus = useMemo(() => {
+    if (!state) return null;
+    return buildLivePlanStatus({
+      draftRoomId,
+      currentPickNumber: state.currentPickNumber,
+      currentRound: state.currentRound,
+      myDraftSlot: state.myDraftSlot,
+      teamCount: state.teamCount,
+      picksUntilMyTurn: state.picksUntilMyNextPick,
+      positionCounts: state.positionCounts,
+      strategy: strategyState.strategy,
+      boardRows: blackbirdBoard.rows,
+      draftedPlayerIds: state.draftedPlayerIds ?? [],
+    });
+  }, [blackbirdBoard.rows, draftRoomId, state, strategyState.strategy]);
+
+  const planFitBoardRows = useMemo(
+    () => applyLivePlanFitToBoardRows(blackbirdBoard.rows, livePlanStatus),
+    [blackbirdBoard.rows, livePlanStatus]
+  );
+
   const filteredBoardRows = useMemo(() => {
     const needle = search.trim().toLowerCase();
-    return blackbirdBoard.rows
+    return planFitBoardRows
       .filter((row) => positionFilter === "All" || row.position === positionFilter)
       .filter((row) => !needle || row.playerName.toLowerCase().includes(needle))
       .filter((row) => {
@@ -512,7 +534,7 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
         if (matchFilter === "Issues") return row.confidence === "low" || row.risk === "high" || row.dataStatus.projection === "unavailable";
         return true;
       });
-  }, [blackbirdBoard.rows, matchFilter, positionFilter, search]);
+  }, [matchFilter, planFitBoardRows, positionFilter, search]);
 
   const visibleBlackbirdRows = filteredBoardRows.slice(0, visibleBoardRows);
 
@@ -582,6 +604,7 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
             <span className="font-bold">Internal Blackbird Mode</span> · Read-only trusted preview · Synthetic replay validated; historical outcome validation not yet available.
           </div>
         ) : null}
+        <LivePlanStatusPanel status={livePlanStatus} />
         {state.myDraftSlot === null ? (
           <p className="mt-3 rounded-md border border-gold/25 bg-gold/10 px-3 py-2 text-xs text-gold">
             Your draft slot is not detected yet. Sync league rosters or draft picks to restore exact pick timing.
@@ -1016,6 +1039,9 @@ function AvailablePlayersTable({ rows, onSelectPlayer }: { rows: BlackbirdBoardR
               </td>
               <td className="px-3 py-3">
                 <BoardDataStatus row={row} />
+                <div className="mt-2">
+                  <PlanFitBadge fit={row.planFit} />
+                </div>
               </td>
             </tr>
           ))}
@@ -1064,6 +1090,7 @@ function BlackbirdBoardPlayerDetails({ row }: { row: BlackbirdBoardRow }) {
         <DetailList title="Cautions" items={detail.whyBlackbirdIsCautious.slice(0, 3)} />
         <DetailList title="Wait Plan" items={detail.waitPlanContext.slice(0, 2)} />
         <DetailList title="Contingency" items={detail.contingencyContext.slice(0, 2)} />
+        <DetailList title="Plan Fit" items={row.planFitReasons.slice(0, 4)} />
         {detail.tierNeighborContext.previous.length || detail.tierNeighborContext.next.length ? (
           <div>
             <div className="text-[11px] uppercase tracking-wide text-slate-500">Tier Neighbors</div>
@@ -1080,6 +1107,80 @@ function BlackbirdBoardPlayerDetails({ row }: { row: BlackbirdBoardRow }) {
       </div>
     </details>
   );
+}
+
+function LivePlanStatusPanel({ status }: { status: LivePlanStatus | null }) {
+  if (!status) {
+    return (
+      <section className="mt-4 rounded-lg border border-line bg-panel2 px-3 py-3">
+        <div className="text-sm font-black text-slate-100">Live Plan Status</div>
+        <p className="mt-1 text-xs text-slate-400">Insufficient data to score the live plan.</p>
+      </section>
+    );
+  }
+  return (
+    <section className="mt-4 rounded-lg border border-line bg-panel2 px-3 py-3">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className={`rounded-full border px-2 py-1 text-[11px] uppercase tracking-wide ${livePlanStatusClass(status.overallStatus)}`}>
+              {status.statusLabel}
+            </span>
+            {status.activeRoundWindowIds.slice(0, 2).map((windowId) => (
+              <span key={windowId} className="rounded-full border border-line bg-background px-2 py-1 text-[11px] text-slate-300">
+                {windowId}
+              </span>
+            ))}
+          </div>
+          <h2 className="mt-2 text-base font-black text-slate-100">Live Plan Status</h2>
+          <p className="mt-1 text-sm text-slate-400">{status.statusSummary}</p>
+        </div>
+        <div className="grid min-w-[220px] grid-cols-3 gap-2 text-xs">
+          <MiniDetail label="Pick" value={formatNullableNumber(status.currentPickNumber)} />
+          <MiniDetail label="Round" value={formatNullableNumber(status.currentRound)} />
+          <MiniDetail label="Until turn" value={formatNullableNumber(status.picksUntilMyTurn)} />
+        </div>
+      </div>
+      <details className="group mt-3 rounded-md border border-line/70 bg-background/45 px-3 py-2 text-xs">
+        <summary className="flex cursor-pointer list-none items-center justify-between gap-2 font-bold text-brand">
+          <span>Plan details</span>
+          <ChevronDown className="h-3.5 w-3.5 shrink-0 transition group-open:rotate-180" />
+        </summary>
+        <div className="mt-3 grid gap-3 lg:grid-cols-2">
+          <DetailList title="Recommended Focus" items={status.recommendedFocus.slice(0, 4).map((item) => `${item.label}: ${item.reason}`)} />
+          <DetailList title="Active Contingencies" items={status.triggeredContingencies.slice(0, 4).map((item) => `${item.label}: ${item.suggestedAdjustment}`)} />
+          <DetailList title="Position Plan" items={status.positionPlanStatus.slice(0, 6).map((item) => `${item.position}: ${item.summary}`)} />
+          <DetailList title="Wait Plan" items={status.waitPlanStatus.slice(0, 4).map((item) => item.summary)} />
+          <DetailList title="Tier Risk" items={status.tierRiskStatus.slice(0, 4).map((item) => item.summary)} />
+          <DetailList title="Value Signals" items={status.valueFallStatus.slice(0, 4).map((item) => item.summary)} />
+          <DetailList title="Data Gaps" items={status.dataGaps.slice(0, 6)} />
+          <DetailList title="Safety" items={status.safetyNotes} />
+        </div>
+      </details>
+    </section>
+  );
+}
+
+function PlanFitBadge({ fit }: { fit: LivePlanFit }) {
+  const label = fit.replaceAll("_", " ");
+  const className =
+    fit === "strong_fit"
+      ? "border-emerald-400/30 bg-emerald-500/10 text-emerald-200"
+      : fit === "contingency_fit" || fit === "value_detour"
+        ? "border-gold/35 bg-gold/10 text-gold"
+        : fit === "avoid_forcing"
+          ? "border-red-400/30 bg-red-500/10 text-red-200"
+          : fit === "insufficient_data"
+            ? "border-line bg-background text-slate-400"
+            : "border-brand/30 bg-brand/10 text-brand";
+  return <span className={`rounded-full border px-2 py-1 text-[11px] uppercase tracking-wide ${className}`}>{label}</span>;
+}
+
+function livePlanStatusClass(status: LivePlanStatus["overallStatus"]) {
+  if (status === "on_plan" || status === "pre_draft") return "border-emerald-400/30 bg-emerald-500/10 text-emerald-200";
+  if (status === "slightly_off_plan" || status === "off_plan_recoverable") return "border-brand/30 bg-brand/10 text-brand";
+  if (status === "contingency_active" || status === "needs_attention") return "border-gold/35 bg-gold/10 text-gold";
+  return "border-line bg-background text-slate-400";
 }
 
 function MiniDetail({ label, value }: { label: string; value: string }) {

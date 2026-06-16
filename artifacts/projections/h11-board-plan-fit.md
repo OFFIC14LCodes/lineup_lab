@@ -1,0 +1,77 @@
+# h11-board-plan-fit
+
+```json
+{
+  "generatedAt": "2026-06-16T00:07:05.850Z",
+  "verdict": "passed",
+  "checks": [
+    {
+      "name": "board_rows_receive_plan_fit",
+      "passed": true,
+      "detail": "Kicker:avoid_forcing, RB Value:value_detour, QB Tier:contingency_fit"
+    },
+    {
+      "name": "contextual_rank_primary",
+      "passed": true,
+      "detail": "available players -> contextual Blackbird value -> PAR -> projected fantasy points -> H10 tie-breakers -> position/name"
+    },
+    {
+      "name": "h10_score_not_rank_source",
+      "passed": true,
+      "detail": "available players -> contextual Blackbird value -> PAR -> projected fantasy points -> H10 tie-breakers -> position/name"
+    },
+    {
+      "name": "data_gaps_visible",
+      "passed": true,
+      "detail": "contextual gaps checked"
+    },
+    {
+      "name": "no_banned_language",
+      "passed": true,
+      "detail": "safe language"
+    },
+    {
+      "name": "no_mutation",
+      "passed": true,
+      "detail": "synthetic read-only diagnostic"
+    }
+  ],
+  "rows": [
+    {
+      "rank": 1,
+      "playerName": "Kicker",
+      "planFit": "avoid_forcing",
+      "planFitReasons": [
+        "Fills roster thin spot.",
+        "Unexpected contextual value signal.",
+        "Avoid forcing K/DST before late-window evidence.",
+        "Situation, snap, or depth-chart data is unavailable."
+      ]
+    },
+    {
+      "rank": 2,
+      "playerName": "RB Value",
+      "planFit": "value_detour",
+      "planFitReasons": [
+        "Fits active round window.",
+        "Unexpected contextual value signal.",
+        "Position can likely wait.",
+        "Situation, snap, or depth-chart data is unavailable."
+      ]
+    },
+    {
+      "rank": 3,
+      "playerName": "QB Tier",
+      "planFit": "contingency_fit",
+      "planFitReasons": [
+        "Fits active round window.",
+        "Fits active contingency.",
+        "Fills roster thin spot.",
+        "Unexpected contextual value signal.",
+        "Tier risk is rising.",
+        "Situation, snap, or depth-chart data is unavailable."
+      ]
+    }
+  ]
+}
+```
