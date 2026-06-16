@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-06-16T01:22:39.974Z",
-  "verdict": "passed",
+  "generatedAt": "2026-06-16T04:50:26.353Z",
+  "verdict": "failed",
   "endpointPath": "/api/draft-rooms/[draftRoomId]/pre-draft-strategy",
   "roomsTested": [
     {
@@ -34,8 +34,8 @@
       "safetyCaveatsVisible": true,
       "bannedLanguageFound": [],
       "mutationSafety": {
-        "draftStateUnchanged": true,
-        "availablePlayerOrderUnchanged": true,
+        "draftStateUnchanged": false,
+        "availablePlayerOrderUnchanged": false,
         "strategyEndpointStable": true
       },
       "screenshots": [
@@ -100,9 +100,9 @@
   ],
   "summary": {
     "total": 2,
-    "passed": 2,
-    "failed": 0,
-    "mutationSafetyPassed": true,
+    "passed": 1,
+    "failed": 1,
+    "mutationSafetyPassed": false,
     "bannedLanguagePassed": true
   },
   "remainingRisks": [

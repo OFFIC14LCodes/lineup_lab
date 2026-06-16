@@ -41,7 +41,7 @@ const status = buildLivePlanStatus({
 const fitted = applyLivePlanFitToBoardRows(board.rows, status);
 const checks = [
   { name: "board_rows_receive_plan_fit", passed: fitted.every((row) => row.planFitReasons.length > 0), detail: fitted.map((row) => `${row.playerName}:${row.planFit}`).join(", ") },
-  { name: "contextual_rank_primary", passed: fitted[0].blackbirdBoardRank === board.rows[0].blackbirdBoardRank && board.diagnostics.orderingMethod.includes("contextual Blackbird value"), detail: board.diagnostics.orderingMethod },
+  { name: "contextual_rank_primary", passed: fitted[0].blackbirdBoardRank === board.rows[0].blackbirdBoardRank && board.diagnostics.orderingMethod.includes("static Blackbird league rank"), detail: board.diagnostics.orderingMethod },
   { name: "h10_score_not_rank_source", passed: !board.diagnostics.orderingMethod.includes("H10 recommendation/value rank"), detail: board.diagnostics.orderingMethod },
   { name: "data_gaps_visible", passed: fitted.some((row) => row.contextualDataGaps.length > 0), detail: "contextual gaps checked" },
   { name: "no_banned_language", passed: findBannedLivePlanLanguage(JSON.stringify({ status, fitted })).length === 0, detail: "safe language" },

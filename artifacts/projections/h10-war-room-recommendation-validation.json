@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-16T01:18:38.124Z",
+  "generatedAt": "2026-06-16T04:49:20.777Z",
   "artifactVersion": "h10.8-war-room-recommendation-validation-v3",
   "args": {
     "includeLive": true,
@@ -10905,7 +10905,7 @@
         "QB": 22
       },
       "warningCounts": {
-        "LOW_PROJECTION_CONFIDENCE": 95,
+        "LOW_PROJECTION_CONFIDENCE": 96,
         "MARKET_NOT_IMPLEMENTED": 58,
         "Best-ball and managed-league ADP are not blended.": 87,
         "NO_COMPATIBLE_MARKET": 87,
@@ -10965,8 +10965,8 @@
           },
           "draftContext": {
             "currentRound": 20,
-            "currentPick": 238,
-            "picksUntilNextUserPick": 9,
+            "currentPick": 240,
+            "picksUntilNextUserPick": 7,
             "positionNeedLevel": "urgent",
             "starterSlotNeed": true,
             "benchDepthNeed": false,
@@ -10989,7 +10989,7 @@
           "survivalConfidenceScore": 58,
           "comparableOptionsNow": 17,
           "comparableOptionsLikelyNextPick": 15,
-          "comparableOptionsLikelyNextTwoPicks": 13,
+          "comparableOptionsLikelyNextTwoPicks": 14,
           "waitRisk": "low",
           "waitRiskReasons": [
             "DL projection confidence is low."
@@ -11055,8 +11055,8 @@
           },
           "draftContext": {
             "currentRound": 20,
-            "currentPick": 238,
-            "picksUntilNextUserPick": 9,
+            "currentPick": 240,
+            "picksUntilNextUserPick": 7,
             "positionNeedLevel": "urgent",
             "starterSlotNeed": true,
             "benchDepthNeed": false,
@@ -11079,7 +11079,7 @@
           "survivalConfidenceScore": 58,
           "comparableOptionsNow": 17,
           "comparableOptionsLikelyNextPick": 15,
-          "comparableOptionsLikelyNextTwoPicks": 13,
+          "comparableOptionsLikelyNextTwoPicks": 14,
           "waitRisk": "low",
           "waitRiskReasons": [
             "DL projection confidence is low."
@@ -11145,8 +11145,8 @@
           },
           "draftContext": {
             "currentRound": 20,
-            "currentPick": 238,
-            "picksUntilNextUserPick": 9,
+            "currentPick": 240,
+            "picksUntilNextUserPick": 7,
             "positionNeedLevel": "urgent",
             "starterSlotNeed": true,
             "benchDepthNeed": false,
@@ -11169,7 +11169,7 @@
           "survivalConfidenceScore": 58,
           "comparableOptionsNow": 17,
           "comparableOptionsLikelyNextPick": 15,
-          "comparableOptionsLikelyNextTwoPicks": 13,
+          "comparableOptionsLikelyNextTwoPicks": 14,
           "waitRisk": "low",
           "waitRiskReasons": [
             "DL projection confidence is low."
@@ -11235,8 +11235,8 @@
           },
           "draftContext": {
             "currentRound": 20,
-            "currentPick": 238,
-            "picksUntilNextUserPick": 9,
+            "currentPick": 240,
+            "picksUntilNextUserPick": 7,
             "positionNeedLevel": "urgent",
             "starterSlotNeed": true,
             "benchDepthNeed": false,
@@ -11259,7 +11259,7 @@
           "survivalConfidenceScore": 58,
           "comparableOptionsNow": 17,
           "comparableOptionsLikelyNextPick": 15,
-          "comparableOptionsLikelyNextTwoPicks": 13,
+          "comparableOptionsLikelyNextTwoPicks": 14,
           "waitRisk": "low",
           "waitRiskReasons": [
             "DL projection confidence is low."
@@ -11325,8 +11325,8 @@
           },
           "draftContext": {
             "currentRound": 20,
-            "currentPick": 238,
-            "picksUntilNextUserPick": 9,
+            "currentPick": 240,
+            "picksUntilNextUserPick": 7,
             "positionNeedLevel": "urgent",
             "starterSlotNeed": true,
             "benchDepthNeed": false,
@@ -11349,7 +11349,7 @@
           "survivalConfidenceScore": 58,
           "comparableOptionsNow": 17,
           "comparableOptionsLikelyNextPick": 15,
-          "comparableOptionsLikelyNextTwoPicks": 13,
+          "comparableOptionsLikelyNextTwoPicks": 14,
           "waitRisk": "low",
           "waitRiskReasons": [
             "DL projection confidence is low."
@@ -11415,8 +11415,8 @@
           },
           "draftContext": {
             "currentRound": 20,
-            "currentPick": 238,
-            "picksUntilNextUserPick": 9,
+            "currentPick": 240,
+            "picksUntilNextUserPick": 7,
             "positionNeedLevel": "urgent",
             "starterSlotNeed": true,
             "benchDepthNeed": false,
@@ -11439,7 +11439,7 @@
           "survivalConfidenceScore": 58,
           "comparableOptionsNow": 17,
           "comparableOptionsLikelyNextPick": 15,
-          "comparableOptionsLikelyNextTwoPicks": 13,
+          "comparableOptionsLikelyNextTwoPicks": 14,
           "waitRisk": "low",
           "waitRiskReasons": [
             "DL projection confidence is low."
@@ -11505,8 +11505,8 @@
           },
           "draftContext": {
             "currentRound": 20,
-            "currentPick": 238,
-            "picksUntilNextUserPick": 9,
+            "currentPick": 240,
+            "picksUntilNextUserPick": 7,
             "positionNeedLevel": "urgent",
             "starterSlotNeed": true,
             "benchDepthNeed": false,
@@ -11529,7 +11529,7 @@
           "survivalConfidenceScore": 58,
           "comparableOptionsNow": 17,
           "comparableOptionsLikelyNextPick": 15,
-          "comparableOptionsLikelyNextTwoPicks": 13,
+          "comparableOptionsLikelyNextTwoPicks": 14,
           "waitRisk": "low",
           "waitRiskReasons": [
             "DL projection confidence is low."
@@ -11595,8 +11595,8 @@
           },
           "draftContext": {
             "currentRound": 20,
-            "currentPick": 238,
-            "picksUntilNextUserPick": 9,
+            "currentPick": 240,
+            "picksUntilNextUserPick": 7,
             "positionNeedLevel": "urgent",
             "starterSlotNeed": true,
             "benchDepthNeed": false,
@@ -11619,7 +11619,7 @@
           "survivalConfidenceScore": 58,
           "comparableOptionsNow": 17,
           "comparableOptionsLikelyNextPick": 15,
-          "comparableOptionsLikelyNextTwoPicks": 13,
+          "comparableOptionsLikelyNextTwoPicks": 14,
           "waitRisk": "low",
           "waitRiskReasons": [
             "DL projection confidence is low."
@@ -11685,8 +11685,8 @@
           },
           "draftContext": {
             "currentRound": 20,
-            "currentPick": 238,
-            "picksUntilNextUserPick": 9,
+            "currentPick": 240,
+            "picksUntilNextUserPick": 7,
             "positionNeedLevel": "urgent",
             "starterSlotNeed": true,
             "benchDepthNeed": false,
@@ -11709,7 +11709,7 @@
           "survivalConfidenceScore": 58,
           "comparableOptionsNow": 17,
           "comparableOptionsLikelyNextPick": 15,
-          "comparableOptionsLikelyNextTwoPicks": 13,
+          "comparableOptionsLikelyNextTwoPicks": 14,
           "waitRisk": "low",
           "waitRiskReasons": [
             "DL projection confidence is low."
@@ -11775,8 +11775,8 @@
           },
           "draftContext": {
             "currentRound": 20,
-            "currentPick": 238,
-            "picksUntilNextUserPick": 9,
+            "currentPick": 240,
+            "picksUntilNextUserPick": 7,
             "positionNeedLevel": "urgent",
             "starterSlotNeed": true,
             "benchDepthNeed": false,
@@ -11799,7 +11799,7 @@
           "survivalConfidenceScore": 58,
           "comparableOptionsNow": 17,
           "comparableOptionsLikelyNextPick": 15,
-          "comparableOptionsLikelyNextTwoPicks": 13,
+          "comparableOptionsLikelyNextTwoPicks": 14,
           "waitRisk": "low",
           "waitRiskReasons": [
             "DL projection confidence is low."
@@ -11865,8 +11865,8 @@
           },
           "draftContext": {
             "currentRound": 20,
-            "currentPick": 238,
-            "picksUntilNextUserPick": 9,
+            "currentPick": 240,
+            "picksUntilNextUserPick": 7,
             "positionNeedLevel": "urgent",
             "starterSlotNeed": true,
             "benchDepthNeed": false,
@@ -11889,7 +11889,7 @@
           "survivalConfidenceScore": 58,
           "comparableOptionsNow": 17,
           "comparableOptionsLikelyNextPick": 15,
-          "comparableOptionsLikelyNextTwoPicks": 13,
+          "comparableOptionsLikelyNextTwoPicks": 14,
           "waitRisk": "low",
           "waitRiskReasons": [
             "DL projection confidence is low."
@@ -11955,8 +11955,8 @@
           },
           "draftContext": {
             "currentRound": 20,
-            "currentPick": 238,
-            "picksUntilNextUserPick": 9,
+            "currentPick": 240,
+            "picksUntilNextUserPick": 7,
             "positionNeedLevel": "urgent",
             "starterSlotNeed": true,
             "benchDepthNeed": false,
@@ -11979,7 +11979,7 @@
           "survivalConfidenceScore": 58,
           "comparableOptionsNow": 17,
           "comparableOptionsLikelyNextPick": 15,
-          "comparableOptionsLikelyNextTwoPicks": 13,
+          "comparableOptionsLikelyNextTwoPicks": 14,
           "waitRisk": "low",
           "waitRiskReasons": [
             "DL projection confidence is low."
@@ -12045,8 +12045,8 @@
           },
           "draftContext": {
             "currentRound": 20,
-            "currentPick": 238,
-            "picksUntilNextUserPick": 9,
+            "currentPick": 240,
+            "picksUntilNextUserPick": 7,
             "positionNeedLevel": "urgent",
             "starterSlotNeed": true,
             "benchDepthNeed": false,
@@ -12069,7 +12069,7 @@
           "survivalConfidenceScore": 58,
           "comparableOptionsNow": 17,
           "comparableOptionsLikelyNextPick": 15,
-          "comparableOptionsLikelyNextTwoPicks": 13,
+          "comparableOptionsLikelyNextTwoPicks": 14,
           "waitRisk": "low",
           "waitRiskReasons": [
             "DL projection confidence is low."
@@ -12135,8 +12135,8 @@
           },
           "draftContext": {
             "currentRound": 20,
-            "currentPick": 238,
-            "picksUntilNextUserPick": 9,
+            "currentPick": 240,
+            "picksUntilNextUserPick": 7,
             "positionNeedLevel": "urgent",
             "starterSlotNeed": true,
             "benchDepthNeed": false,
@@ -12159,7 +12159,7 @@
           "survivalConfidenceScore": 58,
           "comparableOptionsNow": 17,
           "comparableOptionsLikelyNextPick": 15,
-          "comparableOptionsLikelyNextTwoPicks": 13,
+          "comparableOptionsLikelyNextTwoPicks": 14,
           "waitRisk": "low",
           "waitRiskReasons": [
             "DL projection confidence is low."
@@ -12225,8 +12225,8 @@
           },
           "draftContext": {
             "currentRound": 20,
-            "currentPick": 238,
-            "picksUntilNextUserPick": 9,
+            "currentPick": 240,
+            "picksUntilNextUserPick": 7,
             "positionNeedLevel": "urgent",
             "starterSlotNeed": true,
             "benchDepthNeed": false,
@@ -12249,7 +12249,7 @@
           "survivalConfidenceScore": 58,
           "comparableOptionsNow": 17,
           "comparableOptionsLikelyNextPick": 15,
-          "comparableOptionsLikelyNextTwoPicks": 13,
+          "comparableOptionsLikelyNextTwoPicks": 14,
           "waitRisk": "low",
           "waitRiskReasons": [
             "DL projection confidence is low."
@@ -12317,8 +12317,8 @@
           },
           "draftContext": {
             "currentRound": 20,
-            "currentPick": 238,
-            "picksUntilNextUserPick": 9,
+            "currentPick": 240,
+            "picksUntilNextUserPick": 7,
             "positionNeedLevel": "urgent",
             "starterSlotNeed": true,
             "benchDepthNeed": false,
@@ -12341,7 +12341,7 @@
           "survivalConfidenceScore": 58,
           "comparableOptionsNow": 17,
           "comparableOptionsLikelyNextPick": 15,
-          "comparableOptionsLikelyNextTwoPicks": 13,
+          "comparableOptionsLikelyNextTwoPicks": 14,
           "waitRisk": "low",
           "waitRiskReasons": [
             "DL projection confidence is low."
@@ -12407,8 +12407,8 @@
           },
           "draftContext": {
             "currentRound": 20,
-            "currentPick": 238,
-            "picksUntilNextUserPick": 9,
+            "currentPick": 240,
+            "picksUntilNextUserPick": 7,
             "positionNeedLevel": "urgent",
             "starterSlotNeed": true,
             "benchDepthNeed": false,
@@ -12431,7 +12431,7 @@
           "survivalConfidenceScore": 58,
           "comparableOptionsNow": 17,
           "comparableOptionsLikelyNextPick": 15,
-          "comparableOptionsLikelyNextTwoPicks": 13,
+          "comparableOptionsLikelyNextTwoPicks": 14,
           "waitRisk": "low",
           "waitRiskReasons": [
             "DL projection confidence is low."
@@ -12497,8 +12497,8 @@
           },
           "draftContext": {
             "currentRound": 20,
-            "currentPick": 238,
-            "picksUntilNextUserPick": 9,
+            "currentPick": 240,
+            "picksUntilNextUserPick": 7,
             "positionNeedLevel": "urgent",
             "starterSlotNeed": true,
             "benchDepthNeed": false,
@@ -12521,7 +12521,7 @@
           "survivalConfidenceScore": 58,
           "comparableOptionsNow": 17,
           "comparableOptionsLikelyNextPick": 15,
-          "comparableOptionsLikelyNextTwoPicks": 13,
+          "comparableOptionsLikelyNextTwoPicks": 14,
           "waitRisk": "low",
           "waitRiskReasons": [
             "DL projection confidence is low."
@@ -12587,8 +12587,8 @@
           },
           "draftContext": {
             "currentRound": 20,
-            "currentPick": 238,
-            "picksUntilNextUserPick": 9,
+            "currentPick": 240,
+            "picksUntilNextUserPick": 7,
             "positionNeedLevel": "urgent",
             "starterSlotNeed": true,
             "benchDepthNeed": false,
@@ -12611,7 +12611,7 @@
           "survivalConfidenceScore": 58,
           "comparableOptionsNow": 17,
           "comparableOptionsLikelyNextPick": 15,
-          "comparableOptionsLikelyNextTwoPicks": 13,
+          "comparableOptionsLikelyNextTwoPicks": 14,
           "waitRisk": "low",
           "waitRiskReasons": [
             "DL projection confidence is low."
@@ -12677,8 +12677,8 @@
           },
           "draftContext": {
             "currentRound": 20,
-            "currentPick": 238,
-            "picksUntilNextUserPick": 9,
+            "currentPick": 240,
+            "picksUntilNextUserPick": 7,
             "positionNeedLevel": "urgent",
             "starterSlotNeed": true,
             "benchDepthNeed": false,
@@ -12701,7 +12701,7 @@
           "survivalConfidenceScore": 58,
           "comparableOptionsNow": 17,
           "comparableOptionsLikelyNextPick": 15,
-          "comparableOptionsLikelyNextTwoPicks": 13,
+          "comparableOptionsLikelyNextTwoPicks": 14,
           "waitRisk": "low",
           "waitRiskReasons": [
             "DL projection confidence is low."
@@ -12767,8 +12767,8 @@
           },
           "draftContext": {
             "currentRound": 20,
-            "currentPick": 238,
-            "picksUntilNextUserPick": 9,
+            "currentPick": 240,
+            "picksUntilNextUserPick": 7,
             "positionNeedLevel": "urgent",
             "starterSlotNeed": true,
             "benchDepthNeed": false,
@@ -12791,7 +12791,7 @@
           "survivalConfidenceScore": 58,
           "comparableOptionsNow": 17,
           "comparableOptionsLikelyNextPick": 15,
-          "comparableOptionsLikelyNextTwoPicks": 13,
+          "comparableOptionsLikelyNextTwoPicks": 14,
           "waitRisk": "low",
           "waitRiskReasons": [
             "DL projection confidence is low."
@@ -12857,8 +12857,8 @@
           },
           "draftContext": {
             "currentRound": 20,
-            "currentPick": 238,
-            "picksUntilNextUserPick": 9,
+            "currentPick": 240,
+            "picksUntilNextUserPick": 7,
             "positionNeedLevel": "urgent",
             "starterSlotNeed": true,
             "benchDepthNeed": false,
@@ -12881,7 +12881,7 @@
           "survivalConfidenceScore": 58,
           "comparableOptionsNow": 17,
           "comparableOptionsLikelyNextPick": 15,
-          "comparableOptionsLikelyNextTwoPicks": 13,
+          "comparableOptionsLikelyNextTwoPicks": 14,
           "waitRisk": "low",
           "waitRiskReasons": [
             "DL projection confidence is low."
@@ -12947,8 +12947,8 @@
           },
           "draftContext": {
             "currentRound": 20,
-            "currentPick": 238,
-            "picksUntilNextUserPick": 9,
+            "currentPick": 240,
+            "picksUntilNextUserPick": 7,
             "positionNeedLevel": "urgent",
             "starterSlotNeed": true,
             "benchDepthNeed": false,
@@ -12971,7 +12971,7 @@
           "survivalConfidenceScore": 58,
           "comparableOptionsNow": 17,
           "comparableOptionsLikelyNextPick": 15,
-          "comparableOptionsLikelyNextTwoPicks": 13,
+          "comparableOptionsLikelyNextTwoPicks": 14,
           "waitRisk": "low",
           "waitRiskReasons": [
             "DL projection confidence is low."
@@ -13037,8 +13037,8 @@
           },
           "draftContext": {
             "currentRound": 20,
-            "currentPick": 238,
-            "picksUntilNextUserPick": 9,
+            "currentPick": 240,
+            "picksUntilNextUserPick": 7,
             "positionNeedLevel": "urgent",
             "starterSlotNeed": true,
             "benchDepthNeed": false,
@@ -13061,7 +13061,7 @@
           "survivalConfidenceScore": 58,
           "comparableOptionsNow": 17,
           "comparableOptionsLikelyNextPick": 15,
-          "comparableOptionsLikelyNextTwoPicks": 13,
+          "comparableOptionsLikelyNextTwoPicks": 14,
           "waitRisk": "low",
           "waitRiskReasons": [
             "DL projection confidence is low."
@@ -13127,8 +13127,8 @@
           },
           "draftContext": {
             "currentRound": 20,
-            "currentPick": 238,
-            "picksUntilNextUserPick": 9,
+            "currentPick": 240,
+            "picksUntilNextUserPick": 7,
             "positionNeedLevel": "urgent",
             "starterSlotNeed": true,
             "benchDepthNeed": false,
@@ -13151,7 +13151,7 @@
           "survivalConfidenceScore": 58,
           "comparableOptionsNow": 17,
           "comparableOptionsLikelyNextPick": 15,
-          "comparableOptionsLikelyNextTwoPicks": 13,
+          "comparableOptionsLikelyNextTwoPicks": 14,
           "waitRisk": "low",
           "waitRiskReasons": [
             "DL projection confidence is low."
@@ -13212,8 +13212,8 @@
           },
           "draftContext": {
             "currentRound": 20,
-            "currentPick": 238,
-            "picksUntilNextUserPick": 9,
+            "currentPick": 240,
+            "picksUntilNextUserPick": 7,
             "positionNeedLevel": "urgent",
             "starterSlotNeed": true,
             "benchDepthNeed": false,
@@ -13236,7 +13236,7 @@
           "survivalConfidenceScore": 50,
           "comparableOptionsNow": 18,
           "comparableOptionsLikelyNextPick": 16,
-          "comparableOptionsLikelyNextTwoPicks": 14,
+          "comparableOptionsLikelyNextTwoPicks": 15,
           "waitRisk": "severe",
           "waitRiskReasons": [
             "DL tier drop risk is high."
@@ -13295,8 +13295,8 @@
           },
           "draftContext": {
             "currentRound": 20,
-            "currentPick": 238,
-            "picksUntilNextUserPick": 9,
+            "currentPick": 240,
+            "picksUntilNextUserPick": 7,
             "positionNeedLevel": "urgent",
             "starterSlotNeed": true,
             "benchDepthNeed": false,
@@ -13319,7 +13319,7 @@
           "survivalConfidenceScore": 50,
           "comparableOptionsNow": 18,
           "comparableOptionsLikelyNextPick": 16,
-          "comparableOptionsLikelyNextTwoPicks": 14,
+          "comparableOptionsLikelyNextTwoPicks": 15,
           "waitRisk": "severe",
           "waitRiskReasons": [
             "DL tier drop risk is high."
@@ -13378,8 +13378,8 @@
           },
           "draftContext": {
             "currentRound": 20,
-            "currentPick": 238,
-            "picksUntilNextUserPick": 9,
+            "currentPick": 240,
+            "picksUntilNextUserPick": 7,
             "positionNeedLevel": "urgent",
             "starterSlotNeed": true,
             "benchDepthNeed": false,
@@ -13402,7 +13402,7 @@
           "survivalConfidenceScore": 50,
           "comparableOptionsNow": 18,
           "comparableOptionsLikelyNextPick": 16,
-          "comparableOptionsLikelyNextTwoPicks": 14,
+          "comparableOptionsLikelyNextTwoPicks": 15,
           "waitRisk": "severe",
           "waitRiskReasons": [
             "DL tier drop risk is high."
@@ -13457,8 +13457,8 @@
           },
           "draftContext": {
             "currentRound": 20,
-            "currentPick": 238,
-            "picksUntilNextUserPick": 9,
+            "currentPick": 240,
+            "picksUntilNextUserPick": 7,
             "positionNeedLevel": "low",
             "starterSlotNeed": false,
             "benchDepthNeed": false,
@@ -13481,7 +13481,7 @@
           "survivalConfidenceScore": 65,
           "comparableOptionsNow": 19,
           "comparableOptionsLikelyNextPick": 17,
-          "comparableOptionsLikelyNextTwoPicks": 15,
+          "comparableOptionsLikelyNextTwoPicks": 16,
           "waitRisk": "low",
           "waitRiskReasons": [
             "LB tier drop risk is high."
@@ -13536,8 +13536,8 @@
           },
           "draftContext": {
             "currentRound": 20,
-            "currentPick": 238,
-            "picksUntilNextUserPick": 9,
+            "currentPick": 240,
+            "picksUntilNextUserPick": 7,
             "positionNeedLevel": "low",
             "starterSlotNeed": false,
             "benchDepthNeed": false,
@@ -13560,7 +13560,7 @@
           "survivalConfidenceScore": 65,
           "comparableOptionsNow": 19,
           "comparableOptionsLikelyNextPick": 17,
-          "comparableOptionsLikelyNextTwoPicks": 15,
+          "comparableOptionsLikelyNextTwoPicks": 16,
           "waitRisk": "low",
           "waitRiskReasons": [
             "LB tier drop risk is high."
@@ -13612,7 +13612,7 @@
         "matchRate": 0.967,
         "insufficientDataRate": 0.033,
         "warningCounts": {
-          "LOW_PROJECTION_CONFIDENCE": 95,
+          "LOW_PROJECTION_CONFIDENCE": 96,
           "MARKET_NOT_IMPLEMENTED": 58,
           "Best-ball and managed-league ADP are not blended.": 87,
           "NO_COMPATIBLE_MARKET": 87,

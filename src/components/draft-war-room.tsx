@@ -14,7 +14,7 @@ import {
   type H10RecommendationSource,
 } from "@/lib/draft/war-room-recommendation-experiment-ui";
 import { buildBlackbirdBoard, type BlackbirdBoardRow, type BlackbirdBoardSortKey } from "@/lib/draft/blackbird-board";
-import { applyLivePlanFitToBoardRows, buildLivePlanStatus } from "@/lib/draft/live-plan-status";
+import { applyLivePlanFitToBoardRows, buildLivePlanStatus, type LivePlanStatus } from "@/lib/draft/live-plan-status";
 import {
   draftBoardPositionBadgeClass,
   draftBoardPositionCardClass,
@@ -780,6 +780,8 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
         <aside className="min-w-0 space-y-5">
           {!strategyProminent ? <PreDraftStrategyPanel loadState={strategyState} /> : null}
 
+          <LivePlanStatusPanel status={livePlanStatus} />
+
           <SidePanel title="My Roster Construction">
             <RosterConstructionSummary state={state} />
             <div className="mt-3 rounded-md border border-line bg-panel2 px-3 py-2 text-sm">
@@ -994,6 +996,118 @@ function TeamRosterStrip({ team, picks }: { team: DraftBoardTeam; picks: PickLin
         ))}
         {!picks.length ? <p className="text-sm text-slate-400">No synced picks for this team yet. Sync Sleeper draft picks to populate this roster view.</p> : null}
       </div>
+    </div>
+  );
+}
+
+function LivePlanStatusPanel({ status }: { status: LivePlanStatus | null }) {
+  if (!status) {
+    return (
+      <SidePanel title="Live Plan Status">
+        <div className="rounded-md border border-line bg-panel2 px-3 py-3 text-sm text-slate-400">
+          Insufficient data to score the live plan.
+        </div>
+      </SidePanel>
+    );
+  }
+
+  const activeSignals = [
+    ...status.triggeredContingencies.slice(0, 2).map((item) => ({
+      label: "Contingency active",
+      text: item.label,
+      tone: "gold" as const,
+    })),
+    ...status.tierRiskStatus.filter((item) => item.riskLevel !== "low").slice(0, 2).map((item) => ({
+      label: "Tier risk rising",
+      text: item.summary,
+      tone: "red" as const,
+    })),
+    ...status.valueFallStatus.slice(0, 2).map((item) => ({
+      label: "Unexpected value signal",
+      text: item.summary,
+      tone: "brand" as const,
+    })),
+    ...status.waitPlanStatus.filter((item) => item.status !== "not_waiting").slice(0, 2).map((item) => ({
+      label: item.status === "supported" ? "Wait plan supported" : "Wait plan weakening",
+      text: item.summary,
+      tone: item.status === "supported" ? "green" as const : "gold" as const,
+    })),
+  ].slice(0, 6);
+
+  return (
+    <SidePanel title="Live Plan Status">
+      <div className="space-y-3">
+        <div className="rounded-md border border-line bg-panel2 px-3 py-3">
+          <div className="flex flex-wrap items-center gap-2">
+            <LivePlanBadge status={status.overallStatus} label={status.statusLabel} />
+            {status.activeRoundWindowIds.slice(0, 2).map((windowId) => (
+              <span key={windowId} className="rounded-full border border-line bg-background px-2 py-1 text-[11px] font-bold text-slate-300">
+                {windowId}
+              </span>
+            ))}
+          </div>
+          <p className="mt-3 text-sm leading-relaxed text-slate-300">{status.statusSummary}</p>
+          <div className="mt-3 grid grid-cols-3 gap-2 text-xs">
+            <MiniDetail label="Pick" value={formatNullableNumber(status.currentPickNumber)} />
+            <MiniDetail label="Round" value={formatNullableNumber(status.currentRound)} />
+            <MiniDetail label="Until turn" value={formatNullableNumber(status.picksUntilMyTurn)} />
+          </div>
+        </div>
+
+        {activeSignals.length ? (
+          <div className="grid gap-2">
+            {activeSignals.map((signal, index) => (
+              <LiveSignal key={`${signal.label}-${index}`} label={signal.label} text={signal.text} tone={signal.tone} />
+            ))}
+          </div>
+        ) : (
+          <p className="rounded-md border border-line bg-background/60 px-3 py-2 text-sm text-slate-400">
+            No active contingency or tier alerts are visible.
+          </p>
+        )}
+
+        <DetailList
+          title="Focus"
+          items={status.recommendedFocus.slice(0, 4).map((item) => `${item.label}: ${item.reason}`)}
+        />
+        <DetailList
+          title="Position Plan"
+          items={status.positionPlanStatus
+            .filter((item) => ["thin", "behind", "intentionally_waiting", "avoid_forcing"].includes(item.status))
+            .slice(0, 4)
+            .map((item) => item.summary)}
+        />
+        <DetailList title="Data Gaps" items={status.dataGaps.slice(0, 5)} />
+      </div>
+    </SidePanel>
+  );
+}
+
+function LivePlanBadge({ status, label }: { status: LivePlanStatus["overallStatus"]; label: string }) {
+  const className =
+    status === "on_plan" || status === "pre_draft"
+      ? "border-emerald-400/30 bg-emerald-500/10 text-emerald-200"
+      : status === "slightly_off_plan" || status === "off_plan_recoverable"
+        ? "border-brand/30 bg-brand/10 text-brand"
+        : status === "contingency_active" || status === "needs_attention"
+          ? "border-gold/35 bg-gold/10 text-gold"
+          : "border-line bg-background text-slate-400";
+  return <span className={`rounded-full border px-2 py-1 text-[11px] font-black uppercase tracking-wide ${className}`}>{label}</span>;
+}
+
+function LiveSignal({ label, text, tone }: { label: string; text: string; tone: "gold" | "red" | "brand" | "green" }) {
+  const className =
+    tone === "red"
+      ? "border-red-400/25 bg-red-500/10 text-red-100"
+      : tone === "green"
+        ? "border-emerald-400/25 bg-emerald-500/10 text-emerald-100"
+        : tone === "brand"
+          ? "border-brand/25 bg-brand/10 text-brand"
+          : "border-gold/30 bg-gold/10 text-gold";
+  return (
+    <div className={`rounded-md border px-3 py-2 text-sm ${className}`}>
+      <div className="text-[11px] font-black uppercase tracking-wide opacity-80">{label}</div>
+      <div className="mt-1 leading-relaxed">{text}</div>
     </div>
   );
 }

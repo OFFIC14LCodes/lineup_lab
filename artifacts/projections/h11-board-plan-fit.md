@@ -2,7 +2,7 @@
 
 ```json
 {
-  "generatedAt": "2026-06-16T00:07:05.850Z",
+  "generatedAt": "2026-06-16T03:51:25.860Z",
   "verdict": "passed",
   "checks": [
     {
@@ -13,12 +13,12 @@
     {
       "name": "contextual_rank_primary",
       "passed": true,
-      "detail": "available players -> contextual Blackbird value -> PAR -> projected fantasy points -> H10 tie-breakers -> position/name"
+      "detail": "static Blackbird league rank; ADP external reference only"
     },
     {
       "name": "h10_score_not_rank_source",
       "passed": true,
-      "detail": "available players -> contextual Blackbird value -> PAR -> projected fantasy points -> H10 tie-breakers -> position/name"
+      "detail": "static Blackbird league rank; ADP external reference only"
     },
     {
       "name": "data_gaps_visible",

@@ -51,9 +51,59 @@ const STAT_LABELS: Record<string, string> = {
   fieldGoalsMade: "FGM",
   fieldGoalsAttempted: "FGA",
   extraPointsMade: "XPM",
+  pass_yd: "Pass Yds",
+  pass_td: "Pass TD",
+  pass_int: "INT",
+  pass_att: "Pass Att",
+  pass_cmp: "Pass Cmp",
+  rush_att: "Rush Att",
+  rush_yd: "Rush Yds",
+  rush_td: "Rush TD",
+  target: "Targets",
+  rec: "Rec",
+  rec_yd: "Rec Yds",
+  rec_td: "Rec TD",
+  ypc: "YPC",
+  ypr: "YPR",
+  fum: "Fum",
+  fum_lost: "Fum Lost",
+  solo_tkl: "Solo",
+  ast_tkl: "Ast",
+  total_tkl: "Total Tkl",
+  tfl: "TFL",
+  sack: "Sacks",
+  qb_hit: "QB Hits",
+  pass_def: "PD",
+  def_int: "Def INT",
+  ff: "FF",
+  fr: "FR",
+  def_td: "Def TD",
+  fg_made: "FGM",
+  fg_att: "FGA",
+  fg_miss: "FG Miss",
+  pat_made: "XPM",
+  pat_att: "XPA",
+  pat_miss: "XP Miss",
 };
 
 const HISTORY_KEY_ALIASES: Record<string, string[]> = {
+  pass_yd: ["pass_yd", "passYards"],
+  pass_td: ["pass_td", "passTds"],
+  pass_int: ["pass_int", "interceptions"],
+  pass_att: ["pass_att", "passAttempts"],
+  pass_cmp: ["pass_cmp", "passCompletions"],
+  rush_att: ["rush_att", "carries"],
+  rush_yd: ["rush_yd", "rushingYards"],
+  rush_td: ["rush_td", "rushingTds"],
+  target: ["target", "targets"],
+  rec: ["rec", "receptions"],
+  rec_yd: ["rec_yd", "receivingYards"],
+  rec_td: ["rec_td", "receivingTds"],
+  fum_lost: ["fum_lost", "fumblesLost"],
+  solo_tkl: ["solo_tkl", "tackles", "solo_tackles", "tackle_solo"],
+  ast_tkl: ["ast_tkl", "assists", "assisted_tackles", "tackle_ast"],
+  def_int: ["def_int", "interceptionsDefense", "interception"],
+  sack: ["sack", "sacks", "def_sack"],
   passAttempts: ["pass_att"],
   passCompletions: ["pass_cmp"],
   passYards: ["pass_yd"],
@@ -71,20 +121,20 @@ const HISTORY_KEY_ALIASES: Record<string, string[]> = {
   tackles: ["solo_tkl", "tackle_solo", "solo_tackle", "solo_tackles"],
   assists: ["ast_tkl", "tackle_ast", "assist_tkl", "assist_tackle", "assisted_tackles"],
   interceptionsDefense: ["def_int", "interception"],
-  fieldGoalsMade: ["fgm"],
-  fieldGoalsAttempted: ["fga"],
-  extraPointsMade: ["xpm"],
+  fieldGoalsMade: ["fg_made", "fgm"],
+  fieldGoalsAttempted: ["fg_att", "fga"],
+  extraPointsMade: ["pat_made", "xpm"],
 };
 
 const POSITION_STAT_KEYS: Record<string, string[]> = {
-  QB: ["passAttempts", "passCompletions", "passYards", "passTds", "interceptions", "carries", "rushingYards", "rushingTds", "fumblesLost"],
-  RB: ["carries", "rushingYards", "rushingTds", "targets", "receptions", "receivingYards", "receivingTds", "fumblesLost"],
-  WR: ["targets", "receptions", "receivingYards", "receivingTds", "carries", "rushingYards", "rushingTds", "fumblesLost"],
-  TE: ["targets", "receptions", "receivingYards", "receivingTds", "fumblesLost"],
-  K: ["fieldGoalsMade", "fieldGoalsAttempted", "extraPointsMade"],
-  DL: ["sacks", "tackles", "assists", "interceptionsDefense"],
-  LB: ["tackles", "assists", "sacks", "interceptionsDefense"],
-  DB: ["tackles", "assists", "interceptionsDefense", "sacks"],
+  QB: ["pass_yd", "pass_td", "pass_int", "pass_att", "pass_cmp", "rush_att", "rush_yd", "rush_td", "fum_lost"],
+  RB: ["rush_att", "rush_yd", "ypc", "rush_td", "target", "rec", "rec_yd", "rec_td", "fum", "fum_lost"],
+  WR: ["target", "rec", "rec_yd", "ypr", "rec_td", "rush_att", "rush_yd", "rush_td", "fum_lost"],
+  TE: ["target", "rec", "rec_yd", "ypr", "rec_td", "fum_lost"],
+  K: ["pat_made", "pat_att", "fg_made", "fg_att", "fg_miss"],
+  DL: ["solo_tkl", "ast_tkl", "total_tkl", "tfl", "sack", "qb_hit", "ff", "fr", "pass_def"],
+  LB: ["solo_tkl", "ast_tkl", "total_tkl", "tfl", "sack", "pass_def", "def_int", "ff", "fr"],
+  DB: ["solo_tkl", "ast_tkl", "total_tkl", "pass_def", "def_int", "sack", "tfl", "ff", "fr"],
 };
 
 export function isUuid(value: string): boolean {
@@ -110,7 +160,7 @@ function buildStatLineFromRecord(stats: Record<string, unknown>, position: strin
 
   return statKeys
     .map((key) => {
-      const value = source === "projection" ? numeric(stats[key]) : readHistoricalValue(stats, key);
+      const value = source === "projection" ? readProjectionValue(stats, key) : readHistoricalValue(stats, key);
       if (value === null) return null;
       return {
         key,
@@ -119,6 +169,12 @@ function buildStatLineFromRecord(stats: Record<string, unknown>, position: strin
       };
     })
     .filter((item): item is PlayerProfileStatLineItem => item !== null);
+}
+
+function readProjectionValue(stats: Record<string, unknown>, key: string): number | null {
+  const exact = numeric(stats[key]);
+  if (exact !== null) return exact;
+  return readHistoricalValue(stats, key);
 }
 
 function readHistoricalValue(stats: Record<string, unknown>, projectionKey: string): number | null {

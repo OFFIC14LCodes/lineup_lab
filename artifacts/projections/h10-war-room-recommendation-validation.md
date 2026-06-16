@@ -1,6 +1,6 @@
 # H10.8 War Room Recommendation Validation
 
-Generated: 2026-06-16T01:18:38.124Z
+Generated: 2026-06-16T04:49:20.777Z
 
 Readiness verdict: ready
 
@@ -112,7 +112,7 @@ Readiness verdict: ready
 - Match rate: 0.967
 - Rows by tier: {"watchlist":16,"avoid_for_now":129,"insufficient_data":5}
 - Rows by status: {"watch_only":145,"missing_projection":5}
-- Warnings: {"LOW_PROJECTION_CONFIDENCE":95,"MARKET_NOT_IMPLEMENTED":58,"Best-ball and managed-league ADP are not blended.":87,"NO_COMPATIBLE_MARKET":87,"SINGLE_SEASON_OFFENSIVE_BASELINE":87,"H10_VALUE_OVERLAY_MISSING_PROJECTION":5}
+- Warnings: {"LOW_PROJECTION_CONFIDENCE":96,"MARKET_NOT_IMPLEMENTED":58,"Best-ball and managed-league ADP are not blended.":87,"NO_COMPATIBLE_MARKET":87,"SINGLE_SEASON_OFFENSIVE_BASELINE":87,"H10_VALUE_OVERLAY_MISSING_PROJECTION":5}
 - Thresholds: {"matchRatePass":true,"insufficientDataPass":true,"invariantPass":true,"legacyUnchangedPass":true,"remainingOrderUnchangedPass":true,"forbiddenLanguagePass":true,"offensiveTargetTierPass":false,"superflexQbUrgencyPass":false,"kEarlySuppressionPass":null,"dstEarlySuppressionPass":null}
 - Experiment readiness: {"legacyReady":false,"blackbirdPreviewReady":true,"blackbirdExperimentEligible":true,"failedExperimentGates":[]}
 - Legacy changed: false

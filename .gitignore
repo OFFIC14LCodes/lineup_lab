@@ -7,3 +7,5 @@ dev-server.*.log
 dev-h*.log
 *.tsbuildinfo
 data/raw/
+artifacts/projections/h9-comprehensive-scored-projections.json
+artifacts/projections/h9-comprehensive-stat-projections.json

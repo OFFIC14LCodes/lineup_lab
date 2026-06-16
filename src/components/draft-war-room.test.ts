@@ -77,6 +77,13 @@ describe("DraftWarRoom H11 strategy UI wiring", () => {
       "Blackbird Power Rank",
       "Draft Suggestion",
       "Risk",
+      "Live Plan Status",
+      "Contingency active",
+      "Wait plan supported",
+      "Wait plan weakening",
+      "Tier risk rising",
+      "Unexpected value signal",
+      "Data Gaps",
       "withFallbackDraftSuggestionRanks",
       "Filters and sort are local to this browser view.",
     ].forEach((text) => expect(source).toContain(text));

@@ -4,21 +4,22 @@
    - Environments: .env.local
 
  ✓ Starting...
- ✓ Ready in 3.4s
+ ✓ Ready in 3.7s
  ○ Compiling / ...
- ✓ Compiled / in 1537ms (635 modules)
- GET / 200 in 453ms
- GET / 200 in 282ms
+ ✓ Compiled / in 1845ms (635 modules)
+ GET / 200 in 2020ms
+ GET / 200 in 270ms
  ○ Compiling /api/draft-rooms/[draftRoomId]/state ...
- ✓ Compiled /api/draft-rooms/[draftRoomId]/state in 1824ms (744 modules)
- GET /api/draft-rooms/c82aef89-ce90-40f0-936f-545656045554/state 200 in 5148ms
+ ✓ Compiled /api/draft-rooms/[draftRoomId]/state in 1645ms (744 modules)
+ GET /api/draft-rooms/c82aef89-ce90-40f0-936f-545656045554/state 200 in 5417ms
  ○ Compiling /drafts/[draftRoomId] ...
- ✓ Compiled /drafts/[draftRoomId] in 855ms (796 modules)
- GET /drafts/c82aef89-ce90-40f0-936f-545656045554 200 in 2706ms
+ ✓ Compiled /drafts/[draftRoomId] in 685ms (796 modules)
+ GET /drafts/c82aef89-ce90-40f0-936f-545656045554 200 in 2569ms
  ○ Compiling /api/draft-rooms/[draftRoomId]/pre-draft-strategy ...
- ✓ Compiled /api/draft-rooms/[draftRoomId]/pre-draft-strategy in 805ms (802 modules)
- GET /api/draft-rooms/c82aef89-ce90-40f0-936f-545656045554/state 200 in 2952ms
- GET /api/draft-rooms/c82aef89-ce90-40f0-936f-545656045554/pre-draft-strategy 200 in 4596ms
- GET /api/draft-rooms/c82aef89-ce90-40f0-936f-545656045554/state 200 in 1796ms
- GET /api/draft-rooms/c82aef89-ce90-40f0-936f-545656045554/state 200 in 1588ms
- GET /api/draft-rooms/c82aef89-ce90-40f0-936f-545656045554/state 200 in 2133ms
+ ✓ Compiled /api/draft-rooms/[draftRoomId]/pre-draft-strategy in 580ms (802 modules)
+ GET /api/draft-rooms/c82aef89-ce90-40f0-936f-545656045554/state 200 in 2735ms
+ GET /api/draft-rooms/c82aef89-ce90-40f0-936f-545656045554/pre-draft-strategy 200 in 4309ms
+ GET /api/draft-rooms/c82aef89-ce90-40f0-936f-545656045554/state 200 in 1829ms
+ GET /api/draft-rooms/c82aef89-ce90-40f0-936f-545656045554/state 200 in 1723ms
+ GET /api/draft-rooms/c82aef89-ce90-40f0-936f-545656045554/state 200 in 1628ms
+ GET /api/draft-rooms/c82aef89-ce90-40f0-936f-545656045554/state 200 in 2004ms

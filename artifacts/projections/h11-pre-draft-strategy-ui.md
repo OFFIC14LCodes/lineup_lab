@@ -1,15 +1,15 @@
 # H11.2 Pre-Draft Strategy UI
 
-Generated: 2026-06-16T01:22:39.974Z
-Verdict: passed
+Generated: 2026-06-16T04:50:26.353Z
+Verdict: failed
 Endpoint: /api/draft-rooms/[draftRoomId]/pre-draft-strategy
 
 ## Summary
 
 - Total: 2
-- Passed: 2
-- Failed: 0
-- Mutation safety passed: true
+- Passed: 1
+- Failed: 1
+- Mutation safety passed: false
 - Banned language passed: true
 
 ## Results
@@ -20,7 +20,7 @@ Endpoint: /api/draft-rooms/[draftRoomId]/pre-draft-strategy
 - Data gaps rendered: true
 - Safety caveats visible: true
 - Banned language found: none
-- Mutation safety: {"draftStateUnchanged":true,"availablePlayerOrderUnchanged":true,"strategyEndpointStable":true}
+- Mutation safety: {"draftStateUnchanged":false,"availablePlayerOrderUnchanged":false,"strategyEndpointStable":true}
 - Responsive: [{"viewport":"desktop","passed":true,"error":null},{"viewport":"mobile","passed":true,"error":null}]
 - Screenshots: C:\Projects\lineup_lab\artifacts\projections\h11-pre-draft-strategy-ui-screenshots\desktop-c82aef89-ce90-40f0-936f-545656045554.png, C:\Projects\lineup_lab\artifacts\projections\h11-pre-draft-strategy-ui-screenshots\mobile-c82aef89-ce90-40f0-936f-545656045554.png
 - Error: none
