@@ -1,0 +1,328 @@
+{
+  "generatedAt": "2026-06-16T21:08:59.488Z",
+  "dryRun": true,
+  "totalProfilesBuilt": 7511,
+  "profilesByPosition": {
+    "QB": 346,
+    "LB": 1261,
+    "WR": 1319,
+    "TE": 649,
+    "DL": 1248,
+    "K": 138,
+    "RB": 812,
+    "DB": 1738
+  },
+  "profilesByMatchConfidence": {
+    "strong": 2982,
+    "exact_id": 4388,
+    "weak": 100,
+    "medium": 41
+  },
+  "profilesWithWeeklyStats": 1700,
+  "profilesWithoutWeeklyStats": 5811,
+  "profilesWithIdpStats": 1389,
+  "profilesWithWarnings": 6248,
+  "skippedMatches": {
+    "unmatched": 2151,
+    "conflict": 197,
+    "missingGsisId": 0
+  },
+  "sampleTopProfilesByPosition": {
+    "QB": [
+      {
+        "playerName": "Drake Maye",
+        "gsisId": "00-0039851",
+        "totalFantasyPoints": 426.8,
+        "gamesPlayed": 21
+      },
+      {
+        "playerName": "Josh Allen",
+        "gsisId": "00-0034857",
+        "totalFantasyPoints": 424.6,
+        "gamesPlayed": 18
+      },
+      {
+        "playerName": "Matthew Stafford",
+        "gsisId": "00-0026498",
+        "totalFantasyPoints": 417.3,
+        "gamesPlayed": 20
+      },
+      {
+        "playerName": "Trevor Lawrence",
+        "gsisId": "00-0036971",
+        "totalFantasyPoints": 361.5,
+        "gamesPlayed": 18
+      },
+      {
+        "playerName": "Caleb Williams",
+        "gsisId": "00-0039918",
+        "totalFantasyPoints": 355,
+        "gamesPlayed": 19
+      }
+    ],
+    "LB": [
+      {
+        "playerName": "Jordyn Brooks",
+        "gsisId": "00-0036409",
+        "totalFantasyPoints": 302,
+        "gamesPlayed": 17
+      },
+      {
+        "playerName": "Jack Campbell",
+        "gsisId": "00-0039018",
+        "totalFantasyPoints": 301,
+        "gamesPlayed": 17
+      },
+      {
+        "playerName": "Devin White",
+        "gsisId": "00-0035707",
+        "totalFantasyPoints": 283,
+        "gamesPlayed": 17
+      },
+      {
+        "playerName": "Bobby Wagner",
+        "gsisId": "00-0029255",
+        "totalFantasyPoints": 272,
+        "gamesPlayed": 17
+      },
+      {
+        "playerName": "Ernest Jones",
+        "gsisId": "00-0036994",
+        "totalFantasyPoints": 270,
+        "gamesPlayed": 18
+      }
+    ],
+    "WR": [
+      {
+        "playerName": "Puka Nacua",
+        "gsisId": "00-0039075",
+        "totalFantasyPoints": 454.6,
+        "gamesPlayed": 19
+      },
+      {
+        "playerName": "Jaxon Smith-Njigba",
+        "gsisId": "00-0038543",
+        "totalFantasyPoints": 410.8,
+        "gamesPlayed": 20
+      },
+      {
+        "playerName": "Amon-Ra St. Brown",
+        "gsisId": "00-0036963",
+        "totalFantasyPoints": 324,
+        "gamesPlayed": 17
+      },
+      {
+        "playerName": "Ja'Marr Chase",
+        "gsisId": "00-0036900",
+        "totalFantasyPoints": 315.6,
+        "gamesPlayed": 16
+      },
+      {
+        "playerName": "George Pickens",
+        "gsisId": "00-0037247",
+        "totalFantasyPoints": 289.9,
+        "gamesPlayed": 17
+      }
+    ],
+    "TE": [
+      {
+        "playerName": "Trey McBride",
+        "gsisId": "00-0037744",
+        "totalFantasyPoints": 315.9,
+        "gamesPlayed": 17
+      },
+      {
+        "playerName": "Kyle Pitts",
+        "gsisId": "00-0036970",
+        "totalFantasyPoints": 210.8,
+        "gamesPlayed": 17
+      },
+      {
+        "playerName": "Hunter Henry",
+        "gsisId": "00-0033090",
+        "totalFantasyPoints": 205,
+        "gamesPlayed": 21
+      },
+      {
+        "playerName": "Dallas Goedert",
+        "gsisId": "00-0034351",
+        "totalFantasyPoints": 204.5,
+        "gamesPlayed": 16
+      },
+      {
+        "playerName": "Colston Loveland",
+        "gsisId": "00-0040126",
+        "totalFantasyPoints": 196.4,
+        "gamesPlayed": 18
+      }
+    ],
+    "DL": [
+      {
+        "playerName": "Myles Garrett",
+        "gsisId": "00-0033868",
+        "totalFantasyPoints": 242,
+        "gamesPlayed": 17
+      },
+      {
+        "playerName": "Danielle Hunter",
+        "gsisId": "00-0031565",
+        "totalFantasyPoints": 213,
+        "gamesPlayed": 18
+      },
+      {
+        "playerName": "Will Anderson",
+        "gsisId": "00-0039108",
+        "totalFantasyPoints": 198,
+        "gamesPlayed": 19
+      },
+      {
+        "playerName": "Aidan Hutchinson",
+        "gsisId": "00-0037236",
+        "totalFantasyPoints": 190,
+        "gamesPlayed": 17
+      },
+      {
+        "playerName": "Maxx Crosby",
+        "gsisId": "00-0034973",
+        "totalFantasyPoints": 186,
+        "gamesPlayed": 15
+      }
+    ],
+    "K": [
+      {
+        "playerName": "Jason Myers",
+        "gsisId": "00-0031492",
+        "totalFantasyPoints": 200,
+        "gamesPlayed": 20
+      },
+      {
+        "playerName": "Ka'imi Fairbairn",
+        "gsisId": "00-0032726",
+        "totalFantasyPoints": 172,
+        "gamesPlayed": 17
+      },
+      {
+        "playerName": "Brandon Aubrey",
+        "gsisId": "00-0037692",
+        "totalFantasyPoints": 148,
+        "gamesPlayed": 17
+      },
+      {
+        "playerName": "Cameron Dicker",
+        "gsisId": "00-0037224",
+        "totalFantasyPoints": 147,
+        "gamesPlayed": 18
+      },
+      {
+        "playerName": "Andy Borregales",
+        "gsisId": "00-0040200",
+        "totalFantasyPoints": 145,
+        "gamesPlayed": 21
+      }
+    ],
+    "RB": [
+      {
+        "playerName": "Christian McCaffrey",
+        "gsisId": "00-0033280",
+        "totalFantasyPoints": 458.4,
+        "gamesPlayed": 19
+      },
+      {
+        "playerName": "Bijan Robinson",
+        "gsisId": "00-0038542",
+        "totalFantasyPoints": 374.8,
+        "gamesPlayed": 17
+      },
+      {
+        "playerName": "Jahmyr Gibbs",
+        "gsisId": "00-0039139",
+        "totalFantasyPoints": 368.9,
+        "gamesPlayed": 17
+      },
+      {
+        "playerName": "Jonathan Taylor",
+        "gsisId": "00-0036223",
+        "totalFantasyPoints": 362.3,
+        "gamesPlayed": 17
+      },
+      {
+        "playerName": "James Cook",
+        "gsisId": "00-0037248",
+        "totalFantasyPoints": 331.4,
+        "gamesPlayed": 19
+      }
+    ],
+    "DB": [
+      {
+        "playerName": "Kam Curl",
+        "gsisId": "00-0036349",
+        "totalFantasyPoints": 268,
+        "gamesPlayed": 20
+      },
+      {
+        "playerName": "Talanoa Hufanga",
+        "gsisId": "00-0036564",
+        "totalFantasyPoints": 226,
+        "gamesPlayed": 19
+      },
+      {
+        "playerName": "Nick Cross",
+        "gsisId": "00-0037616",
+        "totalFantasyPoints": 214,
+        "gamesPlayed": 17
+      },
+      {
+        "playerName": "Chamarri Conner",
+        "gsisId": "00-0038982",
+        "totalFantasyPoints": 210,
+        "gamesPlayed": 17
+      },
+      {
+        "playerName": "Jordan Battle",
+        "gsisId": "00-0038560",
+        "totalFantasyPoints": 209,
+        "gamesPlayed": 17
+      }
+    ]
+  },
+  "scoringProfileUsed": {
+    "id": "blackbird-default-profile-scoring",
+    "label": "Blackbird default dry-run profile scoring",
+    "version": "v1",
+    "scoringSettings": {
+      "pass_yd": 0.04,
+      "pass_td": 4,
+      "pass_int": -2,
+      "rush_yd": 0.1,
+      "rush_td": 6,
+      "rec": 1,
+      "rec_yd": 0.1,
+      "rec_td": 6,
+      "fgm": 3,
+      "xpm": 1,
+      "fgmiss": -1,
+      "xpmiss": -1,
+      "solo_tkl": 2,
+      "ast_tkl": 1,
+      "sack": 6,
+      "int": 4,
+      "ff": 2,
+      "fr": 2,
+      "pd": 1,
+      "def_td": 6,
+      "safe": 2
+    },
+    "notes": [
+      "Dry-run default profile only; not a league-specific scoring profile.",
+      "IDP support includes solo tackles and sacks so defensive profiles do not collapse to near-zero points.",
+      "Replace with league scoring when profiles are wired into product surfaces."
+    ]
+  },
+  "limitations": [
+    "Dry-run only. No Supabase writes are performed.",
+    "Scoring uses a clearly labeled default profile, not league-specific settings.",
+    "Position rank is calculated only within the built historical profile snapshot.",
+    "Expected missed weeks use a simple 17-week estimate and do not yet account for byes, injuries, or playoff weeks.",
+    "Profiles are not yet consumed by projections, Blackbird Rank, or War Room recommendations."
+  ]
+}

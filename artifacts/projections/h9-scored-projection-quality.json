@@ -1,6 +1,6 @@
 {
   "kind": "scored-projection-quality",
-  "generatedAt": "2026-06-16T04:47:54.240Z",
+  "generatedAt": "2026-06-16T16:33:43.421Z",
   "verdict": "passed",
   "failureReasons": [],
   "warnings": [
@@ -341,34 +341,8 @@
     "floorMedianCeilingFailures": 0
   },
   "persistence": {
-    "persistence": {
-      "projectionRunId": "3fa33111-b8f6-450d-93cb-8cf12acdfb4a",
-      "reusedCompleteRun": false
-    },
-    "persistenceInspection": {
-      "projectionRunId": "3fa33111-b8f6-450d-93cb-8cf12acdfb4a",
-      "inputCount": 7234,
-      "outputCount": 27820,
-      "reasonCount": 23202,
-      "distinctInputPlayers": 7234,
-      "distinctOutputPlayers": 2140,
-      "distinctOutputLeagues": 13,
-      "positionDistribution": {
-        "TE": 601,
-        "RB": 706,
-        "DL": 1358,
-        "DB": 1680,
-        "WR": 1296,
-        "LB": 1086,
-        "QB": 354,
-        "K": 153
-      },
-      "duplicateInputKeys": 0,
-      "duplicateOutputKeys": 0,
-      "duplicateReasonKeys": 0,
-      "missingPlayerLeagueOutputs": 0,
-      "complete": true
-    }
+    "persistence": null,
+    "persistenceInspection": null
   },
   "samples": {
     "byPosition": {
@@ -505,18 +479,17 @@
         "dataGaps": [
           "missing NFL draft capital",
           "missing college production profile",
-          "missing NFL draft capital",
           "rookie role uncertainty"
         ],
         "medianStats": {
-          "solo_tkl": 30.6,
-          "ast_tkl": 15,
-          "total_tkl": 45.6,
-          "pass_def": 3.4,
-          "def_int": 0.8,
-          "sack": 0.3,
-          "tfl": 1.4,
-          "ff": 0.5
+          "solo_tkl": 22.5,
+          "ast_tkl": 11,
+          "total_tkl": 33.5,
+          "pass_def": 2.5,
+          "def_int": 0.6,
+          "sack": 0.2,
+          "tfl": 1,
+          "ff": 0.4
         }
       },
       "WR": {
@@ -527,20 +500,19 @@
         "dataGaps": [
           "missing NFL draft capital",
           "missing college production profile",
-          "missing NFL draft capital",
           "rookie role uncertainty"
         ],
         "medianStats": {
-          "target": 49,
-          "rec": 29.2,
-          "rec_yd": 370.6,
-          "rec_td": 2,
-          "rush_att": 2,
-          "rush_yd": 12.2,
+          "target": 37.4,
+          "rec": 22.4,
+          "rec_yd": 283.4,
+          "rec_td": 1.6,
+          "rush_att": 1.6,
+          "rush_yd": 9.4,
           "rush_td": 0.1,
-          "fum": 0.7,
-          "fum_lost": 0.3,
-          "ypc": 6.1,
+          "fum": 0.5,
+          "fum_lost": 0.2,
+          "ypc": 5.9,
           "ypr": 12.7
         }
       },
@@ -552,19 +524,18 @@
         "dataGaps": [
           "missing NFL draft capital",
           "missing college production profile",
-          "missing NFL draft capital",
           "rookie role uncertainty"
         ],
         "medianStats": {
-          "solo_tkl": 37.4,
-          "ast_tkl": 21.8,
-          "total_tkl": 59.2,
-          "tfl": 3.4,
-          "sack": 1.7,
-          "qb_hit": 3.4,
-          "pass_def": 2,
-          "def_int": 0.3,
-          "ff": 0.7
+          "solo_tkl": 27.5,
+          "ast_tkl": 16,
+          "total_tkl": 43.5,
+          "tfl": 2.5,
+          "sack": 1.2,
+          "qb_hit": 2.5,
+          "pass_def": 1.5,
+          "def_int": 0.2,
+          "ff": 0.5
         }
       },
       "RB": {
@@ -575,19 +546,18 @@
         "dataGaps": [
           "missing NFL draft capital",
           "missing college production profile",
-          "missing NFL draft capital",
           "rookie role uncertainty"
         ],
         "medianStats": {
-          "rush_att": 78.2,
-          "rush_yd": 336.6,
-          "rush_td": 2.7,
-          "target": 23.8,
-          "rec": 16.3,
-          "rec_yd": 122.4,
-          "rec_td": 0.7,
-          "fum": 1.4,
-          "fum_lost": 0.7,
+          "rush_att": 59.8,
+          "rush_yd": 257.4,
+          "rush_td": 2.1,
+          "target": 18.2,
+          "rec": 12.5,
+          "rec_yd": 93.6,
+          "rec_td": 0.5,
+          "fum": 1,
+          "fum_lost": 0.5,
           "ypc": 4.3,
           "ypr": 7.5
         }
@@ -600,17 +570,16 @@
         "dataGaps": [
           "missing NFL draft capital",
           "missing college production profile",
-          "missing NFL draft capital",
           "rookie role uncertainty"
         ],
         "medianStats": {
-          "pat_att": 23.1,
-          "pat_made": 21.8,
-          "fg_att": 17.7,
-          "fg_made": 14.3,
-          "fg_miss": 3.4,
-          "fg_pct": 80.8,
-          "pat_pct": 94.4
+          "pat_att": 18.4,
+          "pat_made": 17.3,
+          "fg_att": 14,
+          "fg_made": 11.3,
+          "fg_miss": 2.7,
+          "fg_pct": 80.7,
+          "pat_pct": 94
         }
       },
       "QB": {
@@ -621,22 +590,21 @@
         "dataGaps": [
           "missing NFL draft capital",
           "missing college production profile",
-          "missing NFL draft capital",
           "rookie role uncertainty"
         ],
         "medianStats": {
-          "pass_att": 176.8,
-          "pass_cmp": 107.4,
-          "pass_yd": 1224,
-          "pass_td": 6.8,
-          "pass_int": 5.4,
-          "rush_att": 30.6,
-          "rush_yd": 142.8,
-          "rush_td": 1.4,
-          "fum": 3.4,
-          "fum_lost": 1.4,
+          "pass_att": 135.2,
+          "pass_cmp": 82.2,
+          "pass_yd": 936,
+          "pass_td": 5.2,
+          "pass_int": 4.2,
+          "rush_att": 23.4,
+          "rush_yd": 109.2,
+          "rush_td": 1,
+          "fum": 2.6,
+          "fum_lost": 1,
           "ypc": 4.7,
-          "cmp_pct": 60.7
+          "cmp_pct": 60.8
         }
       },
       "DL": {
@@ -647,19 +615,18 @@
         "dataGaps": [
           "missing NFL draft capital",
           "missing college production profile",
-          "missing NFL draft capital",
           "rookie role uncertainty"
         ],
         "medianStats": {
-          "solo_tkl": 16.3,
-          "ast_tkl": 9.5,
-          "total_tkl": 25.8,
-          "tfl": 3.4,
-          "sack": 2.7,
-          "qb_hit": 5.4,
-          "ff": 0.7,
-          "fr": 0.3,
-          "pass_def": 0.7
+          "solo_tkl": 12,
+          "ast_tkl": 7,
+          "total_tkl": 19,
+          "tfl": 2.5,
+          "sack": 2,
+          "qb_hit": 4,
+          "ff": 0.5,
+          "fr": 0.2,
+          "pass_def": 0.5
         }
       },
       "TE": {
@@ -670,17 +637,16 @@
         "dataGaps": [
           "missing NFL draft capital",
           "missing college production profile",
-          "missing NFL draft capital",
           "rookie role uncertainty"
         ],
         "medianStats": {
-          "target": 30.6,
-          "rec": 19,
-          "rec_yd": 210.8,
-          "rec_td": 1.4,
-          "fum": 0.5,
-          "fum_lost": 0.2,
-          "ypr": 11.1
+          "target": 18.9,
+          "rec": 11.8,
+          "rec_yd": 130.2,
+          "rec_td": 0.8,
+          "fum": 0.3,
+          "fum_lost": 0.1,
+          "ypr": 11
         }
       }
     },

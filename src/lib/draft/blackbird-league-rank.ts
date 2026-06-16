@@ -7,6 +7,9 @@ import {
 import type { WarRoomValueOverlayRow } from "@/lib/draft/h10-war-room-overlay";
 import type { ScoredDraftTarget } from "@/lib/draft/scoring";
 import type { WarRoomRecommendationRow } from "@/lib/draft/war-room-recommendations";
+import { buildReplacementValueModel, type PlayerPAR } from "@/lib/draft/replacement-value";
+import { classifyPlayerRole, type PlayerRoleClassification } from "@/lib/projections/player-role-classification";
+import { buildProjectionTrust, type ProjectionTrust } from "@/lib/projections/projection-trust";
 
 export type ProjectionUnit = "season" | "weekly" | "game" | "fallback" | "unknown";
 
@@ -27,6 +30,9 @@ export type BlackbirdLeagueRankRow = {
     source: string;
     scoringAware: boolean;
   };
+  projectionTrust: ProjectionTrust;
+  roleClassification: PlayerRoleClassification;
+  replacementValue: PlayerPAR;
   pointsAboveReplacement: number | null;
   valueComponents: BlackbirdContextualValue["valueScoreComponents"];
   confidence: BlackbirdContextualValue["confidence"];
@@ -49,6 +55,9 @@ export type BlackbirdLeagueRankDiagnostics = {
   undraftedPlayersIncluded: number;
   projectionUnits: Record<ProjectionUnit, number>;
   fallbackProjectionRows: number;
+  roleClassifiedRows: number;
+  replacementBaselinePositions: number;
+  playersWithRoleAwarePAR: number;
   adpPrimarySignal: false;
   orderingMethod: string;
   bannedLanguageFound: string[];
@@ -89,12 +98,12 @@ export function buildBlackbirdLeagueRank(input: BuildBlackbirdLeagueRankInput): 
           floor: peer.overlay?.floorPoints ?? null,
           ceiling: peer.overlay?.ceilingPoints ?? null,
           par: peer.overlay?.pointsAboveReplacement ?? peer.recommendation?.h10.pointsAboveReplacement ?? null,
-          value: peer.recommendation?.recommendationScore ?? peer.player.draftTargetScore ?? peer.overlay?.riskAdjustedValue ?? null,
+          value: peer.overlay?.riskAdjustedValue ?? peer.recommendation?.recommendationScore ?? null,
         })),
     })
   ));
   const contextualByKey = new Map(contextualValues.map((value) => [rankKey(value.playerId, value.playerName), value]));
-  const rows = baseRows
+  const unrankedRows = baseRows
     .map((row): BlackbirdLeagueRankRow => {
       const playerId = row.player.matched_player_id ?? row.player.sleeper_player_id ?? row.overlay?.entityId ?? row.recommendation?.entityId ?? "";
       const playerName = row.player.player_name ?? row.overlay?.displayName ?? row.recommendation?.displayName ?? "Unknown";
@@ -104,6 +113,25 @@ export function buildBlackbirdLeagueRank(input: BuildBlackbirdLeagueRankInput): 
         contextualByKey.get(rankKey(row.overlay?.entityId, playerName)) ??
         contextualByKey.get(rankKey(null, playerName));
       if (!contextual) throw new Error(`Missing contextual value for ${playerName}`);
+      const unit = projectionUnit(row.player, row.overlay, contextual);
+      const version = inferProjectionVersion(row.overlay, contextual);
+      const projectionTrust = buildProjectionTrust({
+        playerId,
+        playerName,
+        position: row.player.position ?? row.overlay?.position ?? row.recommendation?.position ?? "UNK",
+        team: row.player.team ?? row.overlay?.team ?? row.recommendation?.team ?? null,
+        projectionRunId: null,
+        projectionVersion: version,
+        projectionUnit: unit,
+        projectionSource: contextual.projectedFantasyPoints.source,
+        confidence: contextual.confidence,
+        dataGaps: contextual.dataGaps,
+        floorPoints: contextual.projectedFantasyPoints.low,
+        medianPoints: contextual.projectedFantasyPoints.median,
+        ceilingPoints: contextual.projectedFantasyPoints.high,
+        isFallback: row.player.is_fallback || unit === "fallback",
+        matchStatus: row.player.match_status,
+      });
       return {
         playerId,
         playerName,
@@ -117,10 +145,13 @@ export function buildBlackbirdLeagueRank(input: BuildBlackbirdLeagueRankInput): 
           floor: contextual.projectedFantasyPoints.low,
           median: contextual.projectedFantasyPoints.median,
           ceiling: contextual.projectedFantasyPoints.high,
-          unit: projectionUnit(row.player, row.overlay, contextual),
+          unit,
           source: contextual.projectedFantasyPoints.source,
           scoringAware: contextual.projectedFantasyPoints.scoringAware,
         },
+        projectionTrust,
+        roleClassification: emptyRoleClassification(playerId, playerName, normalizePosition(row.player.position ?? row.overlay?.position ?? row.recommendation?.position ?? "UNK"), row.player.team ?? row.overlay?.team ?? row.recommendation?.team ?? null),
+        replacementValue: emptyReplacementValue(playerId, normalizePosition(row.player.position ?? row.overlay?.position ?? row.recommendation?.position ?? "UNK")),
         pointsAboveReplacement: row.overlay?.pointsAboveReplacement ?? row.recommendation?.h10.pointsAboveReplacement ?? null,
         valueComponents: contextual.valueScoreComponents,
         confidence: contextual.confidence,
@@ -132,12 +163,81 @@ export function buildBlackbirdLeagueRank(input: BuildBlackbirdLeagueRankInput): 
           externalMarketRank: finiteNumber(row.player.rank),
           h10RecommendationRank: row.recommendation?.recommendationRank ?? null,
           projectionRunId: null,
-          projectionVersion: inferProjectionVersion(row.overlay, contextual),
+          projectionVersion: version,
           fallbackProjection: row.player.is_fallback || contextual.projectedFantasyPoints.source === "uploaded_ranking_projection",
         },
       };
     })
     .sort((a, b) => a.blackbirdRank - b.blackbirdRank);
+  const baseByPlayerId = new Map(baseRows.map((base) => [playerIdFor(base.player, base.overlay, base.recommendation), base]));
+  const roleByPlayerId = new Map(unrankedRows.map((row) => {
+    const base = baseByPlayerId.get(row.playerId);
+    return [
+      row.playerId,
+      classifyPlayerRole({
+        playerId: row.playerId,
+        playerName: row.playerName,
+        position: row.position,
+        team: row.team,
+        age: finiteNumber(base?.player.age),
+        yearsExperience: finiteNumber(base?.player.yearsExperience) ?? finiteNumber(base?.player.years_exp),
+        medianProjection: row.projectedFantasyPoints.median,
+        projectionTrustLabel: row.projectionTrust.trustLabel,
+        projectionUnit: row.projectedFantasyPoints.unit,
+        isFallback: row.source.fallbackProjection,
+        matchStatus: base?.player.match_status,
+        sameTeamPositionPeers: unrankedRows
+          .filter((peer) => peer.playerId !== row.playerId && peer.team === row.team && peer.position === row.position)
+          .map((peer) => ({
+            playerId: peer.playerId,
+            medianProjection: peer.projectedFantasyPoints.median,
+            projectionTrustLabel: peer.projectionTrust.trustLabel,
+            isFallback: peer.source.fallbackProjection,
+          })),
+      }),
+    ] as const;
+  }));
+  const replacementModel = buildReplacementValueModel({
+    players: unrankedRows.map((row) => ({
+      playerId: row.playerId,
+      playerName: row.playerName,
+      position: row.position,
+      medianPoints: row.projectedFantasyPoints.median,
+      drafted: row.drafted,
+      projectionTrustLabel: row.projectionTrust.trustLabel,
+      roleClassification: roleByPlayerId.get(row.playerId) ?? emptyRoleClassification(row.playerId, row.playerName, row.position, row.team),
+    })),
+    leagueContext: input.leagueContext,
+  });
+  const replacementByPlayerId = new Map(replacementModel.playerPar.map((row) => [row.playerId, row]));
+  const adjustedRows = unrankedRows.map((row) => {
+    const roleClassification = roleByPlayerId.get(row.playerId) ?? row.roleClassification;
+    const replacementValue = replacementByPlayerId.get(row.playerId) ?? row.replacementValue;
+    const pointsAboveReplacement = replacementValue.pointsAboveReplacement ?? row.pointsAboveReplacement;
+    const leagueValueScore = adjustedLeagueValueScore(row, replacementValue, roleClassification);
+    return {
+      ...row,
+      roleClassification,
+      replacementValue,
+      pointsAboveReplacement,
+      leagueValueScore,
+      valueComponents: {
+        ...row.valueComponents,
+        positionScarcity: replacementValue.parPercentileByPosition ?? row.valueComponents.positionScarcity,
+        depthChartRole: roleComponentScore(roleClassification.role),
+      },
+      reasons: Array.from(new Set([...row.reasons, ...roleClassification.reasons, ...replacementValue.reasons])).slice(0, 8),
+      dataGaps: Array.from(new Set([...row.dataGaps, ...roleClassification.dataGaps, ...replacementValue.dataGaps])).sort(),
+    };
+  });
+  const tiers = buildAdjustedTiers(adjustedRows);
+  const rows = adjustedRows
+    .sort((a, b) => b.leagueValueScore - a.leagueValueScore || (b.projectedFantasyPoints.median ?? -Infinity) - (a.projectedFantasyPoints.median ?? -Infinity) || a.playerName.localeCompare(b.playerName))
+    .map((row, index) => ({
+      ...row,
+      blackbirdRank: index + 1,
+      blackbirdTier: tiers.get(row.playerId) ?? row.blackbirdTier,
+    }));
   return {
     rows,
     diagnostics: {
@@ -146,10 +246,98 @@ export function buildBlackbirdLeagueRank(input: BuildBlackbirdLeagueRankInput): 
       undraftedPlayersIncluded: rows.filter((row) => !row.drafted).length,
       projectionUnits: countProjectionUnits(rows),
       fallbackProjectionRows: rows.filter((row) => row.source.fallbackProjection).length,
+      roleClassifiedRows: rows.filter((row) => row.roleClassification.role !== "unknown").length,
+      replacementBaselinePositions: replacementModel.baselines.length,
+      playersWithRoleAwarePAR: rows.filter((row) => row.replacementValue.pointsAboveReplacement !== null).length,
       adpPrimarySignal: false,
-      orderingMethod: "contextual league value -> projection -> name; ADP external reference only",
+      orderingMethod: "contextual league value + role-aware PAR -> projection -> name; ADP external reference only",
       bannedLanguageFound: findBannedLeagueRankLanguage(JSON.stringify(rows)),
     },
+  };
+}
+
+function adjustedLeagueValueScore(row: BlackbirdLeagueRankRow, replacementValue: PlayerPAR, role: PlayerRoleClassification): number {
+  const baseScore = row.leagueValueScore;
+  const parScore = replacementValue.parPercentileByPosition ?? 50;
+  const roleScore = roleComponentScore(role.role);
+  const trustScore = row.projectionTrust.trustScore;
+  const formatFit = (row.valueComponents.rosterFormatFit + row.valueComponents.leagueFormatFit) / 2;
+  const fallbackPenalty = row.source.fallbackProjection ? -9 : 0;
+  const missingProjectionPenalty = row.projectedFantasyPoints.median === null ? -24 : 0;
+  const trustPenalty = row.projectionTrust.trustLabel === "very_low" ? -8 : row.projectionTrust.trustLabel === "low" ? -4 : 0;
+  const rolePenalty = ["backup", "deep_reserve", "rookie_unknown", "unknown"].includes(role.role) ? -5 : role.role === "rotational" ? -1.5 : 0;
+  const riskPenalty = row.risk === "high" ? -5 : row.risk === "medium" ? -2 : 0;
+  const dataGapPenalty = -Math.min(7, Math.max(0, row.dataGaps.length - 3) * 0.8);
+  const score =
+    baseScore * 0.38 +
+    parScore * 0.32 +
+    roleScore * 0.1 +
+    trustScore * 0.1 +
+    formatFit * 0.07 +
+    row.valueComponents.floorCeilingShape * 0.03 +
+    fallbackPenalty +
+    missingProjectionPenalty +
+    trustPenalty +
+    rolePenalty +
+    riskPenalty +
+    dataGapPenalty;
+  return clamp(round2(score), 0, 100);
+}
+
+function roleComponentScore(role: PlayerRoleClassification["role"]): number {
+  if (role === "locked_starter" || role === "team_unit") return 82;
+  if (role === "probable_starter") return 76;
+  if (role === "committee") return 62;
+  if (role === "rotational") return 52;
+  if (role === "backup") return 34;
+  if (role === "deep_reserve") return 20;
+  if (role === "rookie_unknown") return 38;
+  return 45;
+}
+
+function buildAdjustedTiers(rows: BlackbirdLeagueRankRow[]): Map<string, number> {
+  const tiers = new Map<string, number>();
+  let tier = 1;
+  let previous: number | null = null;
+  for (const row of [...rows].sort((a, b) => b.leagueValueScore - a.leagueValueScore || a.playerName.localeCompare(b.playerName))) {
+    if (previous !== null && previous - row.leagueValueScore >= 4) tier += 1;
+    tiers.set(row.playerId, tier);
+    previous = row.leagueValueScore;
+  }
+  return tiers;
+}
+
+function emptyRoleClassification(playerId: string, playerName: string, position: string, team: string | null): PlayerRoleClassification {
+  return {
+    playerId,
+    playerName,
+    position,
+    team,
+    role: "unknown",
+    confidence: "very_low",
+    basis: ["insufficient_data"],
+    teamPositionRankProxy: null,
+    sameTeamPositionPeerCount: 1,
+    projectedVolumeScore: null,
+    reasons: [],
+    dataGaps: ["role classification"],
+  };
+}
+
+function emptyReplacementValue(playerId: string, position: string): PlayerPAR {
+  return {
+    playerId,
+    position,
+    medianPoints: null,
+    replacementMedianPoints: null,
+    pointsAboveReplacement: null,
+    parPercentileByPosition: null,
+    replacementRank: null,
+    replacementMethod: "unavailable",
+    role: "unknown",
+    roleConfidence: "very_low",
+    reasons: [],
+    dataGaps: ["replacement baseline"],
   };
 }
 
@@ -190,6 +378,10 @@ function isDrafted(playerId: string, player: ScoredDraftTarget, overlay: WarRoom
   return Boolean(playerId && drafted.has(playerId)) || Boolean(player.sleeper_player_id && drafted.has(player.sleeper_player_id)) || Boolean(player.matched_player_id && drafted.has(player.matched_player_id)) || Boolean(overlay?.entityId && drafted.has(overlay.entityId)) || Boolean(recommendation?.entityId && drafted.has(recommendation.entityId));
 }
 
+function playerIdFor(player: ScoredDraftTarget, overlay: WarRoomValueOverlayRow | null, recommendation: WarRoomRecommendationRow | null): string {
+  return player.matched_player_id ?? player.sleeper_player_id ?? overlay?.entityId ?? recommendation?.entityId ?? "";
+}
+
 function rankKey(id: string | null | undefined, name: string | null | undefined): string {
   return `${id ?? ""}|${(name ?? "").trim().toLowerCase()}`;
 }
@@ -201,4 +393,12 @@ function normalizePosition(position: string): string {
 
 function finiteNumber(value: number | null | undefined): number | null {
   return typeof value === "number" && Number.isFinite(value) ? value : null;
+}
+
+function clamp(value: number, min: number, max: number): number {
+  return Math.max(min, Math.min(max, value));
+}
+
+function round2(value: number): number {
+  return Math.round(value * 100) / 100;
 }

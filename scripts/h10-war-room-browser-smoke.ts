@@ -233,12 +233,45 @@ function sanitizeProperNouns(text: string) {
 }
 
 async function fetchState(page: Page, draftRoomId: string) {
-  const payload = await page.evaluate(async (id) => {
+  let lastPayload: Awaited<ReturnType<typeof fetchStatePayload>> | null = null;
+  for (let attempt = 1; attempt <= 5; attempt++) {
+    const payload = await fetchStatePayload(page, draftRoomId);
+    lastPayload = payload;
+    if (payload.ok && payload.json && payload.body && typeof payload.body === "object") {
+      return stateSnapshot(payload.body as Record<string, unknown>);
+    }
+    await delay(750);
+  }
+  throw new Error(`State request failed: ${lastPayload?.status ?? "unknown"} ${JSON.stringify({
+    contentType: lastPayload?.contentType ?? null,
+    bodyPreview: lastPayload?.bodyPreview ?? null,
+  })}`);
+}
+
+async function fetchStatePayload(page: Page, draftRoomId: string) {
+  return page.evaluate(async (id) => {
     const response = await fetch(`/api/draft-rooms/${id}/state`, { cache: "no-store" });
-    return { ok: response.ok, status: response.status, body: await response.json() };
+    const contentType = response.headers.get("content-type") ?? "";
+    const text = await response.text();
+    let body: unknown = null;
+    let json = false;
+    if (contentType.includes("application/json")) {
+      try {
+        body = JSON.parse(text);
+        json = true;
+      } catch {
+        body = null;
+      }
+    }
+    return {
+      ok: response.ok,
+      status: response.status,
+      contentType,
+      json,
+      body,
+      bodyPreview: text.slice(0, 160),
+    };
   }, draftRoomId);
-  if (!payload.ok) throw new Error(`State request failed: ${payload.status} ${JSON.stringify(payload.body)}`);
-  return stateSnapshot(payload.body);
 }
 
 function stateSnapshot(state: Record<string, unknown>) {

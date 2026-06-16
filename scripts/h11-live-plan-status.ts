@@ -31,6 +31,7 @@ const checks = [
   check("idp_visible", scenarios[1].status.positionPlanStatus.some((row) => row.position === "LB"), "LB tracked"),
   check("k_dst_caution_visible", scenarios[1].status.positionPlanStatus.some((row) => row.position === "K" || row.position === "DEF"), "K/DST tracked"),
   check("data_gaps_visible", scenario("missing_data", { strategy: null }).status.dataGaps.includes("missing pre-draft strategy"), "missing strategy gap"),
+  check("projection_trust_visible", scenarios.every((item) => item.projectionTrustSample.every((row) => row.projectionTrustLabel && row.projectionSource && row.projectionUnit)), "source/unit/trust included"),
   check("no_banned_language", scenarios.every((item) => findBannedLivePlanLanguage(JSON.stringify(item.status)).length === 0), "safe language"),
   check("no_persistence_or_mutation", true, "synthetic read-only diagnostic"),
 ];
@@ -57,7 +58,18 @@ function scenario(name: string, overrides: Partial<Parameters<typeof buildLivePl
   };
   const before = JSON.stringify(input);
   const status = buildLivePlanStatus(input);
-  return { name, status, inputUnchanged: JSON.stringify(input) === before };
+  return {
+    name,
+    status,
+    projectionTrustSample: rows.slice(0, 4).map((row) => ({
+      playerName: row.playerName,
+      projectionSource: row.projectionSource,
+      projectionUnit: row.projectionUnit,
+      projectionTrustLabel: row.projectionTrust.trustLabel,
+      projectionTrustScore: row.projectionTrust.trustScore,
+    })),
+    inputUnchanged: JSON.stringify(input) === before,
+  };
 }
 
 function rowsForScenario() {

@@ -9,8 +9,12 @@ describe("H11.3 Blackbird board", () => {
   it("does not use alphabetical as primary ordering when Blackbird data exists", () => {
     const { rows } = buildBlackbirdBoard({
       players: [
-        player({ player_name: "Alpha WR", matched_player_id: "a", draftTargetScore: 50, rank: 40 }),
-        player({ player_name: "Zulu RB", matched_player_id: "z", draftTargetScore: 95, rank: 30 }),
+        player({ player_name: "Alpha WR", matched_player_id: "a", projected_points: 160, draftTargetScore: 50, rank: 40 }),
+        player({ player_name: "Zulu RB", matched_player_id: "z", projected_points: 240, draftTargetScore: 95, rank: 30 }),
+      ],
+      overlays: [
+        overlay({ entityId: "a", displayName: "Alpha WR", position: "WR", medianPoints: 160, pointsAboveReplacement: 5 }),
+        overlay({ entityId: "z", displayName: "Zulu RB", position: "RB", medianPoints: 240, pointsAboveReplacement: 35 }),
       ],
       recommendations: [
         recommendation({ entityId: "z", displayName: "Zulu RB", recommendationRank: 1, recommendationScore: 91 }),

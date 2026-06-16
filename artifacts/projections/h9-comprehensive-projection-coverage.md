@@ -3,7 +3,7 @@
 ```json
 {
   "kind": "coverage",
-  "generatedAt": "2026-06-16T04:47:53.533Z",
+  "generatedAt": "2026-06-16T16:32:26.248Z",
   "verdict": "passed",
   "failureReasons": [],
   "warnings": [
@@ -345,15 +345,15 @@
   },
   "persistence": {
     "persistence": {
-      "projectionRunId": "3fa33111-b8f6-450d-93cb-8cf12acdfb4a",
+      "projectionRunId": "e4cab3af-e6fa-45bf-b7f2-ee0e428f7ab2",
       "reusedCompleteRun": false
     },
     "persistenceInspection": {
-      "projectionRunId": "3fa33111-b8f6-450d-93cb-8cf12acdfb4a",
-      "inputCount": 7234,
+      "projectionRunId": "e4cab3af-e6fa-45bf-b7f2-ee0e428f7ab2",
+      "inputCount": 7266,
       "outputCount": 27820,
       "reasonCount": 23202,
-      "distinctInputPlayers": 7234,
+      "distinctInputPlayers": 7266,
       "distinctOutputPlayers": 2140,
       "distinctOutputLeagues": 13,
       "positionDistribution": {
@@ -364,7 +364,8 @@
         "WR": 1296,
         "LB": 1086,
         "QB": 354,
-        "K": 153
+        "K": 153,
+        "DEF": 32
       },
       "duplicateInputKeys": 0,
       "duplicateOutputKeys": 0,
@@ -561,6 +562,5 @@
         "medianStats": {
           "solo_tkl": 37.4,
           "ast_tkl": 21.8,
-          "total_tkl": 59.2,
-        
+          "total_t
 ```

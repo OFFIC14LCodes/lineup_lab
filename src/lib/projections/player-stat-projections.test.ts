@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { buildPlayerStatProjection } from "./player-stat-projections";
+import { normalizeRookieProfile } from "./rookie-data-sources";
 
 describe("comprehensive player stat projections", () => {
   it("builds veteran QB stat ranges from historical production", () => {
@@ -41,6 +42,48 @@ describe("comprehensive player stat projections", () => {
     expect(projection.dataGaps).toContain("rookie role uncertainty");
     expect(projection.stats.rush_att.floor!).toBeLessThan(projection.stats.rush_att.median!);
     expect(projection.stats.rush_att.ceiling!).toBeGreaterThan(projection.stats.rush_att.median!);
+  });
+
+  it("uses real rookie profile inputs when available without fabricating high confidence", () => {
+    const profile = normalizeRookieProfile({
+      playerId: "rookie-wr",
+      playerName: "Rookie WR",
+      position: "WR",
+      team: "KC",
+      season: 2026,
+      nflDraftRound: 1,
+      nflDraftOverall: 18,
+      collegeTargets: 125,
+      collegeReceptions: 88,
+      collegeReceivingYards: 1400,
+      collegeReceivingTouchdowns: 13,
+      landingSpotRole: "probable_starter",
+      source: "manual",
+    });
+    const projection = buildPlayerStatProjection({
+      playerId: "rookie-wr",
+      playerName: "Rookie WR",
+      position: "WR",
+      team: "KC",
+      season: 2026,
+      yearsExperience: 0,
+      rookieContext: {
+        draftCapitalScore: profile.draftCapitalScore,
+        collegeProductionScore: profile.collegeProductionScore,
+        opportunityScore: profile.opportunityScore,
+        landingSpotRole: profile.landingSpotRole,
+        collegeStatsAvailable: true,
+        profile,
+      },
+    });
+
+    expect(projection.projectionType).toBe("rookie");
+    expect(projection.confidence).toBe("medium");
+    expect(projection.confidence).not.toBe("high");
+    expect(projection.dataGaps).not.toContain("missing NFL draft capital");
+    expect(projection.dataGaps).not.toContain("missing college production profile");
+    expect(projection.stats.target.median!).toBeGreaterThan(55);
+    expect(projection.reasons.join(" ")).toContain("College production shapes uncertainty");
   });
 
   it("does not fabricate stat ranges when no safe source exists", () => {

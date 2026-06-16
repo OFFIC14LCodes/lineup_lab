@@ -73,8 +73,12 @@ describe("DraftWarRoom H11 strategy UI wiring", () => {
       "Available Blackbird Rank",
       "Load more",
       "Projection unavailable",
-      "Projection Range",
+      "Season Projection",
+      "Floor",
+      "Median",
+      "Ceiling",
       "Blackbird Power Rank",
+      "Player + Details",
       "Draft Suggestion",
       "Risk",
       "Live Plan Status",
@@ -84,8 +88,34 @@ describe("DraftWarRoom H11 strategy UI wiring", () => {
       "Tier risk rising",
       "Unexpected value signal",
       "Data Gaps",
+      "Rookie projection",
+      "Enriched rookie data available",
+      "Draft capital available",
+      "Missing draft capital",
+      "College production available",
+      "Missing college production",
+      "Role uncertainty",
+      "Rookie Context",
       "withFallbackDraftSuggestionRanks",
       "Filters and sort are local to this browser view.",
+    ].forEach((text) => expect(source).toContain(text));
+  });
+
+  it("wires read-only historical player profiles into the player modal", () => {
+    [
+      "/api/player-profiles/",
+      "weeklyLimit: \"8\"",
+      "Historical Profile",
+      "Loading historical profile...",
+      "Historical profile not available yet.",
+      "League projection profile is not available for this player yet.",
+      "Profile match confidence:",
+      "Review may be needed.",
+      "Recent Weekly Game Log",
+      "weeklyGameLog.slice(0, 8)",
+      "profile.warnings.map",
+      "buildWeeklyStatLine",
+      "idpSummary",
     ].forEach((text) => expect(source).toContain(text));
   });
 });

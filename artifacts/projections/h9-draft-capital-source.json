@@ -1,0 +1,19 @@
+{
+  "generatedAt": "2026-06-16T19:06:01.069Z",
+  "kind": "draft-capital-source",
+  "safety": {
+    "noScraping": true,
+    "noPaidApi": true,
+    "noAi": true,
+    "noAdpFallback": true,
+    "unknownFieldsRemainDataGaps": true
+  },
+  "verdict": "passed",
+  "summary": {
+    "sourceRows": 0,
+    "rowsWithDraftCapital": 0,
+    "rowsWithAttribution": 0,
+    "dataGaps": []
+  },
+  "samples": []
+}

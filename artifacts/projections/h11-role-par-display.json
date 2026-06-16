@@ -1,0 +1,494 @@
+{
+  "kind": "h11-role-par-display",
+  "draftRoomId": null,
+  "dataMode": "synthetic_fixture",
+  "generatedAt": "2026-06-16T15:55:04.144Z",
+  "counts": {
+    "players": 13,
+    "roleClassified": 13,
+    "replacementBaselinePositions": 9,
+    "playersWithPAR": 13,
+    "draftSuggestions": 12,
+    "boardRows": 13
+  },
+  "checks": {
+    "roleClassificationPresent": true,
+    "replacementBaselinesPresent": true,
+    "parUsesSeasonProjectionMinusReplacement": true,
+    "backupsCanBeBelowReplacement": true,
+    "draftedPlayersRetainBlackbirdRank": true,
+    "suggestionsCarryRoleAndPAR": true,
+    "boardCarriesRoleAndPAR": true,
+    "noAdpPrimarySignal": true,
+    "noMutationOrPersistence": true
+  },
+  "replacementBaselines": [
+    {
+      "position": "QB",
+      "replacementRank": 4,
+      "replacementMedianPoints": 335,
+      "replacementPlayerId": "qb",
+      "replacementPlayerName": "Superflex QB",
+      "starterDemand": 2,
+      "flexDemand": 1.4,
+      "benchDemand": 0,
+      "eligiblePlayerCount": 1,
+      "method": "league_roster_slots",
+      "dataGaps": [
+        "confirmed depth chart for backup deweighting"
+      ]
+    },
+    {
+      "position": "LB",
+      "replacementRank": 2,
+      "replacementMedianPoints": 259,
+      "replacementPlayerId": "lb",
+      "replacementPlayerName": "Starter LB",
+      "starterDemand": 2,
+      "flexDemand": 0,
+      "benchDemand": 0,
+      "eligiblePlayerCount": 1,
+      "method": "league_roster_slots",
+      "dataGaps": [
+        "confirmed depth chart for backup deweighting"
+      ]
+    },
+    {
+      "position": "RB",
+      "replacementRank": 5,
+      "replacementMedianPoints": 155,
+      "replacementPlayerId": "rb2",
+      "replacementPlayerName": "Depth RB",
+      "starterDemand": 4,
+      "flexDemand": 1,
+      "benchDemand": 0,
+      "eligiblePlayerCount": 2,
+      "method": "league_roster_slots",
+      "dataGaps": [
+        "confirmed depth chart for backup deweighting"
+      ]
+    },
+    {
+      "position": "TE",
+      "replacementRank": 3,
+      "replacementMedianPoints": 220,
+      "replacementPlayerId": "te",
+      "replacementPlayerName": "Premium TE",
+      "starterDemand": 2,
+      "flexDemand": 0.5,
+      "benchDemand": 0,
+      "eligiblePlayerCount": 1,
+      "method": "league_roster_slots",
+      "dataGaps": []
+    },
+    {
+      "position": "WR",
+      "replacementRank": 6,
+      "replacementMedianPoints": 245,
+      "replacementPlayerId": "wr",
+      "replacementPlayerName": "Ceiling WR",
+      "starterDemand": 4,
+      "flexDemand": 1.1,
+      "benchDemand": 0,
+      "eligiblePlayerCount": 1,
+      "method": "league_roster_slots",
+      "dataGaps": []
+    },
+    {
+      "position": "DL",
+      "replacementRank": 2,
+      "replacementMedianPoints": 214,
+      "replacementPlayerId": "dl",
+      "replacementPlayerName": "Starter DL",
+      "starterDemand": 2,
+      "flexDemand": 0,
+      "benchDemand": 0,
+      "eligiblePlayerCount": 1,
+      "method": "league_roster_slots",
+      "dataGaps": []
+    },
+    {
+      "position": "DEF",
+      "replacementRank": 2,
+      "replacementMedianPoints": 120,
+      "replacementPlayerId": "def",
+      "replacementPlayerName": "Defense",
+      "starterDemand": 2,
+      "flexDemand": 0,
+      "benchDemand": 0,
+      "eligiblePlayerCount": 1,
+      "method": "league_roster_slots",
+      "dataGaps": []
+    },
+    {
+      "position": "K",
+      "replacementRank": 2,
+      "replacementMedianPoints": 115,
+      "replacementPlayerId": "k",
+      "replacementPlayerName": "Kicker",
+      "starterDemand": 2,
+      "flexDemand": 0,
+      "benchDemand": 0,
+      "eligiblePlayerCount": 1,
+      "method": "league_roster_slots",
+      "dataGaps": []
+    },
+    {
+      "position": "DB",
+      "replacementRank": 2,
+      "replacementMedianPoints": 196,
+      "replacementPlayerId": "db",
+      "replacementPlayerName": "Starter DB",
+      "starterDemand": 2,
+      "flexDemand": 0,
+      "benchDemand": 0,
+      "eligiblePlayerCount": 1,
+      "method": "league_roster_slots",
+      "dataGaps": [
+        "confirmed depth chart for backup deweighting"
+      ]
+    }
+  ],
+  "sampleRoles": [
+    {
+      "playerId": "qb",
+      "playerName": "Superflex QB",
+      "position": "QB",
+      "median": 335,
+      "blackbirdRank": 1,
+      "role": "probable_starter",
+      "roleConfidence": "low",
+      "replacementMedian": 335,
+      "pointsAboveReplacement": 0,
+      "valueScore": 73.39,
+      "dataGaps": [
+        "confirmed depth chart",
+        "confirmed snap share"
+      ]
+    },
+    {
+      "playerId": "lb",
+      "playerName": "Starter LB",
+      "position": "LB",
+      "median": 259,
+      "blackbirdRank": 2,
+      "role": "probable_starter",
+      "roleConfidence": "low",
+      "replacementMedian": 259,
+      "pointsAboveReplacement": 0,
+      "valueScore": 71.95,
+      "dataGaps": [
+        "confirmed depth chart",
+        "confirmed snap share"
+      ]
+    },
+    {
+      "playerId": "rb",
+      "playerName": "Need RB",
+      "position": "RB",
+      "median": 260,
+      "blackbirdRank": 3,
+      "role": "probable_starter",
+      "roleConfidence": "low",
+      "replacementMedian": 155,
+      "pointsAboveReplacement": 105,
+      "valueScore": 71.5,
+      "dataGaps": [
+        "confirmed depth chart",
+        "confirmed snap share"
+      ]
+    },
+    {
+      "playerId": "te",
+      "playerName": "Premium TE",
+      "position": "TE",
+      "median": 220,
+      "blackbirdRank": 4,
+      "role": "probable_starter",
+      "roleConfidence": "low",
+      "replacementMedian": 220,
+      "pointsAboveReplacement": 0,
+      "valueScore": 52.11,
+      "dataGaps": [
+        "confirmed depth chart",
+        "confirmed snap share"
+      ]
+    },
+    {
+      "playerId": "wr",
+      "playerName": "Ceiling WR",
+      "position": "WR",
+      "median": 245,
+      "blackbirdRank": 5,
+      "role": "probable_starter",
+      "roleConfidence": "low",
+      "replacementMedian": 245,
+      "pointsAboveReplacement": 0,
+      "valueScore": 52.02,
+      "dataGaps": [
+        "confirmed depth chart",
+        "confirmed snap share"
+      ]
+    },
+    {
+      "playerId": "dl",
+      "playerName": "Starter DL",
+      "position": "DL",
+      "median": 214,
+      "blackbirdRank": 6,
+      "role": "probable_starter",
+      "roleConfidence": "low",
+      "replacementMedian": 214,
+      "pointsAboveReplacement": 0,
+      "valueScore": 51.78,
+      "dataGaps": [
+        "confirmed depth chart",
+        "confirmed snap share"
+      ]
+    },
+    {
+      "playerId": "def",
+      "playerName": "Defense",
+      "position": "DEF",
+      "median": 120,
+      "blackbirdRank": 7,
+      "role": "team_unit",
+      "roleConfidence": "medium",
+      "replacementMedian": 120,
+      "pointsAboveReplacement": 0,
+      "valueScore": 49.27,
+      "dataGaps": [
+        "individual role not applicable to team defense"
+      ]
+    },
+    {
+      "playerId": "k",
+      "playerName": "Kicker",
+      "position": "K",
+      "median": 115,
+      "blackbirdRank": 8,
+      "role": "probable_starter",
+      "roleConfidence": "low",
+      "replacementMedian": 115,
+      "pointsAboveReplacement": 0,
+      "valueScore": 48.43,
+      "dataGaps": [
+        "confirmed depth chart",
+        "confirmed snap share"
+      ]
+    },
+    {
+      "playerId": "rb2",
+      "playerName": "Depth RB",
+      "position": "RB",
+      "median": 155,
+      "blackbirdRank": 9,
+      "role": "committee",
+      "roleConfidence": "low",
+      "replacementMedian": 155,
+      "pointsAboveReplacement": 0,
+      "valueScore": 47.24,
+      "dataGaps": [
+        "confirmed depth chart",
+        "confirmed snap share"
+      ]
+    },
+    {
+      "playerId": "db",
+      "playerName": "Starter DB",
+      "position": "DB",
+      "median": 196,
+      "blackbirdRank": 10,
+      "role": "probable_starter",
+      "roleConfidence": "low",
+      "replacementMedian": 196,
+      "pointsAboveReplacement": 0,
+      "valueScore": 45.88,
+      "dataGaps": [
+        "confirmed depth chart",
+        "confirmed snap share"
+      ]
+    },
+    {
+      "playerId": "lb2",
+      "playerName": "Depth LB",
+      "position": "LB",
+      "median": 140,
+      "blackbirdRank": 11,
+      "role": "rotational",
+      "roleConfidence": "low",
+      "replacementMedian": 259,
+      "pointsAboveReplacement": -119,
+      "valueScore": 22.55,
+      "dataGaps": [
+        "confirmed depth chart",
+        "confirmed snap share"
+      ]
+    },
+    {
+      "playerId": "qb2",
+      "playerName": "Backup QB",
+      "position": "QB",
+      "median": 115,
+      "blackbirdRank": 12,
+      "role": "deep_reserve",
+      "roleConfidence": "low",
+      "replacementMedian": 335,
+      "pointsAboveReplacement": -220,
+      "valueScore": 17.5,
+      "dataGaps": [
+        "confirmed depth chart",
+        "confirmed snap share"
+      ]
+    }
+  ],
+  "topSuggestions": [
+    {
+      "draftSuggestionRank": 1,
+      "blackbirdRank": 3,
+      "playerName": "Need RB",
+      "position": "RB",
+      "role": "probable_starter",
+      "par": 105,
+      "score": 84.9,
+      "reasons": [
+        "Static Blackbird Rank #3; live score adjusts for roster and timing context.",
+        "RB need level is high.",
+        "Role-aware PAR is 105.0 points above replacement."
+      ],
+      "cautions": [
+        "Projection trust is low.",
+        "Projection caveat: missing projected components."
+      ]
+    },
+    {
+      "draftSuggestionRank": 2,
+      "blackbirdRank": 2,
+      "playerName": "Starter LB",
+      "position": "LB",
+      "role": "probable_starter",
+      "par": 0,
+      "score": 75.15,
+      "reasons": [
+        "Static Blackbird Rank #2; live score adjusts for roster and timing context.",
+        "LB need level is moderate.",
+        "Role-aware PAR is 0.0 points above replacement."
+      ],
+      "cautions": [
+        "Projection trust is low.",
+        "Projection caveat: missing projected components."
+      ]
+    },
+    {
+      "draftSuggestionRank": 3,
+      "blackbirdRank": 9,
+      "playerName": "Depth RB",
+      "position": "RB",
+      "role": "committee",
+      "par": 0,
+      "score": 50.71,
+      "reasons": [
+        "Static Blackbird Rank #9; live score adjusts for roster and timing context.",
+        "RB need level is high.",
+        "Role-aware PAR is 0.0 points above replacement."
+      ],
+      "cautions": [
+        "Projection trust is low.",
+        "Projection caveat: missing projected components."
+      ]
+    },
+    {
+      "draftSuggestionRank": 4,
+      "blackbirdRank": 4,
+      "playerName": "Premium TE",
+      "position": "TE",
+      "role": "probable_starter",
+      "par": 0,
+      "score": 49.34,
+      "reasons": [
+        "Static Blackbird Rank #4; live score adjusts for roster and timing context.",
+        "Role-aware PAR is 0.0 points above replacement.",
+        "Role proxy is probable starter with low confidence."
+      ],
+      "cautions": [
+        "Projection trust is low.",
+        "Projection caveat: missing projected components."
+      ]
+    },
+    {
+      "draftSuggestionRank": 5,
+      "blackbirdRank": 5,
+      "playerName": "Ceiling WR",
+      "position": "WR",
+      "role": "probable_starter",
+      "par": 0,
+      "score": 47.97,
+      "reasons": [
+        "Static Blackbird Rank #5; live score adjusts for roster and timing context.",
+        "Role-aware PAR is 0.0 points above replacement.",
+        "Role proxy is probable starter with low confidence."
+      ],
+      "cautions": [
+        "Projection trust is low.",
+        "Projection caveat: missing projected components."
+      ]
+    },
+    {
+      "draftSuggestionRank": 6,
+      "blackbirdRank": 6,
+      "playerName": "Starter DL",
+      "position": "DL",
+      "role": "probable_starter",
+      "par": 0,
+      "score": 46.55,
+      "reasons": [
+        "Static Blackbird Rank #6; live score adjusts for roster and timing context.",
+        "Role-aware PAR is 0.0 points above replacement.",
+        "Role proxy is probable starter with low confidence."
+      ],
+      "cautions": [
+        "Projection trust is low.",
+        "Projection caveat: missing projected components."
+      ]
+    },
+    {
+      "draftSuggestionRank": 7,
+      "blackbirdRank": 7,
+      "playerName": "Defense",
+      "position": "DEF",
+      "role": "team_unit",
+      "par": 0,
+      "score": 37.3,
+      "reasons": [
+        "Static Blackbird Rank #7; live score adjusts for roster and timing context.",
+        "Role-aware PAR is 0.0 points above replacement.",
+        "Role proxy is team unit with medium confidence."
+      ],
+      "cautions": [
+        "DEF has avoid-forcing context at this stage.",
+        "Projection trust is low.",
+        "Projection caveat: missing projected components."
+      ]
+    },
+    {
+      "draftSuggestionRank": 8,
+      "blackbirdRank": 10,
+      "playerName": "Starter DB",
+      "position": "DB",
+      "role": "probable_starter",
+      "par": 0,
+      "score": 34.1,
+      "reasons": [
+        "Static Blackbird Rank #10; live score adjusts for roster and timing context.",
+        "Role-aware PAR is 0.0 points above replacement.",
+        "Role proxy is probable starter with low confidence."
+      ],
+      "cautions": [
+        "Context confidence is low.",
+        "Projection trust is very low.",
+        "Projection caveat: missing projected components."
+      ]
+    }
+  ],
+  "verdict": "pass"
+}

@@ -1,0 +1,24 @@
+# h9-college-prospect-profile
+
+```json
+{
+  "generatedAt": "2026-06-16T18:48:28.458Z",
+  "kind": "college-prospect-profile",
+  "safety": {
+    "noScraping": true,
+    "noPaidApi": true,
+    "noAi": true,
+    "noAdpFallback": true,
+    "unknownFieldsRemainDataGaps": true
+  },
+  "verdict": "passed",
+  "summary": {
+    "profileCount": 0,
+    "profilesWithDraftCapital": 0,
+    "profilesWithCollegeProduction": 0,
+    "profilesWithRole": 0
+  },
+  "profiles": [],
+  "note": "No local source records are available yet; profile builder is source-ready."
+}
+```

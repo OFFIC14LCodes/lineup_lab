@@ -2,7 +2,7 @@
 
 ```json
 {
-  "generatedAt": "2026-06-16T04:54:50.671Z",
+  "generatedAt": "2026-06-16T19:38:30.401Z",
   "verdict": "passed",
   "checks": [
     {
@@ -38,7 +38,7 @@
     {
       "name": "contextual_value_fall",
       "passed": true,
-      "detail": "[{\"playerId\":\"k\",\"playerName\":\"K\",\"position\":\"K\",\"blackbirdRank\":1,\"valueScore\":60.4,\"signal\":\"unexpected_contextual_value\",\"summary\":\"K is a contextual value signal.\"},{\"playerId\":\"lb\",\"playerName\":\"IDP LB\",\"position\":\"LB\",\"blackbirdRank\":2,\"valueScore\":59.25,\"signal\":\"unexpected_contextual_value\",\"summary\":\"IDP LB is a contextual value signal.\"},{\"playerId\":\"rb\",\"playerName\":\"RB Value\",\"position\":\"RB\",\"blackbirdRank\":3,\"valueScore\":57.82,\"signal\":\"unexpected_contextual_value\",\"summary\":\"RB Value is a contextual value signal.\"},{\"playerId\":\"qb\",\"playerName\":\"QB Tier\",\"position\":\"QB\",\"blackbirdRank\":4,\"valueScore\":53.08,\"signal\":\"unexpected_contextual_value\",\"summary\":\"QB Tier is a contextual value signal.\"}]"
+      "detail": "[{\"playerId\":\"k\",\"playerName\":\"K\",\"position\":\"K\",\"blackbirdRank\":1,\"valueScore\":48.87,\"signal\":\"unexpected_contextual_value\",\"summary\":\"K is a contextual value signal.\"},{\"playerId\":\"rb\",\"playerName\":\"RB Value\",\"position\":\"RB\",\"blackbirdRank\":2,\"valueScore\":46.88,\"signal\":\"unexpected_contextual_value\",\"summary\":\"RB Value is a contextual value signal.\"},{\"playerId\":\"lb\",\"playerName\":\"IDP LB\",\"position\":\"LB\",\"blackbirdRank\":3,\"valueScore\":43.37,\"signal\":\"unexpected_contextual_value\",\"summary\":\"IDP LB is a contextual value signal.\"},{\"playerId\":\"qb\",\"playerName\":\"QB Tier\",\"position\":\"QB\",\"blackbirdRank\":4,\"valueScore\":40.64,\"signal\":\"unexpected_contextual_value\",\"summary\":\"QB Tier is a contextual value signal.\"}]"
     },
     {
       "name": "superflex_differs_from_1qb",
@@ -64,6 +64,11 @@
       "name": "data_gaps_visible",
       "passed": true,
       "detail": "missing strategy gap"
+    },
+    {
+      "name": "projection_trust_visible",
+      "passed": true,
+      "detail": "source/unit/trust included"
     },
     {
       "name": "no_banned_language",
@@ -163,7 +168,7 @@
             "status": "thin",
             "summary": "LB is thin versus plan (0/1).",
             "reasons": [
-              "Top available LB is Blackbird rank 2."
+              "Top available LB is Blackbird rank 3."
             ]
           },
           {
@@ -188,7 +193,7 @@
             "reasons": [
               "RB is in the active or nearby round window.",
               "RB can wait.",
-              "Top available RB is Blackbird rank 3."
+              "Top available RB is Blackbird rank 2."
             ]
           },
           {
@@ -292,6 +297,36 @@
           "H10 timing can inform plan fit but does not replace contextual rank."
         ]
       },
+      "projectionTrustSample": [
+        {
+          "playerName": "K",
+          "projectionSource": "h10_league_projection",
+          "projectionUnit": "season",
+          "projectionTrustLabel": "low",
+          "projectionTrustScore": 30
+        },
+        {
+          "playerName": "RB Value",
+          "projectionSource": "h10_league_projection",
+          "projectionUnit": "season",
+          "projectionTrustLabel": "low",
+          "projectionTrustScore": 30
+        },
+        {
+          "playerName": "IDP LB",
+          "projectionSource": "h10_league_projection",
+          "projectionUnit": "season",
+          "projectionTrustLabel": "very_low",
+          "projectionTrustScore": 20
+        },
+        {
+          "playerName": "QB Tier",
+          "projectionSource": "h10_league_projection",
+          "projectionUnit": "season",
+          "projectionTrustLabel": "low",
+          "projectionTrustScore": 30
+        }
+      ],
       "inputUnchanged": true
     },
     {
@@ -382,7 +417,7 @@
             "status": "on_track",
             "summary": "LB is on track (1/1).",
             "reasons": [
-              "Top available LB is Blackbird rank 2."
+              "Top available LB is Blackbird rank 3."
             ]
           },
           {
@@ -407,7 +442,7 @@
             "reasons": [
               "RB is in the active or nearby round window.",
               "RB can wait.",
-              "Top available RB is Blackbird rank 3."
+              "Top available RB is Blackbird rank 2."
             ]
           },
           {
@@ -462,34 +497,34 @@
             "playerName": "K",
             "position": "K",
             "blackbirdRank": 1,
-            "valueScore": 60.4,
+            "valueScore": 48.87,
             "signal": "unexpected_contextual_value",
             "summary": "K is a contextual value signal."
-          },
-          {
-            "playerId": "lb",
-            "playerName": "IDP LB",
-            "position": "LB",
-            "blackbirdRank": 2,
-            "valueScore": 59.25,
-            "signal": "unexpected_contextual_value",
-            "summary": "IDP LB is a contextual value signal."
           },
           {
             "playerId": "rb",
             "playerName": "RB Value",
             "position": "RB",
-            "blackbirdRank": 3,
-            "valueScore": 57.82,
+            "blackbirdRank": 2,
+            "valueScore": 46.88,
             "signal": "unexpected_contextual_value",
             "summary": "RB Value is a contextual value signal."
+          },
+          {
+            "playerId": "lb",
+            "playerName": "IDP LB",
+            "position": "LB",
+            "blackbirdRank": 3,
+            "valueScore": 43.37,
+            "signal": "unexpected_contextual_value",
+            "summary": "IDP LB is a contextual value signal."
           },
           {
             "playerId": "qb",
             "playerName": "QB Tier",
             "position": "QB",
             "blackbirdRank": 4,
-            "valueScore": 53.08,
+            "valueScore": 40.64,
             "signal": "unexpected_contextual_value",
             "summary": "QB Tier is a contextual value signal."
           }
@@ -533,14 +568,14 @@
             "priority": "medium",
             "positions": [
               "K",
-              "LB",
               "RB",
+              "LB",
               "QB"
             ],
             "playerIds": [
               "k",
-              "lb",
               "rb",
+              "lb",
               "qb"
             ],
             "reason": "A high contextual Blackbird Rank player is still available."
@@ -564,6 +599,36 @@
           "H10 timing can inform plan fit but does not replace contextual rank."
         ]
       },
+      "projectionTrustSample": [
+        {
+          "playerName": "K",
+          "projectionSource": "h10_league_projection",
+          "projectionUnit": "season",
+          "projectionTrustLabel": "low",
+          "projectionTrustScore": 30
+        },
+        {
+          "playerName": "RB Value",
+          "projectionSource": "h10_league_projection",
+          "projectionUnit": "season",
+          "projectionTrustLabel": "low",
+          "projectionTrustScore": 30
+        },
+        {
+          "playerName": "IDP LB",
+          "projectionSource": "h10_league_projection",
+          "projectionUnit": "season",
+          "projectionTrustLabel": "very_low",
+          "projectionTrustScore": 20
+        },
+        {
+          "playerName": "QB Tier",
+          "projectionSource": "h10_league_projection",
+          "projectionUnit": "season",
+          "projectionTrustLabel": "low",
+          "projectionTrustScore": 30
+        }
+      ],
       "inputUnchanged": true
     },
     {
@@ -654,7 +719,7 @@
             "status": "thin",
             "summary": "LB is thin versus plan (0/1).",
             "reasons": [
-              "Top available LB is Blackbird rank 2."
+              "Top available LB is Blackbird rank 3."
             ]
           },
           {
@@ -679,7 +744,7 @@
             "reasons": [
               "RB is in the active or nearby round window.",
               "RB can wait.",
-              "Top available RB is Blackbird rank 3."
+              "Top available RB is Blackbird rank 2."
             ]
           },
           {
@@ -737,34 +802,34 @@
             "playerName": "K",
             "position": "K",
             "blackbirdRank": 1,
-            "valueScore": 60.4,
+            "valueScore": 48.87,
             "signal": "unexpected_contextual_value",
             "summary": "K is a contextual value signal."
-          },
-          {
-            "playerId": "lb",
-            "playerName": "IDP LB",
-            "position": "LB",
-            "blackbirdRank": 2,
-            "valueScore": 59.25,
-            "signal": "unexpected_contextual_value",
-            "summary": "IDP LB is a contextual value signal."
           },
           {
             "playerId": "rb",
             "playerName": "RB Value",
             "position": "RB",
-            "blackbirdRank": 3,
-            "valueScore": 57.82,
+            "blackbirdRank": 2,
+            "valueScore": 46.88,
             "signal": "unexpected_contextual_value",
             "summary": "RB Value is a contextual value signal."
+          },
+          {
+            "playerId": "lb",
+            "playerName": "IDP LB",
+            "position": "LB",
+            "blackbirdRank": 3,
+            "valueScore": 43.37,
+            "signal": "unexpected_contextual_value",
+            "summary": "IDP LB is a contextual value signal."
           },
           {
             "playerId": "qb",
             "playerName": "QB Tier",
             "position": "QB",
             "blackbirdRank": 4,
-            "valueScore": 53.08,
+            "valueScore": 40.64,
             "signal": "unexpected_contextual_value",
             "summary": "QB Tier is a contextual value signal."
           }
@@ -808,14 +873,14 @@
             "priority": "medium",
             "positions": [
               "K",
-              "LB",
               "RB",
+              "LB",
               "QB"
             ],
             "playerIds": [
               "k",
-              "lb",
               "rb",
+              "lb",
               "qb"
             ],
             "reason": "A high contextual Blackbird Rank player is still available."
@@ -839,6 +904,36 @@
           "H10 timing can inform plan fit but does not replace contextual rank."
         ]
       },
+      "projectionTrustSample": [
+        {
+          "playerName": "K",
+          "projectionSource": "h10_league_projection",
+          "projectionUnit": "season",
+          "projectionTrustLabel": "low",
+          "projectionTrustScore": 30
+        },
+        {
+          "playerName": "RB Value",
+          "projectionSource": "h10_league_projection",
+          "projectionUnit": "season",
+          "projectionTrustLabel": "low",
+          "projectionTrustScore": 30
+        },
+        {
+          "playerName": "IDP LB",
+          "projectionSource": "h10_league_projection",
+          "projectionUnit": "season",
+          "projectionTrustLabel": "very_low",
+          "projectionTrustScore": 20
+        },
+        {
+          "playerName": "QB Tier",
+          "projectionSource": "h10_league_projection",
+          "projectionUnit": "season",
+          "projectionTrustLabel": "low",
+          "projectionTrustScore": 30
+        }
+      ],
       "inputUnchanged": true
     },
     {
@@ -929,7 +1024,7 @@
             "status": "thin",
             "summary": "LB is thin versus plan (0/1).",
             "reasons": [
-              "Top available LB is Blackbird rank 2."
+              "Top available LB is Blackbird rank 3."
             ]
           },
           {
@@ -954,7 +1049,7 @@
             "reasons": [
               "RB is in the active or nearby round window.",
               "RB can wait.",
-              "Top available RB is Blackbird rank 3."
+              "Top available RB is Blackbird rank 2."
             ]
           },
           {
@@ -1012,34 +1107,34 @@
             "playerName": "K",
             "position": "K",
             "blackbirdRank": 1,
-            "valueScore": 60.4,
+            "valueScore": 48.87,
             "signal": "unexpected_contextual_value",
             "summary": "K is a contextual value signal."
-          },
-          {
-            "playerId": "lb",
-            "playerName": "IDP LB",
-            "position": "LB",
-            "blackbirdRank": 2,
-            "valueScore": 59.25,
-            "signal": "unexpected_contextual_value",
-            "summary": "IDP LB is a contextual value signal."
           },
           {
             "playerId": "rb",
             "playerName": "RB Value",
             "position": "RB",
-            "blackbirdRank": 3,
-            "valueScore": 57.82,
+            "blackbirdRank": 2,
+            "valueScore": 46.88,
             "signal": "unexpected_contextual_value",
             "summary": "RB Value is a contextual value signal."
+          },
+          {
+            "playerId": "lb",
+            "playerName": "IDP LB",
+            "position": "LB",
+            "blackbirdRank": 3,
+            "valueScore": 43.37,
+            "signal": "unexpected_contextual_value",
+            "summary": "IDP LB is a contextual value signal."
           },
           {
             "playerId": "qb",
             "playerName": "QB Tier",
             "position": "QB",
             "blackbirdRank": 4,
-            "valueScore": 53.08,
+            "valueScore": 40.64,
             "signal": "unexpected_contextual_value",
             "summary": "QB Tier is a contextual value signal."
           }
@@ -1083,14 +1178,14 @@
             "priority": "medium",
             "positions": [
               "K",
-              "LB",
               "RB",
+              "LB",
               "QB"
             ],
             "playerIds": [
               "k",
-              "lb",
               "rb",
+              "lb",
               "qb"
             ],
             "reason": "A high contextual Blackbird Rank player is still available."
@@ -1114,6 +1209,36 @@
           "H10 timing can inform plan fit but does not replace contextual rank."
         ]
       },
+      "projectionTrustSample": [
+        {
+          "playerName": "K",
+          "projectionSource": "h10_league_projection",
+          "projectionUnit": "season",
+          "projectionTrustLabel": "low",
+          "projectionTrustScore": 30
+        },
+        {
+          "playerName": "RB Value",
+          "projectionSource": "h10_league_projection",
+          "projectionUnit": "season",
+          "projectionTrustLabel": "low",
+          "projectionTrustScore": 30
+        },
+        {
+          "playerName": "IDP LB",
+          "projectionSource": "h10_league_projection",
+          "projectionUnit": "season",
+          "projectionTrustLabel": "very_low",
+          "projectionTrustScore": 20
+        },
+        {
+          "playerName": "QB Tier",
+          "projectionSource": "h10_league_projection",
+          "projectionUnit": "season",
+          "projectionTrustLabel": "low",
+          "projectionTrustScore": 30
+        }
+      ],
       "inputUnchanged": true
     },
     {
@@ -1204,7 +1329,7 @@
             "status": "thin",
             "summary": "LB is thin versus plan (0/1).",
             "reasons": [
-              "Top available LB is Blackbird rank 2."
+              "Top available LB is Blackbird rank 3."
             ]
           },
           {
@@ -1228,7 +1353,7 @@
             "summary": "RB is thin versus plan (1/2).",
             "reasons": [
               "RB is in the active or nearby round window.",
-              "Top available RB is Blackbird rank 3."
+              "Top available RB is Blackbird rank 2."
             ]
           },
           {
@@ -1288,34 +1413,34 @@
             "playerName": "K",
             "position": "K",
             "blackbirdRank": 1,
-            "valueScore": 60.4,
+            "valueScore": 48.87,
             "signal": "unexpected_contextual_value",
             "summary": "K is a contextual value signal."
-          },
-          {
-            "playerId": "lb",
-            "playerName": "IDP LB",
-            "position": "LB",
-            "blackbirdRank": 2,
-            "valueScore": 59.25,
-            "signal": "unexpected_contextual_value",
-            "summary": "IDP LB is a contextual value signal."
           },
           {
             "playerId": "rb",
             "playerName": "RB Value",
             "position": "RB",
-            "blackbirdRank": 3,
-            "valueScore": 57.82,
+            "blackbirdRank": 2,
+            "valueScore": 46.88,
             "signal": "unexpected_contextual_value",
             "summary": "RB Value is a contextual value signal."
+          },
+          {
+            "playerId": "lb",
+            "playerName": "IDP LB",
+            "position": "LB",
+            "blackbirdRank": 3,
+            "valueScore": 43.37,
+            "signal": "unexpected_contextual_value",
+            "summary": "IDP LB is a contextual value signal."
           },
           {
             "playerId": "qb",
             "playerName": "QB Tier",
             "position": "QB",
             "blackbirdRank": 4,
-            "valueScore": 53.08,
+            "valueScore": 40.64,
             "signal": "unexpected_contextual_value",
             "summary": "QB Tier is a contextual value signal."
           }
@@ -1366,14 +1491,14 @@
             "priority": "medium",
             "positions": [
               "K",
-              "LB",
               "RB",
+              "LB",
               "QB"
             ],
             "playerIds": [
               "k",
-              "lb",
               "rb",
+              "lb",
               "qb"
             ],
             "reason": "A high contextual Blackbird Rank player is still available."
@@ -1397,6 +1522,36 @@
           "H10 timing can inform plan fit but does not replace contextual rank."
         ]
       },
+      "projectionTrustSample": [
+        {
+          "playerName": "K",
+          "projectionSource": "h10_league_projection",
+          "projectionUnit": "season",
+          "projectionTrustLabel": "low",
+          "projectionTrustScore": 30
+        },
+        {
+          "playerName": "RB Value",
+          "projectionSource": "h10_league_projection",
+          "projectionUnit": "season",
+          "projectionTrustLabel": "low",
+          "projectionTrustScore": 30
+        },
+        {
+          "playerName": "IDP LB",
+          "projectionSource": "h10_league_projection",
+          "projectionUnit": "season",
+          "projectionTrustLabel": "very_low",
+          "projectionTrustScore": 20
+        },
+        {
+          "playerName": "QB Tier",
+          "projectionSource": "h10_league_projection",
+          "projectionUnit": "season",
+          "projectionTrustLabel": "low",
+          "projectionTrustScore": 30
+        }
+      ],
       "inputUnchanged": true
     },
     {
@@ -1487,7 +1642,7 @@
             "status": "thin",
             "summary": "LB is thin versus plan (0/1).",
             "reasons": [
-              "Top available LB is Blackbird rank 2."
+              "Top available LB is Blackbird rank 3."
             ]
           },
           {
@@ -1512,7 +1667,7 @@
             "reasons": [
               "RB is in the active or nearby round window.",
               "RB can wait.",
-              "Top available RB is Blackbird rank 3."
+              "Top available RB is Blackbird rank 2."
             ]
           },
           {
@@ -1570,34 +1725,34 @@
             "playerName": "K",
             "position": "K",
             "blackbirdRank": 1,
-            "valueScore": 60.4,
+            "valueScore": 48.87,
             "signal": "unexpected_contextual_value",
             "summary": "K is a contextual value signal."
-          },
-          {
-            "playerId": "lb",
-            "playerName": "IDP LB",
-            "position": "LB",
-            "blackbirdRank": 2,
-            "valueScore": 59.25,
-            "signal": "unexpected_contextual_value",
-            "summary": "IDP LB is a contextual value signal."
           },
           {
             "playerId": "rb",
             "playerName": "RB Value",
             "position": "RB",
-            "blackbirdRank": 3,
-            "valueScore": 57.82,
+            "blackbirdRank": 2,
+            "valueScore": 46.88,
             "signal": "unexpected_contextual_value",
             "summary": "RB Value is a contextual value signal."
+          },
+          {
+            "playerId": "lb",
+            "playerName": "IDP LB",
+            "position": "LB",
+            "blackbirdRank": 3,
+            "valueScore": 43.37,
+            "signal": "unexpected_contextual_value",
+            "summary": "IDP LB is a contextual value signal."
           },
           {
             "playerId": "qb",
             "playerName": "QB Tier",
             "position": "QB",
             "blackbirdRank": 4,
-            "valueScore": 53.08,
+            "valueScore": 40.64,
             "signal": "unexpected_contextual_value",
             "summary": "QB Tier is a contextual value signal."
           }
@@ -1641,14 +1796,14 @@
             "priority": "medium",
             "positions": [
               "K",
-              "LB",
               "RB",
+              "LB",
               "QB"
             ],
             "playerIds": [
               "k",
-              "lb",
               "rb",
+              "lb",
               "qb"
             ],
             "reason": "A high contextual Blackbird Rank player is still available."
@@ -1672,6 +1827,36 @@
           "H10 timing can inform plan fit but does not replace contextual rank."
         ]
       },
+      "projectionTrustSample": [
+        {
+          "playerName": "K",
+          "projectionSource": "h10_league_projection",
+          "projectionUnit": "season",
+          "projectionTrustLabel": "low",
+          "projectionTrustScore": 30
+        },
+        {
+          "playerName": "RB Value",
+          "projectionSource": "h10_league_projection",
+          "projectionUnit": "season",
+          "projectionTrustLabel": "low",
+          "projectionTrustScore": 30
+        },
+        {
+          "playerName": "IDP LB",
+          "projectionSource": "h10_league_projection",
+          "projectionUnit": "season",
+          "projectionTrustLabel": "very_low",
+          "projectionTrustScore": 20
+        },
+        {
+          "playerName": "QB Tier",
+          "projectionSource": "h10_league_projection",
+          "projectionUnit": "season",
+          "projectionTrustLabel": "low",
+          "projectionTrustScore": 30
+        }
+      ],
       "inputUnchanged": true
     },
     {
@@ -1762,7 +1947,7 @@
             "status": "thin",
             "summary": "LB is thin versus plan (0/1).",
             "reasons": [
-              "Top available LB is Blackbird rank 2."
+              "Top available LB is Blackbird rank 3."
             ]
           },
           {
@@ -1787,7 +1972,7 @@
             "reasons": [
               "RB is in the active or nearby round window.",
               "RB can wait.",
-              "Top available RB is Blackbird rank 3."
+              "Top available RB is Blackbird rank 2."
             ]
           },
           {
@@ -1845,34 +2030,34 @@
             "playerName": "K",
             "position": "K",
             "blackbirdRank": 1,
-            "valueScore": 60.4,
+            "valueScore": 48.87,
             "signal": "unexpected_contextual_value",
             "summary": "K is a contextual value signal."
-          },
-          {
-            "playerId": "lb",
-            "playerName": "IDP LB",
-            "position": "LB",
-            "blackbirdRank": 2,
-            "valueScore": 59.25,
-            "signal": "unexpected_contextual_value",
-            "summary": "IDP LB is a contextual value signal."
           },
           {
             "playerId": "rb",
             "playerName": "RB Value",
             "position": "RB",
-            "blackbirdRank": 3,
-            "valueScore": 57.82,
+            "blackbirdRank": 2,
+            "valueScore": 46.88,
             "signal": "unexpected_contextual_value",
             "summary": "RB Value is a contextual value signal."
+          },
+          {
+            "playerId": "lb",
+            "playerName": "IDP LB",
+            "position": "LB",
+            "blackbirdRank": 3,
+            "valueScore": 43.37,
+            "signal": "unexpected_contextual_value",
+            "summary": "IDP LB is a contextual value signal."
           },
           {
             "playerId": "qb",
             "playerName": "QB Tier",
             "position": "QB",
             "blackbirdRank": 4,
-            "valueScore": 53.08,
+            "valueScore": 40.64,
             "signal": "unexpected_contextual_value",
             "summary": "QB Tier is a contextual value signal."
           }
@@ -1916,14 +2101,14 @@
             "priority": "medium",
             "positions": [
               "K",
-              "LB",
               "RB",
+              "LB",
               "QB"
             ],
             "playerIds": [
               "k",
-              "lb",
               "rb",
+              "lb",
               "qb"
             ],
             "reason": "A high contextual Blackbird Rank player is still available."
@@ -1947,6 +2132,36 @@
           "H10 timing can inform plan fit but does not replace contextual rank."
         ]
       },
+      "projectionTrustSample": [
+        {
+          "playerName": "K",
+          "projectionSource": "h10_league_projection",
+          "projectionUnit": "season",
+          "projectionTrustLabel": "low",
+          "projectionTrustScore": 30
+        },
+        {
+          "playerName": "RB Value",
+          "projectionSource": "h10_league_projection",
+          "projectionUnit": "season",
+          "projectionTrustLabel": "low",
+          "projectionTrustScore": 30
+        },
+        {
+          "playerName": "IDP LB",
+          "projectionSource": "h10_league_projection",
+          "projectionUnit": "season",
+          "projectionTrustLabel": "very_low",
+          "projectionTrustScore": 20
+        },
+        {
+          "playerName": "QB Tier",
+          "projectionSource": "h10_league_projection",
+          "projectionUnit": "season",
+          "projectionTrustLabel": "low",
+          "projectionTrustScore": 30
+        }
+      ],
       "inputUnchanged": true
     }
   ]

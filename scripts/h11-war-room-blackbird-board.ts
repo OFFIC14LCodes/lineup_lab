@@ -126,9 +126,9 @@ async function smokeBoard(browser: Browser, draftRoomId: string): Promise<Artifa
 
     const visible = await page.getByText("Blackbird Board").first().isVisible();
     const projectionCoverage = buildBrowserProjectionCoverage(draftRoomId, recordOrNull(beforeState.body));
-    const projectionColumnVisible = await page.getByRole("columnheader", { name: "Projection Range" }).isVisible().catch(() => false);
+    const projectionColumnVisible = await page.getByRole("columnheader", { name: "Season Projection" }).isVisible().catch(() => false);
     const blackbirdRankColumnVisible = await page.getByRole("columnheader", { name: "Blackbird Power Rank" }).isVisible().catch(() => false);
-    const valueColumnVisible = await page.getByRole("columnheader", { name: "Draft Suggestion" }).isVisible().catch(() => false);
+    const valueColumnVisible = await page.getByRole("columnheader", { name: "Static Value" }).isVisible().catch(() => false);
     const loadMore = page.getByRole("button", { name: "Load more" });
     const loadMoreVisible = await loadMore.isVisible().catch(() => false);
     let loadedMore = false;

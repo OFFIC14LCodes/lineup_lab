@@ -1,0 +1,51 @@
+sourcePlayerId,sleeperId,blackbirdPlayerId,playerName,normalizedName,position,normalizedPosition,team,status,active,searchRank,yearsExperience,college,age,birthDate,height,weight,candidateNflversePlayerIds,candidateNames,candidateTeams,candidatePositions,matchConfidence,matchReasons,conflictReasons,recommendedAction,reviewPriority
+1613,1613,,Otha Foster,otha foster,DB,DB,,Active,true,9999999,9,West Alabama,33,1988-09-27,71,199,,,,,unmatched,,,provider_missing_id,P3
+1622,1622,,Frank Beltre,frank beltre,LB,LB,,Active,true,9999999,9,Towson,31,1990-01-28,74,240,,,,,unmatched,,,provider_missing_id,P3
+1659,1659,,Will Pericak,will pericak,DL,DL,,Active,true,9999999,9,Colorado,32,1989-12-30,75,300,,,,,unmatched,,,provider_missing_id,P3
+1670,1670,,Lawrence Okoye,lawrence okoye,DL,DL,,Active,true,9999999,9,No College,30,1991-10-06,78,304,,,,,unmatched,,,provider_missing_id,P3
+1779,1779,,Mitchell White,mitchell white,DB,DB,,Active,true,9999999,9,Michigan State,31,1990-03-30,71,185,,,,,unmatched,,,provider_missing_id,P3
+1855,1855,,Shaquelle Evans,shaquelle evans,WR,WR,,Active,true,9999999,8,UCLA,30,1991-03-07,72,210,,,,,unmatched,,,provider_missing_id,P3
+1921,1921,,Daniel McCullers,daniel mccullers,DL,DL,,Inactive,true,787,8,Tennessee,29,1992-08-11,79,352,,,,,unmatched,,,provider_missing_id,P3
+1939,1939,,Derel Walker,derel walker,WR,WR,,Active,true,9999999,8,Texas A&M,30,1991-06-29,74,185,,,,,unmatched,,,provider_missing_id,P3
+1943,1943,,Lacoltan Bester,lacoltan bester,WR,WR,,Active,true,9999999,12,Oklahoma,,,75,208,,,,,unmatched,,,provider_missing_id,P3
+2044,2044,,Brelan Chancellor,brelan chancellor,WR,WR,,Active,true,9999999,12,North Texas,33,1992-08-06,68,183,,,,,unmatched,,,provider_missing_id,P3
+2119,2119,,James Franklin,james franklin,QB,QB,,Active,true,9999999,12,Missouri,34,1991-07-23,74,230,,,,,unmatched,,,provider_missing_id,P3
+2120,2120,,Gregory Hickman,gregory hickman,DL,DL,,Active,true,9999999,11,Florida International,34,1990-11-23,74,280,,,,,unmatched,,,provider_missing_id,P3
+2169,2169,,Devonta Glover-Wright,devonta glover wright,DB,DB,,Inactive,true,9999999,5,Utah State,27,1992-06-28,72,175,,,,,unmatched,,,provider_missing_id,P3
+2200,2200,,Timothy Flanders,timothy flanders,RB,RB,,Active,true,9999999,11,Sam Houston State,33,1991-09-29,69,210,,,,,unmatched,,,provider_missing_id,P3
+2206,2206,,Logan Kilgore,logan kilgore,QB,QB,,Active,true,9999999,12,Middle Tennessee,,,75,206,,,,,unmatched,,,provider_missing_id,P3
+2502,2502,,Bud Sasser,bud sasser,WR,WR,,Active,true,9999999,11,Missouri,,,74,210,,,,,unmatched,,,provider_missing_id,P3
+2551,2551,,Josh Furman,josh furman,DB,DB,,Active,true,9999999,10,Oklahoma State,33,1991-11-01,73,210,,,,,unmatched,,,provider_missing_id,P3
+2557,2557,,Jerry Lovelocke,jerry lovelocke,QB,QB,,Active,true,9999999,10,Prairie View A&M,32,1992-10-08,77,200,,,,,unmatched,,,provider_missing_id,P3
+2561,2561,,Anthony Boone,anthony boone,QB,QB,,Active,true,9999999,11,Duke,34,1991-10-29,72,225,,,,,unmatched,,,provider_missing_id,P3
+2565,2565,,Jean Sifrin,jean sifrin,TE,TE,,Active,true,9999999,1,UMass,38,1987-07-23,77,245,,,,,unmatched,,,provider_missing_id,P3
+2567,2567,,Bryan Bennett,bryan bennett,QB,QB,,Active,true,9999999,10,Southeastern Louisiana,32,1992-03-06,74,215,,,,,unmatched,,,provider_missing_id,P3
+2569,2569,,Jake Waters,jake waters,QB,QB,,Active,true,9999999,10,Kansas State,32,1992-03-20,73,210,,,,,unmatched,,,provider_missing_id,P3
+2573,2573,,DaVaris Daniels,davaris daniels,WR,WR,,Active,true,9999999,10,Notre Dame,32,1992-12-18,73,201,,,,,unmatched,,,provider_missing_id,P3
+2576,2576,,Cody Fajardo,cody fajardo,QB,QB,,Active,true,9999999,10,Nevada,32,1992-03-29,74,215,,,,,unmatched,,,provider_missing_id,P3
+2577,2577,,Devante Davis,devante davis,WR,WR,,Active,true,9999999,10,UNLV,32,1992-10-13,75,215,,,,,unmatched,,,provider_missing_id,P3
+2578,2578,,John Harris,john harris,WR,WR,,Active,true,9999999,10,Texas,,,74,218,HAR447512,John Harris,MIN,DB,unmatched,normalized full name match|height support,position mismatch: WR vs DB,manual_review_required,P3
+2582,2582,,Cole Stoudt,cole stoudt,QB,QB,,Active,true,9999999,11,Clemson,33,1992-10-23,76,220,,,,,unmatched,,,provider_missing_id,P3
+2597,2597,,Michael Dyer,michael dyer,RB,RB,,Active,true,9999999,10,Louisville,34,1990-10-13,69,220,,,,,unmatched,,,provider_missing_id,P3
+2600,2600,,Ricky Seale,ricky seale,RB,RB,,Active,true,9999999,10,Stanford,33,1992-01-08,69,203,,,,,unmatched,,,provider_missing_id,P3
+2607,2607,,Landon Feichter,landon feichter,DB,DB,,Active,true,9999999,10,Purdue,33,1991-08-22,71,201,,,,,unmatched,,,provider_missing_id,P3
+2616,2616,,Jeremy Crayton,jeremy crayton,DB,DB,,Active,true,9999999,10,Southern Arkansas,,,73,190,,,,,unmatched,,,provider_missing_id,P3
+2622,2622,,Warren Herring,warren herring,DL,DL,,Active,true,9999999,10,Wisconsin,33,1992-01-11,75,294,,,,,unmatched,,,provider_missing_id,P3
+2628,2628,,Boris Anyama,boris anyama,LB,LB,,Active,true,9999999,10,Louisiana,33,1991-09-13,75,232,,,,,unmatched,,,provider_missing_id,P3
+2629,2629,,Sam Meredith,sam meredith,DL,DL,,Active,true,9999999,10,San Diego State,32,1993-01-31,76,290,,,,,unmatched,,,provider_missing_id,P3
+2632,2632,,Desmond Martin,desmond martin,RB,RB,,Active,true,9999999,10,Wayne State (MI),32,1992-03-20,72,221,,,,,unmatched,,,provider_missing_id,P3
+2635,2635,,Vernon Johnson,vernon johnson,WR,WR,,Active,true,9999999,10,Texas A&M-Commerce,32,1992-04-17,73,190,,,,,unmatched,,,provider_missing_id,P3
+2636,2636,,Jarred Haggins,jarred haggins,WR,WR,,Active,true,9999999,10,Florida State,33,1992-01-17,72,202,,,,,unmatched,,,provider_missing_id,P3
+2641,2641,,Brian Suite,brian suite,DB,DB,,Active,true,9999999,10,Utah State,32,1992-04-21,74,206,,,,,unmatched,,,provider_missing_id,P3
+2647,2647,,Dyshawn Davis,dyshawn davis,LB,LB,,Active,true,9999999,10,Syracuse,32,1992-07-14,73,225,,,,,unmatched,,,provider_missing_id,P3
+2648,2648,,Tajh Hasson,tajh hasson,DB,DB,,Active,true,9999999,10,UNLV,32,1992-06-12,73,195,,,,,unmatched,,,provider_missing_id,P3
+2650,2650,,Ty Long,ty long,K,K,,Active,true,568,7,UAB,29,1993-04-06,74,205,,,,,unmatched,,,provider_missing_id,P3
+2651,2651,,Phillip Sims,phillip sims,QB,QB,,Active,true,9999999,10,Winston-Salem State,32,1992-08-15,76,210,,,,,unmatched,,,provider_missing_id,P3
+2659,2659,,Manny Asprilla,manny asprilla,DB,DB,,Active,true,9999999,10,Boston College,31,1993-04-04,71,183,,,,,unmatched,,,provider_missing_id,P3
+2662,2662,,Cameron Botticelli,cameron botticelli,DL,DL,,Active,true,9999999,10,Minnesota,33,1991-10-19,77,290,,,,,unmatched,,,provider_missing_id,P3
+2674,2674,,Paul Browning,paul browning,WR,WR,,Active,true,9999999,10,CSU-Pueblo,32,1992-08-05,74,221,,,,,unmatched,,,provider_missing_id,P3
+2681,2681,,Terry Redden,terry redden,DL,DL,,Active,true,9999999,10,Memphis,31,1993-08-23,74,295,,,,,unmatched,,,provider_missing_id,P3
+2703,2703,,Ezell Ruffin,ezell ruffin,WR,WR,,Active,true,9999999,10,San Diego State,32,1992-03-17,73,210,,,,,unmatched,,,provider_missing_id,P3
+2710,2710,,Donald Celiscar,donald celiscar,DB,DB,,Active,true,9999999,10,Western Michigan,33,1991-10-14,71,183,,,,,unmatched,,,provider_missing_id,P3
+2713,2713,,Josh Harper,josh harper,WR,WR,,Active,true,9999999,10,Fresno State,33,1991-12-01,73,185,,,,,unmatched,,,provider_missing_id,P3
+2725,2725,,Jimmy Jean,jimmy jean,DB,DB,,Active,true,9999999,10,UAB,35,1989-04-01,75,180,,,,,unmatched,,,provider_missing_id,P3

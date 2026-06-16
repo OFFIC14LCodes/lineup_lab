@@ -1,0 +1,5 @@
+playerName,position,team,season,rookieYear,age,yearsExperience,nflDraftRound,nflDraftPick,nflDraftOverall,nflDraftTeam,collegeGames,collegePassingYards,collegeRushingYards,collegeReceivingYards,collegeTotalTackles,collegeSacks,landingSpotRole,source,sourceLabel
+Example Rookie QB,QB,CHI,2026,2026,22,0,1,1,1,CHI,14,3600,520,,,,probable_starter,csv_import,example
+Example Rookie RB,RB,LV,2026,2026,21,0,2,4,36,LV,13,,1450,285,,,committee,csv_import,example
+Example Rookie LB,LB,CLE,2026,2026,22,0,2,1,33,CLE,14,,,,110,4,probable_starter,csv_import,example
+Example Sparse TE,TE,DEN,2026,2026,22,0,4,6,118,DEN,,,,,,,,csv_import,example

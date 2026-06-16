@@ -2,7 +2,7 @@
 
 ```json
 {
-  "generatedAt": "2026-06-16T03:51:25.860Z",
+  "generatedAt": "2026-06-16T15:55:25.966Z",
   "verdict": "passed",
   "checks": [
     {
@@ -26,6 +26,11 @@
       "detail": "contextual gaps checked"
     },
     {
+      "name": "projection_source_trust_visible",
+      "passed": true,
+      "detail": "source/unit/trust carried into plan fit rows"
+    },
+    {
       "name": "no_banned_language",
       "passed": true,
       "detail": "safe language"
@@ -46,7 +51,11 @@
         "Unexpected contextual value signal.",
         "Avoid forcing K/DST before late-window evidence.",
         "Situation, snap, or depth-chart data is unavailable."
-      ]
+      ],
+      "projectionSource": "h10_league_projection",
+      "projectionUnit": "season",
+      "projectionTrustLabel": "low",
+      "projectionTrustScore": 30
     },
     {
       "rank": 2,
@@ -57,7 +66,11 @@
         "Unexpected contextual value signal.",
         "Position can likely wait.",
         "Situation, snap, or depth-chart data is unavailable."
-      ]
+      ],
+      "projectionSource": "h10_league_projection",
+      "projectionUnit": "season",
+      "projectionTrustLabel": "low",
+      "projectionTrustScore": 30
     },
     {
       "rank": 3,
@@ -70,7 +83,11 @@
         "Unexpected contextual value signal.",
         "Tier risk is rising.",
         "Situation, snap, or depth-chart data is unavailable."
-      ]
+      ],
+      "projectionSource": "h10_league_projection",
+      "projectionUnit": "season",
+      "projectionTrustLabel": "low",
+      "projectionTrustScore": 30
     }
   ]
 }

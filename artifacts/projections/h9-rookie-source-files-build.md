@@ -1,0 +1,59 @@
+# h9-rookie-source-files-build
+
+```json
+{
+  "generatedAt": "2026-06-16T19:05:39.077Z",
+  "dryRun": true,
+  "apply": false,
+  "generatedPriorityFillFiles": [
+    {
+      "kind": "draft-capital",
+      "path": "C:\\Projects\\lineup_lab\\data\\rookies\\sources\\draft-capital-priority-fill.csv",
+      "rows": 100
+    },
+    {
+      "kind": "college-production",
+      "path": "C:\\Projects\\lineup_lab\\data\\rookies\\sources\\college-production-priority-fill.csv",
+      "rows": 100
+    },
+    {
+      "kind": "role-notes",
+      "path": "C:\\Projects\\lineup_lab\\data\\rookies\\sources\\role-notes-priority-fill.csv",
+      "rows": 100
+    }
+  ],
+  "mergeResults": [
+    {
+      "kind": "draft-capital",
+      "sourcePath": "C:\\Projects\\lineup_lab\\data\\rookies\\sources\\draft-capital.csv",
+      "fillPath": "C:\\Projects\\lineup_lab\\data\\rookies\\sources\\draft-capital-priority-fill.csv",
+      "fillRows": 100,
+      "rowsWithData": 0,
+      "appliedRows": 0,
+      "conflicts": 0,
+      "invalidRows": 0
+    },
+    {
+      "kind": "college-production",
+      "sourcePath": "C:\\Projects\\lineup_lab\\data\\rookies\\sources\\college-production.csv",
+      "fillPath": "C:\\Projects\\lineup_lab\\data\\rookies\\sources\\college-production-priority-fill.csv",
+      "fillRows": 100,
+      "rowsWithData": 0,
+      "appliedRows": 0,
+      "conflicts": 0,
+      "invalidRows": 0
+    },
+    {
+      "kind": "role-notes",
+      "sourcePath": "C:\\Projects\\lineup_lab\\data\\rookies\\sources\\role-notes.csv",
+      "fillPath": "C:\\Projects\\lineup_lab\\data\\rookies\\sources\\role-notes-priority-fill.csv",
+      "fillRows": 100,
+      "rowsWithData": 0,
+      "appliedRows": 0,
+      "conflicts": 0,
+      "invalidRows": 0
+    }
+  ],
+  "verdict": "needs_source_data"
+}
+```

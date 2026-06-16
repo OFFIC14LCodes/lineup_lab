@@ -334,9 +334,9 @@ function formatValue(value: number | null, active: boolean, ageCurve: number): n
   return value === null ? ageCurve : clamp(value * 0.7 + ageCurve * 0.3, 0, 100);
 }
 
-function redraftScore(player: ScoredDraftTarget, projectionValue: number, dynasty: boolean): number {
+function redraftScore(_player: ScoredDraftTarget, projectionValue: number, dynasty: boolean): number {
   if (dynasty) return 50;
-  return clamp((player.draftTargetScore ?? projectionValue) * 0.6 + projectionValue * 0.4, 0, 100);
+  return clamp(projectionValue, 0, 100);
 }
 
 function bestBallScore(value: number | null, floorCeilingShape: number, active: boolean): number {

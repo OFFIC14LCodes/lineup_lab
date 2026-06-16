@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-16T04:48:55.172Z",
+  "generatedAt": "2026-06-16T16:36:54.713Z",
   "verdict": "passed",
   "boardOrderingMethod": "static Blackbird league rank; ADP external reference only",
   "syntheticAudit": {
@@ -101,13 +101,13 @@
       "verdict": "passed",
       "failureReasons": [],
       "boardRowsByPosition": {
-        "WR": 213,
+        "DL": 203,
+        "WR": 211,
         "RB": 107,
-        "QB": 45,
-        "TE": 108,
+        "QB": 44,
+        "TE": 110,
         "LB": 118,
         "DB": 213,
-        "DL": 202,
         "K": 16
       },
       "missingProjectionPositions": []

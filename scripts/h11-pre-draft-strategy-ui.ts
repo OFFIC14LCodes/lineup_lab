@@ -139,6 +139,7 @@ async function exerciseRoom(browser: Browser, room: ReturnType<typeof selectRoom
     const beforeStrategy = await fetchJson(page, `/api/draft-rooms/${room.draftRoomId}/pre-draft-strategy`);
     await page.goto(`/drafts/${room.draftRoomId}`, { waitUntil: "networkidle", timeout: 30_000 });
     await page.getByText("Pre-Draft Strategy Preview").waitFor({ timeout: 20_000 });
+    await openPlanDetails(page);
 
     const endpointStatus = beforeStrategy.status;
     const sectionsRendered: string[] = [];
@@ -215,6 +216,14 @@ async function exerciseRoom(browser: Browser, room: ReturnType<typeof selectRoom
     };
   } finally {
     await context.close();
+  }
+}
+
+async function openPlanDetails(page: Page) {
+  const summary = page.getByText("Plan details").first();
+  if (await summary.isVisible().catch(() => false)) {
+    await summary.click().catch(() => undefined);
+    await page.waitForTimeout(250);
   }
 }
 

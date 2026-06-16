@@ -1,0 +1,102 @@
+{
+  "kind": "h9-rookie-blackbird-rank",
+  "generatedAt": "2026-06-16T18:15:17.872Z",
+  "verdict": "passed",
+  "checks": [
+    {
+      "name": "rookies_included_in_blackbird_rank",
+      "passed": true,
+      "detail": "Veteran RB, Rookie QB, Rookie LB"
+    },
+    {
+      "name": "rank_uses_projection_context_not_adp",
+      "passed": true,
+      "detail": "static Blackbird league rank; ADP external reference only"
+    },
+    {
+      "name": "rookie_data_gaps_visible",
+      "passed": true,
+      "detail": "rookie rows carry context gaps"
+    },
+    {
+      "name": "no_adp_fallback",
+      "passed": true,
+      "detail": "static Blackbird league rank; ADP external reference only"
+    }
+  ],
+  "safety": {
+    "noScraping": true,
+    "noPaidApi": true,
+    "noFabricatedContext": true,
+    "noAdpFallback": true,
+    "noDraftStateMutation": true,
+    "noRecommendationPersistence": true
+  },
+  "orderingMethod": "static Blackbird league rank; ADP external reference only",
+  "rows": [
+    {
+      "blackbirdRank": 1,
+      "playerName": "Veteran RB",
+      "position": "RB",
+      "projection": 215,
+      "valueScore": 40,
+      "role": "probable_starter",
+      "dataGaps": [
+        "coaching environment",
+        "confirmed depth chart",
+        "confirmed depth chart for backup deweighting",
+        "confirmed snap share",
+        "depth chart role",
+        "injury risk",
+        "projected snap share",
+        "role stability",
+        "team defense environment",
+        "team offense environment"
+      ]
+    },
+    {
+      "blackbirdRank": 2,
+      "playerName": "Rookie QB",
+      "position": "QB",
+      "projection": 255,
+      "valueScore": 33.07,
+      "role": "rookie_unknown",
+      "dataGaps": [
+        "coaching environment",
+        "college role translation",
+        "confirmed depth chart",
+        "confirmed depth chart for backup deweighting",
+        "confirmed snap share",
+        "depth chart role",
+        "injury risk",
+        "projected snap share",
+        "role stability",
+        "rookie draft capital",
+        "team defense environment",
+        "team offense environment"
+      ]
+    },
+    {
+      "blackbirdRank": 3,
+      "playerName": "Rookie LB",
+      "position": "LB",
+      "projection": 190,
+      "valueScore": 32.92,
+      "role": "rookie_unknown",
+      "dataGaps": [
+        "coaching environment",
+        "college role translation",
+        "confirmed depth chart",
+        "confirmed depth chart for backup deweighting",
+        "confirmed snap share",
+        "depth chart role",
+        "injury risk",
+        "projected snap share",
+        "role stability",
+        "rookie draft capital",
+        "team defense environment",
+        "team offense environment"
+      ]
+    }
+  ]
+}

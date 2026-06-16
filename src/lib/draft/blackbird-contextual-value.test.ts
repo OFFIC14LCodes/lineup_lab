@@ -66,6 +66,14 @@ describe("H11.4.1 Blackbird contextual value", () => {
     expect(earlyAdp.valueScore).toBe(lateAdp.valueScore);
   });
 
+  it("does not use old draft target score as redraft static value input", () => {
+    const highLegacyScore = contextual({ player_name: "Legacy High", draftTargetScore: 99, adp: 1 }, overlay({ displayName: "Legacy High" }), { isDynasty: false });
+    const lowLegacyScore = contextual({ player_name: "Legacy Low", draftTargetScore: 5, adp: 250 }, overlay({ displayName: "Legacy Low" }), { isDynasty: false });
+
+    expect(highLegacyScore.valueScore).toBe(lowLegacyScore.valueScore);
+    expect(highLegacyScore.valueScoreComponents.redraftValue).toBe(lowLegacyScore.valueScoreComponents.redraftValue);
+  });
+
   it("separates same-position ties and assigns deterministic ranks", () => {
     const ranked = assignBlackbirdRanks([
       contextual({ player_name: "Alpha", matched_player_id: "a" }, overlay({ entityId: "a", displayName: "Alpha", medianPoints: 205, pointsAboveReplacement: 18 })),

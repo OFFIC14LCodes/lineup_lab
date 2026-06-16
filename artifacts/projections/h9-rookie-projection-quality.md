@@ -3,7 +3,7 @@
 ```json
 {
   "kind": "rookie-projection-quality",
-  "generatedAt": "2026-06-16T04:47:54.585Z",
+  "generatedAt": "2026-06-16T19:07:54.648Z",
   "verdict": "passed",
   "failureReasons": [],
   "warnings": [
@@ -344,34 +344,8 @@
     "floorMedianCeilingFailures": 0
   },
   "persistence": {
-    "persistence": {
-      "projectionRunId": "3fa33111-b8f6-450d-93cb-8cf12acdfb4a",
-      "reusedCompleteRun": false
-    },
-    "persistenceInspection": {
-      "projectionRunId": "3fa33111-b8f6-450d-93cb-8cf12acdfb4a",
-      "inputCount": 7234,
-      "outputCount": 27820,
-      "reasonCount": 23202,
-      "distinctInputPlayers": 7234,
-      "distinctOutputPlayers": 2140,
-      "distinctOutputLeagues": 13,
-      "positionDistribution": {
-        "TE": 601,
-        "RB": 706,
-        "DL": 1358,
-        "DB": 1680,
-        "WR": 1296,
-        "LB": 1086,
-        "QB": 354,
-        "K": 153
-      },
-      "duplicateInputKeys": 0,
-      "duplicateOutputKeys": 0,
-      "duplicateReasonKeys": 0,
-      "missingPlayerLeagueOutputs": 0,
-      "complete": true
-    }
+    "persistence": null,
+    "persistenceInspection": null
   },
   "samples": {
     "byPosition": {
@@ -506,20 +480,22 @@
         "projectionType": "rookie",
         "confidence": "very_low",
         "dataGaps": [
+          "NFL draft capital",
+          "college production",
+          "landing spot role",
           "missing NFL draft capital",
           "missing college production profile",
-          "missing NFL draft capital",
           "rookie role uncertainty"
         ],
         "medianStats": {
-          "solo_tkl": 30.6,
-          "ast_tkl": 15,
-          "total_tkl": 45.6,
-          "pass_def": 3.4,
-          "def_int": 0.8,
-          "sack": 0.3,
-          "tfl": 1.4,
-          "ff": 0.5
+          "solo_tkl": 22.5,
+          "ast_tkl": 11,
+          "total_tkl": 33.5,
+          "pass_def": 2.5,
+          "def_int": 0.6,
+          "sack": 0.2,
+          "tfl": 1,
+          "ff": 0.4
         }
       },
       "WR": {
@@ -528,22 +504,24 @@
         "projectionType": "rookie",
         "confidence": "very_low",
         "dataGaps": [
+          "NFL draft capital",
+          "college production",
+          "landing spot role",
           "missing NFL draft capital",
           "missing college production profile",
-          "missing NFL draft capital",
           "rookie role uncertainty"
         ],
         "medianStats": {
-          "target": 49,
-          "rec": 29.2,
-          "rec_yd": 370.6,
-          "rec_td": 2,
-          "rush_att": 2,
-          "rush_yd": 12.2,
+          "target": 37.4,
+          "rec": 22.4,
+          "rec_yd": 283.4,
+          "rec_td": 1.6,
+          "rush_att": 1.6,
+          "rush_yd": 9.4,
           "rush_td": 0.1,
-          "fum": 0.7,
-          "fum_lost": 0.3,
-          "ypc": 6.1,
+          "fum": 0.5,
+          "fum_lost": 0.2,
+          "ypc": 5.9,
           "ypr": 12.7
         }
       },
@@ -553,13 +531,35 @@
         "projectionType": "rookie",
         "confidence": "very_low",
         "dataGaps": [
+          "NFL draft capital",
+          "college production",
+          "landing spot role",
           "missing NFL draft capital",
           "missing college production profile",
-          "missing NFL draft capital",
-          "rookie role uncertainty"
+          "rookie role uncertainty",
+          "team assignment"
         ],
         "medianStats": {
-          "solo_tkl": 37.4,
-          "ast_tkl": 21.8,
-          "total_tkl
+          "solo_tkl": 27.5,
+          "ast_tkl": 16,
+          "total_tkl": 43.5,
+          "tfl": 2.5,
+          "sack": 1.2,
+          "qb_hit": 2.5,
+          "pass_def": 1.5,
+          "def_int": 0.2,
+          "ff": 0.5
+        }
+      },
+      "RB": {
+        "playerId": "fb05090b-fa0d-4083-884a-2cc9cc6baa0c",
+        "playerName": "Myles Montgomery",
+        "projectionType": "rookie",
+        "confidence": "very_low",
+        "dataGaps": [
+          "NFL draft capital",
+          "college production",
+          "landing spot role",
+          "missing NFL draft capital",
+    
 ```

@@ -2,7 +2,7 @@
 
 ```json
 {
-  "generatedAt": "2026-06-16T04:44:33.289Z",
+  "generatedAt": "2026-06-16T19:07:30.467Z",
   "method": "blackbird_comprehensive_stat_projections_v1",
   "projectionVersion": "comprehensive-stat-projections-v1",
   "historicalSeason": 2025,
@@ -31,660 +31,515 @@
   "rookieConfidenceDistribution": {
     "very_low": 702
   },
-  "projectionStatCoverageByPosition": {
-    "QB": {
-      "pass_att": 114,
-      "pass_cmp": 114,
-      "pass_yd": 114,
-      "pass_td": 114,
-      "pass_int": 114,
-      "rush_att": 114,
-      "rush_yd": 114,
-      "rush_td": 114,
-      "fum_lost": 114,
-      "pass_fd": 81,
-      "rush_fd": 81,
-      "two_pt": 81,
-      "rec": 81,
-      "rec_fd": 81,
-      "rec_td": 81,
-      "rec_yd": 81,
-      "target": 81,
-      "pass_sack": 81,
-      "ypc": 111,
-      "cmp_pct": 109,
-      "ypr": 8,
-      "fum": 33
-    },
-    "RB": {
-      "rush_att": 209,
-      "rush_yd": 209,
-      "rush_td": 209,
-      "target": 209,
-      "rec": 209,
-      "rec_yd": 209,
-      "rec_td": 209,
-      "fum_lost": 209,
-      "rush_fd": 147,
-      "rec_fd": 147,
-      "two_pt": 147,
-      "pass_fd": 147,
-      "pass_td": 147,
-      "pass_yd": 147,
-      "pass_att": 147,
-      "pass_cmp": 147,
-      "pass_int": 147,
-      "pass_sack": 147,
-      "ypc": 197,
-      "ypr": 175,
-      "cmp_pct": 6,
-      "fum": 62
-    },
-    "WR": {
-      "target": 370,
-      "rec": 370,
-      "rec_yd": 370,
-      "rec_td": 370,
-      "rush_att": 370,
-      "rush_yd": 370,
-      "rush_td": 370,
-      "fum_lost": 370,
-      "rec_fd": 232,
-      "two_pt": 232,
-      "pass_fd": 232,
-      "pass_td": 232,
-      "pass_yd": 232,
-      "rush_fd": 232,
-      "pass_att": 232,
-      "pass_cmp": 232,
-      "pass_int": 232,
-      "pass_sack": 232,
-      "ypr": 346,
-      "ypc": 216,
-      "cmp_pct": 4,
-      "fum": 138
-    },
-    "TE": {
-      "target": 197,
-      "rec": 197,
-      "rec_yd": 197,
-      "rec_td": 197,
-      "fum_lost": 197,
-      "rec_fd": 131,
-      "two_pt": 131,
-      "pass_fd": 131,
-      "pass_td": 131,
-      "pass_yd": 131,
-      "rush_fd": 131,
-      "rush_td": 131,
-      "rush_yd": 131,
-      "pass_att": 131,
-      "pass_cmp": 131,
-      "pass_int": 131,
-      "rush_att": 131,
-      "pass_sack": 131,
-      "ypr": 184,
-      "ypc": 22,
-      "cmp_pct": 3,
-      "fum": 66
-    },
-    "K": {
-      "pat_att": 52,
-      "pat_made": 52,
-      "fg_att": 52,
-      "fg_made": 52,
-      "fgm_0_19": 38,
-      "fgm_20_29": 38,
-      "fgm_30_39": 38,
-      "fgm_40_49": 38,
-      "fgm_50p": 38,
-      "fgmiss": 38,
-      "xpmiss": 38,
-      "fg_long": 38,
-      "fgm_60p": 38,
-      "fgm_50_59": 38,
-      "fg_blocked": 38,
-      "fgmiss_50p": 38,
-      "fgmiss_60p": 38,
-      "xp_blocked": 38,
-      "fgmiss_0_19": 38,
-      "fgmiss_20_29": 38,
-      "fgmiss_30_39": 38,
-      "fgmiss_40_49": 38,
-      "fgmiss_50_59": 38,
-      "fg_pct": 52,
-      "pat_pct": 52,
-      "fg_miss": 14
-    },
-    "DEF": {},
-    "DL": {
-      "solo_tkl": 418,
-      "ast_tkl": 418,
-      "total_tkl": 418,
-      "sack": 418,
-      "qb_hit": 418,
-      "ff": 418,
-      "fr": 418,
-      "pass_def": 418,
-      "def_td": 269,
-      "def_int": 269,
-      "safety": 269,
-      "fr_td": 269,
-      "fr_opp": 269,
-      "fr_own": 269,
-      "sack_yd": 269,
-      "tkl_loss": 269,
-      "fr_opp_yd": 269,
-      "fr_own_yd": 269,
-      "fr_ret_yd": 269,
-      "int_ret_yd": 269,
-      "tkl_loss_yd": 269,
-      "tfl": 149
-    },
-    "LB": {
-      "solo_tkl": 279,
-      "ast_tkl": 279,
-      "total_tkl": 279,
-      "sack": 279,
-      "qb_hit": 279,
-      "ff": 279,
-      "fr": 194,
-      "pass_def": 279,
-      "def_int": 279,
-      "def_td": 194,
-      "safety": 194,
-      "fr_td": 194,
-      "fr_opp": 194,
-      "fr_own": 194,
-      "sack_yd": 194,
-      "tkl_loss": 194,
-      "fr_opp_yd": 194,
-      "fr_own_yd": 194,
-      "fr_ret_yd": 194,
-      "int_ret_yd": 194,
-      "tkl_loss_yd": 194,
-      "tfl": 85
-    },
-    "DB": {
-      "solo_tkl": 501,
-      "ast_tkl": 501,
-      "total_tkl": 501,
-      "pass_def": 501,
-      "def_int": 501,
-      "sack": 501,
-      "ff": 501,
-      "fr": 346,
-      "def_td": 346,
-      "safety": 346,
-      "fr_td": 346,
-      "fr_opp": 346,
-      "fr_own": 346,
-      "qb_hit": 346,
-      "sack_yd": 346,
-      "tkl_loss": 346,
-      "fr_opp_yd": 346,
-      "fr_own_yd": 346,
-      "fr_ret_yd": 346,
-      "int_ret_yd": 346,
-      "tkl_loss_yd": 346,
-      "tfl": 155
-    }
+  "rookieDataImport": {
+    "sourcePath": "C:\\Projects\\lineup_lab\\data\\rookies\\rookie-data.csv",
+    "totalRows": 702,
+    "validRows": 702,
+    "invalidRows": 0,
+    "matchedRows": 702,
+    "unmatchedRows": 0,
+    "enrichmentSourcePath": "C:\\Projects\\lineup_lab\\data\\rookies\\rookie-enrichment.csv",
+    "enrichmentRows": 702,
+    "validEnrichmentRows": 702,
+    "invalidEnrichmentRows": 0,
+    "matchedEnrichmentRows": 702,
+    "unmatchedEnrichmentRows": 0,
+    "ambiguousEnrichmentRows": 0,
+    "conflictCount": 0,
+    "conflicts": [],
+    "errors": []
   },
-  "sampleProjections": [
+  "rookieProfiles": [
     {
-      "playerId": "9c149379-df06-4e2d-b734-3fee91327ead",
-      "playerName": "Graham Gano",
-      "position": "K",
-      "team": null,
-      "season": 2026,
-      "projectionVersion": "comprehensive-stat-projections-v1",
-      "projectionUnit": "season",
-      "projectionType": "veteran",
-      "confidence": "low",
+      "playerName": "Aamaris Brown",
+      "position": "DB",
+      "matchedPlayerId": "92017508-73d4-4001-9cb2-ceedac467edc",
+      "matchStatus": "matched_id",
+      "draftCapitalScore": null,
+      "collegeProductionScore": null,
+      "opportunityScore": null,
+      "confidence": "very_low",
       "dataGaps": [
-        "limited historical seasons"
+        "NFL draft capital",
+        "college production",
+        "landing spot role"
       ],
-      "reasons": [
-        "Weighted recent historical stat production.",
-        "Sparse touchdown/turnover events are regressed."
-      ],
-      "stats": {
-        "pat_att": {
-          "floor": 5.9,
-          "median": 9,
-          "ceiling": 12.1
-        },
-        "pat_made": {
-          "floor": 5.9,
-          "median": 9,
-          "ceiling": 12.1
-        },
-        "fg_att": {
-          "floor": 6.6,
-          "median": 10,
-          "ceiling": 13.4
-        },
-        "fg_made": {
-          "floor": 5.9,
-          "median": 9,
-          "ceiling": 12.1
-        },
-        "fgm_0_19": {
-          "floor": 0,
-          "median": 0,
-          "ceiling": 0
-        },
-        "fgm_20_29": {
-          "floor": 2,
-          "median": 3,
-          "ceiling": 4
-        },
-        "fgm_30_39": {
-          "floor": 2.6,
-          "median": 4,
-          "ceiling": 5.4
-        },
-        "fgm_40_49": {
-          "floor": 0.7,
-          "median": 1,
-          "ceiling": 1.3
-        },
-        "fgm_50p": {
-          "floor": 0.7,
-          "median": 1,
-          "ceiling": 1.3
-        },
-        "fgmiss": {
-          "floor": 0.7,
-          "median": 1,
-          "ceiling": 1.3
-        },
-        "xpmiss": {
-          "floor": 0,
-          "median": 0,
-          "ceiling": 0
-        },
-        "fg_long": {
-          "floor": 123.4,
-          "median": 187,
-          "ceiling": 250.6
-        },
-        "fgm_60p": {
-          "floor": 0,
-          "median": 0,
-          "ceiling": 0
-        },
-        "fgm_50_59": {
-          "floor": 0.7,
-          "median": 1,
-          "ceiling": 1.3
-        },
-        "fg_blocked": {
-          "floor": 0,
-          "median": 0,
-          "ceiling": 0
-        },
-        "fgmiss_50p": {
-          "floor": 0,
-          "median": 0,
-          "ceiling": 0
-        },
-        "fgmiss_60p": {
-          "floor": 0,
-          "median": 0,
-          "ceiling": 0
-        },
-        "xp_blocked": {
-          "floor": 0,
-          "median": 0,
-          "ceiling": 0
-        },
-        "fgmiss_0_19": {
-          "floor": 0,
-          "median": 0,
-          "ceiling": 0
-        },
-        "fgmiss_20_29": {
-          "floor": 0,
-          "median": 0,
-          "ceiling": 0
-        },
-        "fgmiss_30_39": {
-          "floor": 0,
-          "median": 0,
-          "ceiling": 0
-        },
-        "fgmiss_40_49": {
-          "floor": 0.7,
-          "median": 1,
-          "ceiling": 1.3
-        },
-        "fgmiss_50_59": {
-          "floor": 0,
-          "median": 0,
-          "ceiling": 0
-        },
-        "fg_pct": {
-          "floor": 90,
-          "median": 90,
-          "ceiling": 90
-        },
-        "pat_pct": {
-          "floor": 100,
-          "median": 100,
-          "ceiling": 100
-        }
-      }
+      "errors": []
     },
     {
-      "playerId": "e511e620-a3a2-4960-90ed-06898da3ff6e",
-      "playerName": "Matt Prater",
-      "position": "K",
-      "team": null,
-      "season": 2026,
-      "projectionVersion": "comprehensive-stat-projections-v1",
-      "projectionUnit": "season",
-      "projectionType": "veteran",
-      "confidence": "low",
+      "playerName": "Ahmari Harvey",
+      "position": "DB",
+      "matchedPlayerId": "56a60c05-94c9-4233-9ba1-413badb6e3db",
+      "matchStatus": "matched_id",
+      "draftCapitalScore": null,
+      "collegeProductionScore": null,
+      "opportunityScore": null,
+      "confidence": "very_low",
       "dataGaps": [
-        "limited historical seasons"
+        "NFL draft capital",
+        "college production",
+        "landing spot role"
       ],
-      "reasons": [
-        "Weighted recent historical stat production.",
-        "Sparse touchdown/turnover events are regressed."
-      ],
-      "stats": {
-        "pat_att": {
-          "floor": 32.3,
-          "median": 49,
-          "ceiling": 65.7
-        },
-        "pat_made": {
-          "floor": 30.4,
-          "median": 46,
-          "ceiling": 61.6
-        },
-        "fg_att": {
-          "floor": 13.2,
-          "median": 20,
-          "ceiling": 26.8
-        },
-        "fg_made": {
-          "floor": 11.9,
-          "median": 18,
-          "ceiling": 24.1
-        },
-        "fgm_0_19": {
-          "floor": 0,
-          "median": 0,
-          "ceiling": 0
-        },
-        "fgm_20_29": {
-          "floor": 2.6,
-          "median": 4,
-          "ceiling": 5.4
-        },
-        "fgm_30_39": {
-          "floor": 4.6,
-          "median": 7,
-          "ceiling": 9.4
-        },
-        "fgm_40_49": {
-          "floor": 4,
-          "median": 6,
-          "ceiling": 8
-        },
-        "fgm_50p": {
-          "floor": 0.7,
-          "median": 1,
-          "ceiling": 1.3
-        },
-        "fgmiss": {
-          "floor": 1.3,
-          "median": 2,
-          "ceiling": 2.7
-        },
-        "xpmiss": {
-          "floor": 2,
-          "median": 3,
-          "ceiling": 4
-        },
-        "fg_long": {
-          "floor": 273.2,
-          "median": 414,
-          "ceiling": 554.8
-        },
-        "fgm_60p": {
-          "floor": 0,
-          "median": 0,
-          "ceiling": 0
-        },
-        "fgm_50_59": {
-          "floor": 0.7,
-          "median": 1,
-          "ceiling": 1.3
-        },
-        "fg_blocked": {
-          "floor": 0,
-          "median": 0,
-          "ceiling": 0
-        },
-        "fgmiss_50p": {
-          "floor": 0.7,
-          "median": 1,
-          "ceiling": 1.3
-        },
-        "fgmiss_60p": {
-          "floor": 0,
-          "median": 0,
-          "ceiling": 0
-        },
-        "xp_blocked": {
-          "floor": 0,
-          "median": 0,
-          "ceiling": 0
-        },
-        "fgmiss_0_19": {
-          "floor": 0,
-          "median": 0,
-          "ceiling": 0
-        },
-        "fgmiss_20_29": {
-          "floor": 0,
-          "median": 0,
-          "ceiling": 0
-        },
-        "fgmiss_30_39": {
-          "floor": 0.7,
-          "median": 1,
-          "ceiling": 1.3
-        },
-        "fgmiss_40_49": {
-          "floor": 0,
-          "median": 0,
-          "ceiling": 0
-        },
-        "fgmiss_50_59": {
-          "floor": 0.7,
-          "median": 1,
-          "ceiling": 1.3
-        },
-        "fg_pct": {
-          "floor": 90,
-          "median": 90,
-          "ceiling": 90
-        },
-        "pat_pct": {
-          "floor": 93.9,
-          "median": 93.9,
-          "ceiling": 93.9
-        }
-      }
+      "errors": []
     },
     {
-      "playerId": "07021f93-ee96-4638-b026-2c5c4c33426d",
-      "playerName": "Joe Flacco",
-      "position": "QB",
-      "team": "CIN",
-      "season": 2026,
-      "projectionVersion": "comprehensive-stat-projections-v1",
-      "projectionUnit": "season",
-      "projectionType": "veteran",
-      "confidence": "low",
+      "playerName": "AJ Haulcy",
+      "position": "DB",
+      "matchedPlayerId": "f3e0a6e8-9820-4d45-b98f-48d02170bfa2",
+      "matchStatus": "matched_id",
+      "draftCapitalScore": null,
+      "collegeProductionScore": null,
+      "opportunityScore": null,
+      "confidence": "very_low",
       "dataGaps": [
-        "limited historical seasons"
+        "NFL draft capital",
+        "college production",
+        "landing spot role"
       ],
-      "reasons": [
-        "Weighted recent historical stat production.",
-        "Sparse touchdown/turnover events are regressed."
-      ],
-      "stats": {
-        "pass_att": {
-          "floor": 307.8,
-          "median": 416,
-          "ceiling": 524.2
-        },
-        "pass_cmp": {
-          "floor": 185.7,
-          "median": 251,
-          "ceiling": 316.3
-        },
-        "pass_yd": {
-          "floor": 1834.5,
-          "median": 2479,
-          "ceiling": 3123.5
-        },
-        "pass_td": {
-          "floor": 10,
-          "median": 13.5,
-          "ceiling": 17
-        },
-        "pass_int": {
-          "floor": 7.4,
-          "median": 10,
-          "ceiling": 12.6
-        },
-        "rush_att": {
-          "floor": 15.5,
-          "median": 21,
-          "ceiling": 26.5
-        },
-        "rush_yd": {
-          "floor": 25.9,
-          "median": 35,
-          "ceiling": 44.1
-        },
-        "rush_td": {
-          "floor": 0.7,
-          "median": 0.9,
-          "ceiling": 1.1
-        },
-        "fum_lost": {
-          "floor": 2.2,
-          "median": 3,
-          "ceiling": 3.8
-        },
-        "pass_fd": {
-          "floor": 85.1,
-          "median": 115,
-          "ceiling": 144.9
-        },
-        "rush_fd": {
-          "floor": 6.7,
-          "median": 9,
-          "ceiling": 11.3
-        },
-        "two_pt": {
-          "floor": 0.8,
-          "median": 1.1,
-          "ceiling": 1.4
-        },
-        "rec": {
-          "floor": 0,
-          "median": 0,
-          "ceiling": 0
-        },
-        "rec_fd": {
-          "floor": 0,
-          "median": 0,
-          "ceiling": 0
-        },
-        "rec_td": {
-          "floor": 0,
-          "median": 0,
-          "ceiling": 0
-        },
-        "rec_yd": {
-          "floor": 0,
-          "median": 0,
-          "ceiling": 0
-        },
-        "target": {
-          "floor": 0,
-          "median": 0,
-          "ceiling": 0
-        },
-        "pass_sack": {
-          "floor": 13.3,
-          "median": 18,
-          "ceiling": 22.7
-        },
-        "ypc": {
-          "floor": 1.7,
-          "median": 1.7,
-          "ceiling": 1.7
-        },
-        "cmp_pct": {
-          "floor": 60.3,
-          "median": 60.3,
-          "ceiling": 60.3
-        }
-      }
+      "errors": []
     },
     {
-      "playerId": "e7aa792e-43ee-4ed5-8d42-1d15950eeee3",
-      "playerName": "Aaron Rodgers",
-      "position": "QB",
-      "team": "PIT",
-      "season": 2026,
-      "projectionVersion": "comprehensive-stat-projections-v1",
-      "projectionUnit": "season",
-      "projectionType": "veteran",
-      "confidence": "low",
+      "playerName": "Al'zillion Hamilton",
+      "position": "DB",
+      "matchedPlayerId": "025e7d09-3bc2-45ed-bbb9-bdaacd5680da",
+      "matchStatus": "matched_id",
+      "draftCapitalScore": null,
+      "collegeProductionScore": null,
+      "opportunityScore": null,
+      "confidence": "very_low",
       "dataGaps": [
-        "limited historical seasons"
+        "NFL draft capital",
+        "college production",
+        "landing spot role"
       ],
-      "reasons": [
-        "Weighted recent historical stat production.",
-        "Sparse touchdown/turnover events are regressed."
+      "errors": []
+    },
+    {
+      "playerName": "Andre Fuller",
+      "position": "DB",
+      "matchedPlayerId": "02c809d7-2819-4201-aace-865ceea995ef",
+      "matchStatus": "matched_id",
+      "draftCapitalScore": null,
+      "collegeProductionScore": null,
+      "opportunityScore": null,
+      "confidence": "very_low",
+      "dataGaps": [
+        "NFL draft capital",
+        "college production",
+        "landing spot role"
       ],
-      "stats": {
-        "pass_att": {
-          "floor": 368.5,
-          "median": 498,
-          "ceiling": 627.5
-        },
-        "pass_cmp": {
-          "floor": 242,
-          "median": 327,
-          "ceiling": 412
-        },
-        "pass_yd": {
-          "floor": 2458.3,
-          "median": 3322,
-          "ceiling": 4185.7
-        },
-        "pass_td": {
-          "floor": 16,
-          "median": 21.6,
-          "ceiling": 27.2
-        },
-        "pass_int": {
-          "floor": 5.2,
-          "median": 7,
-          "ceiling": 8.8
-        },
-        "rush_att": {
-          "floor": 15.5,
-          "median": 21,
+      "errors": []
+    },
+    {
+      "playerName": "Austin Brown",
+      "position": "DB",
+      "matchedPlayerId": "1e496684-662c-45ee-acd3-15b95583d9e7",
+      "matchStatus": "matched_id",
+      "draftCapitalScore": null,
+      "collegeProductionScore": null,
+      "opportunityScore": null,
+      "confidence": "very_low",
+      "dataGaps": [
+        "NFL draft capital",
+        "college production",
+        "landing spot role"
+      ],
+      "errors": []
+    },
+    {
+      "playerName": "Avery Smith",
+      "position": "DB",
+      "matchedPlayerId": "459fab97-e945-42bd-93cf-3125510c89b1",
+      "matchStatus": "matched_id",
+      "draftCapitalScore": null,
+      "collegeProductionScore": null,
+      "opportunityScore": null,
+      "confidence": "very_low",
+      "dataGaps": [
+        "NFL draft capital",
+        "college production",
+        "landing spot role"
+      ],
+      "errors": []
+    },
+    {
+      "playerName": "Avieon Terrell",
+      "position": "DB",
+      "matchedPlayerId": "c23a8ad5-db6a-4b70-ae67-554ed1e15e1e",
+      "matchStatus": "matched_id",
+      "draftCapitalScore": null,
+      "collegeProductionScore": null,
+      "opportunityScore": null,
+      "confidence": "very_low",
+      "dataGaps": [
+        "NFL draft capital",
+        "college production",
+        "landing spot role"
+      ],
+      "errors": []
+    },
+    {
+      "playerName": "Ayden Garnes",
+      "position": "DB",
+      "matchedPlayerId": "b055b8d6-500e-4818-bea2-23f66c7cd3ac",
+      "matchStatus": "matched_id",
+      "draftCapitalScore": null,
+      "collegeProductionScore": null,
+      "opportunityScore": null,
+      "confidence": "very_low",
+      "dataGaps": [
+        "NFL draft capital",
+        "college production",
+        "landing spot role"
+      ],
+      "errors": []
+    },
+    {
+      "playerName": "Bishop Fitzgerald",
+      "position": "DB",
+      "matchedPlayerId": "3ba73fbc-2c93-4bdc-80a4-a1662be16620",
+      "matchStatus": "matched_id",
+      "draftCapitalScore": null,
+      "collegeProductionScore": null,
+      "opportunityScore": null,
+      "confidence": "very_low",
+      "dataGaps": [
+        "NFL draft capital",
+        "college production",
+        "landing spot role"
+      ],
+      "errors": []
+    },
+    {
+      "playerName": "Brandon Cisse",
+      "position": "DB",
+      "matchedPlayerId": "d86db881-089f-40a4-b96b-fa5f0b9c0e75",
+      "matchStatus": "matched_id",
+      "draftCapitalScore": null,
+      "collegeProductionScore": null,
+      "opportunityScore": null,
+      "confidence": "very_low",
+      "dataGaps": [
+        "NFL draft capital",
+        "college production",
+        "landing spot role"
+      ],
+      "errors": []
+    },
+    {
+      "playerName": "Brent Austin",
+      "position": "DB",
+      "matchedPlayerId": "f0229b28-2986-43c8-95f3-08b5a21c3586",
+      "matchStatus": "matched_id",
+      "draftCapitalScore": null,
+      "collegeProductionScore": null,
+      "opportunityScore": null,
+      "confidence": "very_low",
+      "dataGaps": [
+        "NFL draft capital",
+        "college production",
+        "landing spot role"
+      ],
+      "errors": []
+    },
+    {
+      "playerName": "Bryce Phillips",
+      "position": "DB",
+      "matchedPlayerId": "270a2c5f-5b0d-4d84-a54b-392e4efdf5e6",
+      "matchStatus": "matched_id",
+      "draftCapitalScore": null,
+      "collegeProductionScore": null,
+      "opportunityScore": null,
+      "confidence": "very_low",
+      "dataGaps": [
+        "NFL draft capital",
+        "college production",
+        "landing spot role"
+      ],
+      "errors": []
+    },
+    {
+      "playerName": "Bud Clark",
+      "position": "DB",
+      "matchedPlayerId": "04cddc90-1ba9-4167-9dc2-68240195db2b",
+      "matchStatus": "matched_id",
+      "draftCapitalScore": null,
+      "collegeProductionScore": null,
+      "opportunityScore": null,
+      "confidence": "very_low",
+      "dataGaps": [
+        "NFL draft capital",
+        "college production",
+        "landing spot role"
+      ],
+      "errors": []
+    },
+    {
+      "playerName": "Caleb Downs",
+      "position": "DB",
+      "matchedPlayerId": "549c9e3a-6ac2-4c48-b4db-e365db2ea2e3",
+      "matchStatus": "matched_id",
+      "draftCapitalScore": null,
+      "collegeProductionScore": null,
+      "opportunityScore": null,
+      "confidence": "very_low",
+      "dataGaps": [
+        "NFL draft capital",
+        "college production",
+        "landing spot role"
+      ],
+      "errors": []
+    },
+    {
+      "playerName": "Caleb Offord",
+      "position": "DB",
+      "matchedPlayerId": "6fa430bb-3431-47ec-8ae8-0336773c429f",
+      "matchStatus": "matched_id",
+      "draftCapitalScore": null,
+      "collegeProductionScore": null,
+      "opportunityScore": null,
+      "confidence": "very_low",
+      "dataGaps": [
+        "NFL draft capital",
+        "college production",
+        "landing spot role"
+      ],
+      "errors": []
+    },
+    {
+      "playerName": "Cam Miller",
+      "position": "DB",
+      "matchedPlayerId": "93792fbb-c0cb-4610-9935-396960ef424c",
+      "matchStatus": "matched_id",
+      "draftCapitalScore": null,
+      "collegeProductionScore": null,
+      "opportunityScore": null,
+      "confidence": "very_low",
+      "dataGaps": [
+        "NFL draft capital",
+        "college production",
+        "landing spot role"
+      ],
+      "errors": []
+    },
+    {
+      "playerName": "Ceyair Wright",
+      "position": "DB",
+      "matchedPlayerId": "19d82e9d-0f33-4652-82fb-6df1ee0b018d",
+      "matchStatus": "matched_id",
+      "draftCapitalScore": null,
+      "collegeProductionScore": null,
+      "opportunityScore": null,
+      "confidence": "very_low",
+      "dataGaps": [
+        "NFL draft capital",
+        "college production",
+        "landing spot role"
+      ],
+      "errors": []
+    },
+    {
+      "playerName": "Chandler Rivers",
+      "position": "DB",
+      "matchedPlayerId": "c69823b4-9c06-48b9-b227-80804211555f",
+      "matchStatus": "matched_id",
+      "draftCapitalScore": null,
+      "collegeProductionScore": null,
+      "opportunityScore": null,
+      "confidence": "very_low",
+      "dataGaps": [
+        "NFL draft capital",
+        "college production",
+        "landing spot role"
+      ],
+      "errors": []
+    },
+    {
+      "playerName": "Channing Canada",
+      "position": "DB",
+      "matchedPlayerId": "f55060af-0977-4857-bc9d-95ea309de664",
+      "matchStatus": "matched_id",
+      "draftCapitalScore": null,
+      "collegeProductionScore": null,
+      "opportunityScore": null,
+      "confidence": "very_low",
+      "dataGaps": [
+        "NFL draft capital",
+        "college production",
+        "landing spot role"
+      ],
+      "errors": []
+    },
+    {
+      "playerName": "Charles Demmings",
+      "position": "DB",
+      "matchedPlayerId": "cbaeacd2-c0aa-4a5e-90d8-a1b0b43865b9",
+      "matchStatus": "matched_id",
+      "draftCapitalScore": null,
+      "collegeProductionScore": null,
+      "opportunityScore": null,
+      "confidence": "very_low",
+      "dataGaps": [
+        "NFL draft capital",
+        "college production",
+        "landing spot role"
+      ],
+      "errors": []
+    },
+    {
+      "playerName": "Chris Johnson",
+      "position": "DB",
+      "matchedPlayerId": "d1e876bd-9b24-4193-bb2d-b349f587b876",
+      "matchStatus": "matched_id",
+      "draftCapitalScore": null,
+      "collegeProductionScore": null,
+      "opportunityScore": null,
+      "confidence": "very_low",
+      "dataGaps": [
+        "NFL draft capital",
+        "college production",
+        "landing spot role"
+      ],
+      "errors": []
+    },
+    {
+      "playerName": "Colby Humphrey",
+      "position": "DB",
+      "matchedPlayerId": "d2b7ad26-870e-49a6-b885-216659d9ef8e",
+      "matchStatus": "matched_id",
+      "draftCapitalScore": null,
+      "collegeProductionScore": null,
+      "opportunityScore": null,
+      "confidence": "very_low",
+      "dataGaps": [
+        "NFL draft capital",
+        "college production",
+        "landing spot role",
+        "team assignment"
+      ],
+      "errors": []
+    },
+    {
+      "playerName": "Cole Wisniewski",
+      "position": "DB",
+      "matchedPlayerId": "50769ac0-5df9-467c-a16b-c8b1b7d05ff4",
+      "matchStatus": "matched_id",
+      "draftCapitalScore": null,
+      "collegeProductionScore": null,
+      "opportunityScore": null,
+      "confidence": "very_low",
+      "dataGaps": [
+        "NFL draft capital",
+        "college production",
+        "landing spot role"
+      ],
+      "errors": []
+    },
+    {
+      "playerName": "Collin Wright",
+      "position": "DB",
+      "matchedPlayerId": "5c56d8fb-046f-465e-bfda-8a2251311eab",
+      "matchStatus": "matched_id",
+      "draftCapitalScore": null,
+      "collegeProductionScore": null,
+      "opportunityScore": null,
+      "confidence": "very_low",
+      "dataGaps": [
+        "NFL draft capital",
+        "college production",
+        "landing spot role"
+      ],
+      "errors": []
+    },
+    {
+      "playerName": "Colton Hood",
+      "position": "DB",
+      "matchedPlayerId": "dd9dc0f0-0c88-480b-81dd-06d138b62b3e",
+      "matchStatus": "matched_id",
+      "draftCapitalScore": null,
+      "collegeProductionScore": null,
+      "opportunityScore": null,
+      "confidence": "very_low",
+      "dataGaps": [
+        "NFL draft capital",
+        "college production",
+        "landing spot role"
+      ],
+      "errors": []
+    },
+    {
+      "playerName": "D'Angelo Ponds",
+      "position": "DB",
+      "matchedPlayerId": "8a66738d-2eb8-4187-a5a1-a8aee12d0189",
+      "matchStatus": "matched_id",
+      "draftCapitalScore": null,
+      "collegeProductionScore": null,
+      "opportunityScore": null,
+      "confidence": "very_low",
+      "dataGaps": [
+        "NFL draft capital",
+        "college production",
+        "landing spot role"
+      ],
+      "errors": []
+    },
+    {
+      "playerName": "D'Arco Perkins-McAllister",
+      "position": "DB",
+      "matchedPlayerId": "a9990636-f2fe-4b44-9ccc-48371452cc29",
+      "matchStatus": "matched_id",
+      "draftCapitalScore": null,
+      "collegeProductionScore": null,
+      "opportunityScore": null,
+      "confidence": "very_low",
+      "dataGaps": [
+        "NFL draft capital",
+        "college production",
+        "landing spot role"
+      ],
+      "errors": []
+    },
+    {
+      "playerName": "Da'Veawn Armstead",
+      "position": "DB",
+      "matchedPlayerId": "d98dff6b-31e1-4db1-86da-6f1a4d5355b0",
+      "matchStatus": "matched_id",
+      "draftCapitalScore": null,
+      "collegeProductionScore": null,
+      "opportunityScore": null,
+      "confidence": "very_low",
+      "dataGaps": [
+        "NFL draft capital",
+        "college production",
+        "landing spot role"
+      ],
+      "errors": []
+    },
+    {
+      "playerName": "Dalton Johnson",
+      "position": "DB",
+      "matchedPlayerId": "0e6d258a-d219-496a-81c6-8b58a0fff8b7",
+      "matchStatus": "matched_id",
+      "draftCapitalScore": null,
+      "collegeProductionScore": null,
+      "opportunityScore": null,
+      "confidence": "very_low",
+      "dataGaps": [
+        "NFL draft capital",
+        "college production",
+        "landing spot role"
+      ],
+      "errors": []
+    },
+    {
+      "playerName": "Daniel Henry",
+      "position": "DB",
+      "matchedPlayerId": "ed75fa62-433c-46cc-8b2c-040c1ba4edc2",
+      "matchStatus": "matched_id",
+      "draftCapitalScore": null,
+      "collegeProductionScore": null,
+      "opportunityScore": null,
+      "confidence": "very_low",
+      "dataGaps": [
+        "NFL dr
 ```

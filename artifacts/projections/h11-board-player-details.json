@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-16T04:48:17.735Z",
+  "generatedAt": "2026-06-16T16:34:32.656Z",
   "verdict": "passed",
   "checks": {
     "detailContextPresentForRows": true,
@@ -21,6 +21,8 @@
         "IDP roster confirmation",
         "age",
         "coaching environment",
+        "confirmed depth chart",
+        "confirmed snap share",
         "depth chart role",
         "injury risk",
         "projected snap share",
@@ -31,8 +33,8 @@
         "team offense environment",
         "years experience"
       ],
-      "likes": 7,
-      "cautions": 1,
+      "likes": 12,
+      "cautions": 3,
       "comparablePlayers": 2,
       "previousTierNeighbors": 0,
       "nextTierNeighbors": 2
@@ -44,6 +46,8 @@
       "dataGaps": [
         "age",
         "coaching environment",
+        "confirmed depth chart",
+        "confirmed snap share",
         "depth chart role",
         "injury risk",
         "projected snap share",
@@ -54,8 +58,8 @@
         "team offense environment",
         "years experience"
       ],
-      "likes": 7,
-      "cautions": 1,
+      "likes": 11,
+      "cautions": 2,
       "comparablePlayers": 0,
       "previousTierNeighbors": 0,
       "nextTierNeighbors": 0
@@ -67,6 +71,8 @@
       "dataGaps": [
         "age",
         "coaching environment",
+        "confirmed depth chart",
+        "confirmed snap share",
         "depth chart role",
         "injury risk",
         "projected snap share",
@@ -77,8 +83,8 @@
         "team offense environment",
         "years experience"
       ],
-      "likes": 7,
-      "cautions": 1,
+      "likes": 11,
+      "cautions": 2,
       "comparablePlayers": 0,
       "previousTierNeighbors": 0,
       "nextTierNeighbors": 0
@@ -91,6 +97,8 @@
         "IDP roster confirmation",
         "age",
         "coaching environment",
+        "confirmed depth chart",
+        "confirmed snap share",
         "depth chart role",
         "injury risk",
         "projected snap share",
@@ -101,46 +109,22 @@
         "team offense environment",
         "years experience"
       ],
-      "likes": 8,
-      "cautions": 1,
+      "likes": 13,
+      "cautions": 3,
       "comparablePlayers": 2,
       "previousTierNeighbors": 1,
       "nextTierNeighbors": 1
     },
     {
-      "playerName": "Charlie RB",
-      "position": "RB",
-      "blackbirdRank": 5,
-      "dataGaps": [
-        "projection",
-        "H10 context",
-        "age",
-        "coaching environment",
-        "depth chart role",
-        "injury risk",
-        "projected snap share",
-        "projection median",
-        "role stability",
-        "roster positions",
-        "scoring settings",
-        "team defense environment",
-        "team offense environment",
-        "years experience"
-      ],
-      "likes": 3,
-      "cautions": 2,
-      "comparablePlayers": 0,
-      "previousTierNeighbors": 0,
-      "nextTierNeighbors": 0
-    },
-    {
       "playerName": "Foxtrot LB",
       "position": "LB",
-      "blackbirdRank": 6,
+      "blackbirdRank": 5,
       "dataGaps": [
         "IDP roster confirmation",
         "age",
         "coaching environment",
+        "confirmed depth chart",
+        "confirmed snap share",
         "depth chart role",
         "injury risk",
         "projected snap share",
@@ -151,10 +135,42 @@
         "team offense environment",
         "years experience"
       ],
-      "likes": 8,
-      "cautions": 1,
+      "likes": 13,
+      "cautions": 3,
       "comparablePlayers": 2,
       "previousTierNeighbors": 2,
+      "nextTierNeighbors": 0
+    },
+    {
+      "playerName": "Charlie RB",
+      "position": "RB",
+      "blackbirdRank": 6,
+      "dataGaps": [
+        "projection",
+        "H10 context",
+        "replacement baseline",
+        "RB replacement player",
+        "age",
+        "coaching environment",
+        "confirmed depth chart",
+        "confirmed snap share",
+        "depth chart role",
+        "injury risk",
+        "projected snap share",
+        "projection median",
+        "resolved player identity",
+        "role stability",
+        "roster positions",
+        "scoring settings",
+        "season projection median",
+        "team defense environment",
+        "team offense environment",
+        "years experience"
+      ],
+      "likes": 7,
+      "cautions": 6,
+      "comparablePlayers": 0,
+      "previousTierNeighbors": 0,
       "nextTierNeighbors": 0
     }
   ],

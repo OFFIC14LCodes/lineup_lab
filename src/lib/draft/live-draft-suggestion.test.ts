@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { buildLiveDraftSuggestions, findBannedLiveDraftSuggestionLanguage } from "./live-draft-suggestion";
 import type { BlackbirdLeagueRankRow } from "./blackbird-league-rank";
+import { buildProjectionTrust } from "@/lib/projections/projection-trust";
 
 describe("H11.4.2 live draft suggestions", () => {
   it("includes only available players", () => {
@@ -41,6 +42,17 @@ describe("H11.4.2 live draft suggestions", () => {
     expect(result.diagnostics.bannedLanguageFound).toEqual([]);
     expect(findBannedLiveDraftSuggestionLanguage(JSON.stringify(result.rows))).toEqual([]);
   });
+
+  it("normalizes user-facing suggestion score to 0-100", () => {
+    const result = buildLiveDraftSuggestions({
+      leagueRankRows: [rank({ leagueValueScore: 99, pointsAboveReplacement: 250 })],
+      positionNeeds: [{ position: "RB", needLevel: "urgent" }],
+      currentPickNumber: 200,
+    });
+
+    expect(result.rows[0].suggestionScore).toBeLessThanOrEqual(100);
+    expect(result.rows[0].suggestionScore).toBeGreaterThanOrEqual(0);
+  });
 });
 
 function rank(overrides: Partial<BlackbirdLeagueRankRow> = {}): BlackbirdLeagueRankRow {
@@ -62,6 +74,46 @@ function rank(overrides: Partial<BlackbirdLeagueRankRow> = {}): BlackbirdLeagueR
       scoringAware: true,
     },
     pointsAboveReplacement: 30,
+    roleClassification: {
+      playerId: "p",
+      playerName: "Player",
+      position: "RB",
+      team: "TST",
+      role: "probable_starter",
+      confidence: "medium",
+      basis: ["projection_volume_proxy"],
+      teamPositionRankProxy: null,
+      sameTeamPositionPeerCount: 1,
+      projectedVolumeScore: 80,
+      reasons: [],
+      dataGaps: [],
+    },
+    replacementValue: {
+      playerId: "p",
+      position: "RB",
+      medianPoints: 220,
+      replacementMedianPoints: 190,
+      pointsAboveReplacement: 30,
+      parPercentileByPosition: 75,
+      replacementRank: 24,
+      replacementMethod: "league_roster_slots",
+      role: "probable_starter",
+      roleConfidence: "medium",
+      reasons: [],
+      dataGaps: [],
+    },
+    projectionTrust: buildProjectionTrust({
+      playerId: "p",
+      playerName: "Player",
+      position: "RB",
+      projectionVersion: "test",
+      projectionUnit: "season",
+      projectionSource: "h10_league_projection",
+      confidence: "medium",
+      floorPoints: 180,
+      medianPoints: 220,
+      ceilingPoints: 260,
+    }),
     valueComponents: {
       projectionValue: 60,
       floorCeilingShape: 60,

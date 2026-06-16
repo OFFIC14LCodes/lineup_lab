@@ -21,6 +21,7 @@ import {
   normalizeDraftBoardPosition,
 } from "@/lib/draft/draft-board-display";
 import { buildPreDraftStrategyUiViewModel } from "@/lib/draft/pre-draft-strategy-ui";
+import { projectionTrustBadgeLabel } from "@/lib/projections/projection-trust";
 import type { WarRoomRecommendationResult, WarRoomRecommendationRow, WarRoomRecommendationTier } from "@/lib/draft/war-room-recommendations";
 
 type RecommendationTier = "elite_target" | "strong_target" | "good_value" | "depth_option" | "avoid_for_now";
@@ -261,6 +262,100 @@ type PlayerProfileLoadState = {
   error: string | null;
 };
 
+type SelectedPlayerSummary = {
+  playerName: string;
+  position: string | null;
+  team: string | null;
+};
+
+type HistoricalPlayerProfileResponse = {
+  profile: {
+    header: {
+      name: string;
+      position: string;
+      team: string | null;
+      status: string | null;
+      headshot: string | null;
+    };
+    identity: {
+      sleeper_id: string | null;
+      gsis_id: string;
+      blackbird_player_id: string | null;
+      match_confidence: string;
+      match_reasons: string[];
+    };
+    bio: {
+      age: number | null;
+      birth_date: string | null;
+      height: number | null;
+      weight: number | null;
+      college: string | null;
+      rookie_season: number | null;
+      years_experience: number | null;
+    };
+    summaryMetrics: {
+      games: number;
+      total_points: number;
+      points_per_game: number | null;
+      floor: number | null;
+      median: number | null;
+      ceiling: number | null;
+      consistency_score: number;
+      spike_score: number;
+      availability_score: number;
+    };
+    seasonSummaries: Array<{
+      season: number | null;
+      gamesPlayed: number;
+      totalFantasyPoints: number;
+      pointsPerGame: number | null;
+      positionRank: number | null;
+      keyStatTotals: Record<string, number>;
+    }>;
+    weeklyGameLog: Array<{
+      season: number | null;
+      week: number | null;
+      team: string | null;
+      opponent: string | null;
+      passing: Record<string, number | null>;
+      rushing: Record<string, number | null>;
+      receiving: Record<string, number | null>;
+      kicking: Record<string, number | null>;
+      defensive: Record<string, number | null>;
+      calculatedFantasyPoints: number;
+      scoringWarnings: string[];
+    }>;
+    weeklyGameLogTruncated: boolean;
+    idpSummary: Record<string, number> | null;
+    recommendationSignals: {
+      floorScore: number;
+      ceilingScore: number;
+      consistencyScore: number;
+      spikeScore: number;
+      availabilityScore: number;
+      volatilityLabel: string;
+      formatFitHints: {
+        redraft: string;
+        dynasty: string;
+        bestBall: string;
+        idp: string | null;
+      };
+    };
+    warnings: string[];
+  };
+  lookup: {
+    matchedBy: string;
+    artifactBacked: boolean;
+    readOnly: boolean;
+  };
+};
+
+type HistoricalProfileLoadState = {
+  status: "idle" | "loading" | "ready" | "empty" | "error";
+  profile: HistoricalPlayerProfileResponse["profile"] | null;
+  error: string | null;
+};
+
 type PreDraftStrategyResponse = {
   strategyPreviewLabel: string;
   leagueSummary: {
@@ -380,6 +475,12 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
     profile: null,
     error: null,
   });
+  const [selectedPlayerSummary, setSelectedPlayerSummary] = useState<SelectedPlayerSummary | null>(null);
+  const [selectedHistoricalProfile, setSelectedHistoricalProfile] = useState<HistoricalProfileLoadState>({
+    status: "idle",
+    profile: null,
+    error: null,
+  });
   const [recommendationSource, setRecommendationSource] = useState<H10RecommendationSource>(DEFAULT_H10_RECOMMENDATION_SOURCE);
   const [strategyState, setStrategyState] = useState<StrategyLoadState>({
     status: "loading",
@@ -435,9 +536,58 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
     await loadStrategy();
   }, [draftRoomId, loadState, loadStrategy]);
 
+  const loadHistoricalPlayerProfile = useCallback(async (row: BlackbirdBoardRow) => {
+    const lookupId = row.playerId ?? row.playerName;
+    if (!lookupId) {
+      setSelectedHistoricalProfile({ status: "empty", profile: null, error: null });
+      return;
+    }
+
+    setSelectedHistoricalProfile({ status: "loading", profile: null, error: null });
+    const params = new URLSearchParams({ weeklyLimit: "8" });
+    if (row.position) params.set("position", row.position);
+
+    try {
+      const response = await fetch(`/api/player-profiles/${encodeURIComponent(lookupId)}?${params.toString()}`, {
+        cache: "no-store",
+      });
+      if (response.status === 404) {
+        setSelectedHistoricalProfile({ status: "empty", profile: null, error: null });
+        return;
+      }
+
+      const payload = (await response.json()) as Partial<HistoricalPlayerProfileResponse> & { error?: string };
+      if (!response.ok || !payload.profile) {
+        setSelectedHistoricalProfile({
+          status: "error",
+          profile: null,
+          error: payload.error ?? "Historical profile not available yet.",
+        });
+        return;
+      }
+
+      setSelectedHistoricalProfile({ status: "ready", profile: payload.profile, error: null });
+    } catch {
+      setSelectedHistoricalProfile({
+        status: "error",
+        profile: null,
+        error: "Historical profile not available yet.",
+      });
+    }
+  }, []);
+
   const openPlayerProfile = useCallback(async (row: BlackbirdBoardRow) => {
-    if (!row.playerId) return;
+    setSelectedPlayerSummary({ playerName: row.playerName, position: row.position, team: row.team });
     setSelectedPlayerProfile({ status: "loading", profile: null, error: null });
+    void loadHistoricalPlayerProfile(row);
+    if (!row.playerId) {
+      setSelectedPlayerProfile({
+        status: "error",
+        profile: null,
+        error: "League projection profile is not available for this player yet.",
+      });
+      return;
+    }
     try {
       const response = await fetch(
         `/api/draft-rooms/${draftRoomId}/players/${encodeURIComponent(row.playerId)}/profile`,
@@ -460,10 +610,12 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
         error: "Unable to load player profile.",
       });
     }
-  }, [draftRoomId]);
+  }, [draftRoomId, loadHistoricalPlayerProfile]);
 
   const closePlayerProfile = useCallback(() => {
     setSelectedPlayerProfile({ status: "idle", profile: null, error: null });
+    setSelectedPlayerSummary(null);
+    setSelectedHistoricalProfile({ status: "idle", profile: null, error: null });
   }, []);
 
   useEffect(() => {
@@ -846,7 +998,12 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
         </aside>
       </div>
       {selectedPlayerProfile.status !== "idle" ? (
-        <PlayerProfileModal loadState={selectedPlayerProfile} onClose={closePlayerProfile} />
+        <PlayerProfileModal
+          loadState={selectedPlayerProfile}
+          fallbackPlayer={selectedPlayerSummary}
+          historicalProfileState={selectedHistoricalProfile}
+          onClose={closePlayerProfile}
+        />
       ) : null}
     </div>
   );
@@ -1115,15 +1272,20 @@ function LiveSignal({ label, text, tone }: { label: string; text: string; tone: 
 function AvailablePlayersTable({ rows, onSelectPlayer }: { rows: BlackbirdBoardRow[]; onSelectPlayer: (row: BlackbirdBoardRow) => void }) {
   return (
     <div className="overflow-x-auto">
-      <table className="w-full min-w-[1080px] text-left text-sm">
+      <table className="w-full min-w-[1420px] text-left text-sm">
         <thead className="bg-panel2 text-xs uppercase text-slate-400">
           <tr>
-            <th className="px-3 py-3">Draft Suggestion</th>
+            <th className="px-3 py-3">Suggestion</th>
             <th className="px-3 py-3">Blackbird Power Rank</th>
             <th className="px-3 py-3">Player + Details</th>
             <th className="px-3 py-3">Position</th>
             <th className="px-3 py-3">Team</th>
-            <th className="px-3 py-3">Projection Range</th>
+            <th className="px-3 py-3">Season Projection</th>
+            <th className="px-3 py-3">PAR</th>
+            <th className="px-3 py-3">Static Value</th>
+            <th className="px-3 py-3">Trust</th>
+            <th className="px-3 py-3">Role</th>
+            <th className="px-3 py-3">Live Fit</th>
             <th className="px-3 py-3">Risk</th>
           </tr>
         </thead>
@@ -1143,17 +1305,13 @@ function AvailablePlayersTable({ rows, onSelectPlayer }: { rows: BlackbirdBoardR
               </td>
               <td className="px-3 py-3 text-lg font-black text-slate-100">#{row.blackbirdBoardRank}</td>
               <td className="px-3 py-3">
-                {row.playerId ? (
-                  <button
-                    type="button"
-                    className="block max-w-[260px] truncate text-left font-medium text-slate-100 underline decoration-brand/40 underline-offset-4 hover:text-brand"
-                    onClick={() => onSelectPlayer(row)}
-                  >
-                    {row.playerName}
-                  </button>
-                ) : (
-                  <div className="font-medium text-slate-100">{row.playerName}</div>
-                )}
+                <button
+                  type="button"
+                  className="block max-w-[260px] truncate text-left font-medium text-slate-100 underline decoration-brand/40 underline-offset-4 hover:text-brand"
+                  onClick={() => onSelectPlayer(row)}
+                >
+                  {row.playerName}
+                </button>
                 <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-slate-500">
                   <span>{row.playerId ? "Matched context" : "Fallback context"}</span>
                   <span>{row.dataStatus.ordering.replace("_", " ")}</span>
@@ -1172,16 +1330,24 @@ function AvailablePlayersTable({ rows, onSelectPlayer }: { rows: BlackbirdBoardR
                       <ProjectionMini label="Median" value={row.projectionPoints} />
                       <ProjectionMini label="Ceiling" value={row.projectionHigh} />
                     </div>
-                    <div className="mt-1 text-[11px] text-slate-500">{projectionUnitLabel(row)}</div>
+                    <div className="mt-1 flex flex-wrap items-center gap-2 text-[11px] text-slate-500">
+                      <span>{projectionUnitLabel(row)}</span>
+                      <ProjectionTrustBadge row={row} />
+                    </div>
                   </div>
                 ) : "Projection unavailable"}
               </td>
+              <td className="px-3 py-3 font-black text-slate-100">{formatNullableNumber(row.pointsAboveReplacement)}</td>
+              <td className="px-3 py-3 font-black text-brand">{row.blackbirdValueScore === null ? "-" : `${formatNumber(row.blackbirdValueScore)}/100`}</td>
+              <td className="px-3 py-3"><ProjectionTrustBadge row={row} /></td>
+              <td className="px-3 py-3 text-xs text-slate-300">{row.role ? row.role.replace(/_/g, " ") : "-"}</td>
+              <td className="px-3 py-3 text-xs text-slate-300">{row.planFit.replace(/_/g, " ")}</td>
               <td className="px-3 py-3">
                 <RiskScoreBlock row={row} />
               </td>
             </tr>
           ))}
-          {rows.length === 0 ? <EmptyTable colSpan={7} text="No players match these filters." /> : null}
+          {rows.length === 0 ? <EmptyTable colSpan={12} text="No players match these filters." /> : null}
         </tbody>
       </table>
     </div>
@@ -1191,6 +1357,7 @@ function AvailablePlayersTable({ rows, onSelectPlayer }: { rows: BlackbirdBoardR
 function BlackbirdBoardPlayerDetails({ row }: { row: BlackbirdBoardRow }) {
   const detail = row.playerDetailContext;
   if (!detail) return null;
+  const rookieContext = rookieDetailContext(row);
   return (
     <details className="group mt-2 max-w-[460px] rounded-md border border-line/70 bg-background/45 px-2 py-2 text-xs">
       <summary className="flex cursor-pointer list-none items-center justify-between gap-2 font-bold text-brand">
@@ -1202,6 +1369,10 @@ function BlackbirdBoardPlayerDetails({ row }: { row: BlackbirdBoardRow }) {
           <StrategyPill>Blackbird preview</StrategyPill>
           <StrategyPill>Read-only</StrategyPill>
           <StrategyPill>Experimental</StrategyPill>
+          <StrategyPill>{projectionTrustBadgeLabel(detail.projectionTrust)}</StrategyPill>
+          {rookieContext.labels.map((label) => (
+            <StrategyPill key={label}>{label}</StrategyPill>
+          ))}
         </div>
         <p className="rounded-md border border-line/70 bg-panel2/60 px-3 py-2 text-slate-300">{blackbirdRankSummary(row)}</p>
         <div className="grid gap-2 sm:grid-cols-2">
@@ -1209,6 +1380,8 @@ function BlackbirdBoardPlayerDetails({ row }: { row: BlackbirdBoardRow }) {
           <MiniDetail label="Floor" value={formatNullableNumber(detail.projectedFantasyPoints.low)} />
           <MiniDetail label="Ceiling" value={formatNullableNumber(detail.projectedFantasyPoints.high)} />
           <MiniDetail label="PAR" value={formatNullableNumber(detail.par)} />
+          <MiniDetail label="Replacement" value={formatNullableNumber(detail.replacementMedianPoints)} />
+          <MiniDetail label="Role" value={detail.role ? detail.role.replace(/_/g, " ") : "-"} />
           <MiniDetail label="Blackbird Rank" value={`#${formatNumber(detail.blackbirdRank)}`} />
           <MiniDetail label="Draft Suggestion" value={detail.draftSuggestionRank === null ? "-" : `#${detail.draftSuggestionRank}`} />
           <MiniDetail label="Value" value={formatNullableNumber(detail.valueScore)} />
@@ -1225,7 +1398,11 @@ function BlackbirdBoardPlayerDetails({ row }: { row: BlackbirdBoardRow }) {
           </div>
         ) : null}
         <DetailList title="Why Blackbird Likes" items={detail.whyBlackbirdLikes.slice(0, 3)} />
+        <DetailList title="Primary Value Drivers" items={(detail.valueExplanation?.primaryDrivers ?? []).slice(0, 4).map((driver) => `${driver.label}: ${driver.explanation}`)} />
         <DetailList title="Cautions" items={detail.whyBlackbirdIsCautious.slice(0, 3)} />
+        <DetailList title="Projection Trust" items={detail.projectionTrust.reasons.slice(0, 4)} />
+        {rookieContext.items.length ? <DetailList title="Rookie Context" items={rookieContext.items} /> : null}
+        <DetailList title="Role Context" items={playerContextDisplayItems(row).slice(0, 6)} />
         <DetailList title="Wait Plan" items={detail.waitPlanContext.slice(0, 2)} />
         <DetailList title="Contingency" items={detail.contingencyContext.slice(0, 2)} />
         <DetailList title="Plan Fit" items={row.planFitReasons.slice(0, 4)} />
@@ -1253,12 +1430,77 @@ function BlackbirdBoardPlayerDetails({ row }: { row: BlackbirdBoardRow }) {
   );
 }
 
+function playerContextDisplayItems(row: BlackbirdBoardRow): string[] {
+  const detail = row.playerDetailContext;
+  const gaps = new Set([...row.contextualDataGaps, ...(detail?.dataGaps ?? [])].map((gap) => gap.toLowerCase()));
+  return [
+    row.role ? `Role context: ${row.role.replace(/_/g, " ")}` : "Role context: unknown",
+    gaps.has("depth chart context") || gaps.has("confirmed depth chart role") ? "Depth chart scenario: data gap" : "Depth chart scenario: source unavailable or neutral",
+    gaps.has("injury context") || gaps.has("confirmed injury status") ? "Injury context: data gap" : "Injury context: unknown unless sourced",
+    gaps.has("physical profile") ? "Physical profile: data gap" : "Physical profile: not yet sourced",
+    gaps.has("athletic testing") ? "Athletic profile: data gap" : "Athletic profile: not yet sourced",
+    gaps.has("coaching environment") || gaps.has("team environment") ? "Coaching/team environment: data gap" : "Coaching/team environment: unknown unless sourced",
+  ];
+}
+
+function rookieDetailContext(row: BlackbirdBoardRow): { labels: string[]; items: string[] } {
+  const detail = row.playerDetailContext;
+  const gaps = new Set([...row.contextualDataGaps, ...(detail?.dataGaps ?? [])].map((gap) => gap.toLowerCase()));
+  const gapText = Array.from(gaps).join(" ");
+  const isRookie =
+    row.role === "rookie_unknown" ||
+    detail?.role === "rookie_unknown" ||
+    gapText.includes("rookie") ||
+    gapText.includes("draft capital") ||
+    gapText.includes("college production");
+  if (!isRookie) return { labels: [], items: [] };
+
+  const hasDraftCapitalGap = gapText.includes("draft capital");
+  const hasCollegeGap = gapText.includes("college");
+  const hasRoleGap = gapText.includes("role") || row.role === "rookie_unknown" || detail?.role === "rookie_unknown";
+  const hasAnyEnrichedInput = !hasDraftCapitalGap || !hasCollegeGap || !hasRoleGap;
+  const labels = [
+    "Rookie projection",
+    hasAnyEnrichedInput ? "Enriched rookie data available" : null,
+    hasDraftCapitalGap ? "Missing draft capital" : "Draft capital available",
+    hasCollegeGap ? "Missing college production" : "College production available",
+    hasRoleGap ? "Role uncertainty" : null,
+  ].filter((label): label is string => Boolean(label));
+
+  const items = [
+    "Rookie outputs use conservative position baselines adjusted only by available draft capital, college production, and role inputs.",
+    hasAnyEnrichedInput ? "At least one rookie context input is available; unresolved fields remain explicit data gaps." : "No enrichment overlay inputs are available for this rookie yet.",
+    hasDraftCapitalGap ? "NFL draft capital is missing or unresolved for this player." : "Draft capital is present and used only as an opportunity signal.",
+    hasCollegeGap ? "College production is missing or unresolved for this player." : "College production is present and used to shape uncertainty/stat mix, not copied directly into NFL stats.",
+    hasRoleGap ? "Landing spot role is uncertain, so confidence remains conservative." : "Role context is available for this rookie profile.",
+  ];
+
+  return { labels, items };
+}
+
 function ProjectionMini({ label, value }: { label: string; value: number | null | undefined }) {
   return (
     <div className="rounded-md border border-line bg-background/60 px-2 py-1.5">
       <div className="text-[10px] uppercase tracking-wide text-slate-500">{label}</div>
       <div className="mt-0.5 font-black text-slate-100">{formatNullableNumber(value)}</div>
     </div>
+  );
+}
+
+function ProjectionTrustBadge({ row }: { row: BlackbirdBoardRow }) {
+  const trust = row.projectionTrust;
+  const className =
+    trust.trustLabel === "high"
+      ? "border-emerald-400/25 bg-emerald-500/10 text-emerald-200"
+      : trust.trustLabel === "medium"
+        ? "border-brand/25 bg-brand/10 text-brand"
+        : trust.trustLabel === "low"
+          ? "border-gold/30 bg-gold/10 text-gold"
+          : "border-red-400/25 bg-red-500/10 text-red-200";
+  return (
+    <span className={`rounded-full border px-2 py-0.5 text-[10px] uppercase tracking-wide ${className}`}>
+      {trust.trustLabel.replace("_", " ")} trust
+    </span>
   );
 }
 
@@ -1311,9 +1553,19 @@ function DetailList({ title, items }: { title: string; items: string[] }) {
   );
 }
 
-function PlayerProfileModal({ loadState, onClose }: { loadState: PlayerProfileLoadState; onClose: () => void }) {
+function PlayerProfileModal({
+  loadState,
+  fallbackPlayer,
+  historicalProfileState,
+  onClose,
+}: {
+  loadState: PlayerProfileLoadState;
+  fallbackPlayer: SelectedPlayerSummary | null;
+  historicalProfileState: HistoricalProfileLoadState;
+  onClose: () => void;
+}) {
   const profile = loadState.profile;
-  const title = profile?.player.fullName ?? "Player Profile";
+  const title = profile?.player.fullName ?? fallbackPlayer?.playerName ?? "Player Profile";
 
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/70 px-3 py-6 sm:px-6">
@@ -1321,11 +1573,10 @@ function PlayerProfileModal({ loadState, onClose }: { loadState: PlayerProfileLo
         <div className="flex items-start justify-between gap-3 border-b border-line px-4 py-4 sm:px-5">
           <div className="min-w-0">
             <h2 className="break-words text-xl font-black text-slate-50">{title}</h2>
-            {profile ? (
-              <p className="mt-1 text-sm text-slate-400">
-                {profile.player.position ?? "-"} · {profile.player.team ?? "-"} · {profile.player.status ?? "status unknown"}
-              </p>
-            ) : null}
+            <p className="mt-1 text-sm text-slate-400">
+              {profile?.player.position ?? fallbackPlayer?.position ?? "-"} · {profile?.player.team ?? fallbackPlayer?.team ?? "-"} ·{" "}
+              {profile?.player.status ?? "status unknown"}
+            </p>
           </div>
           <button
             type="button"
@@ -1420,10 +1671,263 @@ function PlayerProfileModal({ loadState, onClose }: { loadState: PlayerProfileLo
               </section>
             </>
           ) : null}
+          <HistoricalPlayerProfilePanel state={historicalProfileState} />
         </div>
       </div>
     </div>
   );
+}
+
+function HistoricalPlayerProfilePanel({ state }: { state: HistoricalProfileLoadState }) {
+  const profile = state.profile;
+
+  if (state.status === "loading" || state.status === "idle") {
+    return (
+      <section className="rounded-md border border-line bg-panel2 px-3 py-3">
+        <h3 className="text-sm font-black uppercase tracking-wide text-slate-300">Historical Profile</h3>
+        <p className="mt-3 text-sm text-slate-400">Loading historical profile...</p>
+      </section>
+    );
+  }
+
+  if (!profile || state.status === "empty" || state.status === "error") {
+    return (
+      <section className="rounded-md border border-line bg-panel2 px-3 py-3">
+        <h3 className="text-sm font-black uppercase tracking-wide text-slate-300">Historical Profile</h3>
+        <p className="mt-3 text-sm text-slate-400">Historical profile not available yet.</p>
+      </section>
+    );
+  }
+
+  const confidence = profile.identity.match_confidence.toLowerCase();
+  const needsReviewNote = confidence === "medium" || confidence === "weak";
+  const statSummary = buildHistoricalStatSummary(profile);
+  const recentWeeklyRows = profile.weeklyGameLog.slice(0, 8);
+
+  return (
+    <section className="rounded-md border border-line bg-panel2 px-3 py-3">
+      <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-start">
+        <div>
+          <h3 className="text-sm font-black uppercase tracking-wide text-slate-300">Historical Profile</h3>
+          <p className="mt-1 text-xs text-slate-500">
+            Match confidence: <span className="font-bold text-slate-300">{profile.identity.match_confidence}</span>
+          </p>
+          {needsReviewNote ? (
+            <p className="mt-2 rounded-md border border-gold/30 bg-gold/10 px-2 py-1 text-xs text-gold">
+              Profile match confidence: {confidence}. Review may be needed.
+            </p>
+          ) : null}
+        </div>
+        <div className="grid grid-cols-2 gap-2 text-xs sm:min-w-[420px] sm:grid-cols-3">
+          <H11MiniMetric label="Games" value={formatNumber(profile.summaryMetrics.games)} />
+          <H11MiniMetric label="Total Points" value={formatNumber(profile.summaryMetrics.total_points)} />
+          <H11MiniMetric label="PPG" value={formatNullableNumber(profile.summaryMetrics.points_per_game)} />
+        </div>
+      </div>
+
+      <div className="mt-3 grid grid-cols-2 gap-2 text-xs sm:grid-cols-3 lg:grid-cols-6">
+        <H11MiniMetric label="Floor" value={formatNullableNumber(profile.summaryMetrics.floor)} />
+        <H11MiniMetric label="Median" value={formatNullableNumber(profile.summaryMetrics.median)} />
+        <H11MiniMetric label="Ceiling" value={formatNullableNumber(profile.summaryMetrics.ceiling)} />
+        <H11MiniMetric label="Consistency" value={`${formatNumber(profile.summaryMetrics.consistency_score)}/100`} />
+        <H11MiniMetric label="Spike" value={`${formatNumber(profile.summaryMetrics.spike_score)}/100`} />
+        <H11MiniMetric label="Availability" value={`${formatNumber(profile.summaryMetrics.availability_score)}/100`} />
+      </div>
+
+      {profile.warnings.length ? (
+        <div className="mt-3 flex flex-wrap gap-1">
+          {profile.warnings.map((warning) => (
+            <span key={warning} className="rounded-full border border-gold/25 bg-gold/10 px-2 py-1 text-[11px] text-gold">
+              {formatProfileWarning(warning)}
+            </span>
+          ))}
+        </div>
+      ) : null}
+
+      {statSummary.length ? (
+        <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
+          {statSummary.map((stat) => (
+            <div key={stat.label} className="rounded-md border border-line/70 bg-background/50 px-2 py-2">
+              <div className="text-[11px] uppercase tracking-wide text-slate-500">{stat.label}</div>
+              <div className="mt-1 font-black text-slate-100">{formatNumber(stat.value)}</div>
+            </div>
+          ))}
+        </div>
+      ) : null}
+
+      {profile.seasonSummaries.length ? (
+        <div className="mt-4 overflow-x-auto">
+          <table className="w-full min-w-[620px] text-left text-sm">
+            <thead className="text-xs uppercase text-slate-500">
+              <tr>
+                <th className="px-2 py-2">Season</th>
+                <th className="px-2 py-2">Games</th>
+                <th className="px-2 py-2">Points</th>
+                <th className="px-2 py-2">PPG</th>
+                <th className="px-2 py-2">Position Rank</th>
+              </tr>
+            </thead>
+            <tbody>
+              {profile.seasonSummaries.slice(0, 3).map((row) => (
+                <tr key={`${row.season ?? "unknown"}-${row.positionRank ?? "rank"}`} className="border-t border-line/70">
+                  <td className="px-2 py-3 font-bold text-slate-100">{row.season ?? "-"}</td>
+                  <td className="px-2 py-3">{formatNumber(row.gamesPlayed)}</td>
+                  <td className="px-2 py-3">{formatNumber(row.totalFantasyPoints)}</td>
+                  <td className="px-2 py-3">{formatNullableNumber(row.pointsPerGame)}</td>
+                  <td className="px-2 py-3">{row.positionRank === null ? "-" : `#${row.positionRank}`}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : null}
+
+      <div className="mt-4">
+        <div className="text-xs font-black uppercase tracking-wide text-slate-400">Recent Weekly Game Log</div>
+        {recentWeeklyRows.length ? (
+          <div className="mt-2 overflow-x-auto">
+            <table className="w-full min-w-[720px] text-left text-sm">
+              <thead className="text-xs uppercase text-slate-500">
+                <tr>
+                  <th className="px-2 py-2">Week</th>
+                  <th className="px-2 py-2">Team</th>
+                  <th className="px-2 py-2">Opp</th>
+                  <th className="px-2 py-2">Points</th>
+                  <th className="px-2 py-2">Line</th>
+                </tr>
+              </thead>
+              <tbody>
+                {recentWeeklyRows.map((row) => (
+                  <tr key={`${row.season ?? "season"}-${row.week ?? "week"}-${row.team ?? "team"}`} className="border-t border-line/70">
+                    <td className="px-2 py-3 font-bold text-slate-100">
+                      {row.season ?? "-"} W{row.week ?? "-"}
+                    </td>
+                    <td className="px-2 py-3">{row.team ?? "-"}</td>
+                    <td className="px-2 py-3">{row.opponent ?? "-"}</td>
+                    <td className="px-2 py-3">{formatNumber(row.calculatedFantasyPoints)}</td>
+                    <td className="px-2 py-3 text-slate-300">{buildWeeklyStatLine(row, profile.header.position)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <p className="mt-2 text-sm text-slate-400">Weekly game log is not available for this profile.</p>
+        )}
+        {profile.weeklyGameLogTruncated ? <p className="mt-2 text-xs text-slate-500">Showing the most recent 8 weekly rows.</p> : null}
+      </div>
+    </section>
+  );
+}
+
+type HistoricalProfile = HistoricalPlayerProfileResponse["profile"];
+type HistoricalWeeklyRow = HistoricalProfile["weeklyGameLog"][number];
+
+function buildHistoricalStatSummary(profile: HistoricalProfile): Array<{ label: string; value: number }> {
+  const position = profile.header.position;
+  const seasonTotals = profile.seasonSummaries[0]?.keyStatTotals ?? {};
+  const totals = ["DL", "LB", "DB"].includes(position) ? profile.idpSummary ?? seasonTotals : seasonTotals;
+  return positionStatSpecs(position)
+    .map((spec) => ({ label: spec.label, value: firstStatValue(totals, spec.keys) }))
+    .filter((stat) => stat.value !== null && stat.value !== 0)
+    .map((stat) => ({ label: stat.label, value: stat.value ?? 0 }))
+    .slice(0, 8);
+}
+
+function buildWeeklyStatLine(row: HistoricalWeeklyRow, position: string): string {
+  const parts = positionStatSpecs(position)
+    .map((spec) => {
+      const value = firstStatValueForWeeklyRow(row, spec.keys);
+      return value === null || value === 0 ? null : `${spec.label} ${formatNumber(value)}`;
+    })
+    .filter((part): part is string => Boolean(part))
+    .slice(0, 5);
+  return parts.length ? parts.join(" · ") : "Stat line unavailable";
+}
+
+function positionStatSpecs(position: string): Array<{ label: string; keys: string[] }> {
+  if (position === "QB") {
+    return [
+      { label: "Pass Yds", keys: ["passing_yards", "pass_yd", "pass_yds"] },
+      { label: "Pass TD", keys: ["passing_tds", "pass_td"] },
+      { label: "INT", keys: ["interceptions", "pass_int", "int"] },
+      { label: "Rush Yds", keys: ["rushing_yards", "rush_yd", "rush_yds"] },
+      { label: "Rush TD", keys: ["rushing_tds", "rush_td"] },
+    ];
+  }
+  if (position === "RB") {
+    return [
+      { label: "Rush Att", keys: ["carries", "rushing_att", "rush_att"] },
+      { label: "Rush Yds", keys: ["rushing_yards", "rush_yd", "rush_yds"] },
+      { label: "Rush TD", keys: ["rushing_tds", "rush_td"] },
+      { label: "Rec", keys: ["receptions", "rec"] },
+      { label: "Rec Yds", keys: ["receiving_yards", "rec_yd", "rec_yds"] },
+      { label: "Rec TD", keys: ["receiving_tds", "rec_td"] },
+    ];
+  }
+  if (position === "WR" || position === "TE") {
+    return [
+      { label: "Targets", keys: ["targets", "tgt"] },
+      { label: "Rec", keys: ["receptions", "rec"] },
+      { label: "Rec Yds", keys: ["receiving_yards", "rec_yd", "rec_yds"] },
+      { label: "Rec TD", keys: ["receiving_tds", "rec_td"] },
+      { label: "Rush Yds", keys: ["rushing_yards", "rush_yd", "rush_yds"] },
+    ];
+  }
+  if (position === "K") {
+    return [
+      { label: "FGM", keys: ["fg_made", "fgm"] },
+      { label: "FGA", keys: ["fg_att", "fga"] },
+      { label: "XPM", keys: ["xp_made", "xpm"] },
+      { label: "XPA", keys: ["xp_att", "xpa"] },
+    ];
+  }
+  if (position === "DL" || position === "LB" || position === "DB") {
+    return [
+      { label: "Solo", keys: ["solo_tkl", "def_tackle_solo", "tackle_solo"] },
+      { label: "Ast", keys: ["ast_tkl", "def_tackle_ast", "tackle_ast"] },
+      { label: "Sack", keys: ["sack", "sacks"] },
+      { label: "INT", keys: ["int", "def_int"] },
+      { label: "FF", keys: ["ff", "forced_fumbles"] },
+      { label: "FR", keys: ["fr", "fumble_recovery"] },
+      { label: "PD", keys: ["pd", "pass_defended"] },
+    ];
+  }
+  return [
+    { label: "Points", keys: ["fantasy_points", "calculatedFantasyPoints"] },
+  ];
+}
+
+function firstStatValue(totals: Record<string, number>, keys: string[]): number | null {
+  for (const key of keys) {
+    const value = totals[key];
+    if (typeof value === "number" && Number.isFinite(value)) return value;
+  }
+  return null;
+}
+
+function firstStatValueForWeeklyRow(row: HistoricalWeeklyRow, keys: string[]): number | null {
+  const groups = [row.passing, row.rushing, row.receiving, row.kicking, row.defensive];
+  for (const group of groups) {
+    const value = firstNullableStatValue(group, keys);
+    if (value !== null) return value;
+  }
+  return null;
+}
+
+function firstNullableStatValue(totals: Record<string, number | null>, keys: string[]): number | null {
+  for (const key of keys) {
+    const value = totals[key];
+    if (typeof value === "number" && Number.isFinite(value)) return value;
+  }
+  return null;
+}
+
+function formatProfileWarning(warning: string): string {
+  return warning
+    .split("_")
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
 }
 
 function StatLineGrid({ items, empty }: { items: Array<{ key: string; label: string; value: number }>; empty: string }) {
@@ -2674,6 +3178,7 @@ function teamRiskScore(row: BlackbirdBoardRow): number {
   if (row.planFit === "insufficient_data") score += 2;
   if (row.waitPlanTargetCount && row.waitPlanTargetCount > 0) score -= 1;
   if (row.contextualDataGaps.length >= 4) score += 1;
+  if (row.pointsAboveReplacement !== null && row.pointsAboveReplacement < 0) score += 1;
   return clampRisk(score);
 }
 
@@ -2689,6 +3194,8 @@ function playerPerformanceRiskScore(row: BlackbirdBoardRow): number {
     else if (rangeRate > 0.35) score += 1;
   }
   if (row.dataStatus.projection === "unavailable") score += 2;
+  if (row.role && ["backup", "deep_reserve", "rookie_unknown", "unknown"].includes(row.role)) score += 1;
+  if (row.roleConfidence === "very_low" || row.roleConfidence === "low") score += 1;
   return clampRisk(score);
 }
 

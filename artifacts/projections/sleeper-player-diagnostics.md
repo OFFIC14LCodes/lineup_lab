@@ -1,0 +1,259 @@
+# sleeper-player-diagnostics
+
+```json
+{
+  "generatedAt": "2026-06-16T20:39:54.957Z",
+  "sourcePath": "C:\\Projects\\lineup_lab\\data\\sleeper\\raw\\players-nfl.json",
+  "sourceExists": true,
+  "rawPlayerCount": 12199,
+  "normalizedPlayerCount": 12199,
+  "activePlayers": 9393,
+  "fantasyRelevantPlayers": 9859,
+  "activeFantasyRelevantPlayers": 7635,
+  "positionCounts": {
+    "QB": 474,
+    "LB": 1510,
+    "WR": 1790,
+    "TE": 842,
+    "DL": 1735,
+    "K": 197,
+    "RB": 1037,
+    "DB": 2242,
+    "DST": 32
+  },
+  "externalIdCoverage": {
+    "sportradar_id": 11552,
+    "gsis_id": 3893,
+    "oddsjam_id": 4279
+  },
+  "samplePlayers": [
+    {
+      "sleeperId": "6",
+      "playerName": "Brandon Mebane",
+      "position": "DL",
+      "team": null,
+      "active": true,
+      "externalIds": {
+        "gsis_id": "00-0025472",
+        "sportradar_id": "1c5a8bd4-1b02-458e-943d-c391d3f0258e"
+      }
+    },
+    {
+      "sleeperId": "17",
+      "playerName": "Matt Prater",
+      "position": "K",
+      "team": null,
+      "active": true,
+      "externalIds": {
+        "gsis_id": "00-0023853",
+        "sportradar_id": "67f5e782-f91c-4536-9818-cf4a0e7e821d",
+        "oddsjam_id": "021D74C579DB"
+      }
+    },
+    {
+      "sleeperId": "19",
+      "playerName": "Joe Flacco",
+      "position": "QB",
+      "team": "CIN",
+      "active": true,
+      "externalIds": {
+        "gsis_id": "00-0026158",
+        "sportradar_id": "64797df2-efd3-4b27-86ee-1d48f7edb09f",
+        "oddsjam_id": "9BD13F1CF846"
+      }
+    },
+    {
+      "sleeperId": "23",
+      "playerName": "Jason Witten",
+      "position": "TE",
+      "team": null,
+      "active": true,
+      "externalIds": {
+        "gsis_id": "00-0022127",
+        "sportradar_id": "e38c9b1b-7c51-48a2-ac1d-a752502e8930"
+      }
+    },
+    {
+      "sleeperId": "24",
+      "playerName": "Matt Ryan",
+      "position": "QB",
+      "team": null,
+      "active": true,
+      "externalIds": {
+        "gsis_id": "00-0026143",
+        "sportradar_id": "7e648a0b-fdc8-4661-a587-5826f2cac11b"
+      }
+    },
+    {
+      "sleeperId": "49",
+      "playerName": "Robbie Gould",
+      "position": "K",
+      "team": null,
+      "active": true,
+      "externalIds": {
+        "gsis_id": "00-0023252",
+        "sportradar_id": "abd73d50-ce60-47f1-b37f-2f9a05b0d7b9"
+      }
+    },
+    {
+      "sleeperId": "59",
+      "playerName": "Mason Crosby",
+      "position": "K",
+      "team": null,
+      "active": true,
+      "externalIds": {
+        "gsis_id": "00-0025580",
+        "sportradar_id": "e0856548-6fd5-4f83-9aa0-91f1bf4cbbd8",
+        "oddsjam_id": "2BA7B0C52E28"
+      }
+    },
+    {
+      "sleeperId": "74",
+      "playerName": "Mike Adams",
+      "position": "DB",
+      "team": null,
+      "active": true,
+      "externalIds": {
+        "gsis_id": "00-0022247",
+        "sportradar_id": "0f0ff562-af1c-4be8-8011-1f71e8441e00"
+      }
+    },
+    {
+      "sleeperId": "88",
+      "playerName": "Antoine Bethea",
+      "position": "DB",
+      "team": null,
+      "active": true,
+      "externalIds": {
+        "gsis_id": "00-0024421",
+        "sportradar_id": "7a2612f3-ea18-444c-95ee-f1ca597d6fb0"
+      }
+    },
+    {
+      "sleeperId": "89",
+      "playerName": "Chad Henne",
+      "position": "QB",
+      "team": null,
+      "active": true,
+      "externalIds": {
+        "gsis_id": "00-0026197",
+        "sportradar_id": "f55053e4-4bfd-495d-981a-d62e3662f01b"
+      }
+    },
+    {
+      "sleeperId": "95",
+      "playerName": "Dominique Rodgers-Cromartie",
+      "position": "DB",
+      "team": null,
+      "active": true,
+      "externalIds": {
+        "gsis_id": "00-0026156",
+        "sportradar_id": "c881b179-070d-4289-909f-4d3594abbd79"
+      }
+    },
+    {
+      "sleeperId": "96",
+      "playerName": "Aaron Rodgers",
+      "position": "QB",
+      "team": "PIT",
+      "active": true,
+      "externalIds": {
+        "gsis_id": "00-0023459",
+        "sportradar_id": "0ce48193-e2fa-466e-a986-33f751add206",
+        "oddsjam_id": "16E7FD97D946"
+      }
+    },
+    {
+      "sleeperId": "105",
+      "playerName": "Brandon Carr",
+      "position": "DB",
+      "team": null,
+      "active": true,
+      "externalIds": {
+        "gsis_id": "00-0026280",
+        "sportradar_id": "23893852-6ef4-48a9-99a0-c51f41670508"
+      }
+    },
+    {
+      "sleeperId": "110",
+      "playerName": "Stephen Gostkowski",
+      "position": "K",
+      "team": null,
+      "active": true,
+      "externalIds": {
+        "gsis_id": "00-0024333",
+        "sportradar_id": "a527b7db-0b52-4379-9e4c-2e08c1fe1bed"
+      }
+    },
+    {
+      "sleeperId": "111",
+      "playerName": "Marcedes Lewis",
+      "position": "TE",
+      "team": null,
+      "active": true,
+      "externalIds": {
+        "gsis_id": "00-0024243",
+        "sportradar_id": "9c21e9af-681c-41ef-9b00-fbc9e1668ed1",
+        "oddsjam_id": "1CDF394ADBF4"
+      }
+    },
+    {
+      "sleeperId": "120",
+      "playerName": "Adam Vinatieri",
+      "position": "K",
+      "team": null,
+      "active": true,
+      "externalIds": {
+        "gsis_id": "00-0016919",
+        "sportradar_id": "9ecf8040-10f9-4a5c-92da-1b4d77bd6760"
+      }
+    },
+    {
+      "sleeperId": "125",
+      "playerName": "Calais Campbell",
+      "position": "DL",
+      "team": "BAL",
+      "active": true,
+      "externalIds": {
+        "gsis_id": "00-0026190",
+        "sportradar_id": "0333b8f0-3aab-45aa-a684-6d402a309413",
+        "oddsjam_id": "558575451ECA"
+      }
+    },
+    {
+      "sleeperId": "127",
+      "playerName": "Matt Bryant",
+      "position": "K",
+      "team": null,
+      "active": true,
+      "externalIds": {
+        "gsis_id": "00-0020578",
+        "sportradar_id": "218d1644-603e-4da3-9ce1-48ce3927494f"
+      }
+    },
+    {
+      "sleeperId": "138",
+      "playerName": "Ben Roethlisberger",
+      "position": "QB",
+      "team": "PIT",
+      "active": true,
+      "externalIds": {
+        "gsis_id": "00-0022924",
+        "sportradar_id": "ea357add-1a41-4a8b-8f34-bbfade7f4d98"
+      }
+    },
+    {
+      "sleeperId": "146",
+      "playerName": "Tramon Williams",
+      "position": "DB",
+      "team": null,
+      "active": true,
+      "externalIds": {
+        "gsis_id": "00-0024061",
+        "sportradar_id": "640710b9-72f2-47e1-9afa-f3070b23c119"
+      }
+    }
+  ],
+  "verdict": "passed"
+}
+```

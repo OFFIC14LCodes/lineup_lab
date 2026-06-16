@@ -1,0 +1,2144 @@
+[
+  {
+    "sourcePlayerId": "1842",
+    "sleeperId": "1842",
+    "blackbirdPlayerId": null,
+    "playerName": "Derrick Johnson",
+    "normalizedName": "derrick johnson",
+    "position": "WR",
+    "normalizedPosition": "WR",
+    "team": null,
+    "status": "Active",
+    "active": true,
+    "searchRank": 9999999,
+    "yearsExperience": 11,
+    "college": "Maine",
+    "age": 33,
+    "birthDate": "1991-07-06",
+    "height": 71,
+    "weight": 190,
+    "candidateNflversePlayerIds": [
+      "00-0023637"
+    ],
+    "candidateNames": [
+      "Derrick Johnson"
+    ],
+    "candidateTeams": [
+      "ATL"
+    ],
+    "candidatePositions": [
+      "DB"
+    ],
+    "matchConfidence": "conflict",
+    "matchReasons": [
+      "normalized full name match",
+      "weight support"
+    ],
+    "conflictReasons": [
+      "position mismatch: WR vs DB; birth date mismatch: 1991-07-06 vs 1982-02-09",
+      "position mismatch: WR vs DB",
+      "birth date mismatch: 1991-07-06 vs 1982-02-09"
+    ],
+    "recommendedAction": "needs_manual_override",
+    "reviewPriority": "P3"
+  },
+  {
+    "sourcePlayerId": "2538",
+    "sleeperId": "2538",
+    "blackbirdPlayerId": null,
+    "playerName": "Gerod Holliman",
+    "normalizedName": "gerod holliman",
+    "position": "DB",
+    "normalizedPosition": "DB",
+    "team": null,
+    "status": "Active",
+    "active": true,
+    "searchRank": 9999999,
+    "yearsExperience": 10,
+    "college": "Louisville",
+    "age": 32,
+    "birthDate": "1992-12-07",
+    "height": 70,
+    "weight": 218,
+    "candidateNflversePlayerIds": [
+      "00-0032219"
+    ],
+    "candidateNames": [
+      "Gerod Holliman"
+    ],
+    "candidateTeams": [
+      "TB"
+    ],
+    "candidatePositions": [
+      "DB"
+    ],
+    "matchConfidence": "conflict",
+    "matchReasons": [
+      "normalized full name match",
+      "position match",
+      "height support",
+      "weight support"
+    ],
+    "conflictReasons": [
+      "birth date mismatch: 1992-12-07 vs 1994-05-06",
+      "birth date mismatch: 1992-12-07 vs 1994-05-06"
+    ],
+    "recommendedAction": "needs_manual_override",
+    "reviewPriority": "P3"
+  },
+  {
+    "sourcePlayerId": "2610",
+    "sleeperId": "2610",
+    "blackbirdPlayerId": null,
+    "playerName": "Robert Smith",
+    "normalizedName": "robert smith",
+    "position": "DB",
+    "normalizedPosition": "DB",
+    "team": null,
+    "status": "Active",
+    "active": true,
+    "searchRank": 9999999,
+    "yearsExperience": 10,
+    "college": "Clemson",
+    "age": 32,
+    "birthDate": "1992-12-22",
+    "height": 71,
+    "weight": 215,
+    "candidateNflversePlayerIds": [
+      "00-0015286"
+    ],
+    "candidateNames": [
+      "Robert Smith"
+    ],
+    "candidateTeams": [
+      "MIN"
+    ],
+    "candidatePositions": [
+      "RB"
+    ],
+    "matchConfidence": "conflict",
+    "matchReasons": [
+      "normalized full name match",
+      "weight support"
+    ],
+    "conflictReasons": [
+      "position mismatch: DB vs RB; birth date mismatch: 1992-12-22 vs 1972-03-04",
+      "position mismatch: DB vs RB",
+      "birth date mismatch: 1992-12-22 vs 1972-03-04"
+    ],
+    "recommendedAction": "needs_manual_override",
+    "reviewPriority": "P3"
+  },
+  {
+    "sourcePlayerId": "2639",
+    "sleeperId": "2639",
+    "blackbirdPlayerId": null,
+    "playerName": "Tony Jones",
+    "normalizedName": "tony jones",
+    "position": "WR",
+    "normalizedPosition": "WR",
+    "team": null,
+    "status": "Active",
+    "active": true,
+    "searchRank": 9999999,
+    "yearsExperience": 10,
+    "college": "Northwestern",
+    "age": 32,
+    "birthDate": "1992-03-21",
+    "height": 72,
+    "weight": 195,
+    "candidateNflversePlayerIds": [
+      "00-0008884"
+    ],
+    "candidateNames": [
+      "Tony Jones"
+    ],
+    "candidateTeams": [
+      "HOU"
+    ],
+    "candidatePositions": [
+      "WR"
+    ],
+    "matchConfidence": "conflict",
+    "matchReasons": [
+      "normalized full name match",
+      "position match"
+    ],
+    "conflictReasons": [
+      "birth date mismatch: 1992-03-21 vs 1965-12-30",
+      "birth date mismatch: 1992-03-21 vs 1965-12-30"
+    ],
+    "recommendedAction": "needs_manual_override",
+    "reviewPriority": "P3"
+  },
+  {
+    "sourcePlayerId": "2715",
+    "sleeperId": "2715",
+    "blackbirdPlayerId": null,
+    "playerName": "Gary Wilkins",
+    "normalizedName": "gary wilkins",
+    "position": "LB",
+    "normalizedPosition": "LB",
+    "team": null,
+    "status": "Active",
+    "active": true,
+    "searchRank": 9999999,
+    "yearsExperience": 10,
+    "college": "Furman",
+    "age": 33,
+    "birthDate": "1992-02-02",
+    "height": 74,
+    "weight": 240,
+    "candidateNflversePlayerIds": [
+      "00-0017692"
+    ],
+    "candidateNames": [
+      "Gary Wilkins"
+    ],
+    "candidateTeams": [
+      "ATL"
+    ],
+    "candidatePositions": [
+      "RB"
+    ],
+    "matchConfidence": "conflict",
+    "matchReasons": [
+      "normalized full name match",
+      "weight support"
+    ],
+    "conflictReasons": [
+      "position mismatch: LB vs RB; birth date mismatch: 1992-02-02 vs 1963-11-23",
+      "position mismatch: LB vs RB",
+      "birth date mismatch: 1992-02-02 vs 1963-11-23"
+    ],
+    "recommendedAction": "needs_manual_override",
+    "reviewPriority": "P3"
+  },
+  {
+    "sourcePlayerId": "2754",
+    "sleeperId": "2754",
+    "blackbirdPlayerId": null,
+    "playerName": "Michael Johnson",
+    "normalizedName": "michael johnson",
+    "position": "WR",
+    "normalizedPosition": "WR",
+    "team": null,
+    "status": "Active",
+    "active": true,
+    "searchRank": 9999999,
+    "yearsExperience": 10,
+    "college": "Delaware",
+    "age": 33,
+    "birthDate": "1991-09-10",
+    "height": 74,
+    "weight": 210,
+    "candidateNflversePlayerIds": [
+      "00-0025611"
+    ],
+    "candidateNames": [
+      "Michael Johnson"
+    ],
+    "candidateTeams": [
+      "NYG"
+    ],
+    "candidatePositions": [
+      "DB"
+    ],
+    "matchConfidence": "conflict",
+    "matchReasons": [
+      "normalized full name match",
+      "height support",
+      "weight support"
+    ],
+    "conflictReasons": [
+      "position mismatch: WR vs DB; birth date mismatch: 1991-09-10 vs 1984-05-09",
+      "position mismatch: WR vs DB",
+      "birth date mismatch: 1991-09-10 vs 1984-05-09"
+    ],
+    "recommendedAction": "needs_manual_override",
+    "reviewPriority": "P3"
+  },
+  {
+    "sourcePlayerId": "2757",
+    "sleeperId": "2757",
+    "blackbirdPlayerId": null,
+    "playerName": "Micajah Reynolds",
+    "normalizedName": "micajah reynolds",
+    "position": "DL",
+    "normalizedPosition": "DL",
+    "team": null,
+    "status": "Active",
+    "active": true,
+    "searchRank": 9999999,
+    "yearsExperience": 11,
+    "college": "Michigan State",
+    "age": 34,
+    "birthDate": "1991-01-24",
+    "height": 77,
+    "weight": 330,
+    "candidateNflversePlayerIds": [
+      "00-0030810"
+    ],
+    "candidateNames": [
+      "Micajah Reynolds"
+    ],
+    "candidateTeams": [
+      "BAL"
+    ],
+    "candidatePositions": [
+      "DL"
+    ],
+    "matchConfidence": "conflict",
+    "matchReasons": [
+      "normalized full name match",
+      "position match",
+      "height support",
+      "weight support"
+    ],
+    "conflictReasons": [
+      "birth date mismatch: 1991-01-24 vs 1990-01-24",
+      "birth date mismatch: 1991-01-24 vs 1990-01-24"
+    ],
+    "recommendedAction": "needs_manual_override",
+    "reviewPriority": "P3"
+  },
+  {
+    "sourcePlayerId": "2782",
+    "sleeperId": "2782",
+    "blackbirdPlayerId": null,
+    "playerName": "Dominique Davis",
+    "normalizedName": "dominique davis",
+    "position": "DL",
+    "normalizedPosition": "DL",
+    "team": null,
+    "status": "Active",
+    "active": true,
+    "searchRank": 9999999,
+    "yearsExperience": 10,
+    "college": "Liberty",
+    "age": 34,
+    "birthDate": "1990-06-18",
+    "height": 77,
+    "weight": 285,
+    "candidateNflversePlayerIds": [
+      "00-0028863"
+    ],
+    "candidateNames": [
+      "Dominique Davis"
+    ],
+    "candidateTeams": [
+      "IND"
+    ],
+    "candidatePositions": [
+      "QB"
+    ],
+    "matchConfidence": "conflict",
+    "matchReasons": [
+      "normalized full name match"
+    ],
+    "conflictReasons": [
+      "position mismatch: DL vs QB; birth date mismatch: 1990-06-18 vs 1989-07-17",
+      "position mismatch: DL vs QB",
+      "birth date mismatch: 1990-06-18 vs 1989-07-17"
+    ],
+    "recommendedAction": "needs_manual_override",
+    "reviewPriority": "P3"
+  },
+  {
+    "sourcePlayerId": "2883",
+    "sleeperId": "2883",
+    "blackbirdPlayerId": null,
+    "playerName": "Chase Williams",
+    "normalizedName": "chase williams",
+    "position": "LB",
+    "normalizedPosition": "LB",
+    "team": "CLE",
+    "status": "Active",
+    "active": true,
+    "searchRank": 9999999,
+    "yearsExperience": 9,
+    "college": "Virginia Tech",
+    "age": 32,
+    "birthDate": "1991-10-16",
+    "height": 74,
+    "weight": 215,
+    "candidateNflversePlayerIds": [
+      "00-0039948"
+    ],
+    "candidateNames": [
+      "Chase Williams"
+    ],
+    "candidateTeams": [
+      "CLE"
+    ],
+    "candidatePositions": [
+      "DB"
+    ],
+    "matchConfidence": "conflict",
+    "matchReasons": [
+      "normalized full name match",
+      "team match"
+    ],
+    "conflictReasons": [
+      "position mismatch: LB vs DB; birth date mismatch: 1991-10-16 vs 1999-12-09",
+      "position mismatch: LB vs DB",
+      "birth date mismatch: 1991-10-16 vs 1999-12-09"
+    ],
+    "recommendedAction": "needs_manual_override",
+    "reviewPriority": "P1"
+  },
+  {
+    "sourcePlayerId": "2889",
+    "sleeperId": "2889",
+    "blackbirdPlayerId": null,
+    "playerName": "Jordan DeWalt-Ondijo",
+    "normalizedName": "jordan dewalt ondijo",
+    "position": "LB",
+    "normalizedPosition": "LB",
+    "team": null,
+    "status": "Active",
+    "active": true,
+    "searchRank": 9999999,
+    "yearsExperience": 10,
+    "college": "Duke",
+    "age": 33,
+    "birthDate": "1991-05-19",
+    "height": 76,
+    "weight": 240,
+    "candidateNflversePlayerIds": [
+      "00-0031650"
+    ],
+    "candidateNames": [
+      "Jordan Dewalt-Ondijo"
+    ],
+    "candidateTeams": [
+      "HOU"
+    ],
+    "candidatePositions": [
+      "LB"
+    ],
+    "matchConfidence": "conflict",
+    "matchReasons": [
+      "normalized full name match",
+      "position match",
+      "height support",
+      "weight support"
+    ],
+    "conflictReasons": [
+      "birth date mismatch: 1991-05-19 vs 1992-05-19",
+      "birth date mismatch: 1991-05-19 vs 1992-05-19"
+    ],
+    "recommendedAction": "needs_manual_override",
+    "reviewPriority": "P3"
+  },
+  {
+    "sourcePlayerId": "3455",
+    "sleeperId": "3455",
+    "blackbirdPlayerId": null,
+    "playerName": "Gerald Dixon",
+    "normalizedName": "gerald dixon",
+    "position": "DL",
+    "normalizedPosition": "DL",
+    "team": null,
+    "status": "Active",
+    "active": true,
+    "searchRank": 9999999,
+    "yearsExperience": 9,
+    "college": "South Carolina",
+    "age": 31,
+    "birthDate": "1993-03-30",
+    "height": 75,
+    "weight": 327,
+    "candidateNflversePlayerIds": [
+      "00-0004353"
+    ],
+    "candidateNames": [
+      "Gerald Dixon"
+    ],
+    "candidateTeams": [
+      "LAC"
+    ],
+    "candidatePositions": [
+      "LB"
+    ],
+    "matchConfidence": "conflict",
+    "matchReasons": [
+      "normalized full name match",
+      "height support"
+    ],
+    "conflictReasons": [
+      "position mismatch: DL vs LB; birth date mismatch: 1993-03-30 vs 1969-06-20",
+      "position mismatch: DL vs LB",
+      "birth date mismatch: 1993-03-30 vs 1969-06-20"
+    ],
+    "recommendedAction": "needs_manual_override",
+    "reviewPriority": "P3"
+  },
+  {
+    "sourcePlayerId": "4473",
+    "sleeperId": "4473",
+    "blackbirdPlayerId": null,
+    "playerName": "Alex Gray",
+    "normalizedName": "alex gray",
+    "position": "DB",
+    "normalizedPosition": "DB",
+    "team": null,
+    "status": "Active",
+    "active": true,
+    "searchRank": 9999999,
+    "yearsExperience": 5,
+    "college": "Appalachian State",
+    "age": 28,
+    "birthDate": "1993-09-15",
+    "height": 75,
+    "weight": 225,
+    "candidateNflversePlayerIds": [
+      "00-0034010"
+    ],
+    "candidateNames": [
+      "Alex Gray"
+    ],
+    "candidateTeams": [
+      "ATL"
+    ],
+    "candidatePositions": [
+      "TE"
+    ],
+    "matchConfidence": "conflict",
+    "matchReasons": [
+      "normalized full name match",
+      "weight support"
+    ],
+    "conflictReasons": [
+      "position mismatch: DB vs TE; birth date mismatch: 1993-09-15 vs 1991-05-01",
+      "position mismatch: DB vs TE",
+      "birth date mismatch: 1993-09-15 vs 1991-05-01"
+    ],
+    "recommendedAction": "needs_manual_override",
+    "reviewPriority": "P3"
+  },
+  {
+    "sourcePlayerId": "4620",
+    "sleeperId": "4620",
+    "blackbirdPlayerId": null,
+    "playerName": "Avery Williams",
+    "normalizedName": "avery williams",
+    "position": "LB",
+    "normalizedPosition": "LB",
+    "team": null,
+    "status": "Active",
+    "active": true,
+    "searchRank": 9999999,
+    "yearsExperience": 5,
+    "college": "Temple",
+    "age": 27,
+    "birthDate": "1994-09-02",
+    "height": 70,
+    "weight": 224,
+    "candidateNflversePlayerIds": [
+      "00-0036950"
+    ],
+    "candidateNames": [
+      "Avery Williams"
+    ],
+    "candidateTeams": [
+      "NYJ"
+    ],
+    "candidatePositions": [
+      "RB"
+    ],
+    "matchConfidence": "conflict",
+    "matchReasons": [
+      "normalized full name match"
+    ],
+    "conflictReasons": [
+      "position mismatch: LB vs RB; birth date mismatch: 1994-09-02 vs 1998-07-15",
+      "position mismatch: LB vs RB",
+      "birth date mismatch: 1994-09-02 vs 1998-07-15"
+    ],
+    "recommendedAction": "needs_manual_override",
+    "reviewPriority": "P3"
+  },
+  {
+    "sourcePlayerId": "4697",
+    "sleeperId": "4697",
+    "blackbirdPlayerId": null,
+    "playerName": "Khalid Abdullah",
+    "normalizedName": "khalid abdullah",
+    "position": "RB",
+    "normalizedPosition": "RB",
+    "team": null,
+    "status": "Active",
+    "active": true,
+    "searchRank": 9999999,
+    "yearsExperience": 5,
+    "college": "James Madison",
+    "age": 26,
+    "birthDate": "1995-05-14",
+    "height": 70,
+    "weight": 220,
+    "candidateNflversePlayerIds": [
+      "00-0021957"
+    ],
+    "candidateNames": [
+      "Khalid Abdullah"
+    ],
+    "candidateTeams": [
+      "CIN"
+    ],
+    "candidatePositions": [
+      "LB"
+    ],
+    "matchConfidence": "conflict",
+    "matchReasons": [
+      "normalized full name match"
+    ],
+    "conflictReasons": [
+      "position mismatch: RB vs LB; birth date mismatch: 1995-05-14 vs 1979-03-06",
+      "position mismatch: RB vs LB",
+      "birth date mismatch: 1995-05-14 vs 1979-03-06"
+    ],
+    "recommendedAction": "needs_manual_override",
+    "reviewPriority": "P3"
+  },
+  {
+    "sourcePlayerId": "4732",
+    "sleeperId": "4732",
+    "blackbirdPlayerId": null,
+    "playerName": "A.J. Jefferson",
+    "normalizedName": "aj jefferson",
+    "position": "DL",
+    "normalizedPosition": "DL",
+    "team": null,
+    "status": "Active",
+    "active": true,
+    "searchRank": 9999999,
+    "yearsExperience": 5,
+    "college": "Mississippi State",
+    "age": 28,
+    "birthDate": "1993-03-03",
+    "height": 75,
+    "weight": 280,
+    "candidateNflversePlayerIds": [
+      "00-0027350"
+    ],
+    "candidateNames": [
+      "A.J. Jefferson"
+    ],
+    "candidateTeams": [
+      "MIN"
+    ],
+    "candidatePositions": [
+      "DB"
+    ],
+    "matchConfidence": "conflict",
+    "matchReasons": [
+      "normalized full name match"
+    ],
+    "conflictReasons": [
+      "position mismatch: DL vs DB; birth date mismatch: 1993-03-03 vs 1988-04-04",
+      "position mismatch: DL vs DB",
+      "birth date mismatch: 1993-03-03 vs 1988-04-04"
+    ],
+    "recommendedAction": "needs_manual_override",
+    "reviewPriority": "P3"
+  },
+  {
+    "sourcePlayerId": "4837",
+    "sleeperId": "4837",
+    "blackbirdPlayerId": null,
+    "playerName": "Carlos Davis",
+    "normalizedName": "carlos davis",
+    "position": "DL",
+    "normalizedPosition": "DL",
+    "team": null,
+    "status": "Active",
+    "active": true,
+    "searchRank": 9999999,
+    "yearsExperience": 5,
+    "college": "Mississippi",
+    "age": 28,
+    "birthDate": "1993-12-30",
+    "height": 68,
+    "weight": 170,
+    "candidateNflversePlayerIds": [
+      "00-0036352"
+    ],
+    "candidateNames": [
+      "Carlos Davis"
+    ],
+    "candidateTeams": [
+      "ATL"
+    ],
+    "candidatePositions": [
+      "DL"
+    ],
+    "matchConfidence": "conflict",
+    "matchReasons": [
+      "normalized full name match",
+      "position match"
+    ],
+    "conflictReasons": [
+      "birth date mismatch: 1993-12-30 vs 1996-08-22",
+      "birth date mismatch: 1993-12-30 vs 1996-08-22"
+    ],
+    "recommendedAction": "needs_manual_override",
+    "reviewPriority": "P3"
+  },
+  {
+    "sourcePlayerId": "4844",
+    "sleeperId": "4844",
+    "blackbirdPlayerId": null,
+    "playerName": "Elijah Mitchell",
+    "normalizedName": "elijah mitchell",
+    "position": "DB",
+    "normalizedPosition": "DB",
+    "team": null,
+    "status": "Active",
+    "active": true,
+    "searchRank": 9999999,
+    "yearsExperience": 5,
+    "college": "Nevada",
+    "age": 26,
+    "birthDate": "1995-03-31",
+    "height": 68,
+    "weight": 180,
+    "candidateNflversePlayerIds": [
+      "00-0036567"
+    ],
+    "candidateNames": [
+      "Elijah Mitchell"
+    ],
+    "candidateTeams": [
+      "PHI"
+    ],
+    "candidatePositions": [
+      "RB"
+    ],
+    "matchConfidence": "conflict",
+    "matchReasons": [
+      "normalized full name match"
+    ],
+    "conflictReasons": [
+      "position mismatch: DB vs RB; birth date mismatch: 1995-03-31 vs 1998-05-02",
+      "position mismatch: DB vs RB",
+      "birth date mismatch: 1995-03-31 vs 1998-05-02"
+    ],
+    "recommendedAction": "needs_manual_override",
+    "reviewPriority": "P3"
+  },
+  {
+    "sourcePlayerId": "5133",
+    "sleeperId": "5133",
+    "blackbirdPlayerId": null,
+    "playerName": "Tyler Conklin",
+    "normalizedName": "tyler conklin",
+    "position": "TE",
+    "normalizedPosition": "TE",
+    "team": "DET",
+    "status": "Active",
+    "active": true,
+    "searchRank": 999,
+    "yearsExperience": 8,
+    "college": "Central Michigan",
+    "age": 30,
+    "birthDate": "1995-07-30",
+    "height": 75,
+    "weight": 248,
+    "candidateNflversePlayerIds": [
+      "00-0034270",
+      "00-0034439"
+    ],
+    "candidateNames": [
+      "Tyler Conklin",
+      "Ryan Izzo"
+    ],
+    "candidateTeams": [
+      "DET",
+      "TEN"
+    ],
+    "candidatePositions": [
+      "TE",
+      "TE"
+    ],
+    "matchConfidence": "conflict",
+    "matchReasons": [
+      "exact ID match: sleeper_id",
+      "normalized full name match",
+      "position match",
+      "team match",
+      "birth date match",
+      "height support",
+      "exact ID match: gsis_id",
+      "position match",
+      "team mismatch lowered confidence: DET vs TEN"
+    ],
+    "conflictReasons": [
+      "multiple exact ID candidates",
+      "birth date mismatch: 1995-07-30 vs 1995-12-21"
+    ],
+    "recommendedAction": "needs_manual_override",
+    "reviewPriority": "P1"
+  },
+  {
+    "sourcePlayerId": "5173",
+    "sleeperId": "5173",
+    "blackbirdPlayerId": null,
+    "playerName": "Dalton Keene",
+    "normalizedName": "dalton keene",
+    "position": "DL",
+    "normalizedPosition": "DL",
+    "team": null,
+    "status": "Active",
+    "active": true,
+    "searchRank": 9999999,
+    "yearsExperience": 6,
+    "college": "Illinois State",
+    "age": 31,
+    "birthDate": "1994-04-26",
+    "height": 76,
+    "weight": 275,
+    "candidateNflversePlayerIds": [
+      "00-0036225"
+    ],
+    "candidateNames": [
+      "Dalton Keene"
+    ],
+    "candidateTeams": [
+      "HOU"
+    ],
+    "candidatePositions": [
+      "TE"
+    ],
+    "matchConfidence": "conflict",
+    "matchReasons": [
+      "normalized full name match",
+      "height support"
+    ],
+    "conflictReasons": [
+      "position mismatch: DL vs TE; birth date mismatch: 1994-04-26 vs 1999-04-14",
+      "position mismatch: DL vs TE",
+      "birth date mismatch: 1994-04-26 vs 1999-04-14"
+    ],
+    "recommendedAction": "needs_manual_override",
+    "reviewPriority": "P3"
+  },
+  {
+    "sourcePlayerId": "5186",
+    "sleeperId": "5186",
+    "blackbirdPlayerId": null,
+    "playerName": "Darius Jackson",
+    "normalizedName": "darius jackson",
+    "position": "DL",
+    "normalizedPosition": "DL",
+    "team": null,
+    "status": "Active",
+    "active": true,
+    "searchRank": 9999999,
+    "yearsExperience": 4,
+    "college": "Jacksonville State",
+    "age": 27,
+    "birthDate": "1994-11-20",
+    "height": 75,
+    "weight": 242,
+    "candidateNflversePlayerIds": [
+      "00-0033049"
+    ],
+    "candidateNames": [
+      "Darius Jackson"
+    ],
+    "candidateTeams": [
+      "HOU"
+    ],
+    "candidatePositions": [
+      "RB"
+    ],
+    "matchConfidence": "conflict",
+    "matchReasons": [
+      "normalized full name match"
+    ],
+    "conflictReasons": [
+      "position mismatch: DL vs RB; birth date mismatch: 1994-11-20 vs 1993-12-01",
+      "position mismatch: DL vs RB",
+      "birth date mismatch: 1994-11-20 vs 1993-12-01"
+    ],
+    "recommendedAction": "needs_manual_override",
+    "reviewPriority": "P3"
+  },
+  {
+    "sourcePlayerId": "5251",
+    "sleeperId": "5251",
+    "blackbirdPlayerId": null,
+    "playerName": "Tyler Davis",
+    "normalizedName": "tyler davis",
+    "position": "K",
+    "normalizedPosition": "K",
+    "team": null,
+    "status": "Active",
+    "active": true,
+    "searchRank": 9999999,
+    "yearsExperience": 4,
+    "college": "Penn State",
+    "age": 27,
+    "birthDate": "1994-09-29",
+    "height": 71,
+    "weight": 180,
+    "candidateNflversePlayerIds": [
+      "00-0036250"
+    ],
+    "candidateNames": [
+      "Tyler Davis"
+    ],
+    "candidateTeams": [
+      "GB"
+    ],
+    "candidatePositions": [
+      "TE"
+    ],
+    "matchConfidence": "conflict",
+    "matchReasons": [
+      "normalized full name match"
+    ],
+    "conflictReasons": [
+      "position mismatch: K vs TE; birth date mismatch: 1994-09-29 vs 1997-04-02",
+      "position mismatch: K vs TE",
+      "birth date mismatch: 1994-09-29 vs 1997-04-02"
+    ],
+    "recommendedAction": "needs_manual_override",
+    "reviewPriority": "P3"
+  },
+  {
+    "sourcePlayerId": "5286",
+    "sleeperId": "5286",
+    "blackbirdPlayerId": null,
+    "playerName": "Austin Allen",
+    "normalizedName": "austin allen",
+    "position": "QB",
+    "normalizedPosition": "QB",
+    "team": null,
+    "status": "Active",
+    "active": true,
+    "searchRank": 9999999,
+    "yearsExperience": 4,
+    "college": "Arkansas",
+    "age": 27,
+    "birthDate": "1994-08-21",
+    "height": 73,
+    "weight": 209,
+    "candidateNflversePlayerIds": [
+      "00-0037369"
+    ],
+    "candidateNames": [
+      "Austin Allen"
+    ],
+    "candidateTeams": [
+      "GB"
+    ],
+    "candidatePositions": [
+      "TE"
+    ],
+    "matchConfidence": "conflict",
+    "matchReasons": [
+      "normalized full name match"
+    ],
+    "conflictReasons": [
+      "position mismatch: QB vs TE; birth date mismatch: 1994-08-21 vs 1998-11-10",
+      "position mismatch: QB vs TE",
+      "birth date mismatch: 1994-08-21 vs 1998-11-10"
+    ],
+    "recommendedAction": "needs_manual_override",
+    "reviewPriority": "P3"
+  },
+  {
+    "sourcePlayerId": "5533",
+    "sleeperId": "5533",
+    "blackbirdPlayerId": null,
+    "playerName": "Trenton Thompson",
+    "normalizedName": "trenton thompson",
+    "position": "DL",
+    "normalizedPosition": "DL",
+    "team": null,
+    "status": "Active",
+    "active": true,
+    "searchRank": 9999999,
+    "yearsExperience": 4,
+    "college": "Georgia",
+    "age": 25,
+    "birthDate": "1996-07-27",
+    "height": 76,
+    "weight": 295,
+    "candidateNflversePlayerIds": [
+      "00-0037377"
+    ],
+    "candidateNames": [
+      "Trenton Thompson"
+    ],
+    "candidateTeams": [
+      "PIT"
+    ],
+    "candidatePositions": [
+      "DB"
+    ],
+    "matchConfidence": "conflict",
+    "matchReasons": [
+      "normalized full name match"
+    ],
+    "conflictReasons": [
+      "position mismatch: DL vs DB; birth date mismatch: 1996-07-27 vs 1997-12-18",
+      "position mismatch: DL vs DB",
+      "birth date mismatch: 1996-07-27 vs 1997-12-18"
+    ],
+    "recommendedAction": "needs_manual_override",
+    "reviewPriority": "P3"
+  },
+  {
+    "sourcePlayerId": "5547",
+    "sleeperId": "5547",
+    "blackbirdPlayerId": null,
+    "playerName": "Ryan Smith",
+    "normalizedName": "ryan smith",
+    "position": "TE",
+    "normalizedPosition": "TE",
+    "team": null,
+    "status": "Active",
+    "active": true,
+    "searchRank": 9999999,
+    "yearsExperience": 4,
+    "college": "Miami, O.",
+    "age": 25,
+    "birthDate": "1996-01-13",
+    "height": 76,
+    "weight": 265,
+    "candidateNflversePlayerIds": [
+      "00-0032772"
+    ],
+    "candidateNames": [
+      "Ryan Smith"
+    ],
+    "candidateTeams": [
+      "TB"
+    ],
+    "candidatePositions": [
+      "DB"
+    ],
+    "matchConfidence": "conflict",
+    "matchReasons": [
+      "normalized full name match"
+    ],
+    "conflictReasons": [
+      "position mismatch: TE vs DB; birth date mismatch: 1996-01-13 vs 1993-09-07",
+      "position mismatch: TE vs DB",
+      "birth date mismatch: 1996-01-13 vs 1993-09-07"
+    ],
+    "recommendedAction": "needs_manual_override",
+    "reviewPriority": "P3"
+  },
+  {
+    "sourcePlayerId": "5637",
+    "sleeperId": "5637",
+    "blackbirdPlayerId": null,
+    "playerName": "Garrett Johnson",
+    "normalizedName": "garrett johnson",
+    "position": "WR",
+    "normalizedPosition": "WR",
+    "team": null,
+    "status": "Active",
+    "active": true,
+    "searchRank": 9999999,
+    "yearsExperience": 4,
+    "college": "Kentucky",
+    "age": 26,
+    "birthDate": "1995-12-03",
+    "height": 71,
+    "weight": 175,
+    "candidateNflversePlayerIds": [
+      "00-0008507"
+    ],
+    "candidateNames": [
+      "Garrett Johnson"
+    ],
+    "candidateTeams": [
+      "SF"
+    ],
+    "candidatePositions": [
+      "DL"
+    ],
+    "matchConfidence": "conflict",
+    "matchReasons": [
+      "normalized full name match"
+    ],
+    "conflictReasons": [
+      "position mismatch: WR vs DL; birth date mismatch: 1995-12-03 vs 1975-12-31",
+      "position mismatch: WR vs DL",
+      "birth date mismatch: 1995-12-03 vs 1975-12-31"
+    ],
+    "recommendedAction": "needs_manual_override",
+    "reviewPriority": "P3"
+  },
+  {
+    "sourcePlayerId": "5713",
+    "sleeperId": "5713",
+    "blackbirdPlayerId": null,
+    "playerName": "Mike Jones",
+    "normalizedName": "mike jones",
+    "position": "DB",
+    "normalizedPosition": "DB",
+    "team": null,
+    "status": "Active",
+    "active": true,
+    "searchRank": 9999999,
+    "yearsExperience": 4,
+    "college": "Temple",
+    "age": 26,
+    "birthDate": "1995-09-01",
+    "height": 71,
+    "weight": 187,
+    "candidateNflversePlayerIds": [
+      "JON624536"
+    ],
+    "candidateNames": [
+      "Mike Jones"
+    ],
+    "candidateTeams": [
+      "NO"
+    ],
+    "candidatePositions": [
+      "WR"
+    ],
+    "matchConfidence": "conflict",
+    "matchReasons": [
+      "normalized full name match",
+      "height support"
+    ],
+    "conflictReasons": [
+      "position mismatch: DB vs WR; birth date mismatch: 1995-09-01 vs 1960-04-14",
+      "position mismatch: DB vs WR",
+      "birth date mismatch: 1995-09-01 vs 1960-04-14"
+    ],
+    "recommendedAction": "needs_manual_override",
+    "reviewPriority": "P3"
+  },
+  {
+    "sourcePlayerId": "5714",
+    "sleeperId": "5714",
+    "blackbirdPlayerId": null,
+    "playerName": "Tim Wilson",
+    "normalizedName": "tim wilson",
+    "position": "WR",
+    "normalizedPosition": "WR",
+    "team": null,
+    "status": "Active",
+    "active": true,
+    "searchRank": 9999999,
+    "yearsExperience": 4,
+    "college": "East Stroudsburg",
+    "age": 27,
+    "birthDate": "1994-02-16",
+    "height": 69,
+    "weight": 170,
+    "candidateNflversePlayerIds": [
+      "WIL801288"
+    ],
+    "candidateNames": [
+      "Tim Wilson"
+    ],
+    "candidateTeams": [
+      "NO"
+    ],
+    "candidatePositions": [
+      "RB"
+    ],
+    "matchConfidence": "conflict",
+    "matchReasons": [
+      "normalized full name match"
+    ],
+    "conflictReasons": [
+      "position mismatch: WR vs RB; birth date mismatch: 1994-02-16 vs 1954-01-14",
+      "position mismatch: WR vs RB",
+      "birth date mismatch: 1994-02-16 vs 1954-01-14"
+    ],
+    "recommendedAction": "needs_manual_override",
+    "reviewPriority": "P3"
+  },
+  {
+    "sourcePlayerId": "5762",
+    "sleeperId": "5762",
+    "blackbirdPlayerId": null,
+    "playerName": "Josh Smith",
+    "normalizedName": "josh smith",
+    "position": "WR",
+    "normalizedPosition": "WR",
+    "team": null,
+    "status": "Inactive",
+    "active": true,
+    "searchRank": 1137,
+    "yearsExperience": 4,
+    "college": "Tennessee",
+    "age": 27,
+    "birthDate": "1994-03-24",
+    "height": 73,
+    "weight": 206,
+    "candidateNflversePlayerIds": [
+      "00-0035741"
+    ],
+    "candidateNames": [
+      "Josh Smith"
+    ],
+    "candidateTeams": [
+      "TEN"
+    ],
+    "candidatePositions": [
+      "LB"
+    ],
+    "matchConfidence": "conflict",
+    "matchReasons": [
+      "normalized full name match"
+    ],
+    "conflictReasons": [
+      "position mismatch: WR vs LB; birth date mismatch: 1994-03-24 vs 1997-02-25",
+      "position mismatch: WR vs LB",
+      "birth date mismatch: 1994-03-24 vs 1997-02-25"
+    ],
+    "recommendedAction": "needs_manual_override",
+    "reviewPriority": "P3"
+  },
+  {
+    "sourcePlayerId": "5798",
+    "sleeperId": "5798",
+    "blackbirdPlayerId": null,
+    "playerName": "Darren Carrington",
+    "normalizedName": "darren carrington",
+    "position": "WR",
+    "normalizedPosition": "WR",
+    "team": null,
+    "status": "Inactive",
+    "active": true,
+    "searchRank": 9999999,
+    "yearsExperience": 4,
+    "college": "Utah",
+    "age": 27,
+    "birthDate": "1994-10-11",
+    "height": 75,
+    "weight": 205,
+    "candidateNflversePlayerIds": [
+      "00-0002691"
+    ],
+    "candidateNames": [
+      "Darren Carrington"
+    ],
+    "candidateTeams": [
+      "LV"
+    ],
+    "candidatePositions": [
+      "DB"
+    ],
+    "matchConfidence": "conflict",
+    "matchReasons": [
+      "normalized full name match",
+      "weight support"
+    ],
+    "conflictReasons": [
+      "position mismatch: WR vs DB; birth date mismatch: 1994-10-11 vs 1966-10-10",
+      "position mismatch: WR vs DB",
+      "birth date mismatch: 1994-10-11 vs 1966-10-10"
+    ],
+    "recommendedAction": "needs_manual_override",
+    "reviewPriority": "P3"
+  },
+  {
+    "sourcePlayerId": "5851",
+    "sleeperId": "5851",
+    "blackbirdPlayerId": null,
+    "playerName": "Jachai Polite",
+    "normalizedName": "jachai polite",
+    "position": "LB",
+    "normalizedPosition": "LB",
+    "team": null,
+    "status": "Active",
+    "active": true,
+    "searchRank": 1589,
+    "yearsExperience": 3,
+    "college": "Florida",
+    "age": 24,
+    "birthDate": "1997-03-30",
+    "height": 75,
+    "weight": 258,
+    "candidateNflversePlayerIds": [
+      "00-0035528"
+    ],
+    "candidateNames": [
+      "Jachai Polite"
+    ],
+    "candidateTeams": [
+      "LA"
+    ],
+    "candidatePositions": [
+      "LB"
+    ],
+    "matchConfidence": "conflict",
+    "matchReasons": [
+      "normalized full name match",
+      "position match",
+      "height support",
+      "weight support"
+    ],
+    "conflictReasons": [
+      "birth date mismatch: 1997-03-30 vs 1998-03-30",
+      "birth date mismatch: 1997-03-30 vs 1998-03-30"
+    ],
+    "recommendedAction": "needs_manual_override",
+    "reviewPriority": "P3"
+  },
+  {
+    "sourcePlayerId": "5922",
+    "sleeperId": "5922",
+    "blackbirdPlayerId": null,
+    "playerName": "Mike Bell",
+    "normalizedName": "mike bell",
+    "position": "LB",
+    "normalizedPosition": "LB",
+    "team": null,
+    "status": "Active",
+    "active": true,
+    "searchRank": 1640,
+    "yearsExperience": 2,
+    "college": "Fresno State",
+    "age": 24,
+    "birthDate": "1997-12-12",
+    "height": 75,
+    "weight": 207,
+    "candidateNflversePlayerIds": [
+      "00-0001040"
+    ],
+    "candidateNames": [
+      "Mike Bell"
+    ],
+    "candidateTeams": [
+      "KC"
+    ],
+    "candidatePositions": [
+      "DL"
+    ],
+    "matchConfidence": "conflict",
+    "matchReasons": [
+      "normalized full name match"
+    ],
+    "conflictReasons": [
+      "position mismatch: LB vs DL; birth date mismatch: 1997-12-12 vs 1957-08-30",
+      "position mismatch: LB vs DL",
+      "birth date mismatch: 1997-12-12 vs 1957-08-30"
+    ],
+    "recommendedAction": "needs_manual_override",
+    "reviewPriority": "P3"
+  },
+  {
+    "sourcePlayerId": "6036",
+    "sleeperId": "6036",
+    "blackbirdPlayerId": null,
+    "playerName": "Ryan Davis",
+    "normalizedName": "ryan davis",
+    "position": "WR",
+    "normalizedPosition": "WR",
+    "team": null,
+    "status": "Active",
+    "active": true,
+    "searchRank": 9999999,
+    "yearsExperience": 3,
+    "college": "Auburn",
+    "age": 24,
+    "birthDate": "1997-04-12",
+    "height": 69,
+    "weight": 188,
+    "candidateNflversePlayerIds": [
+      "00-0029053"
+    ],
+    "candidateNames": [
+      "Ryan Davis"
+    ],
+    "candidateTeams": [
+      "BUF"
+    ],
+    "candidatePositions": [
+      "DL"
+    ],
+    "matchConfidence": "conflict",
+    "matchReasons": [
+      "normalized full name match"
+    ],
+    "conflictReasons": [
+      "position mismatch: WR vs DL; birth date mismatch: 1997-04-12 vs 1989-02-24",
+      "position mismatch: WR vs DL",
+      "birth date mismatch: 1997-04-12 vs 1989-02-24"
+    ],
+    "recommendedAction": "needs_manual_override",
+    "reviewPriority": "P3"
+  },
+  {
+    "sourcePlayerId": "6079",
+    "sleeperId": "6079",
+    "blackbirdPlayerId": null,
+    "playerName": "Gary Johnson",
+    "normalizedName": "gary johnson",
+    "position": "LB",
+    "normalizedPosition": "LB",
+    "team": null,
+    "status": "Active",
+    "active": true,
+    "searchRank": 9999999,
+    "yearsExperience": 3,
+    "college": "Texas",
+    "age": 25,
+    "birthDate": "1996-08-02",
+    "height": 72,
+    "weight": 216,
+    "candidateNflversePlayerIds": [
+      "JOH254992"
+    ],
+    "candidateNames": [
+      "Gary Johnson"
+    ],
+    "candidateTeams": [
+      "BAL"
+    ],
+    "candidatePositions": [
+      "DL"
+    ],
+    "matchConfidence": "conflict",
+    "matchReasons": [
+      "normalized full name match"
+    ],
+    "conflictReasons": [
+      "position mismatch: LB vs DL; birth date mismatch: 1996-08-02 vs 1955-10-02",
+      "position mismatch: LB vs DL",
+      "birth date mismatch: 1996-08-02 vs 1955-10-02"
+    ],
+    "recommendedAction": "needs_manual_override",
+    "reviewPriority": "P3"
+  },
+  {
+    "sourcePlayerId": "6251",
+    "sleeperId": "6251",
+    "blackbirdPlayerId": null,
+    "playerName": "Reggie Howard",
+    "normalizedName": "reggie howard",
+    "position": "DL",
+    "normalizedPosition": "DL",
+    "team": null,
+    "status": "Active",
+    "active": true,
+    "searchRank": 9999999,
+    "yearsExperience": 3,
+    "college": "Toledo",
+    "age": 25,
+    "birthDate": "1996-03-26",
+    "height": 75,
+    "weight": 280,
+    "candidateNflversePlayerIds": [
+      "00-0019101"
+    ],
+    "candidateNames": [
+      "Reggie Howard"
+    ],
+    "candidateTeams": [
+      "CAR"
+    ],
+    "candidatePositions": [
+      "DB"
+    ],
+    "matchConfidence": "conflict",
+    "matchReasons": [
+      "normalized full name match"
+    ],
+    "conflictReasons": [
+      "position mismatch: DL vs DB; birth date mismatch: 1996-03-26 vs 1977-05-17",
+      "position mismatch: DL vs DB",
+      "birth date mismatch: 1996-03-26 vs 1977-05-17"
+    ],
+    "recommendedAction": "needs_manual_override",
+    "reviewPriority": "P3"
+  },
+  {
+    "sourcePlayerId": "6329",
+    "sleeperId": "6329",
+    "blackbirdPlayerId": null,
+    "playerName": "John Battle",
+    "normalizedName": "john battle",
+    "position": "DB",
+    "normalizedPosition": "DB",
+    "team": null,
+    "status": "Inactive",
+    "active": true,
+    "searchRank": 9999999,
+    "yearsExperience": 3,
+    "college": "Louisiana State",
+    "age": 26,
+    "birthDate": "1995-08-21",
+    "height": 72,
+    "weight": 201,
+    "candidateNflversePlayerIds": [
+      "00-0035498"
+    ],
+    "candidateNames": [
+      "John Battle"
+    ],
+    "candidateTeams": [
+      "PIT"
+    ],
+    "candidatePositions": [
+      "DB"
+    ],
+    "matchConfidence": "conflict",
+    "matchReasons": [
+      "normalized full name match",
+      "position match",
+      "height support",
+      "weight support"
+    ],
+    "conflictReasons": [
+      "birth date mismatch: 1995-08-21 vs 1995-02-21",
+      "birth date mismatch: 1995-08-21 vs 1995-02-21"
+    ],
+    "recommendedAction": "needs_manual_override",
+    "reviewPriority": "P3"
+  },
+  {
+    "sourcePlayerId": "6366",
+    "sleeperId": "6366",
+    "blackbirdPlayerId": null,
+    "playerName": "Andrew Williams",
+    "normalizedName": "andrew williams",
+    "position": "DL",
+    "normalizedPosition": "DL",
+    "team": null,
+    "status": "Active",
+    "active": true,
+    "searchRank": 9999999,
+    "yearsExperience": 3,
+    "college": "Auburn",
+    "age": 26,
+    "birthDate": "1995-12-13",
+    "height": 76,
+    "weight": 294,
+    "candidateNflversePlayerIds": [
+      "00-0022053"
+    ],
+    "candidateNames": [
+      "Andrew Williams"
+    ],
+    "candidateTeams": [
+      "SF"
+    ],
+    "candidatePositions": [
+      "DL"
+    ],
+    "matchConfidence": "conflict",
+    "matchReasons": [
+      "normalized full name match",
+      "position match"
+    ],
+    "conflictReasons": [
+      "birth date mismatch: 1995-12-13 vs 1979-04-18",
+      "birth date mismatch: 1995-12-13 vs 1979-04-18"
+    ],
+    "recommendedAction": "needs_manual_override",
+    "reviewPriority": "P3"
+  },
+  {
+    "sourcePlayerId": "6376",
+    "sleeperId": "6376",
+    "blackbirdPlayerId": null,
+    "playerName": "James Folston",
+    "normalizedName": "james folston",
+    "position": "LB",
+    "normalizedPosition": "LB",
+    "team": null,
+    "status": "Active",
+    "active": true,
+    "searchRank": 9999999,
+    "yearsExperience": 3,
+    "college": "Pittsburgh",
+    "age": 25,
+    "birthDate": "1996-06-04",
+    "height": 75,
+    "weight": 233,
+    "candidateNflversePlayerIds": [
+      "00-0005392"
+    ],
+    "candidateNames": [
+      "James Folston"
+    ],
+    "candidateTeams": [
+      "ARI"
+    ],
+    "candidatePositions": [
+      "LB"
+    ],
+    "matchConfidence": "conflict",
+    "matchReasons": [
+      "normalized full name match",
+      "position match",
+      "height support"
+    ],
+    "conflictReasons": [
+      "birth date mismatch: 1996-06-04 vs 1971-08-14",
+      "birth date mismatch: 1996-06-04 vs 1971-08-14"
+    ],
+    "recommendedAction": "needs_manual_override",
+    "reviewPriority": "P3"
+  },
+  {
+    "sourcePlayerId": "6440",
+    "sleeperId": "6440",
+    "blackbirdPlayerId": null,
+    "playerName": "Jordan Thompson",
+    "normalizedName": "jordan thompson",
+    "position": "DL",
+    "normalizedPosition": "DL",
+    "team": null,
+    "status": "Active",
+    "active": true,
+    "searchRank": 9999999,
+    "yearsExperience": 3,
+    "college": "Northwestern",
+    "age": 25,
+    "birthDate": "1997-01-10",
+    "height": 75,
+    "weight": 292,
+    "candidateNflversePlayerIds": [
+      "00-0030647"
+    ],
+    "candidateNames": [
+      "Jordan Thompson"
+    ],
+    "candidateTeams": [
+      "DET"
+    ],
+    "candidatePositions": [
+      "TE"
+    ],
+    "matchConfidence": "conflict",
+    "matchReasons": [
+      "normalized full name match"
+    ],
+    "conflictReasons": [
+      "position mismatch: DL vs TE; birth date mismatch: 1997-01-10 vs 1989-07-12",
+      "position mismatch: DL vs TE",
+      "birth date mismatch: 1997-01-10 vs 1989-07-12"
+    ],
+    "recommendedAction": "needs_manual_override",
+    "reviewPriority": "P3"
+  },
+  {
+    "sourcePlayerId": "6442",
+    "sleeperId": "6442",
+    "blackbirdPlayerId": null,
+    "playerName": "Johnny Robinson",
+    "normalizedName": "johnny robinson",
+    "position": "DL",
+    "normalizedPosition": "DL",
+    "team": null,
+    "status": "Active",
+    "active": true,
+    "searchRank": 9999999,
+    "yearsExperience": 3,
+    "college": "Charleston Southern",
+    "age": 25,
+    "birthDate": "1996-10-24",
+    "height": 72,
+    "weight": 292,
+    "candidateNflversePlayerIds": [
+      "ROB577792"
+    ],
+    "candidateNames": [
+      "Johnny Robinson"
+    ],
+    "candidateTeams": [
+      "LV"
+    ],
+    "candidatePositions": [
+      "DL"
+    ],
+    "matchConfidence": "conflict",
+    "matchReasons": [
+      "normalized full name match",
+      "position match"
+    ],
+    "conflictReasons": [
+      "birth date mismatch: 1996-10-24 vs 1959-02-14",
+      "birth date mismatch: 1996-10-24 vs 1959-02-14"
+    ],
+    "recommendedAction": "needs_manual_override",
+    "reviewPriority": "P3"
+  },
+  {
+    "sourcePlayerId": "6444",
+    "sleeperId": "6444",
+    "blackbirdPlayerId": null,
+    "playerName": "Nate Harvey",
+    "normalizedName": "nate harvey",
+    "position": "LB",
+    "normalizedPosition": "LB",
+    "team": null,
+    "status": "Active",
+    "active": true,
+    "searchRank": 9999999,
+    "yearsExperience": 3,
+    "college": "East Carolina",
+    "age": 26,
+    "birthDate": "1995-09-15",
+    "height": 73,
+    "weight": 225,
+    "candidateNflversePlayerIds": [
+      "HAR805951"
+    ],
+    "candidateNames": [
+      "Nate Harvey"
+    ],
+    "candidateTeams": [
+      "NYG"
+    ],
+    "candidatePositions": [
+      "DL"
+    ],
+    "matchConfidence": "conflict",
+    "matchReasons": [
+      "normalized full name match",
+      "height support",
+      "weight support"
+    ],
+    "conflictReasons": [
+      "position mismatch: LB vs DL; birth date mismatch: 1995-09-15 vs 1996-09-15",
+      "position mismatch: LB vs DL",
+      "birth date mismatch: 1995-09-15 vs 1996-09-15"
+    ],
+    "recommendedAction": "needs_manual_override",
+    "reviewPriority": "P3"
+  },
+  {
+    "sourcePlayerId": "6526",
+    "sleeperId": "6526",
+    "blackbirdPlayerId": null,
+    "playerName": "Tre Thomas",
+    "normalizedName": "tre thomas",
+    "position": "LB",
+    "normalizedPosition": "LB",
+    "team": null,
+    "status": "Active",
+    "active": true,
+    "searchRank": 9999999,
+    "yearsExperience": 3,
+    "college": "Colorado State",
+    "age": 26,
+    "birthDate": "1995-09-03",
+    "height": 74,
+    "weight": 223,
+    "candidateNflversePlayerIds": [
+      "THO065166"
+    ],
+    "candidateNames": [
+      "Tre Thomas"
+    ],
+    "candidateTeams": [
+      "NYG"
+    ],
+    "candidatePositions": [
+      "DB"
+    ],
+    "matchConfidence": "conflict",
+    "matchReasons": [
+      "normalized full name match"
+    ],
+    "conflictReasons": [
+      "position mismatch: LB vs DB; birth date mismatch: 1995-09-03 vs 1975-09-12",
+      "position mismatch: LB vs DB",
+      "birth date mismatch: 1995-09-03 vs 1975-09-12"
+    ],
+    "recommendedAction": "needs_manual_override",
+    "reviewPriority": "P3"
+  },
+  {
+    "sourcePlayerId": "6538",
+    "sleeperId": "6538",
+    "blackbirdPlayerId": null,
+    "playerName": "Dewayne Hendrix",
+    "normalizedName": "dewayne hendrix",
+    "position": "DL",
+    "normalizedPosition": "DL",
+    "team": null,
+    "status": "Active",
+    "active": true,
+    "searchRank": 1708,
+    "yearsExperience": 3,
+    "college": "Pittsburgh",
+    "age": 26,
+    "birthDate": "1995-06-03",
+    "height": 76,
+    "weight": 290,
+    "candidateNflversePlayerIds": [
+      "00-0035340"
+    ],
+    "candidateNames": [
+      "Dewayne Hendrix"
+    ],
+    "candidateTeams": [
+      "JAX"
+    ],
+    "candidatePositions": [
+      "DL"
+    ],
+    "matchConfidence": "conflict",
+    "matchReasons": [
+      "normalized full name match",
+      "position match",
+      "height support"
+    ],
+    "conflictReasons": [
+      "birth date mismatch: 1995-06-03 vs 1995-06-13",
+      "birth date mismatch: 1995-06-03 vs 1995-06-13"
+    ],
+    "recommendedAction": "needs_manual_override",
+    "reviewPriority": "P3"
+  },
+  {
+    "sourcePlayerId": "6571",
+    "sleeperId": "6571",
+    "blackbirdPlayerId": null,
+    "playerName": "Tre Watson",
+    "normalizedName": "tre watson",
+    "position": "LB",
+    "normalizedPosition": "LB",
+    "team": null,
+    "status": "Active",
+    "active": true,
+    "searchRank": 9999999,
+    "yearsExperience": 3,
+    "college": "Maryland",
+    "age": 25,
+    "birthDate": "1996-07-05",
+    "height": 75,
+    "weight": 241,
+    "candidateNflversePlayerIds": [
+      "00-0040094"
+    ],
+    "candidateNames": [
+      "Tre Watson"
+    ],
+    "candidateTeams": [
+      "KC"
+    ],
+    "candidatePositions": [
+      "TE"
+    ],
+    "matchConfidence": "conflict",
+    "matchReasons": [
+      "normalized full name match"
+    ],
+    "conflictReasons": [
+      "position mismatch: LB vs TE; birth date mismatch: 1996-07-05 vs 2002-10-12",
+      "position mismatch: LB vs TE",
+      "birth date mismatch: 1996-07-05 vs 2002-10-12"
+    ],
+    "recommendedAction": "needs_manual_override",
+    "reviewPriority": "P3"
+  },
+  {
+    "sourcePlayerId": "6686",
+    "sleeperId": "6686",
+    "blackbirdPlayerId": null,
+    "playerName": "Joe Horn",
+    "normalizedName": "joe horn",
+    "position": "WR",
+    "normalizedPosition": "WR",
+    "team": null,
+    "status": "Active",
+    "active": true,
+    "searchRank": 9999999,
+    "yearsExperience": 3,
+    "college": "Missouri Western",
+    "age": 27,
+    "birthDate": "1994-09-16",
+    "height": 70,
+    "weight": 174,
+    "candidateNflversePlayerIds": [
+      "00-0007744"
+    ],
+    "candidateNames": [
+      "Joe Horn"
+    ],
+    "candidateTeams": [
+      "ATL"
+    ],
+    "candidatePositions": [
+      "WR"
+    ],
+    "matchConfidence": "conflict",
+    "matchReasons": [
+      "normalized full name match",
+      "position match"
+    ],
+    "conflictReasons": [
+      "birth date mismatch: 1994-09-16 vs 1972-01-16",
+      "birth date mismatch: 1994-09-16 vs 1972-01-16"
+    ],
+    "recommendedAction": "needs_manual_override",
+    "reviewPriority": "P3"
+  },
+  {
+    "sourcePlayerId": "6689",
+    "sleeperId": "6689",
+    "blackbirdPlayerId": null,
+    "playerName": "Bryant Jones",
+    "normalizedName": "bryant jones",
+    "position": "DL",
+    "normalizedPosition": "DL",
+    "team": null,
+    "status": "Active",
+    "active": true,
+    "searchRank": 9999999,
+    "yearsExperience": 3,
+    "college": "Mississippi Valley",
+    "age": 24,
+    "birthDate": "1997-04-15",
+    "height": 73,
+    "weight": 304,
+    "candidateNflversePlayerIds": [
+      "JON132880"
+    ],
+    "candidateNames": [
+      "Bryant Jones"
+    ],
+    "candidateTeams": [
+      "IND"
+    ],
+    "candidatePositions": [
+      "DB"
+    ],
+    "matchConfidence": "conflict",
+    "matchReasons": [
+      "normalized full name match"
+    ],
+    "conflictReasons": [
+      "position mismatch: DL vs DB; birth date mismatch: 1997-04-15 vs 1963-12-05",
+      "position mismatch: DL vs DB",
+      "birth date mismatch: 1997-04-15 vs 1963-12-05"
+    ],
+    "recommendedAction": "needs_manual_override",
+    "reviewPriority": "P3"
+  },
+  {
+    "sourcePlayerId": "6692",
+    "sleeperId": "6692",
+    "blackbirdPlayerId": null,
+    "playerName": "Joe Horn",
+    "normalizedName": "joe horn",
+    "position": "WR",
+    "normalizedPosition": "WR",
+    "team": null,
+    "status": "Active",
+    "active": true,
+    "searchRank": 9999999,
+    "yearsExperience": 3,
+    "college": "Missouri Western",
+    "age": 27,
+    "birthDate": "1994-09-16",
+    "height": 70,
+    "weight": 174,
+    "candidateNflversePlayerIds": [
+      "00-0007744"
+    ],
+    "candidateNames": [
+      "Joe Horn"
+    ],
+    "candidateTeams": [
+      "ATL"
+    ],
+    "candidatePositions": [
+      "WR"
+    ],
+    "matchConfidence": "conflict",
+    "matchReasons": [
+      "normalized full name match",
+      "position match"
+    ],
+    "conflictReasons": [
+      "birth date mismatch: 1994-09-16 vs 1972-01-16",
+      "birth date mismatch: 1994-09-16 vs 1972-01-16"
+    ],
+    "recommendedAction": "needs_manual_override",
+    "reviewPriority": "P3"
+  },
+  {
+    "sourcePlayerId": "6727",
+    "sleeperId": "6727",
+    "blackbirdPlayerId": null,
+    "playerName": "Joe Walker",
+    "normalizedName": "joe walker",
+    "position": "WR",
+    "normalizedPosition": "WR",
+    "team": null,
+    "status": "Active",
+    "active": true,
+    "searchRank": 9999999,
+    "yearsExperience": 3,
+    "college": "Delaware",
+    "age": 26,
+    "birthDate": "1996-01-12",
+    "height": 73,
+    "weight": 201,
+    "candidateNflversePlayerIds": [
+      "00-0019991"
+    ],
+    "candidateNames": [
+      "Joe Walker"
+    ],
+    "candidateTeams": [
+      "IND"
+    ],
+    "candidatePositions": [
+      "DB"
+    ],
+    "matchConfidence": "conflict",
+    "matchReasons": [
+      "normalized full name match",
+      "weight support"
+    ],
+    "conflictReasons": [
+      "position mismatch: WR vs DB; birth date mismatch: 1996-01-12 vs 1977-03-19",
+      "position mismatch: WR vs DB",
+      "birth date mismatch: 1996-01-12 vs 1977-03-19"
+    ],
+    "recommendedAction": "needs_manual_override",
+    "reviewPriority": "P3"
+  },
+  {
+    "sourcePlayerId": "6827",
+    "sleeperId": "6827",
+    "blackbirdPlayerId": null,
+    "playerName": "Bradlee Anae",
+    "normalizedName": "bradlee anae",
+    "position": "DL",
+    "normalizedPosition": "DL",
+    "team": null,
+    "status": "Inactive",
+    "active": true,
+    "searchRank": 9999999,
+    "yearsExperience": 5,
+    "college": "Utah",
+    "age": 27,
+    "birthDate": "1998-01-17",
+    "height": 75,
+    "weight": 260,
+    "candidateNflversePlayerIds": [
+      "00-0036379"
+    ],
+    "candidateNames": [
+      "Bradlee Anae"
+    ],
+    "candidateTeams": [
+      "NYJ"
+    ],
+    "candidatePositions": [
+      "DL"
+    ],
+    "matchConfidence": "conflict",
+    "matchReasons": [
+      "normalized full name match",
+      "position match",
+      "height support",
+      "weight support"
+    ],
+    "conflictReasons": [
+      "birth date mismatch: 1998-01-17 vs 1998-10-17",
+      "birth date mismatch: 1998-01-17 vs 1998-10-17"
+    ],
+    "recommendedAction": "needs_manual_override",
+    "reviewPriority": "P3"
+  },
+  {
+    "sourcePlayerId": "6831",
+    "sleeperId": "6831",
+    "blackbirdPlayerId": null,
+    "playerName": "Raekwon Davis",
+    "normalizedName": "raekwon davis",
+    "position": "DL",
+    "normalizedPosition": "DL",
+    "team": null,
+    "status": "Active",
+    "active": true,
+    "searchRank": 9999999,
+    "yearsExperience": 5,
+    "college": "Alabama",
+    "age": 27,
+    "birthDate": "1997-08-21",
+    "height": 79,
+    "weight": 325,
+    "candidateNflversePlayerIds": [
+      "00-0036213"
+    ],
+    "candidateNames": [
+      "Raekwon Davis"
+    ],
+    "candidateTeams": [
+      "IND"
+    ],
+    "candidatePositions": [
+      "DL"
+    ],
+    "matchConfidence": "conflict",
+    "matchReasons": [
+      "normalized full name match",
+      "position match",
+      "height support",
+      "weight support"
+    ],
+    "conflictReasons": [
+      "birth date mismatch: 1997-08-21 vs 1997-06-10",
+      "birth date mismatch: 1997-08-21 vs 1997-06-10"
+    ],
+    "recommendedAction": "needs_manual_override",
+    "reviewPriority": "P3"
+  },
+  {
+    "sourcePlayerId": "6898",
+    "sleeperId": "6898",
+    "blackbirdPlayerId": null,
+    "playerName": "Anthony Gordon",
+    "normalizedName": "anthony gordon",
+    "position": "QB",
+    "normalizedPosition": "QB",
+    "team": null,
+    "status": "Active",
+    "active": true,
+    "searchRank": 9999999,
+    "yearsExperience": 2,
+    "college": "Washington State",
+    "age": 25,
+    "birthDate": "1996-08-28",
+    "height": 75,
+    "weight": 201,
+    "candidateNflversePlayerIds": [
+      "00-0035988"
+    ],
+    "candidateNames": [
+      "Anthony Gordon"
+    ],
+    "candidateTeams": [
+      "DEN"
+    ],
+    "candidatePositions": [
+      "QB"
+    ],
+    "matchConfidence": "conflict",
+    "matchReasons": [
+      "normalized full name match",
+      "position match",
+      "weight support"
+    ],
+    "conflictReasons": [
+      "birth date mismatch: 1996-08-28 vs 1997-08-28",
+      "birth date mismatch: 1996-08-28 vs 1997-08-28"
+    ],
+    "recommendedAction": "needs_manual_override",
+    "reviewPriority": "P3"
+  }
+]

@@ -1,0 +1,2 @@
+playerId,playerName,position,team,season,nflDraftRound,nflDraftPick,nflDraftOverall,nflDraftTeam,source,sourceLabel,sourceConfidence
+example-player-id,Example Rookie,QB,CHI,2026,1,1,1,CHI,manual,Example only - replace with verified source,low

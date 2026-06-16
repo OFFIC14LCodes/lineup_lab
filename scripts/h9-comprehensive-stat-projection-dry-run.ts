@@ -13,6 +13,8 @@ import {
   type HistoricalStatInput,
   type PlayerStatProjection,
 } from "@/lib/projections/player-stat-projections";
+import { loadRookieData, rookieProfileForPlayer } from "@/lib/projections/rookie-data-loader";
+import { normalizeRookieProfile, type NormalizedRookieProfile } from "@/lib/projections/rookie-data-sources";
 import {
   scorePlayerStatProjectionForLeague,
   type LeagueScoringProjectionInput,
@@ -24,9 +26,9 @@ const PROJECTION_METHOD = "blackbird_comprehensive_stat_projections_v1";
 const PROJECTION_VERSION = 4;
 const SELECTION_SCOPE = "all_draftable_comprehensive";
 const REASON_REGISTRY_VERSION = "h9.15-comprehensive-reasons-v1";
-const PERSISTENCE_SCHEMA_VERSION = "h9.15-deduped-persistence-v3";
+const PERSISTENCE_SCHEMA_VERSION = "h9.15-deduped-persistence-v4-def";
 const DRAFTABLE_POSITIONS = ["QB", "RB", "WR", "TE", "K", "DEF", "DL", "LB", "DB"];
-const PERSISTABLE_POSITIONS = ["QB", "RB", "WR", "TE", "K", "DL", "LB", "DB"];
+const PERSISTABLE_POSITIONS = ["QB", "RB", "WR", "TE", "K", "DEF", "DL", "LB", "DB"];
 
 type Args = {
   historicalSeason: number;
@@ -120,8 +122,12 @@ async function main() {
     loadHistoricalRows(client, args),
     loadLeagues(client, args),
   ]);
+  const rookieData = loadRookieData({
+    candidates: players.map((player) => ({ id: player.id, full_name: player.full_name, position: playerPosition(player), team: player.team })),
+    useExampleWhenMissing: false,
+  });
   const historicalByPlayer = groupHistoricalRows(seasonRows);
-  const projections = players.map((player) => buildProjectionForPlayer(player, historicalByPlayer.get(player.id) ?? [], args.projectionSeason));
+  const projections = players.map((player) => buildProjectionForPlayer(player, historicalByPlayer.get(player.id) ?? [], args.projectionSeason, rookieData.profilesByPlayerId));
   const leagueInputs = leagues.map((league): LeagueScoringProjectionInput => ({
     leagueId: league.id,
     scoringSettings: league.scoring_settings_json ?? {},
@@ -132,7 +138,7 @@ async function main() {
   const persistence = args.persist ? await persistPlan(client, persistencePlan) : null;
   const inspectionAfter = persistence ? await inspectRun(client, persistence.projectionRunId, persistencePlan.expected) : inspectionBefore;
 
-  const artifact = buildArtifact({ args, players, projections, leagues, scored, persistencePlan, persistence, persistenceInspection: inspectionAfter });
+  const artifact = buildArtifact({ args, players, projections, leagues, scored, persistencePlan, persistence, persistenceInspection: inspectionAfter, rookieData });
   writeArtifacts("h9-comprehensive-stat-projections", artifact.projections);
   writeArtifacts("h9-comprehensive-scored-projections", artifact.scoring);
 
@@ -141,6 +147,17 @@ async function main() {
     projectedPlayers: projections.length,
     projectedPlayersWithStats: projections.filter((projection) => Object.keys(projection.stats).length > 0).length,
     projectedRookies: projections.filter((projection) => projection.projectionType === "rookie").length,
+    rookieDataImport: {
+      sourcePath: rookieData.sourcePath,
+      totalRows: rookieData.totalRows,
+      validRows: rookieData.validRows,
+      matchedRows: rookieData.matchedRows,
+      unmatchedRows: rookieData.unmatchedRows,
+      enrichmentSourcePath: rookieData.enrichmentSourcePath,
+      enrichmentRows: rookieData.enrichmentRows,
+      matchedEnrichmentRows: rookieData.matchedEnrichmentRows,
+      conflictCount: rookieData.conflictCount,
+    },
     positionDistribution: countBy(projections.map((projection) => projection.position)),
     confidenceDistribution: countBy(projections.map((projection) => projection.confidence)),
     scoredFantasyOutputs: scored.filter((row) => row.scored.medianFantasyPoints !== null).length,
@@ -289,13 +306,34 @@ async function loadLeagues(client: SupabaseClient<any>, args: Args): Promise<Lea
   );
 }
 
-function buildProjectionForPlayer(player: PlayerRow, historical: HistoricalStatInput[], projectionSeason: number): PlayerStatProjection {
+function buildProjectionForPlayer(player: PlayerRow, historical: HistoricalStatInput[], projectionSeason: number, rookieProfiles: Map<string, NormalizedRookieProfile>): PlayerStatProjection {
   const age = numberOrNull(player.age);
   const yearsExperience = numberOrNull(player.years_exp);
   const metadata = player.metadata_json ?? {};
   const draftRound = numberOrNull(metadata.draft_round);
   const draftPick = numberOrNull(metadata.draft_pick);
-  const draftCapitalScore = draftPick ? Math.max(0, 100 - Math.min(255, draftPick) / 2.55) : draftRound ? Math.max(0, 95 - draftRound * 11) : null;
+  const draftOverall = numberOrNull(metadata.draft_overall) ?? numberOrNull(metadata.draft_number) ?? draftPick;
+  const derivedProfile = yearsExperience === 0 && (draftRound !== null || draftPick !== null || draftOverall !== null)
+    ? normalizeRookieProfile({
+        playerId: player.id,
+        playerName: player.full_name ?? player.id,
+        position: playerPosition(player),
+        team: player.team,
+        season: projectionSeason,
+        rookieYear: projectionSeason,
+        age,
+        yearsExperience,
+        nflDraftRound: draftRound,
+        nflDraftPick: draftPick,
+        nflDraftOverall: draftOverall,
+        nflDraftTeam: stringOrNull(metadata.draft_team) ?? player.team,
+        source: "derived",
+        sourceLabel: "players.metadata_json",
+        dataGaps: ["college production", "landing spot role"],
+      })
+    : null;
+  const importedProfile = rookieProfileForPlayer(rookieProfiles, { id: player.id, full_name: player.full_name, position: playerPosition(player) }, projectionSeason);
+  const rookieProfile = importedProfile ?? derivedProfile;
   return buildPlayerStatProjection({
     playerId: player.id,
     playerName: player.full_name ?? player.id,
@@ -308,9 +346,13 @@ function buildProjectionForPlayer(player: PlayerRow, historical: HistoricalStatI
     rookieContext: yearsExperience === 0
       ? {
           rookieYear: projectionSeason,
-          draftCapitalScore,
-          collegeStatsAvailable: false,
-          dataGaps: draftCapitalScore === null ? ["missing NFL draft capital"] : [],
+          draftCapitalScore: rookieProfile?.draftCapitalScore ?? null,
+          collegeProductionScore: rookieProfile?.collegeProductionScore ?? null,
+          opportunityScore: rookieProfile?.opportunityScore ?? null,
+          landingSpotRole: rookieProfile?.landingSpotRole ?? null,
+          collegeStatsAvailable: rookieProfile?.collegeProductionScore !== null,
+          dataGaps: rookieProfile?.dataGaps ?? ["missing NFL draft capital", "missing college production profile", "rookie role uncertainty"],
+          profile: rookieProfile,
         }
       : null,
   });
@@ -631,6 +673,7 @@ function buildArtifact(input: {
   persistencePlan: ReturnType<typeof buildPersistencePlan>;
   persistence: { projectionRunId: string; reusedCompleteRun: boolean } | null;
   persistenceInspection: Awaited<ReturnType<typeof inspectRun>> | null;
+  rookieData: ReturnType<typeof loadRookieData>;
 }) {
   const scoredWithPoints = input.scored.filter((row) => row.scored.medianFantasyPoints !== null);
   const projectionStatCoverageByPosition = Object.fromEntries(DRAFTABLE_POSITIONS.map((position) => {
@@ -652,6 +695,36 @@ function buildArtifact(input: {
     positionDistribution: countBy(input.projections.map((projection) => projection.position)),
     confidenceDistribution: countBy(input.projections.map((projection) => projection.confidence)),
     rookieConfidenceDistribution: countBy(input.projections.filter((projection) => projection.projectionType === "rookie").map((projection) => projection.confidence)),
+    rookieDataImport: {
+      sourcePath: input.rookieData.sourcePath,
+      totalRows: input.rookieData.totalRows,
+      validRows: input.rookieData.validRows,
+      invalidRows: input.rookieData.invalidRows,
+      matchedRows: input.rookieData.matchedRows,
+      unmatchedRows: input.rookieData.unmatchedRows,
+      enrichmentSourcePath: input.rookieData.enrichmentSourcePath,
+      enrichmentRows: input.rookieData.enrichmentRows,
+      validEnrichmentRows: input.rookieData.validEnrichmentRows,
+      invalidEnrichmentRows: input.rookieData.invalidEnrichmentRows,
+      matchedEnrichmentRows: input.rookieData.matchedEnrichmentRows,
+      unmatchedEnrichmentRows: input.rookieData.unmatchedEnrichmentRows,
+      ambiguousEnrichmentRows: input.rookieData.ambiguousEnrichmentRows,
+      conflictCount: input.rookieData.conflictCount,
+      conflicts: input.rookieData.conflicts.slice(0, 25),
+      errors: input.rookieData.errors.slice(0, 25),
+    },
+    rookieProfiles: input.rookieData.rows.map((row) => ({
+      playerName: row.profile.playerName,
+      position: row.profile.position,
+      matchedPlayerId: row.matchedPlayerId,
+      matchStatus: row.matchStatus,
+      draftCapitalScore: row.profile.draftCapitalScore,
+      collegeProductionScore: row.profile.collegeProductionScore,
+      opportunityScore: row.profile.opportunityScore,
+      confidence: row.profile.rookieProjectionConfidence,
+      dataGaps: row.profile.dataGaps,
+      errors: row.errors,
+    })),
     projectionStatCoverageByPosition,
     sampleProjections: input.projections
       .filter((projection) => Object.keys(projection.stats).length > 0)
@@ -729,6 +802,11 @@ function playerPosition(player: PlayerRow): string {
 
 function roleSampleClass(projection: PlayerStatProjection): string {
   const idp = ["DL", "LB", "DB"].includes(projection.position);
+  if (projection.position === "DEF") {
+    if (projection.projectionType === "fallback") return "DST_ROLE_UNKNOWN";
+    if (projection.confidence === "very_low") return "DST_LOW_SAMPLE";
+    return "DST_ESTABLISHED_PARTIAL_SEASON";
+  }
   if (projection.position === "K") {
     if (projection.projectionType === "fallback") return "K_ROLE_UNKNOWN";
     if (projection.confidence === "very_low") return "K_LOW_SAMPLE";
@@ -823,6 +901,10 @@ function numberOrNull(value: unknown): number | null {
     return Number.isFinite(parsed) ? parsed : null;
   }
   return null;
+}
+
+function stringOrNull(value: unknown): string | null {
+  return typeof value === "string" && value.trim() ? value.trim() : null;
 }
 
 function codeVersion() {

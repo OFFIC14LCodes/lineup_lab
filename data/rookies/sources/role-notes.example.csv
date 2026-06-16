@@ -1,0 +1,2 @@
+playerId,playerName,position,team,season,landingSpotRole,opportunityNotes,roleSourceLabel,source,sourceLabel,sourceConfidence
+example-player-id,Example Rookie,RB,CHI,2026,committee,Example role note only,Example only - replace with verified source,manual,Example only - replace with verified source,low

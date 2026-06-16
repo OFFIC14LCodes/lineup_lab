@@ -1,0 +1,4 @@
+playerName,position,team,season,nflDraftRound,nflDraftPick,nflDraftOverall,nflDraftTeam,collegeGames,collegePassingYards,collegeRushingYards,collegeReceivingYards,collegeTotalTackles,collegeSacks,landingSpotRole,opportunityNotes,source,sourceLabel
+Example Rookie QB,QB,CHI,2026,1,1,1,CHI,14,3600,520,,,,probable_starter,manual example only; replace with verified source,manual,example_enrichment
+Example Rookie RB,RB,LV,2026,2,4,36,LV,13,,1450,285,,,committee,manual example only; replace with verified source,manual,example_enrichment
+Example Rookie LB,LB,CLE,2026,2,1,33,CLE,14,,,,110,4,probable_starter,manual example only; replace with verified source,manual,example_enrichment

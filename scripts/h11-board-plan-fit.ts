@@ -44,10 +44,25 @@ const checks = [
   { name: "contextual_rank_primary", passed: fitted[0].blackbirdBoardRank === board.rows[0].blackbirdBoardRank && board.diagnostics.orderingMethod.includes("static Blackbird league rank"), detail: board.diagnostics.orderingMethod },
   { name: "h10_score_not_rank_source", passed: !board.diagnostics.orderingMethod.includes("H10 recommendation/value rank"), detail: board.diagnostics.orderingMethod },
   { name: "data_gaps_visible", passed: fitted.some((row) => row.contextualDataGaps.length > 0), detail: "contextual gaps checked" },
+  { name: "projection_source_trust_visible", passed: fitted.every((row) => row.projectionSource && row.projectionUnit && row.projectionTrust.trustLabel), detail: "source/unit/trust carried into plan fit rows" },
   { name: "no_banned_language", passed: findBannedLivePlanLanguage(JSON.stringify({ status, fitted })).length === 0, detail: "safe language" },
   { name: "no_mutation", passed: JSON.stringify(board.rows) === JSON.stringify(board.rows), detail: "synthetic read-only diagnostic" },
 ];
-const artifact = { generatedAt: new Date().toISOString(), verdict: checks.every((row) => row.passed) ? "passed" : "failed", checks, rows: fitted.map((row) => ({ rank: row.blackbirdBoardRank, playerName: row.playerName, planFit: row.planFit, planFitReasons: row.planFitReasons })) };
+const artifact = {
+  generatedAt: new Date().toISOString(),
+  verdict: checks.every((row) => row.passed) ? "passed" : "failed",
+  checks,
+  rows: fitted.map((row) => ({
+    rank: row.blackbirdBoardRank,
+    playerName: row.playerName,
+    planFit: row.planFit,
+    planFitReasons: row.planFitReasons,
+    projectionSource: row.projectionSource,
+    projectionUnit: row.projectionUnit,
+    projectionTrustLabel: row.projectionTrust.trustLabel,
+    projectionTrustScore: row.projectionTrust.trustScore,
+  })),
+};
 mkdirSync(OUTPUT_DIR, { recursive: true });
 writeFileSync(path.join(OUTPUT_DIR, "h11-board-plan-fit.json"), JSON.stringify(artifact, null, 2));
 writeFileSync(path.join(OUTPUT_DIR, "h11-board-plan-fit.md"), `# h11-board-plan-fit\n\n\`\`\`json\n${JSON.stringify(artifact, null, 2)}\n\`\`\`\n`);

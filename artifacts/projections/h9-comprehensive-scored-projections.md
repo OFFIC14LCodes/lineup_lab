@@ -2,7 +2,7 @@
 
 ```json
 {
-  "generatedAt": "2026-06-16T04:44:33.289Z",
+  "generatedAt": "2026-06-16T19:07:30.467Z",
   "method": "blackbird_comprehensive_stat_projections_v1",
   "leagueCount": 13,
   "scoredFantasyOutputs": 27820,

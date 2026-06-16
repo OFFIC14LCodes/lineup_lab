@@ -1,0 +1,113 @@
+{
+  "kind": "h9-rookie-rank-quality",
+  "generatedAt": "2026-06-16T19:07:56.440Z",
+  "verdict": "passed",
+  "checks": [
+    {
+      "name": "draft_capital_score_derives_without_adp",
+      "passed": true,
+      "detail": "score=95"
+    },
+    {
+      "name": "college_production_score_derives_without_adp",
+      "passed": true,
+      "detail": "score=94.6"
+    },
+    {
+      "name": "enriched_rookie_confidence_improves",
+      "passed": true,
+      "detail": "medium vs very_low"
+    },
+    {
+      "name": "rank_can_place_enriched_rookie_above_missing_context_rookie",
+      "passed": true,
+      "detail": "#1 vs #3"
+    },
+    {
+      "name": "missing_context_remains_gapped",
+      "passed": true,
+      "detail": "NFL draft capital, college production, landing spot role"
+    },
+    {
+      "name": "no_adp_fallback",
+      "passed": true,
+      "detail": "ADP and market rank are null"
+    },
+    {
+      "name": "current_real_rookie_gaps_visible",
+      "passed": true,
+      "detail": "702 real rookie projection rows"
+    }
+  ],
+  "safety": {
+    "noScraping": true,
+    "noPaidApi": true,
+    "noFabricatedRealContext": true,
+    "noAdpFallback": true,
+    "noDraftStateMutation": true,
+    "noRecommendationPersistence": true
+  },
+  "currentRealRookies": {
+    "count": 702,
+    "withDraftCapitalGaps": 702,
+    "withCollegeProductionGaps": 702
+  },
+  "syntheticRookies": [
+    {
+      "playerName": "Enriched Rookie RB",
+      "draftCapitalScore": 95,
+      "collegeProductionScore": 94.6,
+      "opportunityScore": 87.9,
+      "confidence": "medium",
+      "dataGaps": []
+    },
+    {
+      "playerName": "Missing Context Rookie RB",
+      "draftCapitalScore": null,
+      "collegeProductionScore": null,
+      "opportunityScore": null,
+      "confidence": "very_low",
+      "dataGaps": [
+        "NFL draft capital",
+        "college production",
+        "landing spot role"
+      ]
+    }
+  ],
+  "syntheticRankRows": [
+    {
+      "playerId": "rookie-enriched-rb",
+      "playerName": "Enriched Rookie RB",
+      "blackbirdRank": 1,
+      "position": "RB",
+      "median": 230,
+      "leagueValueScore": 82,
+      "confidence": "medium",
+      "dataGaps": []
+    },
+    {
+      "playerId": "veteran-rb",
+      "playerName": "Veteran RB",
+      "blackbirdRank": 2,
+      "position": "RB",
+      "median": 216,
+      "leagueValueScore": 76,
+      "confidence": "medium",
+      "dataGaps": []
+    },
+    {
+      "playerId": "rookie-missing-rb",
+      "playerName": "Missing Context Rookie RB",
+      "blackbirdRank": 3,
+      "position": "RB",
+      "median": 185,
+      "leagueValueScore": 62,
+      "confidence": "very_low",
+      "dataGaps": [
+        "NFL draft capital",
+        "college production",
+        "landing spot role"
+      ]
+    }
+  ]
+}

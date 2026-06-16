@@ -1,0 +1,154 @@
+# h9-player-context-build
+
+```json
+{
+  "generatedAt": "2026-06-16T19:33:50.593Z",
+  "draftRoomId": "f85238ff-b2ee-4053-8493-e38c4cb63bd3",
+  "outputPath": "C:\\Projects\\lineup_lab\\data\\player-context\\normalized\\player-context-profiles.json",
+  "sourceRows": 0,
+  "profiles": 7266,
+  "matchedRows": 0,
+  "unmatchedRows": 0,
+  "ambiguousRows": 0,
+  "conflicts": 0,
+  "coverage": {
+    "playersWithDepthChartRole": 0,
+    "playersWithFloorCeilingRoles": 0,
+    "playersWithInjuryContext": 0,
+    "playersWithAthleticTesting": 0,
+    "playersWithPhysicalProfile": 0,
+    "playersWithCoachingContext": 0,
+    "playersWithTeamContext": 0,
+    "byPosition": {
+      "K": {
+        "total": 153,
+        "withAnyContext": 0
+      },
+      "DL": {
+        "total": 1358,
+        "withAnyContext": 0
+      },
+      "QB": {
+        "total": 354,
+        "withAnyContext": 0
+      },
+      "TE": {
+        "total": 601,
+        "withAnyContext": 0
+      },
+      "DB": {
+        "total": 1680,
+        "withAnyContext": 0
+      },
+      "WR": {
+        "total": 1296,
+        "withAnyContext": 0
+      },
+      "RB": {
+        "total": 706,
+        "withAnyContext": 0
+      },
+      "LB": {
+        "total": 1086,
+        "withAnyContext": 0
+      },
+      "DEF": {
+        "total": 32,
+        "withAnyContext": 0
+      }
+    }
+  },
+  "topDataGaps": [
+    {
+      "key": "athletic testing",
+      "count": 7266
+    },
+    {
+      "key": "coaching environment",
+      "count": 7266
+    },
+    {
+      "key": "depth chart context",
+      "count": 7266
+    },
+    {
+      "key": "injury context",
+      "count": 7266
+    },
+    {
+      "key": "physical profile",
+      "count": 7266
+    },
+    {
+      "key": "role context",
+      "count": 7266
+    }
+  ],
+  "valueIntegration": {
+    "contextAffectsValueWhenSourced": true,
+    "missingContextNeutral": true,
+    "adpUsedAsContextFallback": false
+  },
+  "safety": {
+    "noAi": true,
+    "noScraping": true,
+    "noPaidApi": true,
+    "noFabricatedContext": true,
+    "noAdpFallback": true,
+    "noDraftStateMutation": true,
+    "noRecommendationPersistence": true
+  },
+  "verdict": "needs_source_data",
+  "summary": {
+    "profiles": 7266,
+    "sourceRows": 0,
+    "coverage": {
+      "playersWithDepthChartRole": 0,
+      "playersWithFloorCeilingRoles": 0,
+      "playersWithInjuryContext": 0,
+      "playersWithAthleticTesting": 0,
+      "playersWithPhysicalProfile": 0,
+      "playersWithCoachingContext": 0,
+      "playersWithTeamContext": 0,
+      "byPosition": {
+        "K": {
+          "total": 153,
+          "withAnyContext": 0
+        },
+        "DL": {
+          "total": 1358,
+          "withAnyContext": 0
+        },
+        "QB": {
+          "total": 354,
+          "withAnyContext": 0
+        },
+        "TE": {
+          "total": 601,
+          "withAnyContext": 0
+        },
+        "DB": {
+          "total": 1680,
+          "withAnyContext": 0
+        },
+        "WR": {
+          "total": 1296,
+          "withAnyContext": 0
+        },
+        "RB": {
+          "total": 706,
+          "withAnyContext": 0
+        },
+        "LB": {
+          "total": 1086,
+          "withAnyContext": 0
+        },
+        "DEF": {
+          "total": 32,
+          "withAnyContext": 0
+        }
+      }
+    }
+  }
+}
+```

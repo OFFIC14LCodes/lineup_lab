@@ -1,4 +1,5 @@
 import { normalizePrimaryPosition } from "@/lib/players/normalize";
+import type { NormalizedRookieProfile } from "@/lib/projections/rookie-data-sources";
 import { normalizeProjectionStats } from "@/lib/projections/stat-aliases";
 
 export type ProjectionRange = {
@@ -52,8 +53,12 @@ export type PlayerStatProjectionInput = {
   rookieContext?: {
     rookieYear?: number | null;
     draftCapitalScore?: number | null;
+    collegeProductionScore?: number | null;
+    opportunityScore?: number | null;
+    landingSpotRole?: NormalizedRookieProfile["landingSpotRole"] | null;
     collegeStatsAvailable?: boolean;
     dataGaps?: string[];
+    profile?: NormalizedRookieProfile | null;
   } | null;
 };
 
@@ -137,18 +142,24 @@ function buildVeteranProjection(input: PlayerStatProjectionInput, position: stri
 
 function buildRookieProjection(input: PlayerStatProjectionInput, position: string): PlayerStatProjection {
   const baseline = ROOKIE_BASELINES[position] ?? {};
-  const draftCapital = input.rookieContext?.draftCapitalScore ?? null;
-  const opportunity = draftCapital === null ? 0.68 : 0.55 + Math.max(0, Math.min(1, draftCapital / 100)) * 0.55;
+  const profile = input.rookieContext?.profile ?? null;
+  const draftCapital = input.rookieContext?.draftCapitalScore ?? profile?.draftCapitalScore ?? null;
+  const production = input.rookieContext?.collegeProductionScore ?? profile?.collegeProductionScore ?? null;
+  const opportunityProfile = input.rookieContext?.opportunityScore ?? profile?.opportunityScore ?? null;
+  const landingSpotRole = input.rookieContext?.landingSpotRole ?? profile?.landingSpotRole ?? "unknown";
+  const opportunity = rookieOpportunityFactor({ draftCapital, production, opportunityProfile, landingSpotRole, position });
   const stats = Object.fromEntries(
-    Object.entries(baseline).map(([key, value]) => [key, makeRange(value * opportunity, position, "rookie")])
+    Object.entries(baseline).map(([key, value]) => [key, makeRange(value * opportunity * rookieStatShapeMultiplier(key, position, profile), position, "rookie")])
   );
   addDerivedRateStats(stats);
   const dataGaps = [
     ...(input.rookieContext?.dataGaps ?? []),
-    input.rookieContext?.collegeStatsAvailable ? null : "missing college production profile",
+    ...(profile?.dataGaps ?? []),
+    input.rookieContext?.collegeStatsAvailable || production !== null ? null : "missing college production profile",
     draftCapital === null ? "missing NFL draft capital" : null,
-    "rookie role uncertainty",
+    landingSpotRole === "unknown" ? "rookie role uncertainty" : null,
   ].filter((gap): gap is string => Boolean(gap));
+  const confidence = profile?.rookieProjectionConfidence ?? rookieConfidenceForProjection({ draftCapital, production, opportunityProfile, landingSpotRole });
   return {
     playerId: input.playerId,
     playerName: input.playerName,
@@ -158,14 +169,67 @@ function buildRookieProjection(input: PlayerStatProjectionInput, position: strin
     projectionVersion: COMPREHENSIVE_STAT_PROJECTION_VERSION,
     projectionUnit: "season",
     projectionType: "rookie",
-    confidence: draftCapital !== null || input.rookieContext?.collegeStatsAvailable ? "low" : "very_low",
-    dataGaps,
+    confidence,
+    dataGaps: Array.from(new Set(dataGaps)).sort(),
     reasons: [
       "Rookie projection uses conservative position baseline.",
       draftCapital === null ? "Draft capital unavailable; opportunity is conservative." : "Draft capital informs opportunity, not elite outcome.",
+      production === null ? "College production profile is unavailable." : "College production shapes uncertainty and stat mix; it is not copied into NFL projection.",
+      landingSpotRole === "unknown" ? "Landing spot role is unknown." : `Landing spot role is ${landingSpotRole.replace(/_/g, " ")}.`,
     ],
     stats,
   };
+}
+
+function rookieOpportunityFactor(input: {
+  draftCapital: number | null;
+  production: number | null;
+  opportunityProfile: number | null;
+  landingSpotRole: NormalizedRookieProfile["landingSpotRole"];
+  position: string;
+}): number {
+  const base = input.position === "TE" ? 0.5 : input.position === "K" ? 0.62 : ["DL", "LB", "DB"].includes(input.position) ? 0.58 : 0.6;
+  const draft = input.draftCapital === null ? 0 : (input.draftCapital - 50) / 100;
+  const production = input.production === null ? 0 : (input.production - 50) / 180;
+  const opportunity = input.opportunityProfile === null ? 0 : (input.opportunityProfile - 50) / 140;
+  const role =
+    input.landingSpotRole === "clear_starter" ? 0.22 :
+      input.landingSpotRole === "probable_starter" ? 0.14 :
+        input.landingSpotRole === "committee" ? 0.04 :
+          input.landingSpotRole === "rotational" ? -0.06 :
+            input.landingSpotRole === "backup" ? -0.22 :
+              -0.08;
+  return clamp(base + draft + production + opportunity + role, 0.28, 1.08);
+}
+
+function rookieStatShapeMultiplier(key: string, position: string, profile: NormalizedRookieProfile | null): number {
+  if (!profile) return 1;
+  const production = profile.collegeProductionScore ?? 50;
+  const productionLift = clamp((production - 50) / 300, -0.12, 0.16);
+  if (position === "QB" && ["rush_att", "rush_yd", "rush_td"].includes(key)) {
+    const rushingSignals = profile.collegeProduction.volumeSignals.some((signal) => signal.includes("rushing"));
+    return rushingSignals ? 1 + productionLift + 0.08 : 1;
+  }
+  if ((position === "RB" || position === "WR" || position === "TE") && ["target", "rec", "rec_yd", "rec_td"].includes(key)) {
+    const receivingSignals = profile.collegeProduction.volumeSignals.some((signal) => signal.includes("receiving") || signal.includes("receptions") || signal.includes("targets"));
+    return receivingSignals ? 1 + productionLift : 1;
+  }
+  if (["DL", "LB", "DB"].includes(position) && ["solo_tkl", "ast_tkl", "total_tkl", "tfl", "sack", "pass_def", "def_int", "ff"].includes(key)) {
+    return 1 + productionLift;
+  }
+  return 1;
+}
+
+function rookieConfidenceForProjection(input: {
+  draftCapital: number | null;
+  production: number | null;
+  opportunityProfile: number | null;
+  landingSpotRole: NormalizedRookieProfile["landingSpotRole"];
+}): ProjectionConfidence {
+  const sources = [input.draftCapital, input.production, input.opportunityProfile].filter((value) => value !== null).length;
+  if (sources >= 3 && input.landingSpotRole !== "unknown") return "medium";
+  if (sources >= 1) return "low";
+  return "very_low";
 }
 
 function buildFallbackProjection(input: PlayerStatProjectionInput, position: string): PlayerStatProjection {
@@ -219,4 +283,8 @@ function deriveRate(stats: Record<string, ProjectionRange>, key: string, numerat
 
 function roundStat(value: number): number {
   return Math.round(value * 10) / 10;
+}
+
+function clamp(value: number, min: number, max: number): number {
+  return Math.max(min, Math.min(max, value));
 }
