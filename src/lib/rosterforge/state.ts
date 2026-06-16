@@ -281,7 +281,7 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
         .sort((a, b) => (a.rank ?? 99999) - (b.rank ?? 99999))
         .slice(0, 150)
     : selectBalancedFallbackPlayers(fallbackRelevance.players, rosterRequirements, fallbackValueRows, 150);
-  const draftablePlayers = hasRankings
+  const staticDraftablePlayers = hasRankings
     ? rankingRows
         .map((ranking) => {
           const matchedPlayer =
@@ -313,6 +313,7 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
         .sort((a, b) => (a.rank ?? 99999) - (b.rank ?? 99999))
         .slice(0, 250)
     : remainingPlayers;
+  const draftablePlayers = mergeDraftableAndRemainingPlayers(staticDraftablePlayers, remainingPlayers);
   const counts = countPositions(myPicks, playerRowsBySleeperId);
   const positionNeeds = buildPositionNeeds(counts, rosterRequirements);
   const topNeeds = buildTopNeeds(positionNeeds);
@@ -646,6 +647,35 @@ function selectBalancedFallbackPlayers(
   }
 
   return selected;
+}
+
+function mergeDraftableAndRemainingPlayers(
+  draftablePlayers: DraftTargetScorePlayer[],
+  remainingPlayers: DraftTargetScorePlayer[]
+): DraftTargetScorePlayer[] {
+  const merged: DraftTargetScorePlayer[] = [];
+  const seen = new Set<string>();
+  const add = (player: DraftTargetScorePlayer, index: number, source: "draftable" | "remaining") => {
+    const keys = playerMergeKeys(player, index, source);
+    if (keys.some((key) => seen.has(key))) return;
+    merged.push(player);
+    keys.forEach((key) => seen.add(key));
+  };
+
+  draftablePlayers.forEach((player, index) => add(player, index, "draftable"));
+  remainingPlayers.forEach((player, index) => add(player, index, "remaining"));
+  return merged;
+}
+
+function playerMergeKeys(player: DraftTargetScorePlayer, index: number, source: "draftable" | "remaining"): string[] {
+  const keys = [player.matched_player_id, player.sleeper_player_id]
+    .filter((value): value is string => Boolean(value))
+    .map((value) => `id:${value}`);
+  const nameKey = [player.player_name, player.position, player.team]
+    .map((value) => value?.trim().toLowerCase() ?? "")
+    .join("|");
+  if (nameKey.replaceAll("|", "")) keys.push(`name:${nameKey}`);
+  return keys.length ? keys : [`fallback:${source}:${index}`];
 }
 
 function enabledRosterPositions(requirements: ReturnType<typeof buildNormalizedRosterRequirements>): string[] {

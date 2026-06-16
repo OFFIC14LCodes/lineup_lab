@@ -4,22 +4,22 @@
    - Environments: .env.local
 
  ✓ Starting...
- ✓ Ready in 3.3s
+ ✓ Ready in 14.6s
  ○ Compiling / ...
- ✓ Compiled / in 1441ms (635 modules)
- GET / 200 in 2290ms
- GET / 200 in 167ms
- GET / 200 in 221ms
+ ✓ Compiled / in 2.1s (635 modules)
+ GET / 200 in 2125ms
+ GET / 200 in 346ms
+ GET / 200 in 292ms
  ○ Compiling /api/draft-rooms/[draftRoomId]/state ...
- ✓ Compiled /api/draft-rooms/[draftRoomId]/state in 1030ms (744 modules)
- GET /api/draft-rooms/c82aef89-ce90-40f0-936f-545656045554/state 200 in 4740ms
+ ✓ Compiled /api/draft-rooms/[draftRoomId]/state in 1956ms (744 modules)
+ GET /api/draft-rooms/c82aef89-ce90-40f0-936f-545656045554/state 200 in 5976ms
  ○ Compiling /drafts/[draftRoomId] ...
- ✓ Compiled /drafts/[draftRoomId] in 1322ms (796 modules)
- GET /drafts/c82aef89-ce90-40f0-936f-545656045554 200 in 3261ms
+ ✓ Compiled /drafts/[draftRoomId] in 1500ms (796 modules)
+ GET /drafts/c82aef89-ce90-40f0-936f-545656045554 200 in 3886ms
  ○ Compiling /api/draft-rooms/[draftRoomId]/pre-draft-strategy ...
- ✓ Compiled /api/draft-rooms/[draftRoomId]/pre-draft-strategy in 712ms (802 modules)
- GET /api/draft-rooms/c82aef89-ce90-40f0-936f-545656045554/state 200 in 3260ms
- GET /api/draft-rooms/c82aef89-ce90-40f0-936f-545656045554/pre-draft-strategy 200 in 5213ms
- GET /api/draft-rooms/c82aef89-ce90-40f0-936f-545656045554/state 200 in 1502ms
- GET /api/draft-rooms/c82aef89-ce90-40f0-936f-545656045554/state 200 in 1595ms
- GET /api/draft-rooms/c82aef89-ce90-40f0-936f-545656045554/state 200 in 1827ms
+ ✓ Compiled /api/draft-rooms/[draftRoomId]/pre-draft-strategy in 886ms (802 modules)
+ GET /api/draft-rooms/c82aef89-ce90-40f0-936f-545656045554/state 200 in 3082ms
+ GET /api/draft-rooms/c82aef89-ce90-40f0-936f-545656045554/pre-draft-strategy 200 in 5070ms
+ GET /api/draft-rooms/c82aef89-ce90-40f0-936f-545656045554/state 200 in 1632ms
+ GET /api/draft-rooms/c82aef89-ce90-40f0-936f-545656045554/state 200 in 1831ms
+ GET /api/draft-rooms/c82aef89-ce90-40f0-936f-545656045554/state 200 in 2084ms
