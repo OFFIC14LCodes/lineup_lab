@@ -4,7 +4,6 @@ const nextConfig: NextConfig = {
   typedRoutes: true,
   outputFileTracingExcludes: {
     "/*": [
-      "./artifacts/**/*",
       "./data/**/*",
     ],
   },
