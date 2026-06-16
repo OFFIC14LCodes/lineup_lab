@@ -281,6 +281,38 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
         .sort((a, b) => (a.rank ?? 99999) - (b.rank ?? 99999))
         .slice(0, 150)
     : selectBalancedFallbackPlayers(fallbackRelevance.players, rosterRequirements, fallbackValueRows, 150);
+  const draftablePlayers = hasRankings
+    ? rankingRows
+        .map((ranking) => {
+          const matchedPlayer =
+            (ranking.sleeper_player_id ? playerRowsBySleeperId.get(ranking.sleeper_player_id) : null) ??
+            (ranking.matched_player_id ? playerRowsById.get(ranking.matched_player_id) : null) ??
+            null;
+          return {
+            source: "ranking" as const,
+            sleeper_player_id: ranking.sleeper_player_id,
+            matched_player_id: ranking.matched_player_id,
+            player_name: ranking.player_name,
+            position: ranking.position,
+            team: ranking.team,
+            rank: ranking.rank,
+            adp: ranking.adp,
+            projected_points: ranking.projected_points,
+            dynasty_value: ranking.dynasty_value,
+            best_ball_value: ranking.best_ball_value,
+            superflex_value: ranking.superflex_value,
+            te_premium_value: ranking.te_premium_value,
+            age: matchedPlayer?.age ?? null,
+            years_exp: matchedPlayer?.years_exp ?? null,
+            match_status: ranking.match_status,
+            match_confidence: ranking.match_confidence,
+            is_ranked: true,
+            is_fallback: false
+          };
+        })
+        .sort((a, b) => (a.rank ?? 99999) - (b.rank ?? 99999))
+        .slice(0, 250)
+    : remainingPlayers;
   const counts = countPositions(myPicks, playerRowsBySleeperId);
   const positionNeeds = buildPositionNeeds(counts, rosterRequirements);
   const topNeeds = buildTopNeeds(positionNeeds);
@@ -317,6 +349,23 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
   const picksUntilMyNextPick = draftPosition.picksUntilMyNextPick;
   const scoring = buildDraftTargetScore({
     players: remainingPlayers as DraftTargetScorePlayer[],
+    league: {
+      currentPickNumber,
+      rosterPositions: Array.isArray(room.leagues?.roster_positions_json) ? room.leagues.roster_positions_json : [],
+      positionCounts: counts,
+      is_dynasty: Boolean(room.leagues?.is_dynasty),
+      is_best_ball: Boolean(room.leagues?.is_best_ball),
+      is_superflex: Boolean(room.leagues?.is_superflex),
+      is_two_qb: Boolean(room.leagues?.is_two_qb),
+      te_premium: Number(room.leagues?.te_premium ?? 0),
+      scoringSettings:
+        room.leagues?.scoring_settings_json && typeof room.leagues.scoring_settings_json === "object"
+          ? (room.leagues.scoring_settings_json as Record<string, number>)
+          : null
+    }
+  });
+  const fullDraftableScoring = buildDraftTargetScore({
+    players: draftablePlayers as DraftTargetScorePlayer[],
     league: {
       currentPickNumber,
       rosterPositions: Array.isArray(room.leagues?.roster_positions_json) ? room.leagues.roster_positions_json : [],
@@ -380,6 +429,7 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
     myRoster: myPicks,
     positionCounts: counts,
     draftedPlayerIds: Array.from(draftedIds),
+    draftablePlayers: fullDraftableScoring.scoredPlayers,
     remainingPlayers: scoring.scoredPlayers,
     recommendations: hasRankings ? scoring.recommendations : [],
     topNeeds,

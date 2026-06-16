@@ -1,5 +1,6 @@
 import { spawn, spawnSync, type ChildProcess } from "node:child_process";
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { createWriteStream, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import net from "node:net";
 import path from "node:path";
 
 import { chromium, type Browser, type Page } from "@playwright/test";
@@ -12,9 +13,11 @@ import type { WarRoomRecommendationRow } from "@/lib/draft/war-room-recommendati
 import type { H10LeagueValueRow } from "@/lib/projections/h10-league-value";
 import { E2E_AUTH_COOKIE } from "@/lib/supabase/auth";
 
-const PORT = 3023;
+let port = Number(process.env.H11_WAR_ROOM_BLACKBIRD_BOARD_PORT ?? 3023);
 const OUTPUT_DIR = path.join(process.cwd(), "artifacts", "projections");
 const SCREENSHOT_DIR = path.join(OUTPUT_DIR, "h11-war-room-blackbird-board-screenshots");
+const SERVER_STDOUT_PATH = path.join(OUTPUT_DIR, "h11-war-room-blackbird-board-server.out.log");
+const SERVER_STDERR_PATH = path.join(OUTPUT_DIR, "h11-war-room-blackbird-board-server.err.log");
 
 type Artifact = {
   generatedAt: string;
@@ -112,7 +115,7 @@ async function main() {
 async function smokeBoard(browser: Browser, draftRoomId: string): Promise<Artifact["browserSmoke"]> {
   const screenshots: string[] = [];
   mkdirSync(SCREENSHOT_DIR, { recursive: true });
-  const context = await browser.newContext({ baseURL: `http://127.0.0.1:${PORT}`, viewport: { width: 1440, height: 1100 } });
+  const context = await browser.newContext({ baseURL: `http://127.0.0.1:${port}`, viewport: { width: 1440, height: 1100 } });
   await context.addCookies([{ name: E2E_AUTH_COOKIE, value: "enabled", domain: "127.0.0.1", path: "/", httpOnly: false, sameSite: "Lax" }]);
   const page = await context.newPage();
   try {
@@ -123,7 +126,7 @@ async function smokeBoard(browser: Browser, draftRoomId: string): Promise<Artifa
 
     const visible = await page.getByText("Blackbird Board").first().isVisible();
     const projectionCoverage = buildBrowserProjectionCoverage(draftRoomId, recordOrNull(beforeState.body));
-    const projectionColumnVisible = await page.getByRole("columnheader", { name: "Proj" }).isVisible().catch(() => false);
+    const projectionColumnVisible = await page.getByRole("columnheader", { name: "Season Projection" }).isVisible().catch(() => false);
     const blackbirdRankColumnVisible = await page.getByRole("columnheader", { name: "Blackbird Rank" }).isVisible().catch(() => false);
     const valueColumnVisible = await page.getByRole("columnheader", { name: "Value" }).isVisible().catch(() => false);
     const loadMore = page.getByRole("button", { name: "Load more" });
@@ -138,19 +141,23 @@ async function smokeBoard(browser: Browser, draftRoomId: string): Promise<Artifa
       loadedMore = await page.getByText(/Showing \d+ of \d+ filtered players/).isVisible().catch(() => false);
     }
 
-    const selectedPosition = await page.evaluate(() => {
+    const positionSelectTarget = await page.evaluate(() => {
       const selects = Array.from(document.querySelectorAll("select"));
       const positionSelect = selects.find((select) => {
         const values = Array.from(select.options).map((option) => option.value);
-        return values.includes("All") && values.includes("QB") && values.includes("RB");
+        return values.includes("All") && values.some((value) => value !== "All" && /^[A-Z]{1,3}$/.test(value));
       });
       if (!positionSelect) return null;
-      positionSelect.value = "QB";
-      positionSelect.dispatchEvent(new Event("change", { bubbles: true }));
-      return positionSelect.value;
+      const firstPosition = Array.from(positionSelect.options).find((option) => option.value !== "All")?.value;
+      if (!firstPosition) return null;
+      return { index: selects.indexOf(positionSelect), value: firstPosition };
     });
+    const selectedPosition = positionSelectTarget?.value ?? null;
+    if (positionSelectTarget) {
+      await page.locator("select").nth(positionSelectTarget.index).selectOption(positionSelectTarget.value);
+    }
     await page.waitForTimeout(250);
-    const positionFilterWorks = selectedPosition === "QB" && await page.locator("tbody").innerText().then((text) => text.includes("QB") || text.includes("No available players match these filters.")).catch(() => false);
+    const positionFilterWorks = selectedPosition !== null && await page.locator("body").innerText().then((text) => text.includes(selectedPosition) || text.includes("No players matched these filters.")).catch(() => false);
     await page.screenshot({ path: path.join(SCREENSHOT_DIR, `desktop-${draftRoomId}.png`), fullPage: true });
     screenshots.push(path.join(SCREENSHOT_DIR, `desktop-${draftRoomId}.png`));
 
@@ -204,7 +211,7 @@ async function smokeBoard(browser: Browser, draftRoomId: string): Promise<Artifa
 }
 
 async function fetchJson(page: Page, pathname: string): Promise<{ status: number; body: unknown }> {
-  const url = `http://127.0.0.1:${PORT}${pathname}`;
+  const url = `http://127.0.0.1:${port}${pathname}`;
   return page.evaluate(async (target) => {
     const response = await fetch(target, { cache: "no-store" });
     const body = await response.json().catch(() => null);
@@ -249,9 +256,10 @@ function selectDraftRoomId(): string | null {
 }
 
 async function startServer(authUserId: string): Promise<ChildProcess> {
+  port = await findOpenPort(port);
   const env = {
     ...process.env,
-    PORT: String(PORT),
+    PORT: String(port),
     ENABLE_BLACKBIRD_E2E_AUTH_BYPASS: "true",
     BLACKBIRD_E2E_AUTH_USER_ID: authUserId,
     DISABLE_WAR_ROOM_AUTO_SYNC_FOR_E2E: "true",
@@ -259,23 +267,64 @@ async function startServer(authUserId: string): Promise<ChildProcess> {
     ENABLE_H10_WAR_ROOM_RECOMMENDATIONS_EXPERIMENT: "true",
   };
   const nextCli = path.join(process.cwd(), "node_modules", "next", "dist", "bin", "next");
-  const server = spawn(process.execPath, [nextCli, "dev", "--hostname", "127.0.0.1", "--port", String(PORT)], {
+  mkdirSync(OUTPUT_DIR, { recursive: true });
+  const stdout = createWriteStream(SERVER_STDOUT_PATH, { flags: "w" });
+  const stderr = createWriteStream(SERVER_STDERR_PATH, { flags: "w" });
+  const server = spawn(process.execPath, [nextCli, "dev", "--hostname", "127.0.0.1", "--port", String(port)], {
     cwd: process.cwd(),
     env,
-    stdio: "ignore",
+    stdio: ["ignore", "pipe", "pipe"],
     windowsHide: true,
   });
+  server.stdout?.pipe(stdout);
+  server.stderr?.pipe(stderr);
   const deadline = Date.now() + 90_000;
   while (Date.now() < deadline) {
     try {
-      const response = await fetch(`http://127.0.0.1:${PORT}/`);
+      const response = await fetchWithTimeout(`http://127.0.0.1:${port}/`, 2_000);
       if (response.ok || response.status < 500) return server;
     } catch {
       await sleep(500);
     }
+    if (server.exitCode !== null) {
+      throw new Error(`H11.4.2 board smoke server exited early with code ${server.exitCode}. See ${SERVER_STDOUT_PATH} and ${SERVER_STDERR_PATH}.`);
+    }
   }
   stopServer(server);
-  throw new Error("H11.3 board smoke server did not become ready.");
+  throw new Error(`H11.4.2 board smoke server did not become ready. See ${SERVER_STDOUT_PATH} and ${SERVER_STDERR_PATH}.`);
+}
+
+function findOpenPort(preferredPort: number): Promise<number> {
+  const candidates = Array.from({ length: 50 }, (_, index) => preferredPort + index);
+  return new Promise((resolve, reject) => {
+    const tryNext = (index: number) => {
+      const candidate = candidates[index];
+      if (!candidate) {
+        reject(new Error(`No open port found near ${preferredPort}.`));
+        return;
+      }
+      const probe = net.createServer();
+      probe.once("error", () => {
+        probe.close();
+        tryNext(index + 1);
+      });
+      probe.once("listening", () => {
+        probe.close(() => resolve(candidate));
+      });
+      probe.listen(candidate, "127.0.0.1");
+    };
+    tryNext(0);
+  });
+}
+
+async function fetchWithTimeout(url: string, timeoutMs: number): Promise<Response> {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    return await fetch(url, { signal: controller.signal });
+  } finally {
+    clearTimeout(timeout);
+  }
 }
 
 function stopServer(server: ChildProcess) {

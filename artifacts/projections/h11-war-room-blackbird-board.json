@@ -1,17 +1,18 @@
 {
-  "generatedAt": "2026-06-16T00:06:52.808Z",
+  "generatedAt": "2026-06-16T01:18:05.835Z",
   "verdict": "passed",
-  "boardOrderingMethod": "available players -> contextual Blackbird value -> PAR -> projected fantasy points -> H10 tie-breakers -> position/name",
+  "boardOrderingMethod": "static Blackbird league rank; ADP external reference only",
   "syntheticAudit": {
     "totalInputPlayers": 5,
     "availableRows": 5,
     "draftedRowsExcluded": 0,
+    "draftedRowsIncluded": 0,
     "h10RowsMatched": 3,
     "projectionRows": 3,
     "adpRows": 3,
     "marketRows": 5,
     "fallbackOrderedRows": 2,
-    "orderingMethod": "available players -> contextual Blackbird value -> PAR -> projected fantasy points -> H10 tie-breakers -> position/name",
+    "orderingMethod": "static Blackbird league rank; ADP external reference only",
     "bannedLanguageFound": [],
     "exampleRows": [
       {

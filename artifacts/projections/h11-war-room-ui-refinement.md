@@ -1,0 +1,66 @@
+# h11-war-room-ui-refinement
+
+```json
+{
+  "generatedAt": "2026-06-16T01:04:45.950Z",
+  "verdict": "passed",
+  "boardViewModes": [
+    "Draft Suggestions",
+    "Full Blackbird Rank",
+    "Available Blackbird Rank"
+  ],
+  "projectionLabels": [
+    "Season projection",
+    "Weekly projection",
+    "Game projection",
+    "Fallback projection",
+    "Projection unavailable"
+  ],
+  "quieterPositionColors": [
+    "QB",
+    "RB",
+    "WR",
+    "TE",
+    "K",
+    "DEF",
+    "DL",
+    "LB",
+    "DB",
+    "UNK"
+  ],
+  "typographyNote": {
+    "selectedFontStack": "Existing app sans stack with tabular numeric utility where supported by Tailwind/browser defaults.",
+    "reason": "No external font dependency added; dense tables remain readable and performant.",
+    "appliedTo": "War Room board/table and Blackbird detail surfaces.",
+    "fallback": "System sans-serif fallback."
+  },
+  "safety": {
+    "localViewStateOnly": true,
+    "noPersistence": true,
+    "readOnlyCaveatPreserved": true,
+    "experimentalCaveatPreserved": true
+  },
+  "checks": [
+    {
+      "name": "view_modes_present",
+      "passed": true,
+      "detail": "three local modes"
+    },
+    {
+      "name": "projection_unit_labels_visible",
+      "passed": true,
+      "detail": "table/detail labels"
+    },
+    {
+      "name": "typography_documented",
+      "passed": true,
+      "detail": "artifact note included"
+    },
+    {
+      "name": "no_mutation_or_persistence",
+      "passed": true,
+      "detail": "UI state only"
+    }
+  ]
+}
+```

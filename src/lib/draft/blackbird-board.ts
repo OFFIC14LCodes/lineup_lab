@@ -1,9 +1,5 @@
-import {
-  assignBlackbirdRanks,
-  buildBlackbirdContextualValue,
-  type BlackbirdContextualValue,
-  type BlackbirdLeagueContext,
-} from "@/lib/draft/blackbird-contextual-value";
+import type { BlackbirdContextualValue, BlackbirdLeagueContext } from "@/lib/draft/blackbird-contextual-value";
+import { buildBlackbirdLeagueRank, type BlackbirdLeagueRankRow, type ProjectionUnit } from "@/lib/draft/blackbird-league-rank";
 import type { WarRoomValueOverlayRow } from "@/lib/draft/h10-war-room-overlay";
 import type { ScoredDraftTarget } from "@/lib/draft/scoring";
 import type { WarRoomRecommendationRow } from "@/lib/draft/war-room-recommendations";
@@ -13,6 +9,9 @@ export type BlackbirdBoardSortKey = "blackbird" | "projection" | "value";
 
 export type BlackbirdBoardRow = {
   blackbirdBoardRank: number;
+  draftSuggestionRank: number | null;
+  draftSuggestionScore: number | null;
+  draftSuggestionType: string | null;
   playerId: string | null;
   playerName: string;
   position: string | null;
@@ -21,6 +20,8 @@ export type BlackbirdBoardRow = {
   projectionPoints: number | null;
   projectionLow: number | null;
   projectionHigh: number | null;
+  projectionUnit: ProjectionUnit;
+  projectionSource: string;
   pointsAboveReplacement: number | null;
   adp: number | null;
   marketRank: number | null;
@@ -51,6 +52,7 @@ export type BlackbirdBoardRow = {
     player: ScoredDraftTarget & { age?: number | null; years_exp?: number | null; yearsExperience?: number | null };
     overlay: WarRoomValueOverlayRow | null;
     recommendation: WarRoomRecommendationRow | null;
+    leagueRank: BlackbirdLeagueRankRow | null;
   };
   playerDetailContext?: BlackbirdBoardPlayerDetailContext;
 };
@@ -69,6 +71,11 @@ export type BlackbirdBoardPlayerDetailContext = {
   valueScore: number | null;
   valueScoreComponents: BlackbirdContextualValue["valueScoreComponents"] | null;
   projectedFantasyPoints: BlackbirdContextualValue["projectedFantasyPoints"];
+  projectionUnit: ProjectionUnit;
+  projectionSource: string;
+  draftSuggestionRank: number | null;
+  draftSuggestionScore: number | null;
+  draftSuggestionType: string | null;
   blackbirdTier: number | null;
   timingAction: string | null;
   confidence: string;
@@ -89,6 +96,7 @@ export type BlackbirdBoardDiagnostics = {
   totalInputPlayers: number;
   availableRows: number;
   draftedRowsExcluded: number;
+  draftedRowsIncluded: number;
   h10RowsMatched: number;
   projectionRows: number;
   adpRows: number;
@@ -107,46 +115,37 @@ export function buildBlackbirdBoard(input: {
   draftedPlayerIds?: string[];
   sortKey?: BlackbirdBoardSortKey;
   leagueContext?: BlackbirdLeagueContext;
+  includeDrafted?: boolean;
 }): { rows: BlackbirdBoardRow[]; diagnostics: BlackbirdBoardDiagnostics } {
   const drafted = new Set(input.draftedPlayerIds ?? []);
+  const leagueRank = buildBlackbirdLeagueRank({
+    players: input.players,
+    overlays: input.overlays,
+    recommendations: input.recommendations,
+    draftedPlayerIds: input.draftedPlayerIds,
+    leagueContext: input.leagueContext,
+  });
+  const leagueRankByKey = new Map(leagueRank.rows.map((row) => [boardKey(row.playerId, row.playerName), row]));
   const recommendationByKey = new Map((input.recommendations ?? []).map((row) => [boardKey(row.entityId, row.displayName), row]));
   const overlayByKey = new Map((input.overlays ?? []).map((row) => [boardKey(row.entityId, row.displayName), row]));
-  const rowsWithoutRanks = input.players
+  const builtRows = input.players
     .map((player, originalIndex) => {
       const overlay = findOverlay(overlayByKey, player);
       const recommendation = findRecommendation(recommendationByKey, player, overlay);
-      return buildRow({ player, overlay, recommendation, originalIndex, drafted });
-    })
-    .filter((row) => !row.drafted);
-  const contextualValues = assignBlackbirdRanks(rowsWithoutRanks.map((row) =>
-    buildBlackbirdContextualValue({
-      player: row.source.player,
-      overlay: row.source.overlay,
-      recommendation: row.source.recommendation,
-      leagueContext: input.leagueContext,
-      positionPeers: rowsWithoutRanks
-        .filter((peer) => peer.position === row.position)
-        .map((peer) => ({
-          projection: peer.projectionPoints,
-          floor: peer.projectionLow,
-          ceiling: peer.projectionHigh,
-          par: peer.pointsAboveReplacement,
-          value: peer.blackbirdValueScore,
-        })),
-    })
-  ));
-  const contextualByPlayer = new Map(contextualValues.map((value) => [boardKey(value.playerId, value.playerName), value]));
-  const rows = rowsWithoutRanks
-    .map((row) => applyContextualValue(row, findContextualValue(contextualByPlayer, row)))
+      const leagueRankRow = findLeagueRank(leagueRankByKey, player, overlay, recommendation);
+      return buildRow({ player, overlay, recommendation, leagueRank: leagueRankRow, originalIndex, drafted });
+    });
+  const rows = builtRows
+    .filter((row) => input.includeDrafted || !row.drafted)
     .sort((a, b) => sortBoardRows(a, b, input.sortKey ?? "blackbird"))
-    .map((row, index) => ({
+    .map((row) => ({
       ...row,
-      blackbirdBoardRank: index + 1,
-      marketRank: index + 1,
+      blackbirdBoardRank: row.source.leagueRank?.blackbirdRank ?? 999999,
+      marketRank: row.source.leagueRank?.blackbirdRank ?? null,
       rankDelta: null,
       dataStatus: {
         ...row.dataStatus,
-        marketRank: "available" as const,
+        marketRank: row.source.leagueRank ? "available" as const : "unavailable" as const,
       },
     }))
     .map((row, _index, sortedRows) => ({
@@ -159,28 +158,31 @@ export function buildBlackbirdBoard(input: {
     diagnostics: {
       totalInputPlayers: input.players.length,
       availableRows: rows.length,
-      draftedRowsExcluded: input.players.length - rows.length,
+      draftedRowsExcluded: builtRows.filter((row) => row.drafted && !input.includeDrafted).length,
+      draftedRowsIncluded: rows.filter((row) => row.drafted).length,
       h10RowsMatched: rows.filter((row) => row.dataStatus.h10 === "available").length,
       projectionRows: rows.filter((row) => row.dataStatus.projection === "available").length,
       adpRows: rows.filter((row) => row.dataStatus.adp === "available").length,
       marketRows: rows.filter((row) => row.dataStatus.marketRank === "available").length,
       fallbackOrderedRows: rows.filter((row) => row.dataStatus.ordering === "fallback_context").length,
-      orderingMethod: "available players -> contextual Blackbird value -> PAR -> projected fantasy points -> H10 tie-breakers -> position/name",
+      orderingMethod: "static Blackbird league rank; ADP external reference only",
       bannedLanguageFound: findBannedBoardLanguage(JSON.stringify(rows)),
     },
   };
 }
 
-function findContextualValue(
-  contextualByPlayer: Map<string, BlackbirdContextualValue>,
-  row: Omit<BlackbirdBoardRow, "blackbirdBoardRank" | "playerDetailContext">
-): BlackbirdContextualValue | null {
+function findLeagueRank(
+  leagueRankByKey: Map<string, BlackbirdLeagueRankRow>,
+  player: ScoredDraftTarget,
+  overlay: WarRoomValueOverlayRow | null,
+  recommendation: WarRoomRecommendationRow | null
+): BlackbirdLeagueRankRow | null {
   return (
-    contextualByPlayer.get(boardKey(row.playerId, row.playerName)) ??
-    contextualByPlayer.get(boardKey(row.source.player.matched_player_id, row.playerName)) ??
-    contextualByPlayer.get(boardKey(row.source.player.sleeper_player_id, row.playerName)) ??
-    contextualByPlayer.get(boardKey(row.source.overlay?.entityId ?? null, row.playerName)) ??
-    contextualByPlayer.get(boardKey(null, row.playerName)) ??
+    leagueRankByKey.get(boardKey(player.matched_player_id, player.player_name)) ??
+    leagueRankByKey.get(boardKey(player.sleeper_player_id, player.player_name)) ??
+    leagueRankByKey.get(boardKey(overlay?.entityId ?? null, overlay?.displayName ?? player.player_name)) ??
+    leagueRankByKey.get(boardKey(recommendation?.entityId ?? null, recommendation?.displayName ?? player.player_name)) ??
+    leagueRankByKey.get(boardKey(null, player.player_name)) ??
     null
   );
 }
@@ -200,7 +202,7 @@ export function buildPlayerDetailContext(
     .map((candidate) => ({
       playerName: candidate.playerName,
       position: candidate.position,
-      rank: candidate.blackbirdBoardRank,
+    rank: candidate.blackbirdBoardRank,
     projection: candidate.projectionPoints,
       valueScore: candidate.blackbirdValueScore,
     }));
@@ -210,6 +212,9 @@ export function buildPlayerDetailContext(
     position: row.position,
     team: row.team,
     blackbirdRank: row.blackbirdBoardRank,
+    draftSuggestionRank: row.draftSuggestionRank,
+    draftSuggestionScore: row.draftSuggestionScore,
+    draftSuggestionType: row.draftSuggestionType,
     projection: row.projectionPoints,
     par: row.pointsAboveReplacement,
     adp: row.adp,
@@ -224,6 +229,8 @@ export function buildPlayerDetailContext(
       source: row.contextualDataGaps.includes("projection median") ? "missing" : "blackbird_contextual_value",
       scoringAware: row.dataStatus.projection === "available",
     },
+    projectionUnit: row.projectionUnit,
+    projectionSource: row.projectionSource,
     blackbirdTier: row.blackbirdTier,
     timingAction: row.needTimingAction,
     confidence: row.confidence,
@@ -254,6 +261,7 @@ function whyLikes(row: Omit<BlackbirdBoardRow, "playerDetailContext">): string[]
   if (row.projectionPoints !== null) reasons.push(`Projection signal is ${row.projectionPoints.toFixed(1)} points.`);
   if (row.pointsAboveReplacement !== null) reasons.push(`PAR signal is ${row.pointsAboveReplacement.toFixed(1)}.`);
   if (row.marketRank !== null) reasons.push(`Blackbird draft rank is ${row.marketRank}.`);
+  if (row.draftSuggestionRank !== null) reasons.push(`Live draft suggestion rank is ${row.draftSuggestionRank}.`);
   if (row.needTimingAction === "fill_now" || row.needTimingAction === "monitor") reasons.push(`Timing action is ${row.needTimingAction.replace(/_/g, " ")}.`);
   return [...reasons, ...row.contextualReasons].length ? [...reasons, ...row.contextualReasons] : ["Board placement is driven by available deterministic ranking signals."];
 }
@@ -309,15 +317,16 @@ function buildRow(input: {
   player: ScoredDraftTarget;
   overlay: WarRoomValueOverlayRow | null;
   recommendation: WarRoomRecommendationRow | null;
+  leagueRank: BlackbirdLeagueRankRow | null;
   originalIndex: number;
   drafted: Set<string>;
 }): Omit<BlackbirdBoardRow, "blackbirdBoardRank" | "playerDetailContext"> {
   const playerId = input.player.sleeper_player_id ?? input.player.matched_player_id ?? input.overlay?.entityId ?? input.recommendation?.entityId ?? null;
-  const projectionPoints = input.overlay?.medianPoints ?? input.player.projected_points ?? input.recommendation?.h10.medianPoints ?? null;
-  const projectionLow = input.overlay?.floorPoints ?? null;
-  const projectionHigh = input.overlay?.ceilingPoints ?? null;
-  const pointsAboveReplacement = input.overlay?.pointsAboveReplacement ?? input.recommendation?.h10.pointsAboveReplacement ?? null;
-  const blackbirdValueScore = input.recommendation?.recommendationScore ?? input.player.draftTargetScore ?? input.overlay?.riskAdjustedValue ?? null;
+  const projectionPoints = input.leagueRank?.projectedFantasyPoints.median ?? input.overlay?.medianPoints ?? input.player.projected_points ?? input.recommendation?.h10.medianPoints ?? null;
+  const projectionLow = input.leagueRank?.projectedFantasyPoints.floor ?? input.overlay?.floorPoints ?? null;
+  const projectionHigh = input.leagueRank?.projectedFantasyPoints.ceiling ?? input.overlay?.ceilingPoints ?? null;
+  const pointsAboveReplacement = input.leagueRank?.pointsAboveReplacement ?? input.overlay?.pointsAboveReplacement ?? input.recommendation?.h10.pointsAboveReplacement ?? null;
+  const blackbirdValueScore = input.leagueRank?.leagueValueScore ?? input.recommendation?.recommendationScore ?? input.player.draftTargetScore ?? input.overlay?.riskAdjustedValue ?? null;
   const drafted = Boolean(
     (input.player.sleeper_player_id && input.drafted.has(input.player.sleeper_player_id)) ||
       (input.player.matched_player_id && input.drafted.has(input.player.matched_player_id)) ||
@@ -331,19 +340,24 @@ function buildRow(input: {
     position: normalizePosition(input.player.position ?? input.overlay?.position ?? input.recommendation?.position ?? null),
     team: input.player.team ?? input.overlay?.team ?? input.recommendation?.team ?? null,
     blackbirdValueScore: finiteNumber(blackbirdValueScore),
+    draftSuggestionRank: null,
+    draftSuggestionScore: null,
+    draftSuggestionType: null,
     projectionPoints: finiteNumber(projectionPoints),
     projectionLow: finiteNumber(projectionLow),
     projectionHigh: finiteNumber(projectionHigh),
+    projectionUnit: input.leagueRank?.projectedFantasyPoints.unit ?? (input.player.is_fallback ? "fallback" : projectionPoints === null || projectionPoints === undefined ? "unknown" : "season"),
+    projectionSource: input.leagueRank?.projectedFantasyPoints.source ?? (input.overlay?.medianPoints !== null && input.overlay?.medianPoints !== undefined ? "h10_league_projection" : input.player.projected_points !== null && input.player.projected_points !== undefined ? "uploaded_ranking_projection" : "missing"),
     pointsAboveReplacement: finiteNumber(pointsAboveReplacement),
     adp: finiteNumber(input.player.adp),
     marketRank: null,
     rankDelta: null,
-    confidence: input.recommendation?.h10.confidenceLabel ?? input.overlay?.confidenceLabel ?? confidenceFromPlayer(input.player),
-    risk: input.recommendation?.tierDropRisk ?? input.overlay?.riskLabel ?? riskFromWarnings(input.player.warnings),
-    blackbirdTier: null,
-    valueScoreComponents: null,
-    contextualReasons: [],
-    contextualDataGaps: [],
+    confidence: input.leagueRank?.confidence ?? input.recommendation?.h10.confidenceLabel ?? input.overlay?.confidenceLabel ?? confidenceFromPlayer(input.player),
+    risk: input.leagueRank?.risk ?? input.recommendation?.tierDropRisk ?? input.overlay?.riskLabel ?? riskFromWarnings(input.player.warnings),
+    blackbirdTier: input.leagueRank?.blackbirdTier ?? null,
+    valueScoreComponents: input.leagueRank?.valueComponents ?? null,
+    contextualReasons: input.leagueRank?.reasons ?? [],
+    contextualDataGaps: input.leagueRank?.dataGaps ?? [],
     planFit: "insufficient_data",
     planFitReasons: ["Live plan status has not been applied."],
     needTimingAction: input.recommendation?.needTimingAction ?? null,
@@ -368,31 +382,7 @@ function buildRow(input: {
       player: input.player,
       overlay: input.overlay,
       recommendation: input.recommendation,
-    },
-  };
-}
-
-function applyContextualValue(
-  row: Omit<BlackbirdBoardRow, "blackbirdBoardRank" | "playerDetailContext">,
-  contextual: BlackbirdContextualValue | null
-): Omit<BlackbirdBoardRow, "blackbirdBoardRank" | "playerDetailContext"> {
-  if (!contextual) return row;
-  return {
-    ...row,
-    blackbirdValueScore: contextual.valueScore,
-    projectionPoints: contextual.projectedFantasyPoints.median,
-    projectionLow: contextual.projectedFantasyPoints.low,
-    projectionHigh: contextual.projectedFantasyPoints.high,
-    confidence: contextual.confidence,
-    risk: contextual.risk,
-    blackbirdTier: contextual.blackbirdTier,
-    valueScoreComponents: contextual.valueScoreComponents,
-    contextualReasons: contextual.reasons,
-    contextualDataGaps: contextual.dataGaps,
-    dataStatus: {
-      ...row.dataStatus,
-      projection: contextual.projectedFantasyPoints.median === null ? "unavailable" : "available",
-      h10: row.dataStatus.h10,
+      leagueRank: input.leagueRank,
     },
   };
 }
@@ -428,6 +418,7 @@ function sortBoardRows(a: Omit<BlackbirdBoardRow, "blackbirdBoardRank">, b: Omit
   if (sortKey === "value") return descNullable(a.blackbirdValueScore, b.blackbirdValueScore) || sortBoardRows(a, b, "blackbird");
 
   return (
+    ascNullable(a.source.leagueRank?.blackbirdRank ?? null, b.source.leagueRank?.blackbirdRank ?? null) ||
     descNullable(a.blackbirdValueScore, b.blackbirdValueScore) ||
     descNullable(a.pointsAboveReplacement, b.pointsAboveReplacement) ||
     descNullable(a.projectionPoints, b.projectionPoints) ||

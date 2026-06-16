@@ -1,11 +1,11 @@
 # H11.3 War Room Blackbird Board
 
-Generated: 2026-06-16T00:06:52.808Z
+Generated: 2026-06-16T01:18:05.835Z
 Verdict: passed
 
 ## Ordering
 
-available players -> contextual Blackbird value -> PAR -> projected fantasy points -> H10 tie-breakers -> position/name
+static Blackbird league rank; ADP external reference only
 
 ## Coverage
 

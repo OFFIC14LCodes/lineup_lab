@@ -67,12 +67,15 @@ describe("DraftWarRoom H11 strategy UI wiring", () => {
   it("renders the read-only Blackbird board controls and missing-data labels", () => {
     [
       "Blackbird Board",
-      "Sorted by contextual Blackbird value and league scoring",
+      "Draft Suggestion is live and available-only. Blackbird Rank is static league value across draftable players.",
+      "Draft Suggestions",
+      "Full Blackbird Rank",
+      "Available Blackbird Rank",
       "Load more",
       "Projection unavailable",
-      "Rank unavailable",
+      "Season Projection",
       "Blackbird Rank",
-      "Blackbird rank",
+      "Draft Suggestion",
       "Filters and sort are local to this browser view.",
     ].forEach((text) => expect(source).toContain(text));
   });

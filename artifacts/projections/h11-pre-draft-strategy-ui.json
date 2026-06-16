@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-16T00:06:13.029Z",
+  "generatedAt": "2026-06-16T01:22:39.974Z",
   "verdict": "passed",
   "endpointPath": "/api/draft-rooms/[draftRoomId]/pre-draft-strategy",
   "roomsTested": [

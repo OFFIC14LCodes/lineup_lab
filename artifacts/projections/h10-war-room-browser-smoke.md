@@ -1,6 +1,6 @@
 # H10.10 War Room Browser Smoke
 
-Generated: 2026-06-16T00:10:32.999Z
+Generated: 2026-06-16T01:21:47.404Z
 Verdict: passed
 Auth method: server-only local e2e auth bypass via signed-in test user id env and http cookie
 Browser engine: chromium

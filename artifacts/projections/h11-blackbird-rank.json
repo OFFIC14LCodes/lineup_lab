@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-06-16T00:02:52.665Z",
+  "generatedAt": "2026-06-16T01:05:52.982Z",
   "verdict": "passed",
-  "orderingMethod": "available players -> contextual Blackbird value -> PAR -> projected fantasy points -> H10 tie-breakers -> position/name",
+  "orderingMethod": "static Blackbird league rank; ADP external reference only",
   "rows": [
     {
       "rank": 1,

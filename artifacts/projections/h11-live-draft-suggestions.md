@@ -1,0 +1,477 @@
+# h11-live-draft-suggestions
+
+```json
+{
+  "generatedAt": "2026-06-16T01:04:44.778Z",
+  "verdict": "passed",
+  "rbNeed": [
+    {
+      "playerId": "rb",
+      "playerName": "Need RB",
+      "position": "RB",
+      "team": "TST",
+      "draftSuggestionRank": 1,
+      "suggestionScore": 162.81,
+      "blackbirdRank": 5,
+      "leagueValueScore": 66.52,
+      "suggestionType": "need",
+      "timingAction": "fill need if value holds",
+      "planFit": null,
+      "reasons": [
+        "Static Blackbird Rank #5; live score adjusts for roster and timing context.",
+        "RB need level is urgent."
+      ],
+      "cautions": [],
+      "dataGaps": [
+        "coaching environment",
+        "depth chart role",
+        "injury risk",
+        "projected snap share",
+        "role stability",
+        "team defense environment",
+        "team offense environment"
+      ]
+    },
+    {
+      "playerId": "lb",
+      "playerName": "Starter LB",
+      "position": "LB",
+      "team": "TST",
+      "draftSuggestionRank": 2,
+      "suggestionScore": 146.57,
+      "blackbirdRank": 2,
+      "leagueValueScore": 67.53,
+      "suggestionType": "value",
+      "timingAction": "value available",
+      "planFit": null,
+      "reasons": [
+        "Static Blackbird Rank #2; live score adjusts for roster and timing context."
+      ],
+      "cautions": [],
+      "dataGaps": [
+        "coaching environment",
+        "depth chart role",
+        "injury risk",
+        "projected snap share",
+        "role stability",
+        "team defense environment",
+        "team offense environment"
+      ]
+    },
+    {
+      "playerId": "wr",
+      "playerName": "Ceiling WR",
+      "position": "WR",
+      "team": "TST",
+      "draftSuggestionRank": 3,
+      "suggestionScore": 145.7,
+      "blackbirdRank": 3,
+      "leagueValueScore": 66.79,
+      "suggestionType": "value",
+      "timingAction": "value available",
+      "planFit": null,
+      "reasons": [
+        "Static Blackbird Rank #3; live score adjusts for roster and timing context."
+      ],
+      "cautions": [],
+      "dataGaps": [
+        "coaching environment",
+        "depth chart role",
+        "injury risk",
+        "projected snap share",
+        "role stability",
+        "team defense environment",
+        "team offense environment"
+      ]
+    },
+    {
+      "playerId": "te",
+      "playerName": "Premium TE",
+      "position": "TE",
+      "team": "TST",
+      "draftSuggestionRank": 4,
+      "suggestionScore": 145.35,
+      "blackbirdRank": 4,
+      "leagueValueScore": 66.78,
+      "suggestionType": "value",
+      "timingAction": "value available",
+      "planFit": null,
+      "reasons": [
+        "Static Blackbird Rank #4; live score adjusts for roster and timing context."
+      ],
+      "cautions": [],
+      "dataGaps": [
+        "coaching environment",
+        "depth chart role",
+        "injury risk",
+        "projected snap share",
+        "role stability",
+        "team defense environment",
+        "team offense environment"
+      ]
+    },
+    {
+      "playerId": "dl",
+      "playerName": "Starter DL",
+      "position": "DL",
+      "team": "TST",
+      "draftSuggestionRank": 5,
+      "suggestionScore": 144.39,
+      "blackbirdRank": 6,
+      "leagueValueScore": 66.41,
+      "suggestionType": "value",
+      "timingAction": "value available",
+      "planFit": null,
+      "reasons": [
+        "Static Blackbird Rank #6; live score adjusts for roster and timing context."
+      ],
+      "cautions": [],
+      "dataGaps": [
+        "coaching environment",
+        "depth chart role",
+        "injury risk",
+        "projected snap share",
+        "role stability",
+        "team defense environment",
+        "team offense environment"
+      ]
+    },
+    {
+      "playerId": "db",
+      "playerName": "Starter DB",
+      "position": "DB",
+      "team": "TST",
+      "draftSuggestionRank": 6,
+      "suggestionScore": 138.36,
+      "blackbirdRank": 7,
+      "leagueValueScore": 64.01,
+      "suggestionType": "value",
+      "timingAction": "value available",
+      "planFit": null,
+      "reasons": [
+        "Static Blackbird Rank #7; live score adjusts for roster and timing context."
+      ],
+      "cautions": [
+        "Context confidence is low."
+      ],
+      "dataGaps": [
+        "coaching environment",
+        "depth chart role",
+        "injury risk",
+        "projected snap share",
+        "role stability",
+        "team defense environment",
+        "team offense environment"
+      ]
+    },
+    {
+      "playerId": "def",
+      "playerName": "Defense",
+      "position": "DEF",
+      "team": "TST",
+      "draftSuggestionRank": 7,
+      "suggestionScore": 127.49,
+      "blackbirdRank": 8,
+      "leagueValueScore": 60.42,
+      "suggestionType": "avoid_forcing",
+      "timingAction": "avoid forcing",
+      "planFit": null,
+      "reasons": [
+        "Static Blackbird Rank #8; live score adjusts for roster and timing context."
+      ],
+      "cautions": [
+        "DEF has avoid-forcing context at this stage."
+      ],
+      "dataGaps": [
+        "coaching environment",
+        "depth chart role",
+        "injury risk",
+        "projected snap share",
+        "role stability",
+        "team defense environment",
+        "team offense environment"
+      ]
+    },
+    {
+      "playerId": "k",
+      "playerName": "Kicker",
+      "position": "K",
+      "team": "TST",
+      "draftSuggestionRank": 8,
+      "suggestionScore": 126.78,
+      "blackbirdRank": 9,
+      "leagueValueScore": 59.9,
+      "suggestionType": "avoid_forcing",
+      "timingAction": "avoid forcing",
+      "planFit": null,
+      "reasons": [
+        "Static Blackbird Rank #9; live score adjusts for roster and timing context."
+      ],
+      "cautions": [
+        "K has avoid-forcing context at this stage."
+      ],
+      "dataGaps": [
+        "coaching environment",
+        "depth chart role",
+        "injury risk",
+        "projected snap share",
+        "role stability",
+        "team defense environment",
+        "team offense environment"
+      ]
+    }
+  ],
+  "lbNeed": [
+    {
+      "playerId": "lb",
+      "playerName": "Starter LB",
+      "position": "LB",
+      "team": "TST",
+      "draftSuggestionRank": 1,
+      "suggestionScore": 164.57,
+      "blackbirdRank": 2,
+      "leagueValueScore": 67.53,
+      "suggestionType": "need",
+      "timingAction": "fill need if value holds",
+      "planFit": null,
+      "reasons": [
+        "Static Blackbird Rank #2; live score adjusts for roster and timing context.",
+        "LB need level is urgent."
+      ],
+      "cautions": [],
+      "dataGaps": [
+        "coaching environment",
+        "depth chart role",
+        "injury risk",
+        "projected snap share",
+        "role stability",
+        "team defense environment",
+        "team offense environment"
+      ]
+    },
+    {
+      "playerId": "wr",
+      "playerName": "Ceiling WR",
+      "position": "WR",
+      "team": "TST",
+      "draftSuggestionRank": 2,
+      "suggestionScore": 145.7,
+      "blackbirdRank": 3,
+      "leagueValueScore": 66.79,
+      "suggestionType": "value",
+      "timingAction": "value available",
+      "planFit": null,
+      "reasons": [
+        "Static Blackbird Rank #3; live score adjusts for roster and timing context."
+      ],
+      "cautions": [],
+      "dataGaps": [
+        "coaching environment",
+        "depth chart role",
+        "injury risk",
+        "projected snap share",
+        "role stability",
+        "team defense environment",
+        "team offense environment"
+      ]
+    },
+    {
+      "playerId": "te",
+      "playerName": "Premium TE",
+      "position": "TE",
+      "team": "TST",
+      "draftSuggestionRank": 3,
+      "suggestionScore": 145.35,
+      "blackbirdRank": 4,
+      "leagueValueScore": 66.78,
+      "suggestionType": "value",
+      "timingAction": "value available",
+      "planFit": null,
+      "reasons": [
+        "Static Blackbird Rank #4; live score adjusts for roster and timing context."
+      ],
+      "cautions": [],
+      "dataGaps": [
+        "coaching environment",
+        "depth chart role",
+        "injury risk",
+        "projected snap share",
+        "role stability",
+        "team defense environment",
+        "team offense environment"
+      ]
+    },
+    {
+      "playerId": "rb",
+      "playerName": "Need RB",
+      "position": "RB",
+      "team": "TST",
+      "draftSuggestionRank": 4,
+      "suggestionScore": 144.81,
+      "blackbirdRank": 5,
+      "leagueValueScore": 66.52,
+      "suggestionType": "value",
+      "timingAction": "value available",
+      "planFit": null,
+      "reasons": [
+        "Static Blackbird Rank #5; live score adjusts for roster and timing context."
+      ],
+      "cautions": [],
+      "dataGaps": [
+        "coaching environment",
+        "depth chart role",
+        "injury risk",
+        "projected snap share",
+        "role stability",
+        "team defense environment",
+        "team offense environment"
+      ]
+    },
+    {
+      "playerId": "dl",
+      "playerName": "Starter DL",
+      "position": "DL",
+      "team": "TST",
+      "draftSuggestionRank": 5,
+      "suggestionScore": 144.39,
+      "blackbirdRank": 6,
+      "leagueValueScore": 66.41,
+      "suggestionType": "value",
+      "timingAction": "value available",
+      "planFit": null,
+      "reasons": [
+        "Static Blackbird Rank #6; live score adjusts for roster and timing context."
+      ],
+      "cautions": [],
+      "dataGaps": [
+        "coaching environment",
+        "depth chart role",
+        "injury risk",
+        "projected snap share",
+        "role stability",
+        "team defense environment",
+        "team offense environment"
+      ]
+    },
+    {
+      "playerId": "db",
+      "playerName": "Starter DB",
+      "position": "DB",
+      "team": "TST",
+      "draftSuggestionRank": 6,
+      "suggestionScore": 138.36,
+      "blackbirdRank": 7,
+      "leagueValueScore": 64.01,
+      "suggestionType": "value",
+      "timingAction": "value available",
+      "planFit": null,
+      "reasons": [
+        "Static Blackbird Rank #7; live score adjusts for roster and timing context."
+      ],
+      "cautions": [
+        "Context confidence is low."
+      ],
+      "dataGaps": [
+        "coaching environment",
+        "depth chart role",
+        "injury risk",
+        "projected snap share",
+        "role stability",
+        "team defense environment",
+        "team offense environment"
+      ]
+    },
+    {
+      "playerId": "def",
+      "playerName": "Defense",
+      "position": "DEF",
+      "team": "TST",
+      "draftSuggestionRank": 7,
+      "suggestionScore": 127.49,
+      "blackbirdRank": 8,
+      "leagueValueScore": 60.42,
+      "suggestionType": "avoid_forcing",
+      "timingAction": "avoid forcing",
+      "planFit": null,
+      "reasons": [
+        "Static Blackbird Rank #8; live score adjusts for roster and timing context."
+      ],
+      "cautions": [
+        "DEF has avoid-forcing context at this stage."
+      ],
+      "dataGaps": [
+        "coaching environment",
+        "depth chart role",
+        "injury risk",
+        "projected snap share",
+        "role stability",
+        "team defense environment",
+        "team offense environment"
+      ]
+    },
+    {
+      "playerId": "k",
+      "playerName": "Kicker",
+      "position": "K",
+      "team": "TST",
+      "draftSuggestionRank": 8,
+      "suggestionScore": 126.78,
+      "blackbirdRank": 9,
+      "leagueValueScore": 59.9,
+      "suggestionType": "avoid_forcing",
+      "timingAction": "avoid forcing",
+      "planFit": null,
+      "reasons": [
+        "Static Blackbird Rank #9; live score adjusts for roster and timing context."
+      ],
+      "cautions": [
+        "K has avoid-forcing context at this stage."
+      ],
+      "dataGaps": [
+        "coaching environment",
+        "depth chart role",
+        "injury risk",
+        "projected snap share",
+        "role stability",
+        "team defense environment",
+        "team offense environment"
+      ]
+    }
+  ],
+  "diagnostics": {
+    "inputRows": 9,
+    "availableRows": 8,
+    "draftedRowsExcluded": 1,
+    "rankChangedFromStatic": true,
+    "bannedLanguageFound": [],
+    "noPersistence": true
+  },
+  "checks": [
+    {
+      "name": "available_only",
+      "passed": true,
+      "detail": "rows=8"
+    },
+    {
+      "name": "changes_with_roster_state",
+      "passed": true,
+      "detail": "Need RB vs Starter LB"
+    },
+    {
+      "name": "rank_separate_from_blackbird",
+      "passed": true,
+      "detail": "dynamic rank differs where live context requires it"
+    },
+    {
+      "name": "no_persistence",
+      "passed": true,
+      "detail": "read-only diagnostic"
+    },
+    {
+      "name": "no_banned_language",
+      "passed": true,
+      "detail": "none"
+    }
+  ]
+}
+```

@@ -4,6 +4,8 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { ChevronDown, RefreshCw, Search, Users, X } from "lucide-react";
 
 import type { WarRoomValueOverlayRow, WarRoomValueOverlayResult } from "@/lib/draft/h10-war-room-overlay";
+import { buildBlackbirdLeagueRank } from "@/lib/draft/blackbird-league-rank";
+import { buildLiveDraftSuggestions } from "@/lib/draft/live-draft-suggestion";
 import type { H10RecommendationExperimentDiagnostics } from "@/lib/draft/war-room-recommendation-experiment";
 import {
   buildH10RecommendationExperimentUiState,
@@ -111,6 +113,7 @@ type DraftState = {
   draftBoardTeams: DraftBoardTeam[];
   positionCounts: Record<string, number>;
   remainingPlayers: AvailablePlayer[];
+  draftablePlayers?: AvailablePlayer[];
   recommendations: AvailablePlayer[];
   h10ValueOverlay?: WarRoomValueOverlayRow[];
   h10ValueOverlayDiagnostics?: WarRoomValueOverlayResult["diagnostics"];
@@ -342,6 +345,12 @@ const BOARD_SORTS: Array<{ value: BlackbirdBoardSortKey; label: string }> = [
   { value: "projection", label: "Projection" },
   { value: "value", label: "Value" },
 ];
+const BOARD_VIEW_MODES = [
+  { value: "draft_suggestions", label: "Draft Suggestions" },
+  { value: "full_blackbird", label: "Full Blackbird Rank" },
+  { value: "available_blackbird", label: "Available Blackbird Rank" },
+] as const;
+type BoardViewMode = (typeof BOARD_VIEW_MODES)[number]["value"];
 const POSITION_SORT_ORDER: Record<string, number> = {
   QB: 1,
   RB: 2,
@@ -361,6 +370,7 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
   const [positionFilter, setPositionFilter] = useState("All");
   const [matchFilter, setMatchFilter] = useState("All");
   const [boardSort, setBoardSort] = useState<BlackbirdBoardSortKey>("blackbird");
+  const [boardViewMode, setBoardViewMode] = useState<BoardViewMode>("draft_suggestions");
   const [visibleBoardRows, setVisibleBoardRows] = useState(50);
   const [search, setSearch] = useState("");
   const [selectedRosterId, setSelectedRosterId] = useState<string | null>(null);
@@ -465,7 +475,7 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
 
   useEffect(() => {
     setVisibleBoardRows(50);
-  }, [boardSort, matchFilter, positionFilter, search]);
+  }, [boardSort, boardViewMode, matchFilter, positionFilter, search]);
 
   const blackbirdBoard = useMemo(() => {
     const scoringSettings =
@@ -473,7 +483,7 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
         ? state.league.scoring_settings_json
         : null;
     return buildBlackbirdBoard({
-      players: state?.remainingPlayers ?? [],
+      players: state?.draftablePlayers ?? state?.remainingPlayers ?? [],
       overlays: state?.h10ValueOverlay ?? [],
       recommendations: state?.h10RecommendationPreview ?? [],
       draftedPlayerIds: state?.draftedPlayerIds ?? [],
@@ -490,9 +500,11 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
         rosterPositions: Array.isArray(state?.league?.roster_positions_json) ? state.league.roster_positions_json : [],
         scoringSettings,
       },
+      includeDrafted: true,
     });
   }, [
     boardSort,
+    state?.draftablePlayers,
     state?.draftedPlayerIds,
     state?.h10RecommendationPreview,
     state?.h10ValueOverlay,
@@ -520,13 +532,68 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
   }, [blackbirdBoard.rows, draftRoomId, state, strategyState.strategy]);
 
   const planFitBoardRows = useMemo(
-    () => applyLivePlanFitToBoardRows(blackbirdBoard.rows, livePlanStatus),
-    [blackbirdBoard.rows, livePlanStatus]
+    () => {
+      const scoringSettings =
+        state?.league?.scoring_settings_json && typeof state.league.scoring_settings_json === "object"
+          ? state.league.scoring_settings_json
+          : null;
+      const leagueRank = buildBlackbirdLeagueRank({
+        players: state?.draftablePlayers ?? state?.remainingPlayers ?? [],
+        overlays: state?.h10ValueOverlay ?? [],
+        recommendations: state?.h10RecommendationPreview ?? [],
+        draftedPlayerIds: state?.draftedPlayerIds ?? [],
+        leagueContext: {
+          isDynasty: Boolean(state?.league?.is_dynasty),
+          isBestBall: Boolean(state?.league?.is_best_ball),
+          isSuperflex: Boolean(state?.league?.is_superflex),
+          isTwoQb: Boolean(state?.league?.is_two_qb),
+          tePremium: Number(state?.league?.te_premium ?? 0),
+          hasIDP: Boolean(state?.hasIDP),
+          hasKicker: Boolean(state?.hasKicker),
+          hasTeamDefense: Boolean(state?.hasTeamDefense),
+          rosterPositions: Array.isArray(state?.league?.roster_positions_json) ? state.league.roster_positions_json : [],
+          scoringSettings,
+        },
+      });
+      const suggestions = buildLiveDraftSuggestions({
+        leagueRankRows: leagueRank.rows,
+        draftedPlayerIds: state?.draftedPlayerIds ?? [],
+        positionCounts: state?.positionCounts,
+        positionNeeds: state?.positionNeeds,
+        currentPickNumber: state?.currentPickNumber,
+        picksUntilMyTurn: state?.picksUntilMyNextPick,
+        livePlanStatus,
+      });
+      const suggestionById = new Map(suggestions.rows.map((row) => [row.playerId, row]));
+      return applyLivePlanFitToBoardRows(blackbirdBoard.rows, livePlanStatus).map((row) => {
+        const suggestion = row.playerId ? suggestionById.get(row.playerId) : undefined;
+        return suggestion
+          ? {
+              ...row,
+              draftSuggestionRank: suggestion.draftSuggestionRank,
+              draftSuggestionScore: suggestion.suggestionScore,
+              draftSuggestionType: suggestion.suggestionType,
+              needTimingAction: suggestion.timingAction,
+            }
+          : row;
+      });
+    },
+    [blackbirdBoard.rows, livePlanStatus, state]
   );
 
   const filteredBoardRows = useMemo(() => {
     const needle = search.trim().toLowerCase();
-    return planFitBoardRows
+    const viewRows = planFitBoardRows
+      .filter((row) => {
+        if (boardViewMode === "draft_suggestions") return !row.drafted && row.draftSuggestionRank !== null;
+        if (boardViewMode === "available_blackbird") return !row.drafted;
+        return true;
+      })
+      .sort((a, b) => {
+        if (boardViewMode === "draft_suggestions") return (a.draftSuggestionRank ?? 999999) - (b.draftSuggestionRank ?? 999999);
+        return a.blackbirdBoardRank - b.blackbirdBoardRank;
+      });
+    return viewRows
       .filter((row) => positionFilter === "All" || row.position === positionFilter)
       .filter((row) => !needle || row.playerName.toLowerCase().includes(needle))
       .filter((row) => {
@@ -534,7 +601,7 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
         if (matchFilter === "Issues") return row.confidence === "low" || row.risk === "high" || row.dataStatus.projection === "unavailable";
         return true;
       });
-  }, [matchFilter, planFitBoardRows, positionFilter, search]);
+  }, [boardViewMode, matchFilter, planFitBoardRows, positionFilter, search]);
 
   const visibleBlackbirdRows = filteredBoardRows.slice(0, visibleBoardRows);
 
@@ -670,10 +737,10 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
                     <span className="rounded-full border border-brand/25 bg-brand/10 px-2 py-1 text-[11px] uppercase tracking-wide text-brand">Experimental</span>
                   </div>
                   <p className="mt-1 text-sm text-slate-400">
-                    Sorted by contextual Blackbird value and league scoring · {blackbirdBoard.diagnostics.availableRows} available rows · {state.boardLabel}
+                    Draft Suggestion is live and available-only. Blackbird Rank is static league value across draftable players.
                   </p>
                 </div>
-                <div className="grid gap-2 sm:grid-cols-[minmax(180px,1fr)_140px_120px_160px]">
+                <div className="grid gap-2 sm:grid-cols-[minmax(180px,1fr)_180px_120px_120px_160px]">
                   <label className="relative block">
                     <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
                     <input
@@ -683,6 +750,13 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
                       placeholder="Search players"
                     />
                   </label>
+                  <select className="rf-input" value={boardViewMode} onChange={(event) => setBoardViewMode(event.target.value as BoardViewMode)}>
+                    {BOARD_VIEW_MODES.map((mode) => (
+                      <option key={mode.value} value={mode.value}>
+                        {mode.label}
+                      </option>
+                    ))}
+                  </select>
                   <select className="rf-input" value={positionFilter} onChange={(event) => setPositionFilter(event.target.value)}>
                     {POSITIONS.map((position) => (
                       <option key={position} value={position}>
@@ -979,16 +1053,17 @@ function BoardStatusPill({ label, value, warning = false }: { label: string; val
 function AvailablePlayersTable({ rows, onSelectPlayer }: { rows: BlackbirdBoardRow[]; onSelectPlayer: (row: BlackbirdBoardRow) => void }) {
   return (
     <div className="overflow-x-auto">
-      <table className="w-full min-w-[1040px] text-left text-sm">
+      <table className="w-full min-w-[1120px] text-left text-sm">
         <thead className="bg-panel2 text-xs uppercase text-slate-400">
           <tr>
-            <th className="px-3 py-3">BB Rank</th>
+            <th className="px-3 py-3">Draft Suggestion</th>
+            <th className="px-3 py-3">Blackbird Rank</th>
             <th className="px-3 py-3">Player</th>
             <th className="px-3 py-3">Pos</th>
             <th className="px-3 py-3">Team</th>
-            <th className="px-3 py-3">Proj</th>
+            <th className="px-3 py-3">Season Projection</th>
             <th className="px-3 py-3">PAR</th>
-            <th className="px-3 py-3">Blackbird Rank</th>
+            <th className="px-3 py-3">Tier</th>
             <th className="px-3 py-3">Value</th>
             <th className="px-3 py-3">Timing</th>
             <th className="px-3 py-3">Confidence / Risk</th>
@@ -998,7 +1073,8 @@ function AvailablePlayersTable({ rows, onSelectPlayer }: { rows: BlackbirdBoardR
         <tbody>
           {rows.map((row) => (
             <tr key={`${row.playerId ?? row.playerName}-${row.blackbirdBoardRank}`} className="border-t border-line/70">
-              <td className="px-3 py-3 font-black text-brand">#{row.blackbirdBoardRank}</td>
+              <td className="px-3 py-3 font-black text-brand">{row.draftSuggestionRank === null ? "-" : `#${row.draftSuggestionRank}`}</td>
+              <td className="px-3 py-3 font-black text-slate-100">#{row.blackbirdBoardRank}</td>
               <td className="px-3 py-3">
                 {row.playerId ? (
                   <button
@@ -1014,14 +1090,22 @@ function AvailablePlayersTable({ rows, onSelectPlayer }: { rows: BlackbirdBoardR
                 <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-slate-500">
                   <span>{row.playerId ? "Matched context" : "Fallback context"}</span>
                   <span>{row.dataStatus.ordering.replace("_", " ")}</span>
+                  {row.drafted ? <span className="rounded-full border border-line px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-slate-400">Drafted</span> : null}
                 </div>
                 <BlackbirdBoardPlayerDetails row={row} />
               </td>
               <td className="px-3 py-3"><PositionBadge position={row.position} /></td>
               <td className="px-3 py-3">{row.team || "-"}</td>
-              <td className="px-3 py-3">{row.dataStatus.projection === "available" ? formatNumber(row.projectionPoints) : "Projection unavailable"}</td>
+              <td className="px-3 py-3">
+                {row.dataStatus.projection === "available" ? (
+                  <div>
+                    <div className="font-bold text-slate-100">{formatNumber(row.projectionPoints)}</div>
+                    <div className="mt-1 text-[11px] text-slate-500">{projectionUnitLabel(row)}</div>
+                  </div>
+                ) : "Projection unavailable"}
+              </td>
               <td className="px-3 py-3">{row.pointsAboveReplacement === null ? "Projection unavailable" : formatNumber(row.pointsAboveReplacement)}</td>
-              <td className="px-3 py-3">{row.dataStatus.marketRank === "available" ? `#${formatNumber(row.marketRank)}` : "Rank unavailable"}</td>
+              <td className="px-3 py-3">{row.blackbirdTier === null ? "-" : row.blackbirdTier}</td>
               <td className="px-3 py-3">
                 {row.blackbirdValueScore === null ? "Projection unavailable" : (
                   <span className="inline-flex min-w-[3.75rem] justify-center rounded-md border border-brand/20 bg-brand/10 px-2 py-1 font-black text-brand">
@@ -1045,7 +1129,7 @@ function AvailablePlayersTable({ rows, onSelectPlayer }: { rows: BlackbirdBoardR
               </td>
             </tr>
           ))}
-          {rows.length === 0 ? <EmptyTable colSpan={11} text="No available players match these filters." /> : null}
+          {rows.length === 0 ? <EmptyTable colSpan={12} text="No players match these filters." /> : null}
         </tbody>
       </table>
     </div>
@@ -1068,11 +1152,12 @@ function BlackbirdBoardPlayerDetails({ row }: { row: BlackbirdBoardRow }) {
           <StrategyPill>Experimental</StrategyPill>
         </div>
         <div className="grid gap-2 sm:grid-cols-2">
-          <MiniDetail label="Projection" value={formatNullableNumber(detail.projection)} />
+          <MiniDetail label={projectionUnitLabel(row)} value={formatNullableNumber(detail.projection)} />
           <MiniDetail label="Floor" value={formatNullableNumber(detail.projectedFantasyPoints.low)} />
           <MiniDetail label="Ceiling" value={formatNullableNumber(detail.projectedFantasyPoints.high)} />
           <MiniDetail label="PAR" value={formatNullableNumber(detail.par)} />
-          <MiniDetail label="Blackbird Rank" value={`#${formatNumber(detail.marketRank)}`} />
+          <MiniDetail label="Blackbird Rank" value={`#${formatNumber(detail.blackbirdRank)}`} />
+          <MiniDetail label="Draft Suggestion" value={detail.draftSuggestionRank === null ? "-" : `#${detail.draftSuggestionRank}`} />
           <MiniDetail label="Value" value={formatNullableNumber(detail.valueScore)} />
           <MiniDetail label="Tier" value={detail.blackbirdTier === null ? "-" : String(detail.blackbirdTier)} />
         </div>
@@ -2508,6 +2593,14 @@ function formatNullableNumber(value: number | null | undefined) {
 function formatTimingAction(value: string | null | undefined) {
   if (!value) return "Timing unavailable";
   return value.replaceAll("_", " ");
+}
+
+function projectionUnitLabel(row: Pick<BlackbirdBoardRow, "projectionUnit" | "projectionSource">) {
+  if (row.projectionUnit === "season") return "Season projection";
+  if (row.projectionUnit === "weekly") return "Weekly projection";
+  if (row.projectionUnit === "game") return "Game projection";
+  if (row.projectionUnit === "fallback") return "Fallback projection";
+  return row.projectionSource === "missing" ? "Projection unavailable" : "Projection unit unknown";
 }
 
 function formatCounts(counts: Record<string, number>) {

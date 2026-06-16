@@ -80,7 +80,7 @@ Verdict: passed
 
 ```json
 {
-  "generatedAt": "2026-06-16T00:23:30.088Z",
+  "generatedAt": "2026-06-16T01:18:13.902Z",
   "verdict": "passed",
   "summary": {
     "totalPlayers": 9,
