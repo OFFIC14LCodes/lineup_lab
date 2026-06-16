@@ -14,7 +14,7 @@ import {
   type H10RecommendationSource,
 } from "@/lib/draft/war-room-recommendation-experiment-ui";
 import { buildBlackbirdBoard, type BlackbirdBoardRow, type BlackbirdBoardSortKey } from "@/lib/draft/blackbird-board";
-import { applyLivePlanFitToBoardRows, buildLivePlanStatus, type LivePlanStatus, type LivePlanFit } from "@/lib/draft/live-plan-status";
+import { applyLivePlanFitToBoardRows, buildLivePlanStatus } from "@/lib/draft/live-plan-status";
 import {
   draftBoardPositionBadgeClass,
   draftBoardPositionCardClass,
@@ -112,6 +112,7 @@ type DraftState = {
   draftedPlayerIds?: string[];
   draftBoardTeams: DraftBoardTeam[];
   positionCounts: Record<string, number>;
+  blackbirdRankPlayers?: AvailablePlayer[];
   remainingPlayers: AvailablePlayer[];
   draftablePlayers?: AvailablePlayer[];
   recommendations: AvailablePlayer[];
@@ -478,8 +479,11 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
   }, [boardSort, boardViewMode, matchFilter, positionFilter, search]);
 
   const blackbirdPlayerPool = useMemo(
-    () => mergeDraftableAndRemainingPlayers(state?.draftablePlayers ?? [], state?.remainingPlayers ?? []),
-    [state?.draftablePlayers, state?.remainingPlayers]
+    () => mergeDraftableAndRemainingPlayers(
+      mergeDraftableAndRemainingPlayers(state?.blackbirdRankPlayers ?? [], state?.draftablePlayers ?? []),
+      state?.remainingPlayers ?? []
+    ),
+    [state?.blackbirdRankPlayers, state?.draftablePlayers, state?.remainingPlayers]
   );
 
   const blackbirdBoard = useMemo(() => {
@@ -643,57 +647,27 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
   return (
     <div className="space-y-6">
       <section className="rf-panel p-4 sm:p-5">
-        <div className="flex flex-col justify-between gap-4 md:flex-row md:items-start">
+        <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-center">
           <div className="min-w-0">
             <h1 className="break-words text-2xl font-black sm:text-3xl">{state.league?.name ?? "Draft War Room"}</h1>
-            <p className="mt-2 text-sm text-slate-400">
-              Status {state.room.status ?? "unknown"} · Polling every 5 seconds · Last synced{" "}
-              {state.room.last_synced_at ? new Date(state.room.last_synced_at).toLocaleTimeString() : "never"}
-            </p>
+            <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-slate-400">
+              <span>Pick {state.currentPickNumber}</span>
+              <span>Round {state.currentRound}</span>
+              <span>Until turn {state.picksUntilMyNextPick ?? "N/A"}</span>
+              <span>{state.picks.length} drafted</span>
+            </div>
           </div>
-          <button className="rf-button" onClick={syncNow} disabled={syncing}>
-            <RefreshCw className="h-4 w-4" />
-            {syncing ? "Syncing..." : "Sync now"}
-          </button>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+            <div className="text-xs text-slate-500">
+              Last synced {state.room.last_synced_at ? new Date(state.room.last_synced_at).toLocaleTimeString() : "never"}
+            </div>
+            <button className="rf-button" onClick={syncNow} disabled={syncing}>
+              <RefreshCw className="h-4 w-4" />
+              {syncing ? "Syncing..." : "Sync now"}
+            </button>
+          </div>
         </div>
         {error ? <p className="mt-3 text-sm text-red-300">{error}</p> : null}
-        {state.warningMessages.length ? (
-          <div className="mt-4 grid gap-2">
-            {state.warningMessages.map((message) => (
-              <p key={message} className="rounded-md border border-gold/30 bg-gold/10 px-3 py-2 text-sm text-gold">
-                {message}
-              </p>
-            ))}
-          </div>
-        ) : null}
-        {state.fallbackRelevanceDiagnostics && state.fallbackRelevanceDiagnostics.fallbackRowsExcluded > 0 ? (
-          <p className="mt-3 rounded-md border border-line bg-panel2 px-3 py-2 text-xs text-slate-400">
-            Some diagnostic fallback players are hidden because they lack rankings, ADP, and Blackbird projections.
-          </p>
-        ) : null}
-        {state.h10InternalTrustedExperimentAllowed ? (
-          <div className="mt-3 rounded-md border border-brand/30 bg-brand/10 px-3 py-2 text-xs text-brand">
-            <span className="font-bold">Internal Blackbird Mode</span> · Read-only trusted preview · Synthetic replay validated; historical outcome validation not yet available.
-          </div>
-        ) : null}
-        <LivePlanStatusPanel status={livePlanStatus} />
-        {state.myDraftSlot === null ? (
-          <p className="mt-3 rounded-md border border-gold/25 bg-gold/10 px-3 py-2 text-xs text-gold">
-            Your draft slot is not detected yet. Sync league rosters or draft picks to restore exact pick timing.
-          </p>
-        ) : null}
-        {!state.picks.length ? (
-          <p className="mt-3 rounded-md border border-line bg-panel2 px-3 py-2 text-xs text-slate-400">
-            No synced draft picks yet. The board will fill as Sleeper picks arrive.
-          </p>
-        ) : null}
-        <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-          <Metric label="Current pick" value={state.currentPickNumber} />
-          <Metric label="Round" value={state.currentRound} />
-          <Metric label="Until my pick" value={state.picksUntilMyNextPick ?? "N/A"} />
-          <Metric label="Drafted" value={state.picks.length} />
-          <Metric label="Last pick" value={state.lastPick?.player_name ?? "None"} />
-        </div>
       </section>
 
       {strategyProminent ? <PreDraftStrategyPanel loadState={strategyState} prominent /> : null}
@@ -785,7 +759,9 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
                   </select>
                 </div>
               </div>
-              <BlackbirdBoardStatus diagnostics={blackbirdBoard.diagnostics} filteredCount={filteredBoardRows.length} visibleCount={visibleBlackbirdRows.length} />
+              <div className="mt-3 text-xs text-slate-500">
+                Showing {visibleBlackbirdRows.length} of {filteredBoardRows.length} players · {blackbirdBoard.diagnostics.marketRows} ranked · {blackbirdBoard.diagnostics.projectionRows} with projections
+              </div>
             </div>
             <AvailablePlayersTable rows={visibleBlackbirdRows} onSelectPlayer={openPlayerProfile} />
             <div className="flex flex-col gap-2 border-t border-line bg-panel2/40 p-4 sm:flex-row sm:items-center sm:justify-between">
@@ -1022,69 +998,41 @@ function TeamRosterStrip({ team, picks }: { team: DraftBoardTeam; picks: PickLin
   );
 }
 
-function BlackbirdBoardStatus({
-  diagnostics,
-  filteredCount,
-  visibleCount,
-}: {
-  diagnostics: ReturnType<typeof buildBlackbirdBoard>["diagnostics"];
-  filteredCount: number;
-  visibleCount: number;
-}) {
-  return (
-    <div className="mt-3 grid gap-2 text-xs sm:grid-cols-2 xl:grid-cols-4">
-      <BoardStatusPill label="H10 rows" value={`${diagnostics.h10RowsMatched}/${diagnostics.availableRows}`} warning={diagnostics.h10RowsMatched === 0} />
-      <BoardStatusPill label="Projection" value={`${diagnostics.projectionRows}/${diagnostics.availableRows}`} warning={diagnostics.projectionRows === 0} />
-      <BoardStatusPill label="Blackbird rank" value={`${diagnostics.marketRows}/${diagnostics.availableRows}`} warning={diagnostics.marketRows === 0} />
-      <BoardStatusPill label="Visible" value={`${visibleCount}/${filteredCount}`} />
-      {diagnostics.fallbackOrderedRows > 0 ? (
-        <p className="rounded-md border border-gold/25 bg-gold/10 px-3 py-2 text-gold sm:col-span-2 xl:col-span-4">
-          Some rows use fallback ordering because Blackbird projection or H10 context is unavailable.
-        </p>
-      ) : null}
-    </div>
-  );
-}
-
-function BoardStatusPill({ label, value, warning = false }: { label: string; value: string; warning?: boolean }) {
-  return (
-    <div className={`rounded-md border px-3 py-2 ${warning ? "border-gold/25 bg-gold/10 text-gold" : "border-line bg-background/50 text-slate-300"}`}>
-      <div className="uppercase tracking-wide text-slate-500">{label}</div>
-      <div className="mt-1 font-bold">{value}</div>
-    </div>
-  );
-}
-
 function AvailablePlayersTable({ rows, onSelectPlayer }: { rows: BlackbirdBoardRow[]; onSelectPlayer: (row: BlackbirdBoardRow) => void }) {
   return (
     <div className="overflow-x-auto">
-      <table className="w-full min-w-[1120px] text-left text-sm">
+      <table className="w-full min-w-[1080px] text-left text-sm">
         <thead className="bg-panel2 text-xs uppercase text-slate-400">
           <tr>
             <th className="px-3 py-3">Draft Suggestion</th>
-            <th className="px-3 py-3">Blackbird Rank</th>
-            <th className="px-3 py-3">Player</th>
-            <th className="px-3 py-3">Pos</th>
+            <th className="px-3 py-3">Blackbird Power Rank</th>
+            <th className="px-3 py-3">Player + Details</th>
+            <th className="px-3 py-3">Position</th>
             <th className="px-3 py-3">Team</th>
-            <th className="px-3 py-3">Season Projection</th>
-            <th className="px-3 py-3">PAR</th>
-            <th className="px-3 py-3">Tier</th>
-            <th className="px-3 py-3">Value</th>
-            <th className="px-3 py-3">Timing</th>
-            <th className="px-3 py-3">Confidence / Risk</th>
-            <th className="px-3 py-3">Data</th>
+            <th className="px-3 py-3">Projection Range</th>
+            <th className="px-3 py-3">Risk</th>
           </tr>
         </thead>
         <tbody>
           {rows.map((row) => (
             <tr key={`${row.playerId ?? row.playerName}-${row.blackbirdBoardRank}`} className="border-t border-line/70">
-              <td className="px-3 py-3 font-black text-brand">{row.draftSuggestionRank === null ? "-" : `#${row.draftSuggestionRank}`}</td>
-              <td className="px-3 py-3 font-black text-slate-100">#{row.blackbirdBoardRank}</td>
+              <td className="px-3 py-3">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-lg font-black text-brand">{row.draftSuggestionRank === null ? "-" : `#${row.draftSuggestionRank}`}</span>
+                  {row.blackbirdValueScore === null ? null : (
+                    <span className="rounded-full border border-brand/25 bg-brand/10 px-2 py-1 text-xs font-black text-brand">
+                      {formatNumber(row.blackbirdValueScore)}
+                    </span>
+                  )}
+                </div>
+                <div className="mt-1 text-[11px] text-slate-500">{formatTimingAction(row.needTimingAction)}</div>
+              </td>
+              <td className="px-3 py-3 text-lg font-black text-slate-100">#{row.blackbirdBoardRank}</td>
               <td className="px-3 py-3">
                 {row.playerId ? (
                   <button
                     type="button"
-                    className="block max-w-[220px] truncate text-left font-medium text-slate-100 underline decoration-brand/40 underline-offset-4 hover:text-brand"
+                    className="block max-w-[260px] truncate text-left font-medium text-slate-100 underline decoration-brand/40 underline-offset-4 hover:text-brand"
                     onClick={() => onSelectPlayer(row)}
                   >
                     {row.playerName}
@@ -1097,44 +1045,29 @@ function AvailablePlayersTable({ rows, onSelectPlayer }: { rows: BlackbirdBoardR
                   <span>{row.dataStatus.ordering.replace("_", " ")}</span>
                   {row.drafted ? <span className="rounded-full border border-line px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-slate-400">Drafted</span> : null}
                 </div>
+                <p className="mt-2 max-w-[520px] text-xs leading-relaxed text-slate-400">{blackbirdRankSummary(row)}</p>
                 <BlackbirdBoardPlayerDetails row={row} />
               </td>
               <td className="px-3 py-3"><PositionBadge position={row.position} /></td>
               <td className="px-3 py-3">{row.team || "-"}</td>
               <td className="px-3 py-3">
                 {row.dataStatus.projection === "available" ? (
-                  <div>
-                    <div className="font-bold text-slate-100">{formatNumber(row.projectionPoints)}</div>
+                  <div className="min-w-[210px]">
+                    <div className="grid grid-cols-3 gap-2">
+                      <ProjectionMini label="Floor" value={row.projectionLow} />
+                      <ProjectionMini label="Median" value={row.projectionPoints} />
+                      <ProjectionMini label="Ceiling" value={row.projectionHigh} />
+                    </div>
                     <div className="mt-1 text-[11px] text-slate-500">{projectionUnitLabel(row)}</div>
                   </div>
                 ) : "Projection unavailable"}
               </td>
-              <td className="px-3 py-3">{row.pointsAboveReplacement === null ? "Projection unavailable" : formatNumber(row.pointsAboveReplacement)}</td>
-              <td className="px-3 py-3">{row.blackbirdTier === null ? "-" : row.blackbirdTier}</td>
               <td className="px-3 py-3">
-                {row.blackbirdValueScore === null ? "Projection unavailable" : (
-                  <span className="inline-flex min-w-[3.75rem] justify-center rounded-md border border-brand/20 bg-brand/10 px-2 py-1 font-black text-brand">
-                    {formatNumber(row.blackbirdValueScore)}
-                  </span>
-                )}
-              </td>
-              <td className="px-3 py-3">
-                <div>{formatTimingAction(row.needTimingAction)}</div>
-                {row.waitPlanTargetCount ? <div className="mt-1 text-[11px] text-slate-500">{row.waitPlanTargetCount} wait targets</div> : null}
-              </td>
-              <td className="px-3 py-3">
-                <div>{row.confidence}</div>
-                <div className="mt-1 text-[11px] text-slate-500">Risk: {row.risk}</div>
-              </td>
-              <td className="px-3 py-3">
-                <BoardDataStatus row={row} />
-                <div className="mt-2">
-                  <PlanFitBadge fit={row.planFit} />
-                </div>
+                <RiskScoreBlock row={row} />
               </td>
             </tr>
           ))}
-          {rows.length === 0 ? <EmptyTable colSpan={12} text="No players match these filters." /> : null}
+          {rows.length === 0 ? <EmptyTable colSpan={7} text="No players match these filters." /> : null}
         </tbody>
       </table>
     </div>
@@ -1156,6 +1089,7 @@ function BlackbirdBoardPlayerDetails({ row }: { row: BlackbirdBoardRow }) {
           <StrategyPill>Read-only</StrategyPill>
           <StrategyPill>Experimental</StrategyPill>
         </div>
+        <p className="rounded-md border border-line/70 bg-panel2/60 px-3 py-2 text-slate-300">{blackbirdRankSummary(row)}</p>
         <div className="grid gap-2 sm:grid-cols-2">
           <MiniDetail label={projectionUnitLabel(row)} value={formatNullableNumber(detail.projection)} />
           <MiniDetail label="Floor" value={formatNullableNumber(detail.projectedFantasyPoints.low)} />
@@ -1181,6 +1115,12 @@ function BlackbirdBoardPlayerDetails({ row }: { row: BlackbirdBoardRow }) {
         <DetailList title="Wait Plan" items={detail.waitPlanContext.slice(0, 2)} />
         <DetailList title="Contingency" items={detail.contingencyContext.slice(0, 2)} />
         <DetailList title="Plan Fit" items={row.planFitReasons.slice(0, 4)} />
+        <div>
+          <div className="text-[11px] uppercase tracking-wide text-slate-500">Data Status</div>
+          <div className="mt-1">
+            <BoardDataStatus row={row} />
+          </div>
+        </div>
         {detail.tierNeighborContext.previous.length || detail.tierNeighborContext.next.length ? (
           <div>
             <div className="text-[11px] uppercase tracking-wide text-slate-500">Tier Neighbors</div>
@@ -1199,78 +1139,37 @@ function BlackbirdBoardPlayerDetails({ row }: { row: BlackbirdBoardRow }) {
   );
 }
 
-function LivePlanStatusPanel({ status }: { status: LivePlanStatus | null }) {
-  if (!status) {
-    return (
-      <section className="mt-4 rounded-lg border border-line bg-panel2 px-3 py-3">
-        <div className="text-sm font-black text-slate-100">Live Plan Status</div>
-        <p className="mt-1 text-xs text-slate-400">Insufficient data to score the live plan.</p>
-      </section>
-    );
-  }
+function ProjectionMini({ label, value }: { label: string; value: number | null | undefined }) {
   return (
-    <section className="mt-4 rounded-lg border border-line bg-panel2 px-3 py-3">
-      <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
-        <div className="min-w-0">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className={`rounded-full border px-2 py-1 text-[11px] uppercase tracking-wide ${livePlanStatusClass(status.overallStatus)}`}>
-              {status.statusLabel}
-            </span>
-            {status.activeRoundWindowIds.slice(0, 2).map((windowId) => (
-              <span key={windowId} className="rounded-full border border-line bg-background px-2 py-1 text-[11px] text-slate-300">
-                {windowId}
-              </span>
-            ))}
-          </div>
-          <h2 className="mt-2 text-base font-black text-slate-100">Live Plan Status</h2>
-          <p className="mt-1 text-sm text-slate-400">{status.statusSummary}</p>
-        </div>
-        <div className="grid min-w-[220px] grid-cols-3 gap-2 text-xs">
-          <MiniDetail label="Pick" value={formatNullableNumber(status.currentPickNumber)} />
-          <MiniDetail label="Round" value={formatNullableNumber(status.currentRound)} />
-          <MiniDetail label="Until turn" value={formatNullableNumber(status.picksUntilMyTurn)} />
-        </div>
-      </div>
-      <details className="group mt-3 rounded-md border border-line/70 bg-background/45 px-3 py-2 text-xs">
-        <summary className="flex cursor-pointer list-none items-center justify-between gap-2 font-bold text-brand">
-          <span>Plan details</span>
-          <ChevronDown className="h-3.5 w-3.5 shrink-0 transition group-open:rotate-180" />
-        </summary>
-        <div className="mt-3 grid gap-3 lg:grid-cols-2">
-          <DetailList title="Recommended Focus" items={status.recommendedFocus.slice(0, 4).map((item) => `${item.label}: ${item.reason}`)} />
-          <DetailList title="Active Contingencies" items={status.triggeredContingencies.slice(0, 4).map((item) => `${item.label}: ${item.suggestedAdjustment}`)} />
-          <DetailList title="Position Plan" items={status.positionPlanStatus.slice(0, 6).map((item) => `${item.position}: ${item.summary}`)} />
-          <DetailList title="Wait Plan" items={status.waitPlanStatus.slice(0, 4).map((item) => item.summary)} />
-          <DetailList title="Tier Risk" items={status.tierRiskStatus.slice(0, 4).map((item) => item.summary)} />
-          <DetailList title="Value Signals" items={status.valueFallStatus.slice(0, 4).map((item) => item.summary)} />
-          <DetailList title="Data Gaps" items={status.dataGaps.slice(0, 6)} />
-          <DetailList title="Safety" items={status.safetyNotes} />
-        </div>
-      </details>
-    </section>
+    <div className="rounded-md border border-line bg-background/60 px-2 py-1.5">
+      <div className="text-[10px] uppercase tracking-wide text-slate-500">{label}</div>
+      <div className="mt-0.5 font-black text-slate-100">{formatNullableNumber(value)}</div>
+    </div>
   );
 }
 
-function PlanFitBadge({ fit }: { fit: LivePlanFit }) {
-  const label = fit.replaceAll("_", " ");
-  const className =
-    fit === "strong_fit"
-      ? "border-emerald-400/30 bg-emerald-500/10 text-emerald-200"
-      : fit === "contingency_fit" || fit === "value_detour"
-        ? "border-gold/35 bg-gold/10 text-gold"
-        : fit === "avoid_forcing"
-          ? "border-red-400/30 bg-red-500/10 text-red-200"
-          : fit === "insufficient_data"
-            ? "border-line bg-background text-slate-400"
-            : "border-brand/30 bg-brand/10 text-brand";
-  return <span className={`rounded-full border px-2 py-1 text-[11px] uppercase tracking-wide ${className}`}>{label}</span>;
+function RiskScoreBlock({ row }: { row: BlackbirdBoardRow }) {
+  const teamRisk = teamRiskScore(row);
+  const playerRisk = playerPerformanceRiskScore(row);
+  return (
+    <div className="min-w-[150px] space-y-2">
+      <RiskMeter label="Team" value={teamRisk} />
+      <RiskMeter label="Player" value={playerRisk} />
+      <div className="text-[11px] text-slate-500">{row.confidence} confidence</div>
+    </div>
+  );
 }
 
-function livePlanStatusClass(status: LivePlanStatus["overallStatus"]) {
-  if (status === "on_plan" || status === "pre_draft") return "border-emerald-400/30 bg-emerald-500/10 text-emerald-200";
-  if (status === "slightly_off_plan" || status === "off_plan_recoverable") return "border-brand/30 bg-brand/10 text-brand";
-  if (status === "contingency_active" || status === "needs_attention") return "border-gold/35 bg-gold/10 text-gold";
-  return "border-line bg-background text-slate-400";
+function RiskMeter({ label, value }: { label: string; value: number }) {
+  const className = value >= 7 ? "text-red-200 border-red-400/30 bg-red-500/10" : value >= 4 ? "text-gold border-gold/30 bg-gold/10" : "text-emerald-200 border-emerald-400/30 bg-emerald-500/10";
+  return (
+    <div className={`rounded-md border px-2 py-1.5 ${className}`}>
+      <div className="flex items-center justify-between gap-2">
+        <span className="text-[10px] uppercase tracking-wide opacity-80">{label}</span>
+        <span className="font-black">{value}/10</span>
+      </div>
+    </div>
+  );
 }
 
 function MiniDetail({ label, value }: { label: string; value: string }) {
@@ -1440,15 +1339,6 @@ function BoardDataStatus({ row }: { row: BlackbirdBoardRow }) {
           {label}
         </span>
       ))}
-    </div>
-  );
-}
-
-function Metric({ label, value }: { label: string; value: string | number }) {
-  return (
-    <div className="rounded-md border border-line bg-panel2 p-3">
-      <div className="text-xs uppercase text-slate-400">{label}</div>
-      <div className="mt-1 truncate text-lg font-black">{value}</div>
     </div>
   );
 }
@@ -2648,6 +2538,48 @@ function withFallbackDraftSuggestionRanks(rows: BlackbirdBoardRow[]): BlackbirdB
 
 function boardRowKey(row: BlackbirdBoardRow): string {
   return `${row.playerId ?? ""}|${row.playerName}|${row.position ?? ""}|${row.team ?? ""}`;
+}
+
+function blackbirdRankSummary(row: BlackbirdBoardRow): string {
+  const detail = row.playerDetailContext;
+  const positives = detail?.whyBlackbirdLikes.filter(Boolean) ?? row.contextualReasons;
+  const cautions = detail?.whyBlackbirdIsCautious.filter(Boolean) ?? [];
+  const projection = row.projectionPoints === null ? "projection unavailable" : `${formatNumber(row.projectionPoints)} median points`;
+  const value = row.blackbirdValueScore === null ? "value score unavailable" : `${formatNumber(row.blackbirdValueScore)} value`;
+  const reason = positives[0] ?? `${projection} and ${value} drive the ranking.`;
+  const primaryCaution = cautions[0] ?? row.contextualDataGaps[0] ?? null;
+  const caution = primaryCaution ? ` Caveat: ${primaryCaution}.` : "";
+  return `Ranked #${row.blackbirdBoardRank} for this league because ${reason.replace(/\.$/, "")}. ${projection}; ${value}.${caution}`.replace(/\s+/g, " ").trim();
+}
+
+function teamRiskScore(row: BlackbirdBoardRow): number {
+  let score = 3;
+  if (row.planFit === "strong_fit") score -= 1;
+  if (row.planFit === "contingency_fit" || row.planFit === "value_detour") score += 1;
+  if (row.planFit === "avoid_forcing") score += 4;
+  if (row.planFit === "insufficient_data") score += 2;
+  if (row.waitPlanTargetCount && row.waitPlanTargetCount > 0) score -= 1;
+  if (row.contextualDataGaps.length >= 4) score += 1;
+  return clampRisk(score);
+}
+
+function playerPerformanceRiskScore(row: BlackbirdBoardRow): number {
+  let score = row.risk === "high" ? 8 : row.risk === "medium" ? 5 : 3;
+  if (row.confidence === "very_low") score += 3;
+  else if (row.confidence === "low") score += 2;
+  else if (row.confidence === "high") score -= 1;
+  if (row.projectionLow !== null && row.projectionHigh !== null && row.projectionPoints !== null) {
+    const range = Math.abs(row.projectionHigh - row.projectionLow);
+    const rangeRate = range / Math.max(Math.abs(row.projectionPoints), 1);
+    if (rangeRate > 0.55) score += 2;
+    else if (rangeRate > 0.35) score += 1;
+  }
+  if (row.dataStatus.projection === "unavailable") score += 2;
+  return clampRisk(score);
+}
+
+function clampRisk(value: number): number {
+  return Math.max(1, Math.min(10, Math.round(value)));
 }
 
 function formatTimingAction(value: string | null | undefined) {

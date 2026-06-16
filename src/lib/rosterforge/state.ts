@@ -393,10 +393,34 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
           : null
     }
   });
+  const projectionUniverseCandidates = buildProjectionUniverseCandidates(playerRows);
   const persistedProjectionOverlays = await loadPersistedProjectionOverlays({
     supabase,
     leagueId: room.league_id as string,
-    players: fullDraftableScoring.scoredPlayers,
+    players: projectionUniverseCandidates,
+  });
+  const blackbirdRankPlayers = buildBlackbirdRankPlayerUniverse({
+    leagueId: room.league_id as string,
+    projectionOverlays: persistedProjectionOverlays,
+    playerRows,
+    rankedPlayers: draftablePlayers,
+  });
+  const blackbirdRankScoring = buildDraftTargetScore({
+    players: blackbirdRankPlayers as DraftTargetScorePlayer[],
+    league: {
+      currentPickNumber,
+      rosterPositions: Array.isArray(room.leagues?.roster_positions_json) ? room.leagues.roster_positions_json : [],
+      positionCounts: counts,
+      is_dynasty: Boolean(room.leagues?.is_dynasty),
+      is_best_ball: Boolean(room.leagues?.is_best_ball),
+      is_superflex: Boolean(room.leagues?.is_superflex),
+      is_two_qb: Boolean(room.leagues?.is_two_qb),
+      te_premium: Number(room.leagues?.te_premium ?? 0),
+      scoringSettings:
+        room.leagues?.scoring_settings_json && typeof room.leagues.scoring_settings_json === "object"
+          ? (room.leagues.scoring_settings_json as Record<string, number>)
+          : null
+    }
   });
 
   const idpDetected = rosterRequirements.hasIDP;
@@ -449,6 +473,7 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
     myRoster: myPicks,
     positionCounts: counts,
     draftedPlayerIds: Array.from(draftedIds),
+    blackbirdRankPlayers: blackbirdRankScoring.scoredPlayers,
     draftablePlayers: fullDraftableScoring.scoredPlayers,
     remainingPlayers: scoring.scoredPlayers,
     recommendations: hasRankings ? scoring.recommendations : [],
@@ -525,14 +550,13 @@ async function loadPersistedProjectionOverlays(input: {
     .from("player_projection_outputs")
     .select("canonical_player_id,projection_run_id,position,floor_points,median_points,ceiling_points,projection_confidence_label,created_at")
     .eq("league_id", input.leagueId)
-    .in("canonical_player_id", canonicalIds)
     .order("created_at", { ascending: false })
-    .limit(Math.max(1000, canonicalIds.length * 3));
-
-  if (error || !data) return [];
+    .limit(2500);
+  const projectionRows = error || !data ? [] : (data as ProjectionOutputOverlayRow[]);
+  if (!projectionRows.length) return [];
 
   const latestByPlayer = new Map<string, ProjectionOutputOverlayRow>();
-  for (const row of data as ProjectionOutputOverlayRow[]) {
+  for (const row of projectionRows) {
     if (!latestByPlayer.has(row.canonical_player_id)) latestByPlayer.set(row.canonical_player_id, row);
   }
 
@@ -606,6 +630,81 @@ function shouldUsePersistedProjection(existing: WarRoomValueOverlayRow, persiste
   const position = normalizePrimaryPosition(existing.position ?? persisted.position);
   if ((position === "DL" || position === "LB" || position === "DB") && existing.medianPoints < 25 && persisted.medianPoints > 50) return true;
   return false;
+}
+
+function buildBlackbirdRankPlayerUniverse(input: {
+  leagueId: string;
+  projectionOverlays: WarRoomValueOverlayRow[];
+  playerRows: PlayerRow[];
+  rankedPlayers: DraftTargetScorePlayer[];
+}): DraftTargetScorePlayer[] {
+  const rankedByCanonicalId = new Map(
+    input.rankedPlayers
+      .filter((player) => player.matched_player_id)
+      .map((player) => [player.matched_player_id as string, player])
+  );
+  const playerById = new Map(input.playerRows.map((player) => [player.id, player]));
+  const rows = input.projectionOverlays
+    .filter((overlay) => overlay.entityId && overlay.medianPoints !== null)
+    .map((overlay): DraftTargetScorePlayer | null => {
+      const entityId = overlay.entityId as string;
+      const ranked = rankedByCanonicalId.get(entityId);
+      const player = playerById.get(entityId);
+      const position = normalizePrimaryPosition(overlay.position ?? player?.position_group ?? player?.position ?? ranked?.position) ?? overlay.position ?? ranked?.position ?? player?.position ?? null;
+      if (!position || !FALLBACK_POSITION_GROUPS.includes(position)) return null;
+      return {
+        sleeper_player_id: ranked?.sleeper_player_id ?? player?.sleeper_player_id ?? null,
+        matched_player_id: entityId,
+        player_name: ranked?.player_name ?? player?.full_name ?? overlay.displayName,
+        position,
+        team: ranked?.team ?? player?.team ?? overlay.team,
+        rank: ranked?.rank ?? null,
+        adp: ranked?.adp ?? null,
+        projected_points: overlay.medianPoints,
+        dynasty_value: ranked?.dynasty_value ?? null,
+        best_ball_value: ranked?.best_ball_value ?? null,
+        superflex_value: ranked?.superflex_value ?? null,
+        te_premium_value: ranked?.te_premium_value ?? null,
+        age: player?.age ?? null,
+        years_exp: player?.years_exp ?? null,
+        match_status: ranked?.match_status ?? "projection_output",
+        match_confidence: ranked?.match_confidence ?? 1,
+        is_ranked: Boolean(ranked),
+        is_fallback: !ranked,
+      };
+    })
+    .filter((row): row is DraftTargetScorePlayer => row !== null)
+    .sort((a, b) => (b.projected_points ?? 0) - (a.projected_points ?? 0) || (a.player_name ?? "").localeCompare(b.player_name ?? ""));
+  return mergeDraftableAndRemainingPlayers(rows, input.rankedPlayers);
+}
+
+function buildProjectionUniverseCandidates(playerRows: PlayerRow[]): DraftTargetScorePlayer[] {
+  return playerRows
+    .map((player): DraftTargetScorePlayer | null => {
+      const position = normalizePrimaryPosition(player.position_group ?? player.primary_position ?? player.position);
+      if (!position || !FALLBACK_POSITION_GROUPS.includes(position)) return null;
+      return {
+        sleeper_player_id: player.sleeper_player_id,
+        matched_player_id: player.id,
+        player_name: player.full_name,
+        position,
+        team: player.team,
+        rank: null,
+        adp: null,
+        projected_points: null,
+        dynasty_value: null,
+        best_ball_value: null,
+        superflex_value: null,
+        te_premium_value: null,
+        age: player.age,
+        years_exp: player.years_exp,
+        match_status: "projection_universe",
+        match_confidence: 1,
+        is_ranked: false,
+        is_fallback: true,
+      };
+    })
+    .filter((player): player is DraftTargetScorePlayer => player !== null);
 }
 
 async function loadActivePlayerRows(supabase: ReturnType<typeof createAdminClient>): Promise<PlayerRow[]> {

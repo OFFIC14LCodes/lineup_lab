@@ -1,6 +1,6 @@
 # H11.3 War Room Blackbird Board
 
-Generated: 2026-06-16T02:39:02.096Z
+Generated: 2026-06-16T03:18:00.966Z
 Verdict: passed
 
 ## Ordering
@@ -27,7 +27,7 @@ static Blackbird league rank; ADP external reference only
 
 - Draft room: c82aef89-ce90-40f0-936f-545656045554
 - Visible: true
-- Load more visible: false
+- Load more visible: true
 - Loaded more: true
 - Position filter works: true
 - Mobile usable: true

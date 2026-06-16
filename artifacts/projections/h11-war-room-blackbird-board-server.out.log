@@ -4,23 +4,23 @@
    - Environments: .env.local
 
  ✓ Starting...
- ✓ Ready in 7.8s
+ ✓ Ready in 4s
  ○ Compiling / ...
- ✓ Compiled / in 4.4s (635 modules)
- GET / 200 in 2036ms
- GET / 200 in 345ms
- GET / 200 in 806ms
+ ✓ Compiled / in 5.1s (649 modules)
+ GET / 200 in 1198ms
+ GET / 200 in 192ms
+ GET / 200 in 291ms
  ○ Compiling /api/draft-rooms/[draftRoomId]/state ...
- ✓ Compiled /api/draft-rooms/[draftRoomId]/state in 3.6s (744 modules)
- GET /api/draft-rooms/c82aef89-ce90-40f0-936f-545656045554/state 200 in 10565ms
+ ✓ Compiled /api/draft-rooms/[draftRoomId]/state in 1830ms (758 modules)
+ GET /api/draft-rooms/c82aef89-ce90-40f0-936f-545656045554/state 200 in 6100ms
  ○ Compiling /drafts/[draftRoomId] ...
- ✓ Compiled /drafts/[draftRoomId] in 2.5s (796 modules)
- GET /drafts/c82aef89-ce90-40f0-936f-545656045554 200 in 7839ms
+ ✓ Compiled /drafts/[draftRoomId] in 1694ms (796 modules)
+ GET /drafts/c82aef89-ce90-40f0-936f-545656045554 200 in 4314ms
  ○ Compiling /api/draft-rooms/[draftRoomId]/pre-draft-strategy ...
- ✓ Compiled /api/draft-rooms/[draftRoomId]/pre-draft-strategy in 2.1s (802 modules)
- GET /api/draft-rooms/c82aef89-ce90-40f0-936f-545656045554/state 200 in 5438ms
- GET /api/draft-rooms/c82aef89-ce90-40f0-936f-545656045554/state 200 in 2659ms
- GET /api/draft-rooms/c82aef89-ce90-40f0-936f-545656045554/pre-draft-strategy 200 in 9933ms
- GET /api/draft-rooms/c82aef89-ce90-40f0-936f-545656045554/state 200 in 2821ms
- GET /api/draft-rooms/c82aef89-ce90-40f0-936f-545656045554/state 200 in 2258ms
- GET /api/draft-rooms/c82aef89-ce90-40f0-936f-545656045554/state 200 in 296ms
+ ✓ Compiled /api/draft-rooms/[draftRoomId]/pre-draft-strategy in 1277ms (802 modules)
+ GET /api/draft-rooms/c82aef89-ce90-40f0-936f-545656045554/state 200 in 3556ms
+ GET /api/draft-rooms/c82aef89-ce90-40f0-936f-545656045554/pre-draft-strategy 200 in 5362ms
+ GET /api/draft-rooms/c82aef89-ce90-40f0-936f-545656045554/state 200 in 1835ms
+ GET /api/draft-rooms/c82aef89-ce90-40f0-936f-545656045554/state 200 in 1920ms
+ GET /api/draft-rooms/c82aef89-ce90-40f0-936f-545656045554/state 200 in 1753ms
+ GET /api/draft-rooms/c82aef89-ce90-40f0-936f-545656045554/state 200 in 1581ms

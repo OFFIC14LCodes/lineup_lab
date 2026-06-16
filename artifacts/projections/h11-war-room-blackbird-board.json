@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-16T02:39:02.096Z",
+  "generatedAt": "2026-06-16T03:18:00.966Z",
   "verdict": "passed",
   "boardOrderingMethod": "static Blackbird league rank; ADP external reference only",
   "syntheticAudit": {
@@ -85,7 +85,7 @@
   "browserSmoke": {
     "draftRoomId": "c82aef89-ce90-40f0-936f-545656045554",
     "visible": true,
-    "loadMoreVisible": false,
+    "loadMoreVisible": true,
     "loadedMore": true,
     "projectionColumnVisible": true,
     "blackbirdRankColumnVisible": true,
