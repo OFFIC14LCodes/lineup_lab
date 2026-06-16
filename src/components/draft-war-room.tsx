@@ -477,13 +477,18 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
     setVisibleBoardRows(50);
   }, [boardSort, boardViewMode, matchFilter, positionFilter, search]);
 
+  const blackbirdPlayerPool = useMemo(
+    () => mergeDraftableAndRemainingPlayers(state?.draftablePlayers ?? [], state?.remainingPlayers ?? []),
+    [state?.draftablePlayers, state?.remainingPlayers]
+  );
+
   const blackbirdBoard = useMemo(() => {
     const scoringSettings =
       state?.league?.scoring_settings_json && typeof state.league.scoring_settings_json === "object"
         ? state.league.scoring_settings_json
         : null;
     return buildBlackbirdBoard({
-      players: state?.draftablePlayers ?? state?.remainingPlayers ?? [],
+      players: blackbirdPlayerPool,
       overlays: state?.h10ValueOverlay ?? [],
       recommendations: state?.h10RecommendationPreview ?? [],
       draftedPlayerIds: state?.draftedPlayerIds ?? [],
@@ -503,12 +508,11 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
       includeDrafted: true,
     });
   }, [
+    blackbirdPlayerPool,
     boardSort,
-    state?.draftablePlayers,
     state?.draftedPlayerIds,
     state?.h10RecommendationPreview,
     state?.h10ValueOverlay,
-    state?.remainingPlayers,
     state?.league,
     state?.hasIDP,
     state?.hasKicker,
@@ -538,7 +542,7 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
           ? state.league.scoring_settings_json
           : null;
       const leagueRank = buildBlackbirdLeagueRank({
-        players: state?.draftablePlayers ?? state?.remainingPlayers ?? [],
+        players: blackbirdPlayerPool,
         overlays: state?.h10ValueOverlay ?? [],
         recommendations: state?.h10RecommendationPreview ?? [],
         draftedPlayerIds: state?.draftedPlayerIds ?? [],
@@ -578,7 +582,7 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
           : row;
       });
     },
-    [blackbirdBoard.rows, livePlanStatus, state]
+    [blackbirdBoard.rows, blackbirdPlayerPool, livePlanStatus, state]
   );
 
   const filteredBoardRows = useMemo(() => {
@@ -2588,6 +2592,32 @@ function formatNumber(value: number | null | undefined) {
 
 function formatNullableNumber(value: number | null | undefined) {
   return value === null || value === undefined ? "-" : formatNumber(value);
+}
+
+function mergeDraftableAndRemainingPlayers(draftablePlayers: AvailablePlayer[], remainingPlayers: AvailablePlayer[]): AvailablePlayer[] {
+  const merged: AvailablePlayer[] = [];
+  const seen = new Set<string>();
+  const add = (player: AvailablePlayer, index: number, source: "draftable" | "remaining") => {
+    const keys = playerMergeKeys(player, index, source);
+    if (keys.some((key) => seen.has(key))) return;
+    merged.push(player);
+    keys.forEach((key) => seen.add(key));
+  };
+
+  draftablePlayers.forEach((player, index) => add(player, index, "draftable"));
+  remainingPlayers.forEach((player, index) => add(player, index, "remaining"));
+  return merged;
+}
+
+function playerMergeKeys(player: AvailablePlayer, index: number, source: "draftable" | "remaining"): string[] {
+  const keys = [player.matched_player_id, player.sleeper_player_id]
+    .filter((value): value is string => Boolean(value))
+    .map((value) => `id:${value}`);
+  const nameKey = [player.player_name, player.position, player.team]
+    .map((value) => value?.trim().toLowerCase() ?? "")
+    .join("|");
+  if (nameKey.replaceAll("|", "")) keys.push(`name:${nameKey}`);
+  return keys.length ? keys : [`fallback:${source}:${index}`];
 }
 
 function formatTimingAction(value: string | null | undefined) {
