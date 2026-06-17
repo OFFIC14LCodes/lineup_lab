@@ -20,6 +20,9 @@ import {
   draftBoardPositionCardClass,
   normalizeDraftBoardPosition,
 } from "@/lib/draft/draft-board-display";
+import { buildPlayerProfileEvidence, type PlayerProfileEvidence } from "@/lib/player-profiles/player-profile-evidence";
+import type { PlayerProfileReadModel } from "@/lib/player-profiles/player-profile-read-model";
+import type { PlayerProfileScoringMetadata } from "@/lib/player-profiles/player-profile-rescoring";
 import { buildPreDraftStrategyUiViewModel } from "@/lib/draft/pre-draft-strategy-ui";
 import { projectionTrustBadgeLabel } from "@/lib/projections/projection-trust";
 import type { WarRoomRecommendationResult, WarRoomRecommendationRow, WarRoomRecommendationTier } from "@/lib/draft/war-room-recommendations";
@@ -270,90 +273,19 @@ type SelectedPlayerSummary = {
 
 type HistoricalPlayerProfileResponse = {
   status?: string;
-  profile: {
-    header: {
-      name: string;
-      position: string;
-      team: string | null;
-      status: string | null;
-      headshot: string | null;
-    };
-    identity: {
-      sleeper_id: string | null;
-      gsis_id: string;
-      blackbird_player_id: string | null;
-      match_confidence: string;
-      match_reasons: string[];
-    };
-    bio: {
-      age: number | null;
-      birth_date: string | null;
-      height: number | null;
-      weight: number | null;
-      college: string | null;
-      rookie_season: number | null;
-      years_experience: number | null;
-    };
-    summaryMetrics: {
-      games: number;
-      total_points: number;
-      points_per_game: number | null;
-      floor: number | null;
-      median: number | null;
-      ceiling: number | null;
-      consistency_score: number;
-      spike_score: number;
-      availability_score: number;
-    };
-    seasonSummaries: Array<{
-      season: number | null;
-      gamesPlayed: number;
-      totalFantasyPoints: number;
-      pointsPerGame: number | null;
-      positionRank: number | null;
-      keyStatTotals: Record<string, number>;
-    }>;
-    weeklyGameLog: Array<{
-      season: number | null;
-      week: number | null;
-      team: string | null;
-      opponent: string | null;
-      passing: Record<string, number | null>;
-      rushing: Record<string, number | null>;
-      receiving: Record<string, number | null>;
-      kicking: Record<string, number | null>;
-      defensive: Record<string, number | null>;
-      calculatedFantasyPoints: number;
-      scoringWarnings: string[];
-    }>;
-    weeklyGameLogTruncated: boolean;
-    idpSummary: Record<string, number> | null;
-    recommendationSignals: {
-      floorScore: number;
-      ceilingScore: number;
-      consistencyScore: number;
-      spikeScore: number;
-      availabilityScore: number;
-      volatilityLabel: string;
-      formatFitHints: {
-        redraft: string;
-        dynasty: string;
-        bestBall: string;
-        idp: string | null;
-      };
-    };
-    warnings: string[];
-  };
+  profile: PlayerProfileReadModel;
   lookup: {
     matchedBy: string;
     artifactBacked: boolean;
     readOnly: boolean;
   };
+  scoring: PlayerProfileScoringMetadata;
 };
 
 type HistoricalProfileLoadState = {
   status: "idle" | "loading" | "ready" | "empty" | "error";
   profile: HistoricalPlayerProfileResponse["profile"] | null;
+  scoring: HistoricalPlayerProfileResponse["scoring"] | null;
   error: string | null;
   reason: "artifact_unavailable" | "not_found" | "ambiguous" | "error" | null;
 };
@@ -481,6 +413,7 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
   const [selectedHistoricalProfile, setSelectedHistoricalProfile] = useState<HistoricalProfileLoadState>({
     status: "idle",
     profile: null,
+    scoring: null,
     error: null,
     reason: null,
   });
@@ -542,12 +475,12 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
   const loadHistoricalPlayerProfile = useCallback(async (row: BlackbirdBoardRow) => {
     const lookupId = row.playerId ?? row.playerName;
     if (!lookupId) {
-      setSelectedHistoricalProfile({ status: "empty", profile: null, error: null, reason: "not_found" });
+      setSelectedHistoricalProfile({ status: "empty", profile: null, scoring: null, error: null, reason: "not_found" });
       return;
     }
 
-    setSelectedHistoricalProfile({ status: "loading", profile: null, error: null, reason: null });
-    const params = new URLSearchParams({ weeklyLimit: "8" });
+    setSelectedHistoricalProfile({ status: "loading", profile: null, scoring: null, error: null, reason: null });
+    const params = new URLSearchParams({ weeklyLimit: "8", draftRoomId });
     if (row.position) params.set("position", row.position);
 
     try {
@@ -556,17 +489,18 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
       });
       const payload = (await response.json()) as Partial<HistoricalPlayerProfileResponse> & { error?: string };
       if (response.status === 404 && payload.status === "ambiguous_duplicate_lookup") {
-        setSelectedHistoricalProfile({ status: "empty", profile: null, error: null, reason: "ambiguous" });
+        setSelectedHistoricalProfile({ status: "empty", profile: null, scoring: null, error: null, reason: "ambiguous" });
         return;
       }
       if (response.status === 404) {
-        setSelectedHistoricalProfile({ status: "empty", profile: null, error: null, reason: "not_found" });
+        setSelectedHistoricalProfile({ status: "empty", profile: null, scoring: null, error: null, reason: "not_found" });
         return;
       }
       if (payload.status === "artifact_missing" || payload.status === "artifact_unreadable" || payload.status === "artifact_invalid") {
         setSelectedHistoricalProfile({
           status: "empty",
           profile: null,
+          scoring: null,
           error: null,
           reason: "artifact_unavailable",
         });
@@ -576,22 +510,24 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
         setSelectedHistoricalProfile({
           status: "error",
           profile: null,
+          scoring: null,
           error: payload.error ?? "Historical profile not available yet.",
           reason: "error",
         });
         return;
       }
 
-      setSelectedHistoricalProfile({ status: "ready", profile: payload.profile, error: null, reason: null });
+      setSelectedHistoricalProfile({ status: "ready", profile: payload.profile, scoring: payload.scoring ?? null, error: null, reason: null });
     } catch {
       setSelectedHistoricalProfile({
         status: "error",
         profile: null,
+        scoring: null,
         error: "Historical profile not available yet.",
         reason: "error",
       });
     }
-  }, []);
+  }, [draftRoomId]);
 
   const openPlayerProfile = useCallback(async (row: BlackbirdBoardRow) => {
     setSelectedPlayerSummary({ playerName: row.playerName, position: row.position, team: row.team });
@@ -632,7 +568,7 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
   const closePlayerProfile = useCallback(() => {
     setSelectedPlayerProfile({ status: "idle", profile: null, error: null });
     setSelectedPlayerSummary(null);
-    setSelectedHistoricalProfile({ status: "idle", profile: null, error: null, reason: null });
+    setSelectedHistoricalProfile({ status: "idle", profile: null, scoring: null, error: null, reason: null });
   }, []);
 
   useEffect(() => {
@@ -1386,6 +1322,7 @@ function BlackbirdBoardPlayerDetails({ row }: { row: BlackbirdBoardRow }) {
           <StrategyPill>Blackbird preview</StrategyPill>
           <StrategyPill>Read-only</StrategyPill>
           <StrategyPill>Experimental</StrategyPill>
+          <StrategyPill>Profile evidence in modal</StrategyPill>
           <StrategyPill>{projectionTrustBadgeLabel(detail.projectionTrust)}</StrategyPill>
           {rookieContext.labels.map((label) => (
             <StrategyPill key={label}>{label}</StrategyPill>
@@ -1697,6 +1634,11 @@ function PlayerProfileModal({
 
 function HistoricalPlayerProfilePanel({ state }: { state: HistoricalProfileLoadState }) {
   const profile = state.profile;
+  const evidence = buildPlayerProfileEvidence({
+    profile,
+    scoring: state.scoring,
+    unavailableReason: state.reason,
+  });
 
   if (state.status === "loading" || state.status === "idle") {
     return (
@@ -1718,6 +1660,7 @@ function HistoricalPlayerProfilePanel({ state }: { state: HistoricalProfileLoadS
       <section className="rounded-md border border-line bg-panel2 px-3 py-3">
         <h3 className="text-sm font-black uppercase tracking-wide text-slate-300">Historical Profile</h3>
         <p className="mt-3 text-sm text-slate-400">{message}</p>
+        <HistoricalEvidenceCard evidence={evidence} />
       </section>
     );
   }
@@ -1726,6 +1669,12 @@ function HistoricalPlayerProfilePanel({ state }: { state: HistoricalProfileLoadS
   const needsReviewNote = confidence === "medium" || confidence === "weak";
   const statSummary = buildHistoricalStatSummary(profile);
   const recentWeeklyRows = profile.weeklyGameLog.slice(0, 8);
+  const scoringLabel = historicalScoringLabel(state.scoring);
+  const coverageLabel = formatCoverageLabel(profile.careerMetadata?.coverageLabel ?? null);
+  const careerWindow = profile.careerMetadata?.firstStatSeason && profile.careerMetadata.latestStatSeason
+    ? `${profile.careerMetadata.firstStatSeason}-${profile.careerMetadata.latestStatSeason}`
+    : "No stat window";
+  const trendLabel = profile.trendMetrics?.trendLabel ? formatCoverageLabel(profile.trendMetrics.trendLabel) : "Insufficient data";
 
   return (
     <section className="rounded-md border border-line bg-panel2 px-3 py-3">
@@ -1735,16 +1684,32 @@ function HistoricalPlayerProfilePanel({ state }: { state: HistoricalProfileLoadS
           <p className="mt-1 text-xs text-slate-500">
             Match confidence: <span className="font-bold text-slate-300">{profile.identity.match_confidence}</span>
           </p>
+          <p className="mt-1 text-xs text-slate-500">
+            Career coverage: <span className="font-bold text-slate-300">{coverageLabel}</span>{" "}
+            <span className="text-slate-600">({careerWindow})</span>
+          </p>
+          <p className="mt-1 text-xs text-slate-500">
+            Trend: <span className="font-bold text-slate-300">{trendLabel}</span>
+          </p>
+          <p className="mt-2 inline-flex rounded-full border border-line bg-background/70 px-2 py-1 text-[11px] font-semibold text-slate-300">
+            {scoringLabel}
+          </p>
+          <HistoricalEvidenceCard evidence={evidence} />
           {needsReviewNote ? (
             <p className="mt-2 rounded-md border border-gold/30 bg-gold/10 px-2 py-1 text-xs text-gold">
               Profile match confidence: {confidence}. Review may be needed.
             </p>
           ) : null}
+          {profile.careerMetadata?.coverageNote ? (
+            <p className="mt-2 rounded-md border border-line bg-background/60 px-2 py-1 text-xs text-slate-400">
+              {profile.careerMetadata.coverageNote}
+            </p>
+          ) : null}
         </div>
         <div className="grid grid-cols-2 gap-2 text-xs sm:min-w-[420px] sm:grid-cols-3">
-          <H11MiniMetric label="Games" value={formatNumber(profile.summaryMetrics.games)} />
-          <H11MiniMetric label="Total Points" value={formatNumber(profile.summaryMetrics.total_points)} />
-          <H11MiniMetric label="PPG" value={formatNullableNumber(profile.summaryMetrics.points_per_game)} />
+          <H11MiniMetric label="Career Games" value={formatNumber(profile.summaryMetrics.games)} />
+          <H11MiniMetric label="Career Points" value={formatNumber(profile.summaryMetrics.total_points)} />
+          <H11MiniMetric label="Career PPG" value={formatNullableNumber(profile.summaryMetrics.points_per_game)} />
         </div>
       </div>
 
@@ -1756,6 +1721,9 @@ function HistoricalPlayerProfilePanel({ state }: { state: HistoricalProfileLoadS
         <H11MiniMetric label="Spike" value={`${formatNumber(profile.summaryMetrics.spike_score)}/100`} />
         <H11MiniMetric label="Availability" value={`${formatNumber(profile.summaryMetrics.availability_score)}/100`} />
       </div>
+
+      <HistoricalRoleUsagePanel profile={profile} />
+      <HistoricalHighValueUsagePanel profile={profile} />
 
       {profile.warnings.length ? (
         <div className="mt-3 flex flex-wrap gap-1">
@@ -1787,16 +1755,20 @@ function HistoricalPlayerProfilePanel({ state }: { state: HistoricalProfileLoadS
                 <th className="px-2 py-2">Games</th>
                 <th className="px-2 py-2">Points</th>
                 <th className="px-2 py-2">PPG</th>
+                <th className="px-2 py-2">Floor</th>
+                <th className="px-2 py-2">Ceiling</th>
                 <th className="px-2 py-2">Position Rank</th>
               </tr>
             </thead>
             <tbody>
-              {profile.seasonSummaries.slice(0, 3).map((row) => (
+              {profile.seasonSummaries.slice(0, 8).map((row) => (
                 <tr key={`${row.season ?? "unknown"}-${row.positionRank ?? "rank"}`} className="border-t border-line/70">
                   <td className="px-2 py-3 font-bold text-slate-100">{row.season ?? "-"}</td>
                   <td className="px-2 py-3">{formatNumber(row.gamesPlayed)}</td>
                   <td className="px-2 py-3">{formatNumber(row.totalFantasyPoints)}</td>
                   <td className="px-2 py-3">{formatNullableNumber(row.pointsPerGame)}</td>
+                  <td className="px-2 py-3">{formatNullableNumber(row.floor ?? null)}</td>
+                  <td className="px-2 py-3">{formatNullableNumber(row.ceiling ?? null)}</td>
                   <td className="px-2 py-3">{row.positionRank === null ? "-" : `#${row.positionRank}`}</td>
                 </tr>
               ))}
@@ -1843,8 +1815,278 @@ function HistoricalPlayerProfilePanel({ state }: { state: HistoricalProfileLoadS
   );
 }
 
+function HistoricalHighValueUsagePanel({ profile }: { profile: HistoricalProfile }) {
+  const usage = profile.highValueUsageSummary;
+  if (!usage || usage.sourceStatus !== "available" || usage.gamesWithHighValueUsage === 0) return null;
+  const metrics = highValueUsageMetrics(profile);
+  return (
+    <div className="mt-3 rounded-md border border-line/70 bg-background/45 px-3 py-3">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <div className="text-xs font-black uppercase tracking-wide text-slate-400">High-Value Usage</div>
+          <p className="mt-2 text-xs text-slate-500">
+            Compact play-by-play evidence only; not yet included in Blackbird Rank.
+          </p>
+          {usage.modifiers.length ? (
+            <div className="mt-2 flex flex-wrap gap-1">
+              {usage.modifiers.slice(0, 5).map((modifier) => (
+                <span key={modifier} className="rounded-full border border-brand/20 bg-brand/10 px-2 py-1 text-[11px] text-brand">
+                  {formatCoverageLabel(modifier)}
+                </span>
+              ))}
+            </div>
+          ) : null}
+        </div>
+        <div className="grid grid-cols-2 gap-2 text-xs sm:min-w-[420px] sm:grid-cols-3">
+          {metrics.map((metric) => (
+            <H11MiniMetric key={metric.label} label={metric.label} value={metric.value} />
+          ))}
+        </div>
+      </div>
+      {profile.highValueRoleWarnings?.length ? (
+        <div className="mt-2 flex flex-wrap gap-1">
+          {profile.highValueRoleWarnings.slice(0, 4).map((warning) => (
+            <span key={warning} className="rounded-full border border-gold/25 bg-gold/10 px-2 py-1 text-[11px] text-gold">
+              {formatCoverageLabel(warning)}
+            </span>
+          ))}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function HistoricalRoleUsagePanel({ profile }: { profile: HistoricalProfile }) {
+  const usage = profile.usageSummary;
+  const role = profile.roleMetrics;
+  if (!usage || !role) {
+    return (
+      <div className="mt-3 rounded-md border border-line/70 bg-background/45 px-3 py-3">
+        <div className="text-xs font-black uppercase tracking-wide text-slate-400">Role & Usage</div>
+        <p className="mt-2 text-sm text-slate-400">Usage profile is not available yet.</p>
+      </div>
+    );
+  }
+  const metrics = roleUsageMetrics(profile);
+  return (
+    <div className="mt-3 rounded-md border border-line/70 bg-background/45 px-3 py-3">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <div className="text-xs font-black uppercase tracking-wide text-slate-400">Role & Usage</div>
+          <div className="mt-2 flex flex-wrap gap-2">
+            <span className="rounded-full border border-brand/25 bg-brand/10 px-2 py-1 text-[11px] font-bold uppercase tracking-wide text-brand">
+              {formatCoverageLabel(role.roleLabel)}
+            </span>
+            <span className="rounded-full border border-line bg-panel px-2 py-1 text-[11px] text-slate-300">
+              Confidence {role.roleConfidence}
+            </span>
+            <span className="rounded-full border border-line bg-panel px-2 py-1 text-[11px] text-slate-300">
+              Trend {formatCoverageLabel(role.roleTrend)}
+            </span>
+          </div>
+          <p className="mt-2 text-xs text-slate-500">{roleUsageSourceNote(usage)}</p>
+        </div>
+        <div className="grid grid-cols-2 gap-2 text-xs sm:min-w-[360px] sm:grid-cols-3">
+          {metrics.map((metric) => (
+            <H11MiniMetric key={metric.label} label={metric.label} value={metric.value} />
+          ))}
+        </div>
+      </div>
+      {role.keySignals.length ? (
+        <div className="mt-3 flex flex-wrap gap-1">
+          {role.keySignals.slice(0, 4).map((signal) => (
+            <span key={signal} className="rounded-full border border-line bg-panel px-2 py-1 text-[11px] text-slate-300">
+              {signal}
+            </span>
+          ))}
+        </div>
+      ) : null}
+      {role.roleModifiers.length ? (
+        <div className="mt-2 flex flex-wrap gap-1">
+          {role.roleModifiers.slice(0, 4).map((modifier) => (
+            <span key={modifier} className="rounded-full border border-brand/20 bg-brand/10 px-2 py-1 text-[11px] text-brand">
+              {formatCoverageLabel(modifier)}
+            </span>
+          ))}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function highValueUsageMetrics(profile: HistoricalProfile): Array<{ label: string; value: string }> {
+  const usage = profile.highValueUsageSummary;
+  if (!usage) return [];
+  const position = profile.header.position;
+  if (position === "QB") {
+    return [
+      { label: "RZ Pass/G", value: formatNullableNumber(usage.redZonePassAttemptsPerGame) },
+      { label: "QB Rush/G", value: formatNullableNumber((usage.designedQbRushesPerGame ?? 0) + (usage.scramblesPerGame ?? 0)) },
+      { label: "HV Touch/G", value: formatNullableNumber(usage.highValueTouchesPerGame) },
+      { label: "Trend", value: formatCoverageLabel(usage.trendLabel) },
+      { label: "TD Dep", value: formatNullableNumber(usage.touchdownDependency) },
+      { label: "Games", value: formatNumber(usage.gamesWithHighValueUsage) },
+    ];
+  }
+  if (position === "RB") {
+    return [
+      { label: "HV Touch/G", value: formatNullableNumber(usage.highValueTouchesPerGame) },
+      { label: "RZ Carry/G", value: formatNullableNumber(usage.redZoneCarriesPerGame) },
+      { label: "Goal-Line/G", value: formatNullableNumber(usage.goalLineCarriesPerGame) },
+      { label: "Target HV/G", value: formatNullableNumber(usage.highValueTargetsPerGame) },
+      { label: "Trend", value: formatCoverageLabel(usage.trendLabel) },
+      { label: "Games", value: formatNumber(usage.gamesWithHighValueUsage) },
+    ];
+  }
+  if (position === "WR" || position === "TE") {
+    return [
+      { label: "HV Target/G", value: formatNullableNumber(usage.highValueTargetsPerGame) },
+      { label: "RZ Target/G", value: formatNullableNumber(usage.redZoneTargetsPerGame) },
+      { label: "End Zone/G", value: formatNullableNumber(usage.endZoneTargetsPerGame) },
+      { label: "Deep/G", value: formatNullableNumber(usage.deepTargetsPerGame) },
+      { label: "Air Yd/Tgt", value: formatNullableNumber(usage.airYardsPerTarget) },
+      { label: "Games", value: formatNumber(usage.gamesWithHighValueUsage) },
+    ];
+  }
+  return [
+    { label: "HV Touch/G", value: formatNullableNumber(usage.highValueTouchesPerGame) },
+    { label: "HV Target/G", value: formatNullableNumber(usage.highValueTargetsPerGame) },
+    { label: "RZ Usage/G", value: formatNullableNumber((usage.redZoneCarriesPerGame ?? 0) + (usage.redZoneTargetsPerGame ?? 0)) },
+    { label: "Deep/G", value: formatNullableNumber(usage.deepTargetsPerGame) },
+    { label: "Trend", value: formatCoverageLabel(usage.trendLabel) },
+    { label: "Games", value: formatNumber(usage.gamesWithHighValueUsage) },
+  ];
+}
+
+function roleUsageMetrics(profile: HistoricalProfile): Array<{ label: string; value: string }> {
+  const usage = profile.usageSummary;
+  if (!usage) return [];
+  const position = profile.header.position;
+  const snapMetrics = snapRoleMetrics(usage, position);
+  if (["DL", "LB", "DB"].includes(position)) {
+    return [
+      { label: "Tackle Floor", value: `${formatNullableNumber(usage.tackleFloorScore)}/100` },
+      { label: "Big Play Dep", value: `${formatNullableNumber(usage.bigPlayDependencyScore)}/100` },
+      { label: "Sack Dep", value: `${formatNullableNumber(usage.sackDependencyScore)}/100` },
+      ...snapMetrics,
+    ].slice(0, 6);
+  }
+  if (position === "QB") {
+    return [
+      { label: "Pass Att/G", value: formatNullableNumber(usage.passAttemptsPerGame) },
+      { label: "Carries/G", value: formatNullableNumber(usage.carriesPerGame) },
+      { label: "Use Stable", value: `${formatNumber(usage.weeklyUsageConsistency)}/100` },
+      ...snapMetrics,
+    ].slice(0, 6);
+  }
+  return [
+    { label: "Opp/G", value: formatNullableNumber(usage.opportunitiesPerGame) },
+    { label: "Touches/G", value: formatNullableNumber(usage.touchesPerGame) },
+    { label: "Targets/G", value: formatNullableNumber(usage.targetsPerGame) },
+    ...snapMetrics,
+  ].slice(0, 6);
+}
+
+function snapRoleMetrics(usage: NonNullable<HistoricalProfile["usageSummary"]>, position: string): Array<{ label: string; value: string }> {
+  const primarySnap = ["DL", "LB", "DB"].includes(position) ? usage.defensiveSnapShare : usage.offensiveSnapShare;
+  const label = ["DL", "LB", "DB"].includes(position) ? "Def Snap" : "Off Snap";
+  const metrics: Array<{ label: string; value: string }> = [];
+  if (primarySnap !== null) metrics.push({ label, value: formatPercent(primarySnap) });
+  if (usage.gamesOver70PercentSnaps !== null) metrics.push({ label: "70%+ Games", value: String(usage.gamesOver70PercentSnaps) });
+  if (usage.trendLabel !== "insufficient_data") metrics.push({ label: "Snap Trend", value: formatCoverageLabel(usage.trendLabel) });
+  return metrics;
+}
+
+function roleUsageSourceNote(usage: NonNullable<HistoricalProfile["usageSummary"]>) {
+  if (usage.gamesWithSnapData > 0 && usage.gamesWithParticipationData > 0) {
+    return "Usage profile includes weekly stats, snap counts, and participation context.";
+  }
+  if (usage.gamesWithSnapData > 0) {
+    return "Usage profile includes weekly stats and snap count context.";
+  }
+  if (usage.gamesWithParticipationData > 0) {
+    return "Usage profile includes weekly stats and participation context; snap counts were not matched for this player.";
+  }
+  return "Usage profile is based on available weekly stat data. Snap source exists, but this player has no matched snap data.";
+}
+
+function formatCoverageLabel(value: string | null) {
+  if (!value) return "Unknown";
+  return value
+    .split("_")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
+
+function HistoricalEvidenceCard({ evidence }: { evidence: PlayerProfileEvidence }) {
+  return (
+    <div className="mt-3 rounded-md border border-line/70 bg-background/55 px-3 py-2">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <div className="text-[11px] font-black uppercase tracking-wide text-slate-500">Historical Evidence</div>
+          <p className="mt-1 text-sm text-slate-300">{evidence.summary}</p>
+          <p className="mt-1 text-[11px] text-slate-500">{evidence.note}</p>
+        </div>
+        {evidence.badges.length ? (
+          <div className="flex flex-wrap gap-1 sm:max-w-[320px] sm:justify-end">
+            {evidence.badges.map((badge) => (
+              <span key={badge} className="rounded-full border border-brand/20 bg-brand/10 px-2 py-1 text-[10px] uppercase tracking-wide text-brand">
+                {badge.replaceAll("-", " ")}
+              </span>
+            ))}
+          </div>
+        ) : null}
+      </div>
+      {evidence.positiveSignals.length || evidence.cautionSignals.length ? (
+        <div className="mt-3 grid gap-2 sm:grid-cols-2">
+          {evidence.positiveSignals.length ? (
+            <EvidenceSignalList title="Positive Signals" items={evidence.positiveSignals} tone="positive" />
+          ) : null}
+          {evidence.cautionSignals.length ? (
+            <EvidenceSignalList title="Cautions" items={evidence.cautionSignals} tone="caution" />
+          ) : null}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function EvidenceSignalList({
+  title,
+  items,
+  tone,
+}: {
+  title: string;
+  items: string[];
+  tone: "positive" | "caution";
+}) {
+  const className = tone === "positive" ? "text-emerald-100 border-emerald-400/20 bg-emerald-500/10" : "text-gold border-gold/25 bg-gold/10";
+  return (
+    <div>
+      <div className="text-[11px] uppercase tracking-wide text-slate-500">{title}</div>
+      <div className="mt-1 flex flex-wrap gap-1">
+        {items.map((item) => (
+          <span key={item} className={`rounded-full border px-2 py-1 text-[11px] ${className}`}>
+            {item}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 type HistoricalProfile = HistoricalPlayerProfileResponse["profile"];
 type HistoricalWeeklyRow = HistoricalProfile["weeklyGameLog"][number];
+
+function historicalScoringLabel(scoring: HistoricalProfileLoadState["scoring"]) {
+  if (scoring?.scoringSource === "draft_room" || scoring?.scoringSource === "league") {
+    return "Scored using this league's settings";
+  }
+  if (scoring?.scoringSource === "fallback") {
+    return "League scoring unavailable; using default profile scoring";
+  }
+  return "Scored using Blackbird default profile scoring";
+}
 
 function buildHistoricalStatSummary(profile: HistoricalProfile): Array<{ label: string; value: number }> {
   const position = profile.header.position;
@@ -3124,6 +3366,10 @@ function formatNumber(value: number | null | undefined) {
 
 function formatNullableNumber(value: number | null | undefined) {
   return value === null || value === undefined ? "-" : formatNumber(value);
+}
+
+function formatPercent(value: number | null | undefined) {
+  return value === null || value === undefined ? "-" : `${Math.round(value * 100)}%`;
 }
 
 function mergeDraftableAndRemainingPlayers(draftablePlayers: AvailablePlayer[], remainingPlayers: AvailablePlayer[]): AvailablePlayer[] {

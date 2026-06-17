@@ -9,3 +9,22 @@ dev-h*.log
 data/raw/
 artifacts/projections/h9-comprehensive-scored-projections.json
 artifacts/projections/h9-comprehensive-stat-projections.json
+# Blackbird generated data/artifacts - stored locally or in Supabase Storage
+artifacts/projections/player-profiles.json
+artifacts/projections/player-profiles-sharded/
+artifacts/projections/player-profiles-shards-diagnostics.json
+artifacts/projections/player-profile-remote-diagnostics.json
+artifacts/projections/player-profile-remote-diagnostics.md
+artifacts/projections/profile-evidence-diagnostics.csv
+artifacts/projections/profile-evidence-diagnostics.json
+artifacts/projections/profile-evidence-diagnostics.md
+artifacts/projections/profile-shadow-scoring-diagnostics.csv
+artifacts/projections/profile-shadow-scoring-diagnostics.json
+artifacts/projections/profile-shadow-scoring-diagnostics.md
+
+data/nflverse/player_stats_2018_2025.csv
+data/nflverse/rosters_2018_2025.csv
+data/nflverse/snap_counts_2018_2025.csv
+data/nflverse/participation_2018_2025.csv
+data/nflverse/pbp_2023_2025.csv
+data/nflverse/pbp_2018_2025.csv

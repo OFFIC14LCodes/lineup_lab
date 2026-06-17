@@ -14,6 +14,11 @@ export const NFLVERSE_FILES = {
 
 export type NflverseFileKey = keyof typeof NFLVERSE_FILES;
 
+export const NFLVERSE_PREFERRED_FILES: Partial<Record<NflverseFileKey, string[]>> = {
+  rosters: ["rosters_2018_2025.csv", "rosters_2025.csv"],
+  playerStats: ["player_stats_2018_2025.csv", "player_stats_2025.csv"],
+};
+
 export type NflverseCsvReadResult = {
   filePath: string;
   exists: boolean;
@@ -26,8 +31,18 @@ export function nflverseFilePath(fileKey: NflverseFileKey, dataDir = NFLVERSE_DA
   return path.join(dataDir, NFLVERSE_FILES[fileKey]);
 }
 
+export function resolveNflverseFilePath(fileKey: NflverseFileKey, dataDir = NFLVERSE_DATA_DIR): string {
+  const candidates = NFLVERSE_PREFERRED_FILES[fileKey] ?? [NFLVERSE_FILES[fileKey]];
+  const preferred = candidates.map((fileName) => path.join(dataDir, fileName)).find((filePath) => existsSync(filePath));
+  return preferred ?? path.join(dataDir, candidates[0] ?? NFLVERSE_FILES[fileKey]);
+}
+
 export function readNflverseCsv(fileKey: NflverseFileKey, dataDir = NFLVERSE_DATA_DIR): NflverseCsvReadResult {
-  const filePath = nflverseFilePath(fileKey, dataDir);
+  const filePath = resolveNflverseFilePath(fileKey, dataDir);
+  return readNflverseCsvFile(filePath);
+}
+
+export function readNflverseCsvFile(filePath: string): NflverseCsvReadResult {
   if (!existsSync(filePath)) {
     return { filePath, exists: false, fields: [], rows: [], parseErrors: [] };
   }

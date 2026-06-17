@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 
 import { createPlayerProfileRepository } from "@/lib/player-profiles/player-profile-repository";
 import { toPlayerProfileReadModel } from "@/lib/player-profiles/player-profile-read-model";
+import { rescoreHistoricalPlayerProfile } from "@/lib/player-profiles/player-profile-rescoring";
+import { resolvePlayerProfileScoringContext } from "@/lib/player-profiles/server/player-profile-scoring-context";
 
 export async function GET(request: Request, { params }: { params: Promise<{ playerId: string }> }) {
   const { playerId } = await params;
@@ -9,8 +11,10 @@ export async function GET(request: Request, { params }: { params: Promise<{ play
   const position = url.searchParams.get("position");
   const weeklyLimit = numberParam(url.searchParams.get("weeklyLimit")) ?? 20;
   const includeDiagnostics = url.searchParams.get("diagnostics") === "1";
-  const repository = createPlayerProfileRepository();
-  const diagnostics = repository.runtimeDiagnostics();
+  const draftRoomId = url.searchParams.get("draftRoomId");
+  const leagueId = url.searchParams.get("leagueId");
+  const repository = await createPlayerProfileRepository();
+  const diagnostics = await repository.runtimeDiagnostics();
 
   if (includeDiagnostics) {
     return NextResponse.json({
@@ -29,7 +33,18 @@ export async function GET(request: Request, { params }: { params: Promise<{ play
     }, { status: repository.status === "artifact_missing" ? 503 : 500 });
   }
 
-  const lookup = repository.lookupProfile({ playerId: decodeURIComponent(playerId), position });
+  const lookup = await repository.lookupProfile({ playerId: decodeURIComponent(playerId), position });
+
+  if (lookup.artifactStatus) {
+    return NextResponse.json({
+      status: lookup.artifactStatus,
+      error: playerProfileArtifactError(lookup.artifactStatus),
+      diagnostics: {
+        ...diagnostics,
+        lookupLoadError: lookup.loadError,
+      },
+    }, { status: lookup.artifactStatus === "artifact_missing" ? 503 : 500 });
+  }
 
   if (lookup.duplicateKey) {
     return NextResponse.json({
@@ -47,9 +62,13 @@ export async function GET(request: Request, { params }: { params: Promise<{ play
     }, { status: 404 });
   }
 
+  const scoringContext = await resolvePlayerProfileScoringContext({ draftRoomId, leagueId });
+  const scoredProfile = rescoreHistoricalPlayerProfile(lookup.profile, scoringContext.scoringProfile);
+
   return NextResponse.json({
     status: "profile_found",
-    profile: toPlayerProfileReadModel(lookup.profile, { weeklyLimit }),
+    profile: toPlayerProfileReadModel(scoredProfile, { weeklyLimit }),
+    scoring: scoringContext.metadata,
     lookup: {
       matchedBy: lookup.matchedBy,
       artifactBacked: true,

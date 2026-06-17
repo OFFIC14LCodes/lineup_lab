@@ -35,6 +35,16 @@ export type PlayerProfileReadModel = {
     spike_score: number;
     availability_score: number;
   };
+  careerMetadata: HistoricalPlayerProfileSnapshot["careerMetadata"] | null;
+  careerSummary: HistoricalPlayerProfileSnapshot["careerSummary"] | null;
+  trendMetrics: HistoricalPlayerProfileSnapshot["trendMetrics"] | null;
+  usageSummary: HistoricalPlayerProfileSnapshot["usageSummary"] | null;
+  seasonUsageSummaries: HistoricalPlayerProfileSnapshot["seasonUsageSummaries"];
+  highValueUsageSummary: HistoricalPlayerProfileSnapshot["highValueUsageSummary"] | null;
+  seasonHighValueUsageSummaries: HistoricalPlayerProfileSnapshot["seasonHighValueUsageSummaries"];
+  highValueRoleWarnings: HistoricalPlayerProfileSnapshot["highValueRoleWarnings"];
+  roleMetrics: HistoricalPlayerProfileSnapshot["roleMetrics"] | null;
+  roleWarnings: HistoricalPlayerProfileSnapshot["roleWarnings"];
   seasonSummaries: HistoricalPlayerProfileSnapshot["seasonSummaries"];
   weeklyGameLog: PlayerProfileWeeklyStats[];
   weeklyGameLogTruncated: boolean;
@@ -47,6 +57,7 @@ export function toPlayerProfileReadModel(profile: HistoricalPlayerProfileSnapsho
   const weeklyLimit = Math.max(0, Math.min(input.weeklyLimit ?? 20, 25));
   const weeklyGameLog = profile.weeklyStats.slice(0, weeklyLimit);
   const season = profile.seasonSummaries[0];
+  const career = profile.careerSummary;
   return {
     header: {
       name: profile.bio.name,
@@ -72,16 +83,26 @@ export function toPlayerProfileReadModel(profile: HistoricalPlayerProfileSnapsho
       years_experience: profile.bio.yearsExperience,
     },
     summaryMetrics: {
-      games: season?.gamesPlayed ?? 0,
-      total_points: season?.totalFantasyPoints ?? 0,
-      points_per_game: season?.pointsPerGame ?? null,
-      floor: profile.consistencyMetrics.floorPercentile20,
-      median: profile.consistencyMetrics.median,
-      ceiling: profile.consistencyMetrics.ceilingPercentile90,
-      consistency_score: profile.consistencyMetrics.consistencyScore,
-      spike_score: profile.consistencyMetrics.spikeWeekScore,
-      availability_score: profile.availabilityMetrics.availabilityScore,
+      games: career?.careerGames ?? season?.gamesPlayed ?? 0,
+      total_points: career?.careerTotalPoints ?? season?.totalFantasyPoints ?? 0,
+      points_per_game: career?.careerPointsPerGame ?? season?.pointsPerGame ?? null,
+      floor: career?.careerFloor ?? profile.consistencyMetrics.floorPercentile20,
+      median: career?.careerMedian ?? profile.consistencyMetrics.median,
+      ceiling: career?.careerCeiling ?? profile.consistencyMetrics.ceilingPercentile90,
+      consistency_score: career?.careerConsistencyScore ?? profile.consistencyMetrics.consistencyScore,
+      spike_score: career?.careerSpikeScore ?? profile.consistencyMetrics.spikeWeekScore,
+      availability_score: career?.careerAvailabilityScore ?? profile.availabilityMetrics.availabilityScore,
     },
+    careerMetadata: profile.careerMetadata ?? null,
+    careerSummary: profile.careerSummary ?? null,
+    trendMetrics: profile.trendMetrics ?? null,
+    usageSummary: profile.usageSummary ?? null,
+    seasonUsageSummaries: profile.seasonUsageSummaries ?? [],
+    highValueUsageSummary: profile.highValueUsageSummary ?? null,
+    seasonHighValueUsageSummaries: profile.seasonHighValueUsageSummaries ?? [],
+    highValueRoleWarnings: profile.highValueRoleWarnings ?? [],
+    roleMetrics: profile.roleMetrics ?? null,
+    roleWarnings: profile.roleWarnings ?? [],
     seasonSummaries: profile.seasonSummaries,
     weeklyGameLog,
     weeklyGameLogTruncated: profile.weeklyStats.length > weeklyGameLog.length,
@@ -93,7 +114,10 @@ export function toPlayerProfileReadModel(profile: HistoricalPlayerProfileSnapsho
 
 function buildIdpSummary(profile: HistoricalPlayerProfileSnapshot): Record<string, number> | null {
   if (!["DL", "LB", "DB"].includes(profile.bio.position)) return null;
-  const totals = profile.seasonSummaries[0]?.keyStatTotals ?? {};
+  const totals = profile.careerSummary?.last3Seasons?.keyStatTotals
+    ?? profile.careerSummary?.mostRecentSeason?.keyStatTotals
+    ?? profile.seasonSummaries[0]?.keyStatTotals
+    ?? {};
   const keys = ["solo_tkl", "ast_tkl", "tkl", "tkl_loss", "sack", "qb_hit", "int", "pd", "ff", "fr", "def_td"];
   const summary = Object.fromEntries(keys.map((key) => [key, totals[key] ?? 0]));
   return Object.values(summary).some((value) => value > 0) ? summary : null;

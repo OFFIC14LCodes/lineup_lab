@@ -105,6 +105,7 @@ describe("DraftWarRoom H11 strategy UI wiring", () => {
     [
       "/api/player-profiles/",
       "weeklyLimit: \"8\"",
+      "draftRoomId",
       "Historical Profile",
       "Loading historical profile...",
       "Historical profile not available yet.",
@@ -112,12 +113,47 @@ describe("DraftWarRoom H11 strategy UI wiring", () => {
       "Historical profile lookup is ambiguous and needs review.",
       "League projection profile is not available for this player yet.",
       "Profile match confidence:",
+      "Career coverage:",
+      "Trend:",
+      "Career Games",
+      "Career Points",
+      "Career PPG",
+      "Role & Usage",
+      "High-Value Usage",
+      "Compact play-by-play evidence only; not yet included in Blackbird Rank.",
+      "highValueUsageMetrics",
+      "highValueRoleWarnings",
+      "Usage profile includes weekly stats, snap counts, and participation context.",
+      "Snap source exists, but this player has no matched snap data.",
+      "70%+ Games",
+      "Snap Trend",
+      "roleUsageMetrics",
+      "snapRoleMetrics",
+      "formatCoverageLabel",
       "Review may be needed.",
       "Recent Weekly Game Log",
       "weeklyGameLog.slice(0, 8)",
       "profile.warnings.map",
       "buildWeeklyStatLine",
       "idpSummary",
+      "Scored using this league's settings",
+      "Scored using Blackbird default profile scoring",
+      "League scoring unavailable; using default profile scoring",
+      "buildPlayerProfileEvidence",
+      "Historical Evidence",
+      "evidence.note",
+      "Positive Signals",
+      "Profile evidence in modal",
     ].forEach((text) => expect(source).toContain(text));
+  });
+
+  it("keeps historical evidence read-only and separate from ranking math", () => {
+    const rankingSectionStart = source.indexOf("function AvailablePlayersTable");
+    const rankingSectionEnd = source.indexOf("function BlackbirdBoardPlayerDetails");
+    const rankingSection = source.slice(rankingSectionStart, rankingSectionEnd);
+
+    expect(source).toContain("buildPlayerProfileEvidence({");
+    expect(rankingSection).not.toContain("buildPlayerProfileEvidence");
+    expect(source).not.toContain("profileEvidenceScore");
   });
 });
