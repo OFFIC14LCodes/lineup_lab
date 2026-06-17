@@ -32,6 +32,7 @@ export type ProfileShardStoreDiagnostics = {
   selectedShard: string | null;
   configErrors: string[];
   configWarnings: string[];
+  productionWarning: string | null;
   supabaseUrlDefined: boolean;
   supabaseServiceRoleDefined: boolean;
 };
@@ -211,6 +212,7 @@ function baseDiagnostics(
     selectedShard,
     configErrors: config.errors,
     configWarnings: config.warnings,
+    productionWarning: config.productionWarning,
     supabaseUrlDefined: config.supabaseUrlDefined,
     supabaseServiceRoleDefined: config.supabaseServiceRoleDefined,
   };

@@ -15,6 +15,7 @@ export type ProfileShardStoreConfig = {
   localManifestPath: string;
   supabaseUrlDefined: boolean;
   supabaseServiceRoleDefined: boolean;
+  productionWarning: string | null;
   errors: string[];
   warnings: string[];
 };
@@ -44,6 +45,9 @@ export function resolveProfileShardStoreConfig(input: ProfileShardStoreConfigInp
   const supabaseServiceRoleDefined = Boolean(env.SUPABASE_SERVICE_ROLE_KEY?.trim());
   const errors: string[] = [];
   const warnings: string[] = [];
+  const productionWarning = env.NODE_ENV === "production" && mode !== "remote"
+    ? "Production is not configured for remote profile storage. Local artifacts may be unavailable in Vercel."
+    : null;
 
   if (requestedMode && requestedMode !== "local" && requestedMode !== "remote") {
     warnings.push(`Unknown PROFILE_STORAGE_MODE "${requestedMode}". Falling back to local artifacts.`);
@@ -55,6 +59,7 @@ export function resolveProfileShardStoreConfig(input: ProfileShardStoreConfigInp
   if (mode === "remote" && !prefix) errors.push("PROFILE_STORAGE_PREFIX is required when PROFILE_STORAGE_MODE=remote.");
   if (mode === "remote" && !supabaseUrlDefined) errors.push("NEXT_PUBLIC_SUPABASE_URL is required for remote profile storage.");
   if (mode === "remote" && !supabaseServiceRoleDefined) errors.push("SUPABASE_SERVICE_ROLE_KEY is required for remote profile storage reads.");
+  if (productionWarning) warnings.push(productionWarning);
 
   return {
     mode,
@@ -65,6 +70,7 @@ export function resolveProfileShardStoreConfig(input: ProfileShardStoreConfigInp
     localManifestPath,
     supabaseUrlDefined,
     supabaseServiceRoleDefined,
+    productionWarning,
     errors,
     warnings,
   };

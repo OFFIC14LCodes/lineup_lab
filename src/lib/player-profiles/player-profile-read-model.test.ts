@@ -65,12 +65,13 @@ describe("player profile read model repository", () => {
     });
   });
 
-  it("keeps Vercel tracing scoped to sharded profile artifacts", () => {
+  it("keeps Vercel tracing from bundling sharded profile artifacts", () => {
     const nextConfigSource = readFileSync(path.join(process.cwd(), "next.config.ts"), "utf8");
 
-    expect(nextConfigSource).toContain("./artifacts/projections/player-profiles-sharded/**/*");
+    expect(nextConfigSource).not.toContain("./artifacts/projections/player-profiles-sharded/**/*");
     expect(nextConfigSource).not.toContain("./artifacts/projections/player-profiles.json");
     expect(nextConfigSource).toContain("./data/**/*");
+    expect(nextConfigSource).toContain("Do not bundle player profile shards into Vercel functions.");
   });
 
   it("looks up a profile by sleeper_id", async () => {

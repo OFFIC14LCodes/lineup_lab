@@ -7,13 +7,9 @@ const nextConfig: NextConfig = {
       "./data/**/*",
     ],
   },
-  outputFileTracingIncludes: {
-    // Local sharded profile artifacts remain packaged as the safe fallback.
-    // Remote Supabase Storage is optional and selected only by PROFILE_STORAGE_MODE=remote.
-    "/api/player-profiles/[playerId]": [
-      "./artifacts/projections/player-profiles-sharded/**/*",
-    ],
-  },
+  // Production player profile reads should use PROFILE_STORAGE_MODE=remote.
+  // Local profile artifacts are kept only for local build/upload/dev fallback.
+  // Do not bundle player profile shards into Vercel functions.
 };
 
 export default nextConfig;

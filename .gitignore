@@ -5,16 +5,24 @@ node_modules
 npm-debug.log*
 dev-server.*.log
 dev-h*.log
+dev-profile-smoke.*.log
 *.tsbuildinfo
 data/raw/
 artifacts/projections/h9-comprehensive-scored-projections.json
 artifacts/projections/h9-comprehensive-stat-projections.json
-# Blackbird generated data/artifacts - stored locally or in Supabase Storage
+# Blackbird generated profile artifacts
 artifacts/projections/player-profiles.json
 artifacts/projections/player-profiles-sharded/
 artifacts/projections/player-profiles-shards-diagnostics.json
 artifacts/projections/player-profile-remote-diagnostics.json
 artifacts/projections/player-profile-remote-diagnostics.md
+artifacts/projections/player-profile-read-model-diagnostics.json
+artifacts/projections/player-profile-read-model-diagnostics.md
+artifacts/projections/player-profile-storage-config.json
+artifacts/projections/player-profile-storage-config.md
+artifacts/projections/player-profiles-diagnostics.json
+artifacts/projections/player-profiles-sample.md
+artifacts/projections/player-profiles-summary.md
 artifacts/projections/profile-evidence-diagnostics.csv
 artifacts/projections/profile-evidence-diagnostics.json
 artifacts/projections/profile-evidence-diagnostics.md
@@ -22,6 +30,7 @@ artifacts/projections/profile-shadow-scoring-diagnostics.csv
 artifacts/projections/profile-shadow-scoring-diagnostics.json
 artifacts/projections/profile-shadow-scoring-diagnostics.md
 
+# Large nflverse exports kept locally / uploaded separately
 data/nflverse/player_stats_2018_2025.csv
 data/nflverse/rosters_2018_2025.csv
 data/nflverse/snap_counts_2018_2025.csv

@@ -139,6 +139,28 @@ describe("GET /api/player-profiles/[playerId]", () => {
       source: "local_artifacts",
     });
   });
+
+  it("includes production storage warnings in diagnostics", async () => {
+    mocks.createPlayerProfileRepository.mockReturnValue(repoMock({
+      runtimeDiagnostics: vi.fn(() => ({
+        ...repoMock().runtimeDiagnostics(),
+        productionWarning: "Production is not configured for remote profile storage. Local artifacts may be unavailable in Vercel.",
+        storage: {
+          ...repoMock().runtimeDiagnostics().storage,
+          productionWarning: "Production is not configured for remote profile storage. Local artifacts may be unavailable in Vercel.",
+          configWarnings: ["Production is not configured for remote profile storage. Local artifacts may be unavailable in Vercel."],
+        },
+      })),
+    }));
+
+    const { GET } = await import("./route");
+    const response = await GET(new Request("http://localhost/api/player-profiles/4034?diagnostics=1"), { params: Promise.resolve({ playerId: "4034" }) });
+    const payload = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(payload.diagnostics.productionWarning).toContain("Production is not configured for remote profile storage");
+    expect(payload.diagnostics.storage.productionWarning).toContain("Production is not configured for remote profile storage");
+  });
 });
 
 function repoMock(overrides: Record<string, unknown> = {}) {
@@ -177,6 +199,7 @@ function repoMock(overrides: Record<string, unknown> = {}) {
       manifestLoaded: false,
       manifestProfileCount: null,
       shardLoaded: false,
+      productionWarning: null,
       storage: {
         storageMode: "local",
         storageProvider: "local",
@@ -189,6 +212,7 @@ function repoMock(overrides: Record<string, unknown> = {}) {
         selectedShard: null,
         configErrors: [],
         configWarnings: [],
+        productionWarning: null,
         supabaseUrlDefined: false,
         supabaseServiceRoleDefined: false,
       },

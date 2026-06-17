@@ -35,6 +35,14 @@ describe("profile shard storage", () => {
     expect(diagnostics.storage.configErrors.length).toBeGreaterThan(0);
   });
 
+  it("warns when production is not configured for remote storage", () => {
+    const config = resolveProfileShardStoreConfig({ env: { NODE_ENV: "production" } });
+
+    expect(config.mode).toBe("local");
+    expect(config.productionWarning).toBe("Production is not configured for remote profile storage. Local artifacts may be unavailable in Vercel.");
+    expect(config.warnings).toContain(config.productionWarning);
+  });
+
   it("uses local sharded artifacts when no remote env is set", async () => {
     const manifestPath = await writeShardedProfiles([profile({ sleeperId: "s1" })]);
     const repo = await createPlayerProfileRepository({ artifactPath: manifestPath });
@@ -84,6 +92,32 @@ describe("profile shard storage", () => {
     });
   });
 
+  it("remote mode can load mocked Supabase shards without local artifacts", async () => {
+    const manifestPath = await writeShardedProfiles([profile({ sleeperId: "s1" })]);
+    const manifestDir = path.dirname(manifestPath);
+    const store = createSupabaseProfileShardStore(
+      resolveProfileShardStoreConfig({
+        localManifestPath: path.join(os.tmpdir(), "missing-local-profile-manifest.json"),
+        env: {
+          PROFILE_STORAGE_MODE: "remote",
+          PROFILE_STORAGE_PROVIDER: "supabase",
+          PROFILE_STORAGE_BUCKET: "bucket",
+          PROFILE_STORAGE_PREFIX: "player-profiles/latest",
+          NEXT_PUBLIC_SUPABASE_URL: "https://example.supabase.co",
+          SUPABASE_SERVICE_ROLE_KEY: "service-role",
+        },
+      }),
+      supabaseMock({
+        "player-profiles/latest/manifest.json": readText(manifestPath),
+        "player-profiles/latest/shards/shard-000.json": readText(path.join(manifestDir, "shards", "shard-000.json")),
+      })
+    );
+
+    await expect(store.loadManifest()).resolves.toMatchObject({ status: "ready" });
+    await expect(store.loadShard("shards/shard-000.json")).resolves.toMatchObject({ status: "ready" });
+    expect(store.diagnostics().source).toBe("supabase_storage");
+  });
+
   it("reports an invalid remote shard without guessing", async () => {
     const store = createSupabaseProfileShardStore(
       resolveProfileShardStoreConfig({
@@ -124,6 +158,37 @@ describe("profile shard storage", () => {
 
     expect(result.valid).toBe(false);
     expect(result.errors[0]).toContain("Shard is missing");
+  });
+
+  it("does not include local profile shards in Next.js function tracing", () => {
+    const nextConfigSource = readText(path.join(process.cwd(), "next.config.ts"));
+
+    expect(nextConfigSource).not.toContain("./artifacts/projections/player-profiles-sharded/**/*");
+    expect(nextConfigSource).toContain("./data/**/*");
+    expect(nextConfigSource).toContain("Do not bundle player profile shards into Vercel functions.");
+  });
+
+  it("ignores generated profile and large nflverse artifacts", () => {
+    const gitignore = readText(path.join(process.cwd(), ".gitignore"));
+
+    for (const ignoredPath of [
+      "artifacts/projections/player-profiles.json",
+      "artifacts/projections/player-profiles-sharded/",
+      "artifacts/projections/player-profiles-shards-diagnostics.json",
+      "artifacts/projections/player-profile-remote-diagnostics.json",
+      "artifacts/projections/player-profile-read-model-diagnostics.json",
+      "artifacts/projections/player-profiles-diagnostics.json",
+      "artifacts/projections/profile-evidence-diagnostics.csv",
+      "artifacts/projections/profile-shadow-scoring-diagnostics.json",
+      "data/nflverse/player_stats_2018_2025.csv",
+      "data/nflverse/rosters_2018_2025.csv",
+      "data/nflverse/snap_counts_2018_2025.csv",
+      "data/nflverse/participation_2018_2025.csv",
+      "data/nflverse/pbp_2023_2025.csv",
+      "data/nflverse/pbp_2018_2025.csv",
+    ]) {
+      expect(gitignore).toContain(ignoredPath);
+    }
   });
 });
 

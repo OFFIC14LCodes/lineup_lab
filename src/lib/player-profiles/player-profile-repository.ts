@@ -87,6 +87,7 @@ export type PlayerProfileRuntimeDiagnostics = {
   manifestLoaded: boolean;
   manifestProfileCount: number | null;
   shardLoaded: boolean;
+  productionWarning: string | null;
   shardedArtifacts?: {
     manifestPath: string;
     manifestSizeBytes: number | null;
@@ -515,6 +516,7 @@ async function buildRuntimeDiagnostics(input: {
     manifestLoaded: storage.manifestLoaded,
     manifestProfileCount: storage.manifestProfileCount,
     shardLoaded: storage.shardLoaded,
+    productionWarning: storage.productionWarning,
     shardedArtifacts: input.manifest ? {
       manifestPath: input.artifactPath,
       manifestSizeBytes: input.manifest.sizes.manifestSizeBytes,
@@ -543,6 +545,9 @@ function knownLookup(result: PlayerProfileLookupResult): PlayerProfileKnownLooku
 }
 
 function localSingleStorageDiagnostics(): ProfileShardStoreDiagnostics {
+  const productionWarning = process.env.NODE_ENV === "production"
+    ? "Production is not configured for remote profile storage. Local artifacts may be unavailable in Vercel."
+    : null;
   return {
     storageMode: "local",
     storageProvider: "local",
@@ -554,7 +559,8 @@ function localSingleStorageDiagnostics(): ProfileShardStoreDiagnostics {
     shardLoaded: false,
     selectedShard: null,
     configErrors: [],
-    configWarnings: [],
+    configWarnings: productionWarning ? [productionWarning] : [],
+    productionWarning,
     supabaseUrlDefined: Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL),
     supabaseServiceRoleDefined: Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY),
   };

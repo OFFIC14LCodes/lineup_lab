@@ -93,6 +93,7 @@
     "profiles:shards:diagnostics": "tsx scripts/player-profile-read-model-diagnostics.ts",
     "profiles:upload": "tsx scripts/upload-player-profile-shards.ts",
     "profiles:remote:diagnostics": "tsx scripts/player-profile-remote-diagnostics.ts",
+    "profiles:storage:verify": "tsx scripts/verify-profile-storage-config.ts",
     "profile:evidence:diagnostics": "tsx scripts/profile-evidence-diagnostics.ts",
     "profile:shadow:diagnostics": "tsx scripts/profile-shadow-scoring-diagnostics.ts",
     "sleeper:export": "tsx scripts/export-sleeper-players.ts",
