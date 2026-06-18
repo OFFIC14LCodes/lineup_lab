@@ -92,9 +92,14 @@ export function RankingsUpload({ leagues = [] }: { leagues?: LeagueOption[] }) {
         Supported headers include player, player name, pos, tm, overall_rank, proj, fantasy_points,
         dynasty, best_ball, superflex, and te_premium.
       </p>
-      <label className="rf-button mt-4 cursor-pointer">
-        <Upload className="h-4 w-4" />
-        {loading ? "Uploading..." : "Choose CSV"}
+      <label className="mt-4 flex cursor-pointer flex-col items-center gap-3 rounded-xl border-2 border-dashed border-electric/20 bg-electric/5 px-6 py-8 text-center transition-colors hover:border-electric/40 hover:bg-electric/10">
+        <div className="flex h-10 w-10 items-center justify-center rounded-full border border-electric/30 bg-electric/10 text-electric">
+          <Upload className="h-5 w-5" />
+        </div>
+        <div>
+          <span className="font-semibold text-slate-200">{loading ? "Uploading…" : "Drop a CSV or click to browse"}</span>
+          <p className="mt-1 text-xs text-slate-500">Accepts .csv files — headers auto-detected</p>
+        </div>
         <input className="hidden" type="file" accept=".csv,text/csv" onChange={onFileChange} />
       </label>
       {status ? <p className="mt-3 text-sm text-slate-300">{status}</p> : null}

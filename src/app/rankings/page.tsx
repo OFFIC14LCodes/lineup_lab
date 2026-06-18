@@ -45,15 +45,20 @@ export default async function RankingsPage({
           <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
             <h2 className="text-xl font-bold">Latest rankings</h2>
             <div className="flex flex-wrap gap-2 text-sm">
-              {["all", "matched", "unmatched", "ambiguous"].map((item) => (
+              {[
+                { value: "all", label: "All" },
+                { value: "matched", label: "Matched" },
+                { value: "unmatched", label: "Unmatched" },
+                { value: "ambiguous", label: "Needs Review" },
+              ].map(({ value, label }) => (
                 <Link
-                  key={item}
+                  key={value}
                   className={`rounded border px-3 py-2 ${
-                    filter === item ? "border-brand bg-brand text-background" : "border-line bg-panel2"
+                    filter === value ? "border-electric bg-electric text-background" : "border-line bg-panel2"
                   }`}
-                  href={`/rankings?filter=${item}`}
+                  href={`/rankings?filter=${value}`}
                 >
-                  {item}
+                  {label}
                 </Link>
               ))}
             </div>

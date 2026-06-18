@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Upload, UserPlus } from "lucide-react";
+import { ArrowRight, LayoutGrid, Swords, Upload, UserPlus } from "lucide-react";
 
 import { PageShell, Panel, Stat } from "@/components/ui";
 import { requireUser } from "@/lib/supabase/auth";
@@ -13,6 +13,27 @@ export default async function DashboardPage() {
     supabase.from("draft_rooms").select("*", { count: "exact", head: true }),
     supabase.from("fantasy_accounts").select("*").eq("platform", "sleeper").maybeSingle()
   ]);
+
+  const nextActions = [
+    {
+      href: "/connect/sleeper" as const,
+      icon: UserPlus,
+      label: "Connect Sleeper",
+      description: "Import your current-season leagues",
+    },
+    {
+      href: "/leagues" as const,
+      icon: LayoutGrid,
+      label: "View Leagues",
+      description: "Browse imported leagues and draft rooms",
+    },
+    {
+      href: "/rankings" as const,
+      icon: Upload,
+      label: "Upload Rankings",
+      description: "Load a CSV to power your draft board",
+    },
+  ];
 
   return (
     <PageShell>
@@ -28,27 +49,39 @@ export default async function DashboardPage() {
           </Link>
           <Link href="/rankings" className="rf-button secondary">
             <Upload className="h-4 w-4" />
-            Upload rankings
+            Upload Rankings
           </Link>
         </div>
       </div>
       <div className="mt-8 grid gap-4 md:grid-cols-3">
-        <Stat label="Imported leagues" value={leagues ?? 0} accent />
+        <Stat label="Leagues" value={leagues ?? 0} accent />
         <Stat label="Draft rooms" value={draftRooms ?? 0} />
-        <Stat label="Sleeper account" value={account?.platform_username ?? "Not connected"} />
+        <Stat label="Sleeper account" value={account?.platform_username ?? "—"} />
       </div>
       <Panel className="mt-8">
-        <h2 className="text-xl font-bold">Next actions</h2>
+        <div className="flex items-center gap-2">
+          <Swords className="h-4 w-4 text-electric" />
+          <h2 className="text-xl font-bold">Next Actions</h2>
+        </div>
         <div className="mt-4 grid gap-3 md:grid-cols-3">
-          <Link className="rounded-md border border-line bg-panel2 p-4" href="/connect/sleeper">
-            Connect or refresh Sleeper leagues
-          </Link>
-          <Link className="rounded-md border border-line bg-panel2 p-4" href="/leagues">
-            Open imported league list
-          </Link>
-          <Link className="rounded-md border border-line bg-panel2 p-4" href="/rankings">
-            Upload draft rankings CSV
-          </Link>
+          {nextActions.map(({ href, icon: Icon, label, description }) => (
+            <Link
+              key={href}
+              href={href}
+              className="group flex items-start gap-3 rounded-xl border border-line bg-panel2 p-4 transition-colors hover:border-electric/30 hover:bg-electric/5"
+            >
+              <div className="mt-0.5 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg border border-electric/20 bg-electric/10 text-electric transition-colors group-hover:bg-electric/20">
+                <Icon className="h-4 w-4" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center justify-between gap-1">
+                  <span className="font-semibold text-slate-100">{label}</span>
+                  <ArrowRight className="h-3.5 w-3.5 flex-shrink-0 text-slate-500 transition-colors group-hover:text-electric" />
+                </div>
+                <p className="mt-0.5 text-xs text-slate-400">{description}</p>
+              </div>
+            </Link>
+          ))}
         </div>
       </Panel>
     </PageShell>

@@ -30,7 +30,7 @@ export function SyncPlayersButton() {
       <div className="flex flex-col justify-between gap-3 md:flex-row md:items-center">
         <div>
           <h2 className="font-bold">Sleeper player pool</h2>
-          <p className="mt-1 text-sm text-slate-400">Sync active NFL player metadata for matching and fallback boards.</p>
+          <p className="mt-1 text-sm text-slate-400">Run this before uploading rankings to ensure accurate player name matching.</p>
         </div>
         <button className="rf-button secondary" onClick={syncPlayers} disabled={loading}>
           <DatabaseZap className="h-4 w-4" />

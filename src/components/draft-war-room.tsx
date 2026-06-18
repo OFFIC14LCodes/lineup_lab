@@ -15,6 +15,7 @@ import {
 } from "@/lib/draft/war-room-recommendation-experiment-ui";
 import { buildBlackbirdBoard, type BlackbirdBoardRow, type BlackbirdBoardSortKey } from "@/lib/draft/blackbird-board";
 import { applyLivePlanFitToBoardRows, buildLivePlanStatus, type LivePlanStatus } from "@/lib/draft/live-plan-status";
+import { buildWarRoomLiveState, type WarRoomLiveState } from "@/lib/draft/war-room-live-state";
 import {
   draftBoardPositionBadgeClass,
   draftBoardPositionCardClass,
@@ -24,8 +25,9 @@ import { buildPlayerProfileEvidence, type PlayerProfileEvidence } from "@/lib/pl
 import type { PlayerProfileReadModel } from "@/lib/player-profiles/player-profile-read-model";
 import type { PlayerProfileScoringMetadata } from "@/lib/player-profiles/player-profile-rescoring";
 import { buildPreDraftStrategyUiViewModel } from "@/lib/draft/pre-draft-strategy-ui";
-import { projectionTrustBadgeLabel } from "@/lib/projections/projection-trust";
 import type { WarRoomRecommendationResult, WarRoomRecommendationRow, WarRoomRecommendationTier } from "@/lib/draft/war-room-recommendations";
+import { buildWarRoomAiContext, buildWarRoomGmBrief, type WarRoomAiBoardPlayer, type WarRoomGmBrief } from "@/lib/ai";
+import { buildWarRoomPlayerReasonStack, type WarRoomPlayerReasonStack } from "@/lib/draft/war-room-player-reasons";
 
 type RecommendationTier = "elite_target" | "strong_target" | "good_value" | "depth_option" | "avoid_for_now";
 type InputCompleteness = "full" | "partial" | "rankings_only" | "fallback_only";
@@ -368,7 +370,7 @@ type StrategyLoadState = {
   error: string | null;
 };
 
-const POSITIONS = ["All", "QB", "RB", "WR", "TE", "K", "DEF", "DL", "LB", "DB"];
+const BOARD_POSITION_FILTERS = ["All", "QB", "RB", "WR", "TE", "K", "DEF", "DL", "LB", "DB"];
 const MATCH_FILTERS = ["All", "Matched", "Issues"];
 const BOARD_SORTS: Array<{ value: BlackbirdBoardSortKey; label: string }> = [
   { value: "blackbird", label: "Blackbird rank" },
@@ -381,6 +383,34 @@ const BOARD_VIEW_MODES = [
   { value: "available_blackbird", label: "Available Blackbird Rank" },
 ] as const;
 type BoardViewMode = (typeof BOARD_VIEW_MODES)[number]["value"];
+const BOARD_VIEW_MODE_COPY: Record<BoardViewMode, { label: string; description: string; empty: string }> = {
+  draft_suggestions: {
+    label: "Draft Suggestions",
+    description: "Dynamic live ordering for available players based on your roster, timing, plan fit, and current draft state.",
+    empty: "No Draft Suggestions match these filters. Clear filters or switch to Available Blackbird Rank to inspect remaining players.",
+  },
+  full_blackbird: {
+    label: "Full Blackbird Rank",
+    description: "Static league-specific power ranking across drafted and undrafted draftable players.",
+    empty: "No Full Blackbird Rank rows match these filters. Clear filters to review the static league board.",
+  },
+  available_blackbird: {
+    label: "Available Blackbird Rank",
+    description: "Remaining undrafted players sorted by static Blackbird Power Rank.",
+    empty: "No Available Blackbird Rank rows match these filters. Clear filters to review remaining ranked players.",
+  },
+};
+const SCORING_FOUNDATION_STATUS = {
+  liveScoringPath: "current path / v7-family",
+  v82Status: "scaffolded, disabled",
+  featureFlag: "BLACKBIRD_ENABLE_V8_2_EXPECTED_GAMES",
+  flagDefault: "disabled",
+  warRoomUsingV82: "no",
+  blackbirdRankUsingV82: "no",
+  draftSuggestionsUsingV82: "no",
+  supabaseProductionWritesUsingV82: "no",
+} as const;
+const SHOW_SCORING_FOUNDATION_STATUS = process.env.NODE_ENV !== "production";
 const POSITION_SORT_ORDER: Record<string, number> = {
   QB: 1,
   RB: 2,
@@ -396,7 +426,10 @@ const POSITION_SORT_ORDER: Record<string, number> = {
 export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRoomId: string; disableAutoSync?: boolean }) {
   const [state, setState] = useState<DraftState | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [syncError, setSyncError] = useState<string | null>(null);
   const [syncing, setSyncing] = useState(false);
+  const [lastStateLoadedAt, setLastStateLoadedAt] = useState<string | null>(null);
+  const [currentTime, setCurrentTime] = useState(() => new Date());
   const [positionFilter, setPositionFilter] = useState("All");
   const [matchFilter, setMatchFilter] = useState("All");
   const [boardSort, setBoardSort] = useState<BlackbirdBoardSortKey>("blackbird");
@@ -410,6 +443,7 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
     error: null,
   });
   const [selectedPlayerSummary, setSelectedPlayerSummary] = useState<SelectedPlayerSummary | null>(null);
+  const [selectedBoardRow, setSelectedBoardRow] = useState<BlackbirdBoardRow | null>(null);
   const [selectedHistoricalProfile, setSelectedHistoricalProfile] = useState<HistoricalProfileLoadState>({
     status: "idle",
     profile: null,
@@ -418,6 +452,10 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
     reason: null,
   });
   const [recommendationSource, setRecommendationSource] = useState<H10RecommendationSource>(DEFAULT_H10_RECOMMENDATION_SOURCE);
+  const [rosterOpen, setRosterOpen] = useState(true);
+  const [liveDetailsOpen, setLiveDetailsOpen] = useState(false);
+  const [strategyOpen, setStrategyOpen] = useState(false);
+  const [valuePreviewOpen, setValuePreviewOpen] = useState(false);
   const [strategyState, setStrategyState] = useState<StrategyLoadState>({
     status: "loading",
     strategy: null,
@@ -425,14 +463,20 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
   });
 
   const loadState = useCallback(async () => {
-    const response = await fetch(`/api/draft-rooms/${draftRoomId}/state`, { cache: "no-store" });
-    const payload = await response.json();
-    if (!response.ok) {
-      setError(payload.error ?? "Unable to load draft room.");
-      return;
+    try {
+      const response = await fetch(`/api/draft-rooms/${draftRoomId}/state`, { cache: "no-store" });
+      const payload = await response.json();
+      if (!response.ok) {
+        setError(payload.error ?? "Unable to load draft room.");
+        return;
+      }
+      setState(payload as DraftState);
+      setLastStateLoadedAt(new Date().toISOString());
+      setCurrentTime(new Date());
+      setError(null);
+    } catch {
+      setError("Unable to load draft room.");
     }
-    setState(payload as DraftState);
-    setError(null);
   }, [draftRoomId]);
 
   const loadStrategy = useCallback(async () => {
@@ -462,12 +506,19 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
 
   const syncNow = useCallback(async () => {
     setSyncing(true);
-    const response = await fetch(`/api/draft-rooms/${draftRoomId}/sync`, { method: "POST" });
-    if (!response.ok) {
-      const payload = await response.json();
-      setError(payload.error ?? "Sync failed.");
+    try {
+      const response = await fetch(`/api/draft-rooms/${draftRoomId}/sync`, { method: "POST" });
+      if (!response.ok) {
+        const payload = await response.json();
+        setSyncError(payload.error ?? "Sync failed.");
+      } else {
+        setSyncError(null);
+      }
+    } catch {
+      setSyncError("Sync failed.");
+    } finally {
+      setSyncing(false);
     }
-    setSyncing(false);
     await loadState();
     await loadStrategy();
   }, [draftRoomId, loadState, loadStrategy]);
@@ -531,6 +582,7 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
 
   const openPlayerProfile = useCallback(async (row: BlackbirdBoardRow) => {
     setSelectedPlayerSummary({ playerName: row.playerName, position: row.position, team: row.team });
+    setSelectedBoardRow(row);
     setSelectedPlayerProfile({ status: "loading", profile: null, error: null });
     void loadHistoricalPlayerProfile(row);
     if (!row.playerId) {
@@ -565,9 +617,51 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
     }
   }, [draftRoomId, loadHistoricalPlayerProfile]);
 
+  const openAvailablePlayerProfile = useCallback(async (player: AvailablePlayer) => {
+    setSelectedPlayerSummary({
+      playerName: player.player_name ?? "Unknown Player",
+      position: player.position,
+      team: player.team,
+    });
+    setSelectedBoardRow(null);
+    setSelectedHistoricalProfile({ status: "idle", profile: null, scoring: null, error: null, reason: null });
+    if (!player.matched_player_id) {
+      setSelectedPlayerProfile({
+        status: "error",
+        profile: null,
+        error: "League projection profile is not available for this player yet.",
+      });
+      return;
+    }
+    setSelectedPlayerProfile({ status: "loading", profile: null, error: null });
+    try {
+      const response = await fetch(
+        `/api/draft-rooms/${draftRoomId}/players/${encodeURIComponent(player.matched_player_id)}/profile`,
+        { cache: "no-store" }
+      );
+      const payload = await response.json();
+      if (!response.ok) {
+        setSelectedPlayerProfile({
+          status: "error",
+          profile: null,
+          error: payload.error ?? "Unable to load player profile.",
+        });
+        return;
+      }
+      setSelectedPlayerProfile({ status: "ready", profile: payload as PlayerProfileResponse, error: null });
+    } catch {
+      setSelectedPlayerProfile({
+        status: "error",
+        profile: null,
+        error: "Unable to load player profile.",
+      });
+    }
+  }, [draftRoomId]);
+
   const closePlayerProfile = useCallback(() => {
     setSelectedPlayerProfile({ status: "idle", profile: null, error: null });
     setSelectedPlayerSummary(null);
+    setSelectedBoardRow(null);
     setSelectedHistoricalProfile({ status: "idle", profile: null, scoring: null, error: null, reason: null });
   }, []);
 
@@ -578,6 +672,11 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
     const interval = window.setInterval(loadState, 5000);
     return () => window.clearInterval(interval);
   }, [disableAutoSync, loadState, loadStrategy, syncNow]);
+
+  useEffect(() => {
+    const interval = window.setInterval(() => setCurrentTime(new Date()), 1000);
+    return () => window.clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     setVisibleBoardRows(50);
@@ -695,9 +794,8 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
     [blackbirdBoard.rows, blackbirdPlayerPool, livePlanStatus, state]
   );
 
-  const filteredBoardRows = useMemo(() => {
-    const needle = search.trim().toLowerCase();
-    const viewRows = planFitBoardRows
+  const boardRowsForMode = useMemo(() => {
+    return planFitBoardRows
       .filter((row) => {
         if (boardViewMode === "draft_suggestions") return !row.drafted && row.draftSuggestionRank !== null;
         if (boardViewMode === "available_blackbird") return !row.drafted;
@@ -707,17 +805,121 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
         if (boardViewMode === "draft_suggestions") return (a.draftSuggestionRank ?? 999999) - (b.draftSuggestionRank ?? 999999);
         return a.blackbirdBoardRank - b.blackbirdBoardRank;
       });
-    return viewRows
+  }, [boardViewMode, planFitBoardRows]);
+
+  const availableBoardPositions = useMemo(() => {
+    const positions = new Set(boardRowsForMode.map((row) => row.position).filter((position): position is string => Boolean(position)));
+    return positions;
+  }, [boardRowsForMode]);
+
+  useEffect(() => {
+    if (positionFilter !== "All" && !availableBoardPositions.has(positionFilter)) {
+      setPositionFilter("All");
+    }
+  }, [availableBoardPositions, positionFilter]);
+
+  const filteredBoardRows = useMemo(() => {
+    const needle = normalizeBoardSearch(search);
+    return boardRowsForMode
       .filter((row) => positionFilter === "All" || row.position === positionFilter)
-      .filter((row) => !needle || row.playerName.toLowerCase().includes(needle))
+      .filter((row) => !needle || boardRowMatchesSearch(row, needle))
       .filter((row) => {
         if (matchFilter === "Matched") return Boolean(row.playerId);
         if (matchFilter === "Issues") return row.confidence === "low" || row.risk === "high" || row.dataStatus.projection === "unavailable";
         return true;
       });
-  }, [boardViewMode, matchFilter, planFitBoardRows, positionFilter, search]);
+  }, [boardRowsForMode, matchFilter, positionFilter, search]);
 
   const visibleBlackbirdRows = filteredBoardRows.slice(0, visibleBoardRows);
+  const boardViewCopy = BOARD_VIEW_MODE_COPY[boardViewMode];
+  const activeBoardFilterLabels = buildBoardFilterLabels({ search, positionFilter, matchFilter });
+  const boardEmptyText = search.trim() ? "No players match this search." : boardViewCopy.empty;
+  const liveState = useMemo(
+    () => buildWarRoomLiveState({
+      now: currentTime,
+      lastUpdatedAt: lastStateLoadedAt,
+      error: error ?? syncError,
+      syncing,
+      draftStatus: state?.room.status,
+      currentPickNumber: state?.currentPickNumber,
+      currentRound: state?.currentRound,
+      pickCount: state?.picks.length,
+    }),
+    [currentTime, error, lastStateLoadedAt, state?.currentPickNumber, state?.currentRound, state?.picks.length, state?.room.status, syncError, syncing]
+  );
+
+  const gmBrief = useMemo(() => {
+    if (!state) return buildWarRoomGmBrief(null);
+    const draftSuggestionRows = planFitBoardRows
+      .filter((row) => !row.drafted && row.draftSuggestionRank !== null)
+      .sort((a, b) => (a.draftSuggestionRank ?? 999999) - (b.draftSuggestionRank ?? 999999));
+    const fullRankRows = planFitBoardRows
+      .slice()
+      .sort((a, b) => a.blackbirdBoardRank - b.blackbirdBoardRank || a.playerName.localeCompare(b.playerName));
+    const availableRankRows = fullRankRows.filter((row) => !row.drafted);
+    const context = buildWarRoomAiContext({
+      draftRoomId,
+      leagueId: null,
+      league: {
+        name: state.league?.name ?? null,
+        isDynasty: state.league?.is_dynasty ?? null,
+        isBestBall: state.league?.is_best_ball ?? null,
+        isSuperflex: state.league?.is_superflex ?? null,
+        isTwoQb: state.league?.is_two_qb ?? null,
+        tePremium: state.league?.te_premium ?? null,
+        rosterPositions: state.league?.roster_positions_json ?? null,
+        scoringSettings: state.league?.scoring_settings_json ?? null,
+      },
+      draftState: {
+        currentPickNumber: state.currentPickNumber,
+        currentRound: state.currentRound,
+        picksUntilMyNextPick: state.picksUntilMyNextPick,
+        myDraftSlot: state.myDraftSlot,
+        teamCount: state.teamCount,
+        status: state.room.status,
+      },
+      rosterConstruction: {
+        positionCounts: state.positionCounts,
+        needs: state.positionNeeds.map((need) => ({
+          position: need.position,
+          label: need.label,
+          current: need.draftedCount,
+          target: need.directStarterRequirement,
+          need: need.deficit,
+          needLevel: need.needLevel,
+          note: need.note ?? null,
+        })),
+        planSummaries: buildRosterPlanSummaries(state).summaryLines,
+      },
+      myRoster: state.myRoster.map(toWarRoomAiPick),
+      recentPicks: state.picks.slice(-8).reverse().map(toWarRoomAiPick),
+      draftSuggestions: draftSuggestionRows.map(toWarRoomAiBoardPlayer),
+      fullBlackbirdRank: fullRankRows.map(toWarRoomAiBoardPlayer),
+      availableBlackbirdRank: availableRankRows.map(toWarRoomAiBoardPlayer),
+      positionScarcity: (livePlanStatus?.tierRiskStatus ?? []).map((row) => ({
+        position: row.position,
+        summary: row.summary,
+        risk: row.riskLevel,
+      })),
+      liveState: {
+        status: liveState.status,
+        lastUpdatedAt: liveState.lastUpdatedAt,
+        secondsSinceUpdate: liveState.secondsSinceUpdate,
+        warnings: liveState.warnings,
+      },
+      riskSummary: [
+        livePlanStatus?.statusSummary ?? null,
+        ...liveState.warnings,
+        ...(livePlanStatus?.safetyNotes ?? []),
+      ].filter((item): item is string => Boolean(item)),
+      confidenceSummary: [
+        `${blackbirdBoard.diagnostics.projectionRows} of ${blackbirdBoard.rows.length} board rows have projection inputs.`,
+        `${blackbirdBoard.diagnostics.marketRows} of ${blackbirdBoard.rows.length} board rows have Blackbird rank inputs.`,
+      ],
+      topN: 8,
+    });
+    return buildWarRoomGmBrief(context);
+  }, [blackbirdBoard.diagnostics, blackbirdBoard.rows.length, draftRoomId, livePlanStatus, liveState, planFitBoardRows, state]);
 
   if (error && !state) {
     return (
@@ -758,26 +960,35 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
             <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-slate-400">
               <span>Pick {state.currentPickNumber}</span>
               <span>Round {state.currentRound}</span>
-              <span>Until turn {state.picksUntilMyNextPick ?? "N/A"}</span>
+              {state.picksUntilMyNextPick !== null && state.picksUntilMyNextPick !== undefined ? (
+                <span className="flex items-center gap-1.5 rounded-full border border-electric/30 bg-electric/10 px-2.5 py-0.5 font-black text-electric">
+                  <span className="text-base">{state.picksUntilMyNextPick}</span>
+                  <span className="text-xs font-medium">until turn</span>
+                </span>
+              ) : null}
               <span>{state.picks.length} drafted</span>
             </div>
           </div>
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-            <div className="text-xs text-slate-500">
-              Last synced {state.room.last_synced_at ? new Date(state.room.last_synced_at).toLocaleTimeString() : "never"}
-            </div>
+          <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
+            <LiveSyncStatusIndicator liveState={liveState} sleeperLastSyncedAt={state.room.last_synced_at} />
             <button className="rf-button" onClick={syncNow} disabled={syncing}>
+              {state.room.status === "drafting" && !syncing ? (
+                <span className="h-2 w-2 flex-shrink-0 animate-pulse rounded-full bg-emerald-400" />
+              ) : null}
               <RefreshCw className="h-4 w-4" />
-              {syncing ? "Syncing..." : "Sync now"}
+              {syncing ? "Syncing..." : "Refresh draft state"}
             </button>
           </div>
         </div>
         {error ? <p className="mt-3 text-sm text-red-300">{error}</p> : null}
+        {syncError ? <p className="mt-2 text-sm text-gold">{syncError}</p> : null}
       </section>
+
+      <GmBriefPanel brief={gmBrief} />
 
       {strategyProminent ? <PreDraftStrategyPanel loadState={strategyState} prominent /> : null}
 
-      <div className="grid min-w-0 gap-5 2xl:grid-cols-[minmax(0,1fr)_380px]">
+      <div className="grid min-w-0 gap-5 xl:grid-cols-[minmax(0,1fr)_380px]">
         <section className="min-w-0 space-y-5">
           <section className="rf-panel overflow-hidden">
             <div className="border-b border-line p-4">
@@ -818,13 +1029,13 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
                   <div className="flex flex-wrap items-center gap-2">
                     <h2 className="text-xl font-bold">Blackbird Board</h2>
                     <span className="rounded-full border border-line bg-background px-2 py-1 text-[11px] uppercase tracking-wide text-slate-400">Read-only</span>
-                    <span className="rounded-full border border-brand/25 bg-brand/10 px-2 py-1 text-[11px] uppercase tracking-wide text-brand">Experimental</span>
+                    <span className="rounded-full border border-electric/25 bg-electric/10 px-2 py-1 text-[11px] uppercase tracking-wide text-electric">Experimental</span>
                   </div>
                   <p className="mt-1 text-sm text-slate-400">
-                    Draft Suggestion is live and available-only. Blackbird Rank is static league value across draftable players.
+                    Draft Suggestions are dynamic and available-only. Full Blackbird Rank is the static league board. Available Blackbird Rank filters that static board to remaining players.
                   </p>
                 </div>
-                <div className="grid gap-2 sm:grid-cols-[minmax(180px,1fr)_180px_120px_120px_160px]">
+                <div className="grid min-w-0 gap-2 sm:grid-cols-2 xl:grid-cols-[minmax(180px,1fr)_190px_120px_160px]">
                   <label className="relative block">
                     <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
                     <input
@@ -832,30 +1043,29 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
                       value={search}
                       onChange={(event) => setSearch(event.target.value)}
                       placeholder="Search players"
+                      aria-label="Search Blackbird Board players"
                     />
                   </label>
-                  <select className="rf-input" value={boardViewMode} onChange={(event) => setBoardViewMode(event.target.value as BoardViewMode)}>
+                  <select
+                    className="rf-input"
+                    value={boardViewMode}
+                    onChange={(event) => setBoardViewMode(event.target.value as BoardViewMode)}
+                    aria-label="Blackbird Board view mode"
+                  >
                     {BOARD_VIEW_MODES.map((mode) => (
                       <option key={mode.value} value={mode.value}>
                         {mode.label}
                       </option>
                     ))}
                   </select>
-                  <select className="rf-input" value={positionFilter} onChange={(event) => setPositionFilter(event.target.value)}>
-                    {POSITIONS.map((position) => (
-                      <option key={position} value={position}>
-                        {position}
-                      </option>
-                    ))}
-                  </select>
-                  <select className="rf-input" value={matchFilter} onChange={(event) => setMatchFilter(event.target.value)}>
+                  <select className="rf-input" value={matchFilter} onChange={(event) => setMatchFilter(event.target.value)} aria-label="Board match filter">
                     {MATCH_FILTERS.map((filter) => (
                       <option key={filter} value={filter}>
                         {filter}
                       </option>
                     ))}
                   </select>
-                  <select className="rf-input" value={boardSort} onChange={(event) => setBoardSort(event.target.value as BlackbirdBoardSortKey)}>
+                  <select className="rf-input" value={boardSort} onChange={(event) => setBoardSort(event.target.value as BlackbirdBoardSortKey)} aria-label="Board sort order">
                     {BOARD_SORTS.map((sort) => (
                       <option key={sort.value} value={sort.value}>
                         {sort.label}
@@ -864,14 +1074,51 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
                   </select>
                 </div>
               </div>
-              <div className="mt-3 text-xs text-slate-500">
-                Showing {visibleBlackbirdRows.length} of {filteredBoardRows.length} players · {blackbirdBoard.diagnostics.marketRows} ranked · {blackbirdBoard.diagnostics.projectionRows} with projections
+              <div className="mt-3 flex flex-wrap items-center gap-2">
+                {BOARD_POSITION_FILTERS.map((position) => {
+                  const available = position === "All" || availableBoardPositions.has(position);
+                  const active = positionFilter === position;
+                  return (
+                    <button
+                      key={position}
+                      type="button"
+                      className={`rounded-full border px-3 py-1 text-xs font-black transition ${
+                        active
+                          ? "border-electric/40 bg-electric/15 text-electric"
+                          : available
+                            ? "border-line bg-background/70 text-slate-300 hover:border-electric/30 hover:text-electric"
+                            : "cursor-not-allowed border-line/60 bg-background/40 text-slate-600"
+                      }`}
+                      disabled={!available}
+                      aria-pressed={active}
+                      aria-label={position === "All" ? "Show all positions" : `Filter board to ${position}`}
+                      onClick={() => setPositionFilter(position)}
+                    >
+                      {position}
+                    </button>
+                  );
+                })}
+              </div>
+              <div className="mt-3 rounded-md border border-line/70 bg-background/45 px-3 py-2">
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="min-w-0">
+                    <div className="text-xs font-black uppercase tracking-wide text-slate-300">{boardViewCopy.label}</div>
+                    <p className="mt-0.5 text-xs leading-relaxed text-slate-500">{boardViewCopy.description}</p>
+                    <p className="mt-1 break-words text-xs text-slate-500">
+                      Filtered by: {activeBoardFilterLabels.length ? activeBoardFilterLabels.join(" · ") : "none"}
+                    </p>
+                    <LiveStateWarning liveState={liveState} />
+                  </div>
+                  <div className="shrink-0 text-xs text-slate-500 sm:text-right">
+                    Showing {visibleBlackbirdRows.length} of {filteredBoardRows.length} filtered · {boardRowsForMode.length} in this view · {blackbirdBoard.diagnostics.marketRows} ranked · {blackbirdBoard.diagnostics.projectionRows} with projections
+                  </div>
+                </div>
               </div>
             </div>
-            <AvailablePlayersTable rows={visibleBlackbirdRows} onSelectPlayer={openPlayerProfile} />
+            <AvailablePlayersTable rows={visibleBlackbirdRows} emptyText={boardEmptyText} onSelectPlayer={openPlayerProfile} />
             <div className="flex flex-col gap-2 border-t border-line bg-panel2/40 p-4 sm:flex-row sm:items-center sm:justify-between">
               <p className="text-xs text-slate-400">
-                Showing {visibleBlackbirdRows.length} of {filteredBoardRows.length} filtered players. Filters and sort are local to this browser view.
+                Showing {visibleBlackbirdRows.length} of {filteredBoardRows.length} filtered players. Search, filters, load-more, and sort are local to this browser view.
               </p>
               {visibleBlackbirdRows.length < filteredBoardRows.length ? (
                 <button className="rf-button-secondary justify-center" type="button" onClick={() => setVisibleBoardRows((count) => count + 50)}>
@@ -883,18 +1130,19 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
         </section>
 
         <aside className="min-w-0 space-y-5">
-          {!strategyProminent ? <PreDraftStrategyPanel loadState={strategyState} /> : null}
+          {/* 1. Draft Signal — primary decision surface */}
+          <DraftSignalPanel
+            livePlanStatus={livePlanStatus}
+            topPlayer={state.recommendations[0] ?? null}
+            picksUntilTurn={state.picksUntilMyNextPick}
+            isDrafting={state.room.status === "drafting"}
+            onSelectPlayer={() => {
+              const top = state.recommendations[0];
+              if (top) void openAvailablePlayerProfile(top);
+            }}
+          />
 
-          <LivePlanStatusPanel status={livePlanStatus} />
-
-          <SidePanel title="My Roster Construction">
-            <RosterConstructionSummary state={state} />
-            <div className="mt-3 rounded-md border border-line bg-panel2 px-3 py-2 text-sm">
-              Total drafted: <span className="font-bold">{totalDraftedByMe}</span>
-            </div>
-            <NeedsList needs={state.topNeeds} />
-          </SidePanel>
-
+          {/* 2. Recommended Targets — full target list */}
           <SidePanel title="Recommended Targets">
             {state.h10InternalTrustedExperimentAllowed ? (
               <InternalTrustedRecommendationPanel
@@ -938,22 +1186,86 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
             <ScoringMetadata metadata={state.scoringMetadata} />
           </SidePanel>
 
-          {!state.h10RecommendationExperimentEnabled && (state.rankingsUploaded || state.recommendations.length > 0) && (state.h10RecommendationPreview || state.h10RecommendationDiagnostics) ? (
-            <SidePanel title="Blackbird Value Preview">
-              <H10RecommendationPreview
-                rows={state.h10RecommendationPreview ?? []}
-                diagnostics={state.h10RecommendationDiagnostics ?? null}
-                experimentDiagnostics={state.h10RecommendationExperimentDiagnostics ?? null}
-                mode="preview"
-              />
-            </SidePanel>
+          {/* 3. My Roster Construction — collapsible, open by default */}
+          <details
+            open={rosterOpen}
+            onToggle={(e) => setRosterOpen(e.currentTarget.open)}
+            className="rf-panel overflow-hidden p-0"
+          >
+            <summary className="flex cursor-pointer items-center justify-between px-4 py-3 text-sm font-bold text-slate-200 hover:text-electric">
+              Roster Construction
+              <ChevronDown className="h-4 w-4 opacity-50" />
+            </summary>
+            <div className="border-t border-line/50 px-4 pb-4 pt-3">
+              <RosterConstructionSummary state={state} />
+              <div className="mt-3 rounded-md border border-line bg-panel2 px-3 py-2 text-sm">
+                Total drafted: <span className="font-bold">{totalDraftedByMe}</span>
+              </div>
+              <NeedsList needs={state.topNeeds} />
+            </div>
+          </details>
+
+          {/* 4. Pre-Draft Strategy — collapsible, closed by default */}
+          {!strategyProminent ? (
+            <details
+              open={strategyOpen}
+              onToggle={(e) => setStrategyOpen(e.currentTarget.open)}
+            >
+              <summary className="flex cursor-pointer items-center justify-between rounded-md border border-line bg-panel px-4 py-3 text-sm font-bold text-slate-200 hover:border-electric/30 hover:text-electric">
+                Strategy Preview
+                <ChevronDown className="h-4 w-4 opacity-50" />
+              </summary>
+              <div className="mt-2">
+                <PreDraftStrategyPanel loadState={strategyState} />
+              </div>
+            </details>
           ) : null}
+
+          {/* 5. Live Plan Details — collapsible, closed by default */}
+          <details
+            open={liveDetailsOpen}
+            onToggle={(e) => setLiveDetailsOpen(e.currentTarget.open)}
+          >
+            <summary className="flex cursor-pointer items-center justify-between rounded-md border border-line bg-panel px-4 py-3 text-sm font-bold text-slate-200 hover:border-electric/30 hover:text-electric">
+              Live Plan Details
+              <ChevronDown className="h-4 w-4 opacity-50" />
+            </summary>
+            <div className="mt-2">
+              <LivePlanStatusPanel status={livePlanStatus} />
+            </div>
+          </details>
+
+          {/* 6. Blackbird Value Preview — gated, collapsible, closed by default */}
+          {!state.h10RecommendationExperimentEnabled && (state.rankingsUploaded || state.recommendations.length > 0) && (state.h10RecommendationPreview || state.h10RecommendationDiagnostics) ? (
+            <details
+              open={valuePreviewOpen}
+              onToggle={(e) => setValuePreviewOpen(e.currentTarget.open)}
+              className="rf-panel overflow-hidden p-0"
+            >
+              <summary className="flex cursor-pointer items-center justify-between px-4 py-3 text-sm font-bold text-slate-200 hover:text-electric">
+                Blackbird Value Preview
+                <ChevronDown className="h-4 w-4 opacity-50" />
+              </summary>
+              <div className="border-t border-line/50 px-4 pb-4 pt-3">
+                <H10RecommendationPreview
+                  rows={state.h10RecommendationPreview ?? []}
+                  diagnostics={state.h10RecommendationDiagnostics ?? null}
+                  experimentDiagnostics={state.h10RecommendationExperimentDiagnostics ?? null}
+                  mode="preview"
+                />
+              </div>
+            </details>
+          ) : null}
+
+          {/* Dev-only */}
+          {SHOW_SCORING_FOUNDATION_STATUS ? <ScoringFoundationStatusPanel /> : null}
         </aside>
       </div>
       {selectedPlayerProfile.status !== "idle" ? (
         <PlayerProfileModal
           loadState={selectedPlayerProfile}
           fallbackPlayer={selectedPlayerSummary}
+          boardRow={selectedBoardRow}
           historicalProfileState={selectedHistoricalProfile}
           onClose={closePlayerProfile}
         />
@@ -1010,11 +1322,11 @@ function SleeperStyleDraftBoard({
           {teams.map((team) => (
             <div
               key={team.rosterId}
-              className={`min-w-0 bg-panel2 px-2 py-2 text-[11px] ${team.draftSlot === myDraftSlot ? "ring-1 ring-inset ring-gold/60" : ""}`}
+              className={`min-w-0 bg-panel2 px-2 py-2 text-[11px] ${team.draftSlot === myDraftSlot ? "ring-1 ring-inset ring-electric/60" : ""}`}
             >
               <div className="truncate font-black text-slate-100">Slot {team.draftSlot}</div>
               <div className="mt-1 truncate text-slate-400">{team.label}</div>
-              {team.draftSlot === myDraftSlot ? <div className="mt-1 text-[11px] font-bold uppercase tracking-wide text-gold">My slot</div> : null}
+              {team.draftSlot === myDraftSlot ? <div className="mt-1 text-[11px] font-bold uppercase tracking-wide text-electric">My slot</div> : null}
             </div>
           ))}
           {Array.from({ length: maxRound }, (_, index) => index + 1).flatMap((round) => [
@@ -1050,9 +1362,9 @@ function PositionLegend() {
 function DraftPickCard({ pick, expectedPickNo, isCurrent }: { pick: PickLine | null; expectedPickNo: number; isCurrent: boolean }) {
   if (!pick) {
     return (
-      <div className={`min-h-[72px] min-w-0 bg-background/70 p-1.5 ${isCurrent ? "outline outline-2 outline-gold/70" : ""}`}>
+      <div className={`min-h-[72px] min-w-0 bg-background/70 p-1.5 ${isCurrent ? "outline outline-2 outline-electric/70" : ""}`}>
         <div className="text-[11px] font-semibold text-slate-600">#{expectedPickNo}</div>
-        {isCurrent ? <div className="mt-3 text-xs font-bold text-gold">On clock</div> : null}
+        {isCurrent ? <div className="mt-3 text-xs font-bold text-electric">On clock</div> : null}
       </div>
     );
   }
@@ -1107,6 +1419,272 @@ function TeamRosterStrip({ team, picks }: { team: DraftBoardTeam; picks: PickLin
         {!picks.length ? <p className="text-sm text-slate-400">No synced picks for this team yet. Sync Sleeper draft picks to populate this roster view.</p> : null}
       </div>
     </div>
+  );
+}
+
+function GmBriefPanel({ brief }: { brief: WarRoomGmBrief }) {
+  const hasContext = !brief.headline.startsWith("Brief will appear");
+  return (
+    <section className="rf-panel p-4 sm:p-5">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-center gap-2">
+            <h2 className="text-lg font-black">GM Brief</h2>
+            <span className="rounded-full border border-line bg-background px-2 py-1 text-[11px] uppercase tracking-wide text-slate-400">Preview</span>
+            <span className="rounded-full border border-electric/25 bg-electric/10 px-2 py-1 text-[11px] uppercase tracking-wide text-electric">Deterministic</span>
+          </div>
+          <p className="mt-2 text-sm font-semibold text-slate-100">{brief.headline}</p>
+          <p className="mt-1 text-sm text-slate-400">
+            {hasContext ? brief.topRecommendationSummary : "Brief will appear once draft context is available."}
+          </p>
+        </div>
+        <div className="grid shrink-0 gap-2 text-xs text-slate-400 sm:grid-cols-2 lg:w-[420px]">
+          <div className="rounded-md border border-line/70 bg-background/45 px-3 py-2">
+            <div className="font-bold uppercase tracking-wide text-slate-500">Roster</div>
+            <p className="mt-1">{brief.rosterNeedSummary}</p>
+          </div>
+          <div className="rounded-md border border-line/70 bg-background/45 px-3 py-2">
+            <div className="font-bold uppercase tracking-wide text-slate-500">Scarcity / Risk</div>
+            <p className="mt-1">{brief.scarcitySummary}</p>
+          </div>
+        </div>
+      </div>
+      <details className="group mt-3">
+        <summary className="flex cursor-pointer list-none items-center justify-between rounded-md border border-line/70 bg-background/45 px-3 py-2 text-sm font-bold text-slate-300">
+          <span>Brief details</span>
+          <ChevronDown className="h-4 w-4 transition group-open:rotate-180" />
+        </summary>
+        <div className="mt-3 grid gap-3 lg:grid-cols-2">
+          <div>
+            <div className="text-xs font-bold uppercase tracking-wide text-slate-500">Watch List</div>
+            {brief.watchList.length ? (
+              <div className="mt-2 flex flex-wrap gap-2">
+                {brief.watchList.map((item) => (
+                  <span key={item} className="rounded-full border border-line bg-panel2 px-2.5 py-1 text-xs text-slate-300">
+                    {item}
+                  </span>
+                ))}
+              </div>
+            ) : (
+              <p className="mt-2 text-sm text-slate-500">No watch-list items are available yet.</p>
+            )}
+          </div>
+          <div>
+            <div className="text-xs font-bold uppercase tracking-wide text-slate-500">Data Gaps</div>
+            {brief.dataGaps.length ? (
+              <div className="mt-2 flex flex-wrap gap-2">
+                {brief.dataGaps.map((gap) => (
+                  <span key={gap} className="rounded-full border border-gold/25 bg-gold/10 px-2.5 py-1 text-xs text-gold">
+                    {gap}
+                  </span>
+                ))}
+              </div>
+            ) : (
+              <p className="mt-2 text-sm text-slate-500">No top-player data gaps surfaced in this brief.</p>
+            )}
+          </div>
+        </div>
+        <div className="mt-3 rounded-md border border-line/70 bg-panel2/50 px-3 py-2 text-xs text-slate-500">
+          {brief.draftStateSummary} {brief.riskSummary} Read-only preview; no AI API calls and not included in scoring, Blackbird Rank, or Draft Suggestions.
+        </div>
+      </details>
+    </section>
+  );
+}
+
+function LiveSyncStatusIndicator({
+  liveState,
+  sleeperLastSyncedAt,
+}: {
+  liveState: WarRoomLiveState;
+  sleeperLastSyncedAt: string | null;
+}) {
+  const className =
+    liveState.status === "fresh"
+      ? "border-emerald-400/30 bg-emerald-500/10 text-emerald-200"
+      : liveState.status === "watch"
+        ? "border-electric/30 bg-electric/10 text-electric"
+        : liveState.status === "stale"
+          ? "border-gold/35 bg-gold/10 text-gold"
+          : liveState.status === "error"
+            ? "border-red-400/30 bg-red-500/10 text-red-200"
+            : "border-line bg-background text-slate-400";
+  return (
+    <div className="rounded-md border border-line/70 bg-background/50 px-3 py-2 text-xs">
+      <div className="flex flex-wrap items-center gap-2">
+        <span className={`rounded-full border px-2 py-0.5 font-black uppercase tracking-wide ${className}`}>
+          {liveState.label}
+        </span>
+        <span className="text-slate-400">{liveState.draftStatusSummary}</span>
+      </div>
+      <div className="mt-1 text-slate-500">
+        Last updated {formatSyncAge(liveState.secondsSinceUpdate)}
+        {sleeperLastSyncedAt ? ` · Sleeper sync ${new Date(sleeperLastSyncedAt).toLocaleTimeString()}` : ""}
+      </div>
+    </div>
+  );
+}
+
+function LiveStateWarning({ liveState }: { liveState: WarRoomLiveState }) {
+  if (!liveState.warnings.length || liveState.status === "fresh") return null;
+  const warning = liveState.warnings[0];
+  const className =
+    liveState.status === "error"
+      ? "border-red-400/25 bg-red-500/10 text-red-200"
+      : "border-gold/30 bg-gold/10 text-gold";
+  return (
+    <p className={`mt-2 rounded-md border px-2 py-1 text-xs ${className}`}>
+      {warning}
+    </p>
+  );
+}
+
+function formatSyncAge(seconds: number | null): string {
+  if (seconds === null) return "unknown";
+  if (seconds < 60) return `${seconds}s ago`;
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+  if (minutes < 60) return remainingSeconds ? `${minutes}m ${remainingSeconds}s ago` : `${minutes}m ago`;
+  const hours = Math.floor(minutes / 60);
+  return `${hours}h ${minutes % 60}m ago`;
+}
+
+function DraftSignalPanel({
+  livePlanStatus,
+  topPlayer,
+  picksUntilTurn,
+  isDrafting,
+  onSelectPlayer,
+}: {
+  livePlanStatus: LivePlanStatus | null;
+  topPlayer: AvailablePlayer | null;
+  picksUntilTurn: number | null;
+  isDrafting: boolean;
+  onSelectPlayer: () => void;
+}) {
+  const activeSignals = livePlanStatus
+    ? [
+        ...livePlanStatus.triggeredContingencies.slice(0, 2).map((item) => ({
+          label: "Contingency active",
+          text: item.label,
+          tone: "gold" as const,
+        })),
+        ...livePlanStatus.tierRiskStatus
+          .filter((item) => item.riskLevel !== "low")
+          .slice(0, 2)
+          .map((item) => ({ label: "Tier risk rising", text: item.summary, tone: "red" as const })),
+        ...livePlanStatus.valueFallStatus.slice(0, 2).map((item) => ({
+          label: "Unexpected value signal",
+          text: item.summary,
+          tone: "brand" as const,
+        })),
+        ...livePlanStatus.waitPlanStatus
+          .filter((item) => item.status !== "not_waiting")
+          .slice(0, 2)
+          .map((item) => ({
+            label: item.status === "supported" ? "Wait plan supported" : "Wait plan weakening",
+            text: item.summary,
+            tone: item.status === "supported" ? ("green" as const) : ("gold" as const),
+          })),
+      ].slice(0, 6)
+    : [];
+
+  const visibleSignals = activeSignals.slice(0, 2);
+  const hiddenSignals = activeSignals.slice(2);
+
+  const tierLabel: Record<RecommendationTier, string> = {
+    elite_target: "Elite Target",
+    strong_target: "Strong Target",
+    good_value: "Good Value",
+    depth_option: "Depth",
+    avoid_for_now: "Avoid",
+  };
+
+  const tierClass: Record<RecommendationTier, string> = {
+    elite_target: "border-electric/30 bg-electric/10 text-electric",
+    strong_target: "border-emerald-400/30 bg-emerald-500/10 text-emerald-200",
+    good_value: "border-slate-500/30 bg-slate-500/10 text-slate-300",
+    depth_option: "border-slate-600/30 bg-slate-600/10 text-slate-400",
+    avoid_for_now: "border-red-400/25 bg-red-500/10 text-red-300",
+  };
+
+  return (
+    <SidePanel title="Draft Signal">
+      <div className="rounded-md border border-line bg-panel2 px-3 py-3">
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            {isDrafting ? <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" /> : null}
+            {livePlanStatus ? (
+              <LivePlanBadge status={livePlanStatus.overallStatus} label={livePlanStatus.statusLabel} />
+            ) : (
+              <span className="text-xs text-slate-500">No plan data</span>
+            )}
+          </div>
+          {picksUntilTurn !== null ? (
+            <span className="text-xs text-slate-400">
+              <span className="font-black text-slate-100">{picksUntilTurn}</span>{" "}
+              pick{picksUntilTurn === 1 ? "" : "s"} to turn
+            </span>
+          ) : null}
+        </div>
+        {livePlanStatus?.statusSummary ? (
+          <p className="mt-2 text-xs leading-relaxed text-slate-400">{livePlanStatus.statusSummary}</p>
+        ) : null}
+      </div>
+
+      {activeSignals.length > 0 ? (
+        <div className="mt-3 space-y-2">
+          {visibleSignals.map((signal, i) => (
+            <LiveSignal key={`signal-${i}`} label={signal.label} text={signal.text} tone={signal.tone} />
+          ))}
+          {hiddenSignals.length > 0 ? (
+            <details>
+              <summary className="cursor-pointer text-xs text-slate-500 hover:text-slate-300">
+                +{hiddenSignals.length} more signal{hiddenSignals.length === 1 ? "" : "s"}
+              </summary>
+              <div className="mt-2 space-y-2">
+                {hiddenSignals.map((signal, i) => (
+                  <LiveSignal key={`hidden-signal-${i}`} label={signal.label} text={signal.text} tone={signal.tone} />
+                ))}
+              </div>
+            </details>
+          ) : null}
+        </div>
+      ) : livePlanStatus ? (
+        <p className="mt-3 text-xs text-slate-500">No active signals.</p>
+      ) : null}
+
+      <div className="mt-3">
+        <div className="mb-1.5 text-[10px] font-black uppercase tracking-wide text-slate-500">Top Recommendation</div>
+        {topPlayer ? (
+          <button
+            type="button"
+            className="w-full rounded-md border border-electric/20 bg-electric/5 px-3 py-3 text-left transition-colors hover:border-electric/40 hover:bg-electric/10"
+            onClick={onSelectPlayer}
+          >
+            <div className="flex items-start justify-between gap-2">
+              <div>
+                <div className="font-bold text-slate-100">{topPlayer.player_name}</div>
+                <div className="mt-0.5 text-xs text-slate-400">
+                  {topPlayer.position ?? "—"} · {topPlayer.team ?? "—"}
+                </div>
+              </div>
+              <span className={`shrink-0 rounded-full border px-2 py-0.5 text-[10px] font-black uppercase tracking-wide ${tierClass[topPlayer.recommendationTier]}`}>
+                {tierLabel[topPlayer.recommendationTier]}
+              </span>
+            </div>
+            {topPlayer.reasons[0] ? (
+              <p className="mt-2 text-xs leading-relaxed text-slate-400">{topPlayer.reasons[0]}</p>
+            ) : null}
+            <PlanAlignmentChips labels={buildPlanAlignmentLabels(topPlayer)} compact />
+          </button>
+        ) : (
+          <div className="rounded-md border border-line bg-panel2 px-3 py-2 text-xs text-slate-500">
+            Plan alignment will appear once Draft Suggestions are loaded.
+          </div>
+        )}
+      </div>
+    </SidePanel>
   );
 }
 
@@ -1198,7 +1776,7 @@ function LivePlanBadge({ status, label }: { status: LivePlanStatus["overallStatu
     status === "on_plan" || status === "pre_draft"
       ? "border-emerald-400/30 bg-emerald-500/10 text-emerald-200"
       : status === "slightly_off_plan" || status === "off_plan_recoverable"
-        ? "border-brand/30 bg-brand/10 text-brand"
+        ? "border-electric/30 bg-electric/10 text-electric"
         : status === "contingency_active" || status === "needs_attention"
           ? "border-gold/35 bg-gold/10 text-gold"
           : "border-line bg-background text-slate-400";
@@ -1212,7 +1790,7 @@ function LiveSignal({ label, text, tone }: { label: string; text: string; tone: 
       : tone === "green"
         ? "border-emerald-400/25 bg-emerald-500/10 text-emerald-100"
         : tone === "brand"
-          ? "border-brand/25 bg-brand/10 text-brand"
+          ? "border-electric/25 bg-electric/10 text-electric"
           : "border-gold/30 bg-gold/10 text-gold";
   return (
     <div className={`rounded-md border px-3 py-2 text-sm ${className}`}>
@@ -1222,23 +1800,19 @@ function LiveSignal({ label, text, tone }: { label: string; text: string; tone: 
   );
 }
 
-function AvailablePlayersTable({ rows, onSelectPlayer }: { rows: BlackbirdBoardRow[]; onSelectPlayer: (row: BlackbirdBoardRow) => void }) {
+function AvailablePlayersTable({ rows, emptyText, onSelectPlayer }: { rows: BlackbirdBoardRow[]; emptyText: string; onSelectPlayer: (row: BlackbirdBoardRow) => void }) {
   return (
     <div className="overflow-x-auto">
-      <table className="w-full min-w-[1420px] text-left text-sm">
+      <table className="w-full min-w-[960px] text-left text-sm">
         <thead className="bg-panel2 text-xs uppercase text-slate-400">
           <tr>
             <th className="px-3 py-3">Suggestion</th>
-            <th className="px-3 py-3">Blackbird Power Rank</th>
-            <th className="px-3 py-3">Player + Details</th>
-            <th className="px-3 py-3">Position</th>
+            <th className="px-3 py-3">Player</th>
+            <th className="px-3 py-3">Pos</th>
             <th className="px-3 py-3">Team</th>
-            <th className="px-3 py-3">Season Projection</th>
-            <th className="px-3 py-3">PAR</th>
+            <th className="px-3 py-3">Projection</th>
             <th className="px-3 py-3">Static Value</th>
             <th className="px-3 py-3">Trust</th>
-            <th className="px-3 py-3">Role</th>
-            <th className="px-3 py-3">Live Fit</th>
             <th className="px-3 py-3">Risk</th>
           </tr>
         </thead>
@@ -1247,20 +1821,24 @@ function AvailablePlayersTable({ rows, onSelectPlayer }: { rows: BlackbirdBoardR
             <tr key={`${row.playerId ?? row.playerName}-${row.blackbirdBoardRank}`} className="border-t border-line/70">
               <td className="px-3 py-3">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="text-lg font-black text-brand">{row.draftSuggestionRank === null ? "-" : `#${row.draftSuggestionRank}`}</span>
+                  <span className="text-lg font-black text-electric">{row.draftSuggestionRank === null ? "-" : `#${row.draftSuggestionRank}`}</span>
                   {row.blackbirdValueScore === null ? null : (
-                    <span className="rounded-full border border-brand/25 bg-brand/10 px-2 py-1 text-xs font-black text-brand">
+                    <span className="rounded-full border border-electric/25 bg-electric/10 px-2 py-1 text-xs font-black text-electric">
                       {formatNumber(row.blackbirdValueScore)}
                     </span>
                   )}
                 </div>
                 <div className="mt-1 text-[11px] text-slate-500">{formatTimingAction(row.needTimingAction)}</div>
+                {row.draftSuggestionType ? (
+                  <div className="mt-1">
+                    <SignalChip tone="electric">{row.draftSuggestionType.replace(/_/g, " ")}</SignalChip>
+                  </div>
+                ) : null}
               </td>
-              <td className="px-3 py-3 text-lg font-black text-slate-100">#{row.blackbirdBoardRank}</td>
               <td className="px-3 py-3">
                 <button
                   type="button"
-                  className="block max-w-[260px] truncate text-left font-medium text-slate-100 underline decoration-brand/40 underline-offset-4 hover:text-brand"
+                  className="block max-w-[260px] truncate text-left font-medium text-slate-100 underline decoration-electric/40 underline-offset-4 hover:text-electric"
                   onClick={() => onSelectPlayer(row)}
                 >
                   {row.playerName}
@@ -1270,8 +1848,15 @@ function AvailablePlayersTable({ rows, onSelectPlayer }: { rows: BlackbirdBoardR
                   <span>{row.dataStatus.ordering.replace("_", " ")}</span>
                   {row.drafted ? <span className="rounded-full border border-line px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-slate-400">Drafted</span> : null}
                 </div>
-                <p className="mt-2 max-w-[520px] text-xs leading-relaxed text-slate-400">{blackbirdRankSummary(row)}</p>
-                <BlackbirdBoardPlayerDetails row={row} />
+                <div className="mt-2 flex flex-wrap gap-1">
+                  {row.planFitReasons.slice(0, 2).map((reason) => (
+                    <SignalChip key={reason} tone="slate">{reason}</SignalChip>
+                  ))}
+                  {row.contextualDataGaps.slice(0, 1).map((gap) => (
+                    <SignalChip key={gap} tone="gold">{gap}</SignalChip>
+                  ))}
+                </div>
+                <p className="mt-2 text-xs leading-relaxed text-slate-400">{blackbirdRankSummary(row)}</p>
               </td>
               <td className="px-3 py-3"><PositionBadge position={row.position} /></td>
               <td className="px-3 py-3">{row.team || "-"}</td>
@@ -1290,146 +1875,57 @@ function AvailablePlayersTable({ rows, onSelectPlayer }: { rows: BlackbirdBoardR
                   </div>
                 ) : "Projection unavailable"}
               </td>
-              <td className="px-3 py-3 font-black text-slate-100">{formatNullableNumber(row.pointsAboveReplacement)}</td>
-              <td className="px-3 py-3 font-black text-brand">{row.blackbirdValueScore === null ? "-" : `${formatNumber(row.blackbirdValueScore)}/100`}</td>
+              <td className="px-3 py-3 font-black text-electric">{row.blackbirdValueScore === null ? "-" : `${formatNumber(row.blackbirdValueScore)}/100`}</td>
               <td className="px-3 py-3"><ProjectionTrustBadge row={row} /></td>
-              <td className="px-3 py-3 text-xs text-slate-300">{row.role ? row.role.replace(/_/g, " ") : "-"}</td>
-              <td className="px-3 py-3 text-xs text-slate-300">{row.planFit.replace(/_/g, " ")}</td>
               <td className="px-3 py-3">
                 <RiskScoreBlock row={row} />
               </td>
             </tr>
           ))}
-          {rows.length === 0 ? <EmptyTable colSpan={12} text="No players match these filters." /> : null}
+          {rows.length === 0 ? <EmptyTable colSpan={8} text={emptyText} /> : null}
         </tbody>
       </table>
     </div>
   );
 }
 
-function BlackbirdBoardPlayerDetails({ row }: { row: BlackbirdBoardRow }) {
-  const detail = row.playerDetailContext;
-  if (!detail) return null;
-  const rookieContext = rookieDetailContext(row);
+function SignalChip({ children, tone }: { children: string; tone: "electric" | "gold" | "slate" }) {
+  const className =
+    tone === "electric"
+      ? "border-electric/25 bg-electric/10 text-electric"
+      : tone === "gold"
+        ? "border-gold/30 bg-gold/10 text-gold"
+        : "border-line bg-panel2/70 text-slate-300";
   return (
-    <details className="group mt-2 max-w-[460px] rounded-md border border-line/70 bg-background/45 px-2 py-2 text-xs">
-      <summary className="flex cursor-pointer list-none items-center justify-between gap-2 font-bold text-brand">
-        <span>Details</span>
-        <ChevronDown className="h-3.5 w-3.5 shrink-0 transition group-open:rotate-180" />
-      </summary>
-      <div className="mt-2 space-y-2 text-slate-300">
-        <div className="flex flex-wrap gap-1">
-          <StrategyPill>Blackbird preview</StrategyPill>
-          <StrategyPill>Read-only</StrategyPill>
-          <StrategyPill>Experimental</StrategyPill>
-          <StrategyPill>Profile evidence in modal</StrategyPill>
-          <StrategyPill>{projectionTrustBadgeLabel(detail.projectionTrust)}</StrategyPill>
-          {rookieContext.labels.map((label) => (
-            <StrategyPill key={label}>{label}</StrategyPill>
-          ))}
-        </div>
-        <p className="rounded-md border border-line/70 bg-panel2/60 px-3 py-2 text-slate-300">{blackbirdRankSummary(row)}</p>
-        <div className="grid gap-2 sm:grid-cols-2">
-          <MiniDetail label={projectionUnitLabel(row)} value={formatNullableNumber(detail.projection)} />
-          <MiniDetail label="Floor" value={formatNullableNumber(detail.projectedFantasyPoints.low)} />
-          <MiniDetail label="Ceiling" value={formatNullableNumber(detail.projectedFantasyPoints.high)} />
-          <MiniDetail label="PAR" value={formatNullableNumber(detail.par)} />
-          <MiniDetail label="Replacement" value={formatNullableNumber(detail.replacementMedianPoints)} />
-          <MiniDetail label="Role" value={detail.role ? detail.role.replace(/_/g, " ") : "-"} />
-          <MiniDetail label="Blackbird Rank" value={`#${formatNumber(detail.blackbirdRank)}`} />
-          <MiniDetail label="Draft Suggestion" value={detail.draftSuggestionRank === null ? "-" : `#${detail.draftSuggestionRank}`} />
-          <MiniDetail label="Value" value={formatNullableNumber(detail.valueScore)} />
-          <MiniDetail label="Tier" value={detail.blackbirdTier === null ? "-" : String(detail.blackbirdTier)} />
-        </div>
-        {detail.valueScoreComponents ? (
-          <div>
-            <div className="text-[11px] uppercase tracking-wide text-slate-500">Value Components</div>
-            <div className="mt-1 grid grid-cols-2 gap-1">
-              {Object.entries(detail.valueScoreComponents).slice(0, 8).map(([label, value]) => (
-                <MiniDetail key={label} label={label.replace(/([A-Z])/g, " $1")} value={formatNullableNumber(value)} />
-              ))}
-            </div>
-          </div>
-        ) : null}
-        <DetailList title="Why Blackbird Likes" items={detail.whyBlackbirdLikes.slice(0, 3)} />
-        <DetailList title="Primary Value Drivers" items={(detail.valueExplanation?.primaryDrivers ?? []).slice(0, 4).map((driver) => `${driver.label}: ${driver.explanation}`)} />
-        <DetailList title="Cautions" items={detail.whyBlackbirdIsCautious.slice(0, 3)} />
-        <DetailList title="Projection Trust" items={detail.projectionTrust.reasons.slice(0, 4)} />
-        {rookieContext.items.length ? <DetailList title="Rookie Context" items={rookieContext.items} /> : null}
-        <DetailList title="Role Context" items={playerContextDisplayItems(row).slice(0, 6)} />
-        <DetailList title="Wait Plan" items={detail.waitPlanContext.slice(0, 2)} />
-        <DetailList title="Contingency" items={detail.contingencyContext.slice(0, 2)} />
-        <DetailList title="Plan Fit" items={row.planFitReasons.slice(0, 4)} />
-        <div>
-          <div className="text-[11px] uppercase tracking-wide text-slate-500">Data Status</div>
-          <div className="mt-1">
-            <BoardDataStatus row={row} />
-          </div>
-        </div>
-        {detail.tierNeighborContext.previous.length || detail.tierNeighborContext.next.length ? (
-          <div>
-            <div className="text-[11px] uppercase tracking-wide text-slate-500">Tier Neighbors</div>
-            <div className="mt-1 flex flex-wrap gap-1">
-              {[...detail.tierNeighborContext.previous, ...detail.tierNeighborContext.next].slice(0, 4).map((neighbor) => (
-                <span key={`${neighbor.rank}-${neighbor.playerName}`} className="rounded-full border border-line bg-panel2 px-2 py-1 text-[11px] text-slate-300">
-                  #{neighbor.rank} {neighbor.playerName}
-                </span>
-              ))}
-            </div>
-          </div>
-        ) : null}
-        <DetailList title="Data Gaps" items={detail.dataGaps.slice(0, 4).map((gap) => gap === "none" ? "No explicit data gaps." : gap)} />
-      </div>
-    </details>
+    <span className={`inline-flex max-w-[260px] items-center truncate rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${className}`}>
+      {children}
+    </span>
   );
 }
 
-function playerContextDisplayItems(row: BlackbirdBoardRow): string[] {
-  const detail = row.playerDetailContext;
-  const gaps = new Set([...row.contextualDataGaps, ...(detail?.dataGaps ?? [])].map((gap) => gap.toLowerCase()));
-  return [
-    row.role ? `Role context: ${row.role.replace(/_/g, " ")}` : "Role context: unknown",
-    gaps.has("depth chart context") || gaps.has("confirmed depth chart role") ? "Depth chart scenario: data gap" : "Depth chart scenario: source unavailable or neutral",
-    gaps.has("injury context") || gaps.has("confirmed injury status") ? "Injury context: data gap" : "Injury context: unknown unless sourced",
-    gaps.has("physical profile") ? "Physical profile: data gap" : "Physical profile: not yet sourced",
-    gaps.has("athletic testing") ? "Athletic profile: data gap" : "Athletic profile: not yet sourced",
-    gaps.has("coaching environment") || gaps.has("team environment") ? "Coaching/team environment: data gap" : "Coaching/team environment: unknown unless sourced",
-  ];
+function normalizeBoardSearch(value: string): string {
+  return value.trim().toLowerCase();
 }
 
-function rookieDetailContext(row: BlackbirdBoardRow): { labels: string[]; items: string[] } {
-  const detail = row.playerDetailContext;
-  const gaps = new Set([...row.contextualDataGaps, ...(detail?.dataGaps ?? [])].map((gap) => gap.toLowerCase()));
-  const gapText = Array.from(gaps).join(" ");
-  const isRookie =
-    row.role === "rookie_unknown" ||
-    detail?.role === "rookie_unknown" ||
-    gapText.includes("rookie") ||
-    gapText.includes("draft capital") ||
-    gapText.includes("college production");
-  if (!isRookie) return { labels: [], items: [] };
-
-  const hasDraftCapitalGap = gapText.includes("draft capital");
-  const hasCollegeGap = gapText.includes("college");
-  const hasRoleGap = gapText.includes("role") || row.role === "rookie_unknown" || detail?.role === "rookie_unknown";
-  const hasAnyEnrichedInput = !hasDraftCapitalGap || !hasCollegeGap || !hasRoleGap;
-  const labels = [
-    "Rookie projection",
-    hasAnyEnrichedInput ? "Enriched rookie data available" : null,
-    hasDraftCapitalGap ? "Missing draft capital" : "Draft capital available",
-    hasCollegeGap ? "Missing college production" : "College production available",
-    hasRoleGap ? "Role uncertainty" : null,
-  ].filter((label): label is string => Boolean(label));
-
-  const items = [
-    "Rookie outputs use conservative position baselines adjusted only by available draft capital, college production, and role inputs.",
-    hasAnyEnrichedInput ? "At least one rookie context input is available; unresolved fields remain explicit data gaps." : "No enrichment overlay inputs are available for this rookie yet.",
-    hasDraftCapitalGap ? "NFL draft capital is missing or unresolved for this player." : "Draft capital is present and used only as an opportunity signal.",
-    hasCollegeGap ? "College production is missing or unresolved for this player." : "College production is present and used to shape uncertainty/stat mix, not copied directly into NFL stats.",
-    hasRoleGap ? "Landing spot role is uncertain, so confidence remains conservative." : "Role context is available for this rookie profile.",
+function boardRowMatchesSearch(row: BlackbirdBoardRow, normalizedQuery: string): boolean {
+  const aliases = [
+    row.playerName,
+    row.team,
+    row.position,
+    row.playerId,
+    row.source.player.sleeper_player_id,
+    row.source.player.matched_player_id,
   ];
+  return aliases.some((value) => typeof value === "string" && value.toLowerCase().includes(normalizedQuery));
+}
 
-  return { labels, items };
+function buildBoardFilterLabels(input: { search: string; positionFilter: string; matchFilter: string }): string[] {
+  const labels: string[] = [];
+  const search = input.search.trim();
+  if (search) labels.push(`search "${search}"`);
+  if (input.positionFilter !== "All") labels.push(`position ${input.positionFilter}`);
+  if (input.matchFilter !== "All") labels.push(input.matchFilter === "Matched" ? "matched context" : "risk/data issues");
+  return labels;
 }
 
 function ProjectionMini({ label, value }: { label: string; value: number | null | undefined }) {
@@ -1447,7 +1943,7 @@ function ProjectionTrustBadge({ row }: { row: BlackbirdBoardRow }) {
     trust.trustLabel === "high"
       ? "border-emerald-400/25 bg-emerald-500/10 text-emerald-200"
       : trust.trustLabel === "medium"
-        ? "border-brand/25 bg-brand/10 text-brand"
+        ? "border-electric/25 bg-electric/10 text-electric"
         : trust.trustLabel === "low"
           ? "border-gold/30 bg-gold/10 text-gold"
           : "border-red-400/25 bg-red-500/10 text-red-200";
@@ -1507,19 +2003,89 @@ function DetailList({ title, items }: { title: string; items: string[] }) {
   );
 }
 
+function PlayerReasonStackPanel({ stack, row }: { stack: WarRoomPlayerReasonStack | null; row: BlackbirdBoardRow | null }) {
+  if (!stack || !row) {
+    return (
+      <section className="rounded-md border border-line bg-panel2 px-3 py-3">
+        <div className="flex flex-wrap items-center gap-2">
+          <h3 className="text-sm font-black uppercase tracking-wide text-slate-300">Player Reasoning</h3>
+          <span className="rounded-full border border-line bg-background px-2 py-1 text-[11px] uppercase tracking-wide text-slate-400">Read-only</span>
+        </div>
+        <p className="mt-3 text-sm text-slate-400">
+          Board reasoning will appear when this player is opened from the Blackbird Board.
+        </p>
+      </section>
+    );
+  }
+
+  return (
+    <section className="rounded-md border border-line bg-panel2 px-3 py-3">
+      <div className="flex flex-col justify-between gap-3 lg:flex-row lg:items-start">
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-center gap-2">
+            <h3 className="text-sm font-black uppercase tracking-wide text-slate-300">Player Reasoning</h3>
+            <span className="rounded-full border border-line bg-background px-2 py-1 text-[11px] uppercase tracking-wide text-slate-400">Read-only</span>
+            <span className="rounded-full border border-electric/25 bg-electric/10 px-2 py-1 text-[11px] uppercase tracking-wide text-electric">
+              Deterministic
+            </span>
+          </div>
+          <p className="mt-2 text-sm font-semibold text-slate-100">{stack.headline}</p>
+          <p className="mt-1 text-xs text-slate-500">
+            This explanation uses existing board, projection, roster-fit, and data-gap signals. It does not change ranking or suggestion math.
+          </p>
+        </div>
+        <div className="grid shrink-0 grid-cols-2 gap-2 text-xs sm:grid-cols-4 lg:min-w-[500px]">
+          <MiniDetail label="Blackbird Rank" value={`#${row.blackbirdBoardRank}`} />
+          <MiniDetail label="Draft Suggestion" value={row.draftSuggestionRank === null ? "-" : `#${row.draftSuggestionRank}`} />
+          <MiniDetail label="Value" value={row.blackbirdValueScore === null ? "-" : `${formatNumber(row.blackbirdValueScore)}/100`} />
+          <MiniDetail label="Confidence" value={row.confidence} />
+        </div>
+      </div>
+
+      <div className="mt-3 grid gap-3 lg:grid-cols-2">
+        <ReasonGroup title="Why Blackbird Likes" items={stack.valueReasons} tone="electric" />
+        <ReasonGroup title="Fit With Your Roster" items={stack.fitReasons} tone="slate" />
+        <ReasonGroup title="Projection Profile" items={stack.projectionReasons} tone="slate" />
+        <ReasonGroup title="Risk and Confidence" items={stack.riskReasons} tone="gold" />
+        <ReasonGroup title="Draft Timing / Value Note" items={stack.timingReasons} tone="electric" />
+        <ReasonGroup title="Data Gaps / Things to Verify" items={stack.dataGapReasons} tone="gold" />
+      </div>
+    </section>
+  );
+}
+
+function ReasonGroup({ title, items, tone }: { title: string; items: string[]; tone: "electric" | "gold" | "slate" }) {
+  const titleClass = tone === "electric" ? "text-electric" : tone === "gold" ? "text-gold" : "text-slate-300";
+  return (
+    <div className="rounded-md border border-line/70 bg-background/45 px-3 py-3">
+      <div className={`text-[11px] font-black uppercase tracking-wide ${titleClass}`}>{title}</div>
+      <ul className="mt-2 space-y-1.5">
+        {items.slice(0, 5).map((item) => (
+          <li key={item} className="text-sm leading-relaxed text-slate-300">
+            {item}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 function PlayerProfileModal({
   loadState,
   fallbackPlayer,
+  boardRow,
   historicalProfileState,
   onClose,
 }: {
   loadState: PlayerProfileLoadState;
   fallbackPlayer: SelectedPlayerSummary | null;
+  boardRow: BlackbirdBoardRow | null;
   historicalProfileState: HistoricalProfileLoadState;
   onClose: () => void;
 }) {
   const profile = loadState.profile;
   const title = profile?.player.fullName ?? fallbackPlayer?.playerName ?? "Player Profile";
+  const reasonStack = boardRow ? buildWarRoomPlayerReasonStack(boardRow) : null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/70 px-3 py-6 sm:px-6">
@@ -1534,7 +2100,7 @@ function PlayerProfileModal({
           </div>
           <button
             type="button"
-            className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-line bg-background text-slate-200 hover:border-brand/40 hover:text-brand"
+            className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-line bg-background text-slate-200 hover:border-electric/30 hover:text-electric"
             onClick={onClose}
             aria-label="Close player profile"
           >
@@ -1543,6 +2109,7 @@ function PlayerProfileModal({
         </div>
 
         <div className="space-y-4 px-4 py-4 sm:px-5">
+          <PlayerReasonStackPanel stack={reasonStack} row={boardRow} />
           {loadState.status === "loading" ? (
             <div className="rounded-md border border-line bg-panel2 px-3 py-3 text-sm text-slate-300">Loading player profile...</div>
           ) : null}
@@ -1830,7 +2397,7 @@ function HistoricalHighValueUsagePanel({ profile }: { profile: HistoricalProfile
           {usage.modifiers.length ? (
             <div className="mt-2 flex flex-wrap gap-1">
               {usage.modifiers.slice(0, 5).map((modifier) => (
-                <span key={modifier} className="rounded-full border border-brand/20 bg-brand/10 px-2 py-1 text-[11px] text-brand">
+                <span key={modifier} className="rounded-full border border-slate-500/25 bg-slate-500/10 px-2 py-1 text-[11px] text-slate-300">
                   {formatCoverageLabel(modifier)}
                 </span>
               ))}
@@ -1874,7 +2441,7 @@ function HistoricalRoleUsagePanel({ profile }: { profile: HistoricalProfile }) {
         <div>
           <div className="text-xs font-black uppercase tracking-wide text-slate-400">Role & Usage</div>
           <div className="mt-2 flex flex-wrap gap-2">
-            <span className="rounded-full border border-brand/25 bg-brand/10 px-2 py-1 text-[11px] font-bold uppercase tracking-wide text-brand">
+            <span className="rounded-full border border-slate-500/25 bg-slate-500/10 px-2 py-1 text-[11px] font-bold uppercase tracking-wide text-slate-300">
               {formatCoverageLabel(role.roleLabel)}
             </span>
             <span className="rounded-full border border-line bg-panel px-2 py-1 text-[11px] text-slate-300">
@@ -1904,7 +2471,7 @@ function HistoricalRoleUsagePanel({ profile }: { profile: HistoricalProfile }) {
       {role.roleModifiers.length ? (
         <div className="mt-2 flex flex-wrap gap-1">
           {role.roleModifiers.slice(0, 4).map((modifier) => (
-            <span key={modifier} className="rounded-full border border-brand/20 bg-brand/10 px-2 py-1 text-[11px] text-brand">
+            <span key={modifier} className="rounded-full border border-slate-500/25 bg-slate-500/10 px-2 py-1 text-[11px] text-slate-300">
               {formatCoverageLabel(modifier)}
             </span>
           ))}
@@ -2030,7 +2597,7 @@ function HistoricalEvidenceCard({ evidence }: { evidence: PlayerProfileEvidence 
         {evidence.badges.length ? (
           <div className="flex flex-wrap gap-1 sm:max-w-[320px] sm:justify-end">
             {evidence.badges.map((badge) => (
-              <span key={badge} className="rounded-full border border-brand/20 bg-brand/10 px-2 py-1 text-[10px] uppercase tracking-wide text-brand">
+              <span key={badge} className="rounded-full border border-slate-500/25 bg-slate-500/10 px-2 py-1 text-[10px] uppercase tracking-wide text-slate-300">
                 {badge.replaceAll("-", " ")}
               </span>
             ))}
@@ -2209,28 +2776,45 @@ function StatLineGrid({ items, empty }: { items: Array<{ key: string; label: str
   );
 }
 
-function BoardDataStatus({ row }: { row: BlackbirdBoardRow }) {
-  const labels = [
-    row.dataStatus.h10 === "available" ? "H10" : "No H10 rows",
-    row.dataStatus.projection === "available" ? "Projection" : "Projection unavailable",
-    row.dataStatus.marketRank === "available" ? "Blackbird rank" : "Rank unavailable",
-  ];
-  return (
-    <div className="flex max-w-[220px] flex-wrap gap-1">
-      {labels.map((label) => (
-        <span key={label} className={`rounded-full border px-2 py-1 text-[11px] ${label.includes("unavailable") || label.startsWith("No ") ? "border-gold/25 bg-gold/10 text-gold" : "border-line bg-background text-slate-300"}`}>
-          {label}
-        </span>
-      ))}
-    </div>
-  );
-}
-
 function SidePanel({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section className="rf-panel p-4">
       <h2 className="text-lg font-bold">{title}</h2>
       <div className="mt-3">{children}</div>
+    </section>
+  );
+}
+
+function ScoringFoundationStatusPanel() {
+  const rows = [
+    ["Current live scoring path", SCORING_FOUNDATION_STATUS.liveScoringPath],
+    ["v8.2 status", SCORING_FOUNDATION_STATUS.v82Status],
+    ["Feature flag", SCORING_FOUNDATION_STATUS.featureFlag],
+    ["Flag default", SCORING_FOUNDATION_STATUS.flagDefault],
+    ["War Room using v8.2", SCORING_FOUNDATION_STATUS.warRoomUsingV82],
+    ["Blackbird Rank using v8.2", SCORING_FOUNDATION_STATUS.blackbirdRankUsingV82],
+    ["Draft Suggestions using v8.2", SCORING_FOUNDATION_STATUS.draftSuggestionsUsingV82],
+    ["Supabase production writes using v8.2", SCORING_FOUNDATION_STATUS.supabaseProductionWritesUsingV82],
+  ];
+  return (
+    <section className="rf-panel p-4">
+      <details>
+        <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-bold text-slate-300">
+          <span>Scoring Foundation Status</span>
+          <span className="rounded-full border border-line bg-background px-2 py-1 text-[10px] uppercase tracking-wide text-slate-500">dev</span>
+        </summary>
+        <div className="mt-3 space-y-2 text-xs">
+          {rows.map(([label, value]) => (
+            <div key={label} className="flex items-start justify-between gap-3 rounded-md border border-line/70 bg-background/50 px-2.5 py-2">
+              <span className="text-slate-500">{label}</span>
+              <span className="max-w-[190px] text-right font-bold text-slate-200">{value}</span>
+            </div>
+          ))}
+          <p className="text-[11px] leading-relaxed text-slate-500">
+            v8.2 is scaffolded for dry-run snapshot generation only and is not consumed by live War Room scoring, Blackbird Rank, Draft Suggestions, or Supabase production writes.
+          </p>
+        </div>
+      </details>
     </section>
   );
 }
@@ -2266,7 +2850,7 @@ function PreDraftStrategyPanel({
   });
 
   return (
-    <section className={`rf-panel p-4 sm:p-5 ${prominent ? "border-brand/30" : ""}`} data-testid="pre-draft-strategy-panel">
+    <section className={`rf-panel p-4 sm:p-5 ${prominent ? "border-electric/25" : ""}`} data-testid="pre-draft-strategy-panel">
       <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-start">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
@@ -2570,7 +3154,7 @@ function H11MiniMetric({ label, value }: { label: string; value: string | number
 
 function StrategyPill({ children }: { children: React.ReactNode }) {
   return (
-    <span className="rounded-full border border-brand/25 bg-brand/10 px-2 py-1 text-[11px] font-bold uppercase tracking-wide text-brand">
+    <span className="rounded-full border border-electric/25 bg-electric/10 px-2 py-1 text-[11px] font-bold uppercase tracking-wide text-electric">
       {children}
     </span>
   );
@@ -2645,6 +3229,7 @@ function RecommendationList({
             ? "Review unmatched rows, sync draft picks, or broaden available ranked players to restore recommendations."
             : "Upload matched rankings to enable Draft Target Score recommendations. If rankings are absent, the War Room falls back to the Sleeper player pool only."}
         </p>
+        <p className="mt-2 text-xs text-slate-500">Plan alignment will appear once Draft Suggestions are loaded.</p>
         {usesLimitedDataPositions && rankingsUploaded ? (
           <p className="mt-2 text-xs text-slate-500">
             IDP, kicker, and team-defense recommendations need matched rankings before limited-data scoring can surface them.
@@ -2666,7 +3251,7 @@ function RecommendationList({
             index === 0
               ? "border-gold/35 bg-gradient-to-br from-gold/10 via-panel2 to-panel2 shadow-[0_0_0_1px_rgba(250,204,21,0.06)]"
               : index < 3
-                ? "border-brand/25 bg-gradient-to-br from-brand/6 via-panel2 to-panel2"
+                ? "border-electric/25 bg-gradient-to-br from-electric/6 via-panel2 to-panel2"
                 : "border-line bg-panel2"
           }`}
         >
@@ -2690,7 +3275,7 @@ function RecommendationList({
               </div>
             </div>
             <div className="min-w-[88px] text-right">
-              <div className="inline-flex min-w-[76px] justify-center rounded-lg border border-brand/25 bg-background/70 px-3 py-2 text-lg font-black text-brand">
+              <div className="inline-flex min-w-[76px] justify-center rounded-lg border border-electric/25 bg-background/70 px-3 py-2 text-lg font-black text-electric">
                 {player.draftTargetScore?.toFixed(1) ?? "-"}
               </div>
               <div className="mt-2 flex justify-end">
@@ -2699,6 +3284,7 @@ function RecommendationList({
             </div>
           </div>
           <ReasonList reasons={player.reasons} />
+          <PlanAlignmentChips labels={buildPlanAlignmentLabels(player)} />
           {player.warnings.length ? (
             <div className="mt-3 flex flex-wrap gap-2">
               {player.warnings.map((warning) => (
@@ -2716,6 +3302,36 @@ function RecommendationList({
       ))}
     </div>
   );
+}
+
+function PlanAlignmentChips({ labels, compact = false }: { labels: string[]; compact?: boolean }) {
+  const visibleLabels = labels.length ? labels.slice(0, compact ? 3 : 5) : ["Plan Fit Pending"];
+  return (
+    <div className={`flex flex-wrap gap-1.5 ${compact ? "mt-2" : "mt-3"}`}>
+      {visibleLabels.map((label) => (
+        <span
+          key={label}
+          className="rounded-full border border-electric/20 bg-electric/5 px-2 py-0.5 text-[10px] font-black uppercase tracking-wide text-electric"
+        >
+          {label}
+        </span>
+      ))}
+    </div>
+  );
+}
+
+function buildPlanAlignmentLabels(player: AvailablePlayer): string[] {
+  const labels: string[] = [];
+  const components = player.scoreComponents;
+  if (player.reasons.length || player.recommendationTier === "elite_target" || player.recommendationTier === "strong_target") labels.push("Plan Fit");
+  if ((components?.rosterNeedScore ?? 0) >= 10) labels.push("Need Fit");
+  if ((components?.valueScore ?? 0) >= 10 || (player.dynasty_value ?? player.best_ball_value ?? player.superflex_value ?? 0) > 0) labels.push("Value Fit");
+  if ((components?.scarcityScore ?? 0) >= 8) labels.push("Scarcity Fit");
+  if ((components?.formatFitScore ?? 0) >= 8) labels.push("Format Fit");
+  if (player.recommendationTier === "depth_option") labels.push("Depth Pick");
+  if (player.recommendationTier === "avoid_for_now") labels.push("Luxury Pick");
+  if (player.warnings.length || player.match_status !== "matched" || (player.match_confidence !== null && player.match_confidence < 0.75)) labels.push("Risk Check");
+  return Array.from(new Set(labels)).slice(0, 6);
 }
 
 function RecommendationSourcePanel({
@@ -2754,7 +3370,7 @@ function RecommendationSourcePanel({
         <div className="grid grid-cols-2 gap-2">
           <button
             type="button"
-            className={`rounded-md border px-3 py-2 text-xs font-semibold ${effectiveSource === "legacy" ? "border-brand/40 bg-brand/15 text-brand" : "border-line bg-panel2 text-slate-300"}`}
+            className={`rounded-md border px-3 py-2 text-xs font-semibold ${effectiveSource === "legacy" ? "border-electric/40 bg-electric/15 text-electric" : "border-line bg-panel2 text-slate-300"}`}
             onClick={() => onSourceChange("legacy")}
           >
             Legacy
@@ -2809,12 +3425,12 @@ function InternalTrustedRecommendationPanel({
 }) {
   return (
     <div className="space-y-4">
-      <div className="rounded-lg border border-brand/30 bg-brand/10 px-3 py-3 text-xs text-brand">
+      <div className="rounded-lg border border-electric/30 bg-electric/10 px-3 py-3 text-xs text-electric">
         <div className="font-black uppercase tracking-wide">Blackbird Trusted Preview</div>
-        <p className="mt-1 text-brand/90">
+        <p className="mt-1 text-electric/90">
           Internal experiment · read-only · source switching is not saved · Synthetic replay validated; historical outcome validation not yet available.
         </p>
-        <p className="mt-1 text-brand/80">Gate: {gating === "trusted_user_allowlist" ? "trusted user allowlist" : "environment flag only"}</p>
+        <p className="mt-1 text-electric/80">Gate: {gating === "trusted_user_allowlist" ? "trusted user allowlist" : "environment flag only"}</p>
       </div>
       <H10RecommendationPreview
         rows={blackbirdRows}
@@ -2871,7 +3487,7 @@ function H10RecommendationPreview({
 
   return (
     <div className="space-y-3">
-      <div className="rounded-md border border-brand/20 bg-brand/10 px-3 py-2 text-xs text-brand">
+      <div className="rounded-md border border-electric/20 bg-electric/10 px-3 py-2 text-xs text-electric">
         {internalTrusted ? "Internal experiment · Trusted preview · " : ""}
         {H10_RECOMMENDATION_READINESS_LABELS.join(" · ")}. Blackbird preview is a read-only experimental signal based on current projections,
         market value, roster need, and pick timing. It does not replace legacy Draft Target Score rows.
@@ -3029,7 +3645,7 @@ function H10RecommendationTierBadge({ tier }: { tier: WarRoomRecommendationTier 
     tier === "priority_target"
       ? "border-emerald-400/30 bg-emerald-500/10 text-emerald-200"
       : tier === "strong_target"
-        ? "border-brand/35 bg-brand/10 text-brand"
+        ? "border-electric/35 bg-electric/10 text-electric"
         : tier === "solid_target"
           ? "border-slate-300/30 bg-slate-300/10 text-slate-200"
           : tier === "watchlist"
@@ -3105,19 +3721,19 @@ function DiagnosticsLine({ label, value, warning = false }: { label: string; val
 function TierBadge({ tier }: { tier: RecommendationTier }) {
   const label =
     tier === "elite_target"
-      ? "Elite"
+      ? "Must Draft"
       : tier === "strong_target"
-        ? "Strong"
+        ? "Strong Pick"
         : tier === "good_value"
-          ? "Value"
+          ? "Good Value"
           : tier === "depth_option"
             ? "Depth"
-            : "Avoid";
+            : "Pass";
   const className =
     tier === "elite_target"
       ? "border-gold/40 bg-gold/15 text-gold"
       : tier === "strong_target"
-        ? "border-brand/40 bg-brand/15 text-brand"
+        ? "border-electric/40 bg-electric/15 text-electric"
         : tier === "good_value"
           ? "border-slate-400/30 bg-slate-400/10 text-slate-200"
           : tier === "depth_option"
@@ -3133,7 +3749,7 @@ function PriorityBadge({ index }: { index: number }) {
     index === 0
       ? "border-gold/35 bg-gold/12 text-gold"
       : index < 3
-        ? "border-brand/35 bg-brand/12 text-brand"
+        ? "border-electric/35 bg-electric/12 text-electric"
         : "border-line bg-background text-slate-400";
 
   return <span className={`rounded-full border px-2 py-1 text-[11px] uppercase tracking-wide ${className}`}>{label}</span>;
@@ -3167,7 +3783,7 @@ function LimitedDataBadge({
 
   return (
     <span
-      className={`rounded-full border border-brand/20 bg-brand/10 px-2 py-1 text-[11px] uppercase tracking-wide text-brand ${
+      className={`rounded-full border border-slate-500/25 bg-slate-500/10 px-2 py-1 text-[11px] uppercase tracking-wide text-slate-300 ${
         compact ? "" : ""
       }`}
     >
@@ -3271,9 +3887,42 @@ function RosterConstructionSummary({ state }: { state: DraftState }) {
     if (["DL", "LB", "DB"].includes(need.position)) return state.hasIDP;
     return ["QB", "RB", "WR", "TE"].includes(need.position);
   });
+  const planSummary = buildRosterPlanSummaries(state);
 
   return (
     <div className="space-y-3">
+      {state.myRoster.length || Object.keys(state.positionCounts).length ? (
+        <div className="rounded-md border border-line bg-background/60 px-3 py-3">
+          <div className="flex items-center justify-between gap-3">
+            <div className="text-[10px] font-black uppercase tracking-wide text-slate-500">Current roster by position</div>
+            <div className="text-xs text-slate-400">{state.myRoster.length} picks</div>
+          </div>
+          <div className="mt-2 flex flex-wrap gap-1.5">
+            {planSummary.positionCountLabels.map((label) => (
+              <span key={label} className="rounded-full border border-line bg-panel2 px-2 py-1 text-[11px] font-bold text-slate-300">
+                {label}
+              </span>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <p className="rounded-md border border-line bg-panel2 px-3 py-2 text-sm text-slate-400">
+          Roster construction will appear once your picks are available.
+        </p>
+      )}
+
+      <div className="rounded-md border border-line bg-panel2 px-3 py-3">
+        <div className="text-[10px] font-black uppercase tracking-wide text-slate-500">Next Pick Lens</div>
+        <p className="mt-2 text-sm font-bold text-slate-100">{planSummary.nextPickLens}</p>
+        <div className="mt-2 flex flex-wrap gap-1.5">
+          {planSummary.summaryLines.map((line) => (
+            <span key={line} className="rounded-full border border-line bg-background/60 px-2 py-1 text-[11px] text-slate-300">
+              {line}
+            </span>
+          ))}
+        </div>
+      </div>
+
       <div className="grid gap-2">
         {visibleNeeds.map((need) => (
           <div key={need.position} className="rounded-md border border-line bg-panel2 px-3 py-2">
@@ -3294,6 +3943,15 @@ function RosterConstructionSummary({ state }: { state: DraftState }) {
             </p>
           </div>
         ))}
+        {!visibleNeeds.length ? (
+          <p className="rounded-md border border-line bg-panel2 px-3 py-2 text-sm text-slate-400">
+            No major roster gaps detected yet.
+          </p>
+        ) : null}
+      </div>
+      <div className="grid gap-2 sm:grid-cols-2">
+        <RosterPlanNote label="Strengths" items={planSummary.strengths} empty="No clear roster strengths yet." />
+        <RosterPlanNote label="Needs" items={planSummary.weaknesses} empty="No major roster gaps detected yet." />
       </div>
       <div className="grid gap-2 sm:grid-cols-3">
         {state.rosterRequirements.offensiveFlexCount > 0 ? (
@@ -3307,7 +3965,7 @@ function RosterConstructionSummary({ state }: { state: DraftState }) {
         ) : null}
       </div>
       {state.hasIDP || state.hasKicker || state.hasTeamDefense ? (
-        <p className="rounded-md border border-brand/20 bg-brand/10 px-3 py-2 text-xs text-brand">
+        <p className="rounded-md border border-slate-600/40 bg-panel2 px-3 py-2 text-xs text-slate-400">
           IDP, kicker, and team-defense recommendations currently use imported rankings, roster need, and scarcity.
           Player-stat and league-specific scoring inputs are coming in a later phase.
         </p>
@@ -3317,6 +3975,79 @@ function RosterConstructionSummary({ state }: { state: DraftState }) {
       ) : null}
     </div>
   );
+}
+
+function RosterPlanNote({ label, items, empty }: { label: string; items: string[]; empty: string }) {
+  return (
+    <div className="rounded-md border border-line bg-background/60 px-3 py-2 text-xs">
+      <div className="uppercase tracking-wide text-slate-500">{label}</div>
+      <div className="mt-1 text-slate-300">{items.length ? items.slice(0, 3).join(", ") : empty}</div>
+    </div>
+  );
+}
+
+function buildRosterPlanSummaries(state: DraftState): {
+  positionCountLabels: string[];
+  strengths: string[];
+  weaknesses: string[];
+  summaryLines: string[];
+  nextPickLens: string;
+} {
+  const counts = Object.entries(state.positionCounts)
+    .filter(([, count]) => count > 0)
+    .sort(([a], [b]) => (POSITION_SORT_ORDER[a] ?? 99) - (POSITION_SORT_ORDER[b] ?? 99) || a.localeCompare(b));
+  const positionCountLabels = counts.length ? counts.map(([position, count]) => `${position} ${count}`) : ["No picks yet"];
+  const relevantNeeds = state.positionNeeds.filter((need) => {
+    if (need.position === "K") return state.hasKicker;
+    if (need.position === "DEF") return state.hasTeamDefense;
+    if (["DL", "LB", "DB"].includes(need.position)) return state.hasIDP;
+    return ["QB", "RB", "WR", "TE"].includes(need.position);
+  });
+  const weaknesses = relevantNeeds
+    .filter((need) => ["urgent", "high", "moderate"].includes(need.needLevel))
+    .sort((a, b) => needLevelSort(a.needLevel) - needLevelSort(b.needLevel) || b.deficit - a.deficit)
+    .map((need) => `${need.label} ${need.needLevel}`);
+  const strengths = relevantNeeds
+    .filter((need) => need.needLevel === "filled" || need.needLevel === "low")
+    .sort((a, b) => a.position.localeCompare(b.position))
+    .map((need) => `${need.label} stable`);
+  const overbuilt = relevantNeeds
+    .filter((need) => need.draftedCount > Math.max(need.directStarterRequirement + need.sharedFlexDemand, need.directStarterRequirement + 1))
+    .map((need) => need.label);
+  const underbuilt = weaknesses.slice(0, 3);
+  const priorityPositions = relevantNeeds
+    .filter((need) => ["urgent", "high"].includes(need.needLevel))
+    .sort((a, b) => needLevelSort(a.needLevel) - needLevelSort(b.needLevel) || b.deficit - a.deficit)
+    .map((need) => need.label)
+    .slice(0, 3);
+  const summaryLines = [
+    underbuilt.length ? `Underbuilt: ${underbuilt.join(", ")}` : "No major roster gaps",
+    overbuilt.length ? `Avoid forcing: ${overbuilt.slice(0, 3).join(", ")}` : "No overbuilt positions flagged",
+    state.rosterRequirements.superflexCount > 0 ? "Superflex active" : null,
+    state.rosterRequirements.idpFlexCount > 0 ? "IDP flex active" : null,
+  ].filter((line): line is string => Boolean(line));
+  const nextPickLens = priorityPositions.length
+    ? `Prioritize ${priorityPositions.join(", ")} if value holds.`
+    : overbuilt.length
+      ? `Avoid forcing ${overbuilt.slice(0, 2).join(", ")} unless value falls.`
+      : "Use value and tier signals; roster construction is not forcing a position.";
+
+  return {
+    positionCountLabels,
+    strengths,
+    weaknesses,
+    summaryLines,
+    nextPickLens,
+  };
+}
+
+function needLevelSort(level: DraftState["positionNeeds"][number]["needLevel"]): number {
+  if (level === "urgent") return 1;
+  if (level === "high") return 2;
+  if (level === "moderate") return 3;
+  if (level === "low") return 4;
+  if (level === "filled") return 5;
+  return 6;
 }
 
 function SharedDemandCard({ label, value }: { label: string; value: number }) {
@@ -3339,7 +4070,7 @@ function NeedLevelBadge({
       : level === "high"
         ? "border-gold/35 bg-gold/10 text-gold"
         : level === "moderate"
-          ? "border-brand/35 bg-brand/10 text-brand"
+          ? "border-slate-400/30 bg-slate-400/10 text-slate-300"
           : level === "low"
             ? "border-slate-400/30 bg-slate-400/10 text-slate-300"
             : level === "filled"
@@ -3425,6 +4156,38 @@ function withFallbackDraftSuggestionRanks(rows: BlackbirdBoardRow[]): BlackbirdB
 
 function boardRowKey(row: BlackbirdBoardRow): string {
   return `${row.playerId ?? ""}|${row.playerName}|${row.position ?? ""}|${row.team ?? ""}`;
+}
+
+function toWarRoomAiBoardPlayer(row: BlackbirdBoardRow): WarRoomAiBoardPlayer {
+  return {
+    playerId: row.playerId,
+    playerName: row.playerName,
+    position: row.position,
+    team: row.team,
+    draftSuggestionRank: row.draftSuggestionRank,
+    blackbirdRank: row.blackbirdBoardRank,
+    valueScore: row.blackbirdValueScore,
+    projection: row.projectionPoints,
+    floor: row.projectionLow,
+    ceiling: row.projectionHigh,
+    confidence: row.confidence,
+    risk: row.risk,
+    timingAction: row.needTimingAction,
+    reasons: [...row.contextualReasons, ...row.planFitReasons].slice(0, 6),
+    dataGaps: row.contextualDataGaps,
+    drafted: row.drafted,
+  };
+}
+
+function toWarRoomAiPick(pick: PickLine) {
+  return {
+    pickNo: pick.pick_no,
+    round: pick.round,
+    playerName: pick.player_name,
+    position: pick.position,
+    team: pick.team,
+    rosterId: pick.platform_roster_id,
+  };
 }
 
 function blackbirdRankSummary(row: BlackbirdBoardRow): string {

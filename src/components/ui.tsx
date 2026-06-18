@@ -20,7 +20,7 @@ export function Stat({
   return (
     <div className="rf-panel p-4">
       <div className="text-xs uppercase tracking-wide text-slate-400">{label}</div>
-      <div className={cn("mt-2 text-2xl font-black", accent && "text-brand")}>{value}</div>
+      <div className={cn("mt-2 text-2xl font-black", accent && "text-electric")}>{value}</div>
     </div>
   );
 }

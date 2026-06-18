@@ -5,6 +5,47 @@ import { PageShell, Panel, Stat } from "@/components/ui";
 import { requireUser } from "@/lib/supabase/auth";
 import { createClient } from "@/lib/supabase/server";
 
+function FormatFlag({ label, enabled }: { label: string; enabled: boolean }) {
+  return (
+    <div className="flex items-center justify-between">
+      <dt className="text-slate-300">{label}</dt>
+      <dd>
+        {enabled ? (
+          <span className="rounded-full border border-electric/30 bg-electric/10 px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-electric">
+            On
+          </span>
+        ) : (
+          <span className="text-slate-500">Off</span>
+        )}
+      </dd>
+    </div>
+  );
+}
+
+function DraftStatusBadge({ status }: { status: string | null }) {
+  if (!status) return null;
+  if (status === "drafting") {
+    return (
+      <span className="flex items-center gap-1 rounded-full border border-emerald-500/35 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-emerald-400">
+        <span className="h-1 w-1 animate-pulse rounded-full bg-emerald-400" />
+        Live
+      </span>
+    );
+  }
+  if (status === "complete") {
+    return (
+      <span className="rounded-full border border-slate-700/40 bg-panel2 px-2 py-0.5 text-[10px] uppercase tracking-wider text-slate-500">
+        Complete
+      </span>
+    );
+  }
+  return (
+    <span className="rounded-full border border-slate-700/40 bg-panel2 px-2 py-0.5 text-[10px] uppercase tracking-wider text-slate-500">
+      {status}
+    </span>
+  );
+}
+
 export default async function LeaguePage({ params }: { params: Promise<{ leagueId: string }> }) {
   await requireUser();
   const { leagueId } = await params;
@@ -27,8 +68,8 @@ export default async function LeaguePage({ params }: { params: Promise<{ leagueI
 
   return (
     <PageShell>
-      <Link className="text-sm text-brand" href="/leagues">
-        Back to leagues
+      <Link className="text-sm text-slate-400 transition-colors hover:text-electric" href="/leagues">
+        ← Back to leagues
       </Link>
       <div className="mt-4 flex flex-col justify-between gap-4 md:flex-row md:items-end">
         <div>
@@ -58,10 +99,11 @@ export default async function LeaguePage({ params }: { params: Promise<{ leagueI
                   className="flex flex-col justify-between gap-3 rounded-md border border-line bg-panel2 p-4 md:flex-row md:items-center"
                 >
                   <div>
-                    <div className="font-bold">{draft.platform_draft_id}</div>
-                    <div className="text-sm text-slate-400">
-                      {draft.season} · {draft.draft_type ?? "draft"} · {draft.status ?? "unknown"}
+                    <div className="flex items-center gap-2">
+                      <span className="font-bold">{draft.season} {draft.draft_type === "snake" ? "Snake" : (draft.draft_type ?? "Draft")}</span>
+                      <DraftStatusBadge status={draft.status} />
                     </div>
+                    <div className="mt-0.5 font-mono text-xs text-slate-500">{draft.platform_draft_id}</div>
                   </div>
                   <CreateDraftRoomButton leagueId={league.id} platformDraftId={draft.platform_draft_id} />
                 </div>
@@ -72,11 +114,14 @@ export default async function LeaguePage({ params }: { params: Promise<{ leagueI
         <Panel>
           <h2 className="text-xl font-bold">Format flags</h2>
           <dl className="mt-4 grid gap-3 text-sm">
-            <div className="flex justify-between"><dt>Dynasty</dt><dd>{league.is_dynasty ? "Yes" : "No"}</dd></div>
-            <div className="flex justify-between"><dt>Best ball</dt><dd>{league.is_best_ball ? "Yes" : "No"}</dd></div>
-            <div className="flex justify-between"><dt>Superflex</dt><dd>{league.is_superflex ? "Yes" : "No"}</dd></div>
-            <div className="flex justify-between"><dt>Two QB</dt><dd>{league.is_two_qb ? "Yes" : "No"}</dd></div>
-            <div className="flex justify-between"><dt>TE premium</dt><dd>{league.te_premium ?? 0}</dd></div>
+            <FormatFlag label="Dynasty" enabled={!!league.is_dynasty} />
+            <FormatFlag label="Best ball" enabled={!!league.is_best_ball} />
+            <FormatFlag label="Superflex" enabled={!!league.is_superflex} />
+            <FormatFlag label="Two QB" enabled={!!league.is_two_qb} />
+            <div className="flex items-center justify-between">
+              <dt className="text-slate-300">TE premium</dt>
+              <dd className="font-semibold text-slate-100">{league.te_premium ?? 0}</dd>
+            </div>
           </dl>
         </Panel>
       </div>

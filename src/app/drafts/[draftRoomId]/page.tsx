@@ -10,7 +10,7 @@ export default async function DraftRoomPage({ params }: { params: Promise<{ draf
 
   return (
     <PageShell className="max-w-[1800px]">
-      <Link className="mb-4 inline-block text-sm text-brand" href="/leagues">
+      <Link className="mb-4 inline-block text-sm text-slate-400 hover:text-electric" href="/leagues">
         Back to leagues
       </Link>
       <DraftWarRoom draftRoomId={draftRoomId} disableAutoSync={process.env.DISABLE_WAR_ROOM_AUTO_SYNC_FOR_E2E === "true"} />

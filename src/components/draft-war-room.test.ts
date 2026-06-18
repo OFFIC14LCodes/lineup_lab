@@ -67,18 +67,24 @@ describe("DraftWarRoom H11 strategy UI wiring", () => {
   it("renders the read-only Blackbird board controls and missing-data labels", () => {
     [
       "Blackbird Board",
-      "Draft Suggestion is live and available-only. Blackbird Rank is static league value across draftable players.",
+      "Draft Suggestions are dynamic and available-only. Full Blackbird Rank is the static league board. Available Blackbird Rank filters that static board to remaining players.",
       "Draft Suggestions",
       "Full Blackbird Rank",
       "Available Blackbird Rank",
+      "Dynamic live ordering for available players based on your roster, timing, plan fit, and current draft state.",
+      "Static league-specific power ranking across drafted and undrafted draftable players.",
+      "Remaining undrafted players sorted by static Blackbird Power Rank.",
+      "No Draft Suggestions match these filters.",
+      "No Full Blackbird Rank rows match these filters.",
+      "No Available Blackbird Rank rows match these filters.",
       "Load more",
       "Projection unavailable",
-      "Season Projection",
+      "Season projection",
       "Floor",
       "Median",
       "Ceiling",
       "Blackbird Power Rank",
-      "Player + Details",
+      "Player",
       "Draft Suggestion",
       "Risk",
       "Live Plan Status",
@@ -88,17 +94,57 @@ describe("DraftWarRoom H11 strategy UI wiring", () => {
       "Tier risk rising",
       "Unexpected value signal",
       "Data Gaps",
-      "Rookie projection",
-      "Enriched rookie data available",
-      "Draft capital available",
-      "Missing draft capital",
-      "College production available",
-      "Missing college production",
-      "Role uncertainty",
-      "Rookie Context",
       "withFallbackDraftSuggestionRanks",
-      "Filters and sort are local to this browser view.",
+      "Search, filters, load-more, and sort are local to this browser view.",
     ].forEach((text) => expect(source).toContain(text));
+  });
+
+  it("keeps War Room board view semantics separate", () => {
+    [
+      "if (boardViewMode === \"draft_suggestions\") return !row.drafted && row.draftSuggestionRank !== null;",
+      "if (boardViewMode === \"available_blackbird\") return !row.drafted;",
+      "if (boardViewMode === \"draft_suggestions\") return (a.draftSuggestionRank ?? 999999) - (b.draftSuggestionRank ?? 999999);",
+      "return a.blackbirdBoardRank - b.blackbirdBoardRank;",
+      "Draft Suggestions are dynamic and available-only. Full Blackbird Rank is the static league board. Available Blackbird Rank filters that static board to remaining players.",
+    ].forEach((text) => expect(source).toContain(text));
+  });
+
+  it("renders dev-only scoring foundation status with v8.2 disabled", () => {
+    [
+      "Scoring Foundation Status",
+      "current path / v7-family",
+      "scaffolded, disabled",
+      "BLACKBIRD_ENABLE_V8_2_EXPECTED_GAMES",
+      "Flag default",
+      "War Room using v8.2",
+      "Blackbird Rank using v8.2",
+      "Draft Suggestions using v8.2",
+      "Supabase production writes using v8.2",
+      "SHOW_SCORING_FOUNDATION_STATUS",
+    ].forEach((text) => expect(source).toContain(text));
+  });
+
+  it("renders deterministic GM Brief preview without AI provider calls", () => {
+    [
+      "buildWarRoomAiContext",
+      "buildWarRoomGmBrief",
+      "GM Brief",
+      "Preview",
+      "Deterministic",
+      "Brief will appear once draft context is available.",
+      "Brief details",
+      "Watch List",
+      "No watch-list items are available yet.",
+      "No top-player data gaps surfaced in this brief.",
+      "Read-only preview; no AI API calls and not included in scoring, Blackbird Rank, or Draft Suggestions.",
+      "draftSuggestions: draftSuggestionRows.map(toWarRoomAiBoardPlayer)",
+      "fullBlackbirdRank: fullRankRows.map(toWarRoomAiBoardPlayer)",
+      "availableBlackbirdRank: availableRankRows.map(toWarRoomAiBoardPlayer)",
+    ].forEach((text) => expect(source).toContain(text));
+
+    ["openai", "anthropic", "claude", "chat.completions", "messages.create"].forEach((text) => {
+      expect(source.toLowerCase()).not.toContain(text);
+    });
   });
 
   it("wires read-only historical player profiles into the player modal", () => {
@@ -143,17 +189,147 @@ describe("DraftWarRoom H11 strategy UI wiring", () => {
       "Historical Evidence",
       "evidence.note",
       "Positive Signals",
-      "Profile evidence in modal",
     ].forEach((text) => expect(source).toContain(text));
   });
 
   it("keeps historical evidence read-only and separate from ranking math", () => {
     const rankingSectionStart = source.indexOf("function AvailablePlayersTable");
-    const rankingSectionEnd = source.indexOf("function BlackbirdBoardPlayerDetails");
+    const rankingSectionEnd = source.indexOf("function HistoricalPlayerProfilePanel");
     const rankingSection = source.slice(rankingSectionStart, rankingSectionEnd);
 
     expect(source).toContain("buildPlayerProfileEvidence({");
     expect(rankingSection).not.toContain("buildPlayerProfileEvidence");
     expect(source).not.toContain("profileEvidenceScore");
+  });
+
+  it("renders structured player reasoning without changing board ordering", () => {
+    [
+      "buildWarRoomPlayerReasonStack",
+      "Player Reasoning",
+      "Why Blackbird Likes",
+      "Projection Profile",
+      "Fit With Your Roster",
+      "Risk and Confidence",
+      "Data Gaps / Things to Verify",
+      "Draft Timing / Value Note",
+      "Board reasoning will appear when this player is opened from the Blackbird Board.",
+      "It does not change ranking or suggestion math.",
+      "setSelectedBoardRow(row)",
+      "setSelectedBoardRow(null)",
+    ].forEach((text) => expect(source).toContain(text));
+
+    const orderingSection = source.slice(source.indexOf("const filteredBoardRows"), source.indexOf("const visibleBlackbirdRows"));
+    expect(orderingSection).not.toContain("buildWarRoomPlayerReasonStack");
+    expect(source.toLowerCase()).not.toContain("anthropic");
+    expect(source.toLowerCase()).not.toContain("openai");
+  });
+
+  it("supports H13.4 board search, position chips, counts, and load-more as view-only controls", () => {
+    [
+      "const BOARD_POSITION_FILTERS = [\"All\", \"QB\", \"RB\", \"WR\", \"TE\", \"K\", \"DEF\", \"DL\", \"LB\", \"DB\"]",
+      "const boardRowsForMode = useMemo(() =>",
+      "const availableBoardPositions = useMemo(() =>",
+      "normalizeBoardSearch(search)",
+      "boardRowMatchesSearch(row, needle)",
+      "row.playerName",
+      "row.team",
+      "row.position",
+      "row.source.player.sleeper_player_id",
+      "row.source.player.matched_player_id",
+      "No players match this search.",
+      "Filtered by:",
+      "Showing {visibleBlackbirdRows.length} of {filteredBoardRows.length} filtered",
+      "{boardRowsForMode.length} in this view",
+      "Search, filters, load-more, and sort are local to this browser view.",
+      "aria-pressed={active}",
+      "disabled={!available}",
+      "onClick={() => setPositionFilter(position)}",
+      "setVisibleBoardRows((count) => count + 50)",
+    ].forEach((text) => expect(source).toContain(text));
+  });
+
+  it("keeps H13.4 filtering after mode ordering so search and position filters do not mutate ranks", () => {
+    const baseRowsSection = source.slice(source.indexOf("const boardRowsForMode"), source.indexOf("const availableBoardPositions"));
+    const filteringSection = source.slice(source.indexOf("const filteredBoardRows"), source.indexOf("const visibleBlackbirdRows"));
+
+    expect(baseRowsSection).toContain("if (boardViewMode === \"draft_suggestions\") return !row.drafted && row.draftSuggestionRank !== null;");
+    expect(baseRowsSection).toContain("if (boardViewMode === \"available_blackbird\") return !row.drafted;");
+    expect(baseRowsSection).toContain("return true;");
+    expect(baseRowsSection).toContain("return a.blackbirdBoardRank - b.blackbirdBoardRank;");
+    expect(filteringSection).toContain("positionFilter === \"All\" || row.position === positionFilter");
+    expect(filteringSection).toContain("!needle || boardRowMatchesSearch(row, needle)");
+    expect(filteringSection).toContain("matchFilter === \"Matched\"");
+    expect(filteringSection).not.toContain("sort(");
+    expect(filteringSection).not.toContain("buildLiveDraftSuggestions");
+    expect(filteringSection).not.toContain("buildBlackbirdLeagueRank");
+  });
+
+  it("renders H13.5 roster construction and plan alignment without changing ordering", () => {
+    [
+      "Current roster by position",
+      "Next Pick Lens",
+      "Roster construction will appear once your picks are available.",
+      "No major roster gaps detected yet.",
+      "Plan alignment will appear once Draft Suggestions are loaded.",
+      "PlanAlignmentChips",
+      "buildPlanAlignmentLabels",
+      "Plan Fit",
+      "Need Fit",
+      "Value Fit",
+      "Scarcity Fit",
+      "Depth Pick",
+      "Luxury Pick",
+      "Risk Check",
+      "buildRosterPlanSummaries",
+      "planSummaries: buildRosterPlanSummaries(state).summaryLines",
+      "Strengths",
+      "Needs",
+      "Avoid forcing",
+      "Use value and tier signals; roster construction is not forcing a position.",
+    ].forEach((text) => expect(source).toContain(text));
+
+    const sidebarMarkup = source.slice(source.indexOf("<aside className=\"min-w-0 space-y-5\">"), source.indexOf("</aside>"));
+    const sidebarOrder = [
+      "/* 1. Draft Signal",
+      "/* 2. Recommended Targets",
+      "/* 3. My Roster Construction",
+      "/* 4. Pre-Draft Strategy",
+      "/* 5. Live Plan Details",
+      "/* 6. Blackbird Value Preview",
+      "SHOW_SCORING_FOUNDATION_STATUS",
+    ].map((text) => sidebarMarkup.indexOf(text));
+    expect(sidebarOrder.every((index) => index >= 0)).toBe(true);
+    expect(sidebarOrder).toEqual([...sidebarOrder].sort((a, b) => a - b));
+
+    const orderingSection = source.slice(source.indexOf("const boardRowsForMode"), source.indexOf("const visibleBlackbirdRows"));
+    expect(orderingSection).not.toContain("buildPlanAlignmentLabels");
+    expect(orderingSection).not.toContain("buildRosterPlanSummaries");
+  });
+
+  it("renders H13.6 live sync status and stale warnings without changing ordering", () => {
+    [
+      "buildWarRoomLiveState",
+      "LiveSyncStatusIndicator",
+      "LiveStateWarning",
+      "lastStateLoadedAt",
+      "syncError",
+      "Refresh draft state",
+      "Last updated",
+      "Sleeper sync",
+      "liveState: {",
+      "warnings: liveState.warnings",
+      "...liveState.warnings",
+      "setLastStateLoadedAt(new Date().toISOString())",
+      "window.setInterval(() => setCurrentTime(new Date()), 1000)",
+      "Unable to load draft room.",
+      "Sync failed.",
+    ].forEach((text) => expect(source).toContain(text));
+
+    const orderingSection = source.slice(source.indexOf("const boardRowsForMode"), source.indexOf("const visibleBlackbirdRows"));
+    expect(orderingSection).not.toContain("buildWarRoomLiveState");
+    expect(orderingSection).not.toContain("liveState");
+    expect(orderingSection).not.toContain("syncError");
+    expect(source.toLowerCase()).not.toContain("anthropic");
+    expect(source.toLowerCase()).not.toContain("openai");
   });
 });

@@ -22,7 +22,7 @@ export default async function SettingsPage() {
       <Panel>
         <h1 className="text-3xl font-black">Settings</h1>
         <p className="mt-2 text-sm text-slate-400">
-          Account tools and player sync. Projection APIs and AI scoring come in later phases.
+          Manage your account, sync player data, and configure your draft tools.
         </p>
         <div className="mt-6 space-y-4">
           <SyncPlayersButton />
