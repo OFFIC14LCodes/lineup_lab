@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { draftBoardPositionBadgeClass, normalizeDraftBoardPosition } from "@/lib/draft/draft-board-display";
+import { draftBoardPositionBadgeClass, draftBoardPositionCardClass, normalizeDraftBoardPosition } from "@/lib/draft/draft-board-display";
 
 describe("draft board position display", () => {
   it("normalizes defensive aliases for board labels and colors", () => {
@@ -20,5 +20,14 @@ describe("draft board position display", () => {
   it("keeps unknown positions visually safe", () => {
     expect(normalizeDraftBoardPosition("P")).toBe("UNK");
     expect(draftBoardPositionBadgeClass("P")).toContain("border-line");
+  });
+
+  it("uses quieter full-card position colors for the draft board", () => {
+    expect(draftBoardPositionCardClass("QB")).toContain("bg-red-950/35");
+    expect(draftBoardPositionCardClass("RB")).toContain("bg-emerald-950/35");
+    expect(draftBoardPositionCardClass("WR")).toContain("bg-sky-950/35");
+    expect(draftBoardPositionCardClass("TE")).toContain("bg-amber-950/35");
+    expect(draftBoardPositionCardClass("DL")).toContain("bg-violet-950/35");
+    expect(draftBoardPositionCardClass("QB")).not.toContain("/85");
   });
 });

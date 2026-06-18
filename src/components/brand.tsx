@@ -26,7 +26,6 @@ export function BrandLockup({
           width={isLarge ? 160 : 72}
           height={isLarge ? 68 : 31}
           className="h-auto w-full object-contain"
-          style={{ filter: "brightness(0) invert(1)" }}
         />
       </div>
       <div>

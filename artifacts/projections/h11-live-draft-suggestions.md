@@ -1,0 +1,711 @@
+# h11-live-draft-suggestions
+
+```json
+{
+  "generatedAt": "2026-06-16T19:38:30.414Z",
+  "verdict": "passed",
+  "rbNeed": [
+    {
+      "playerId": "rb",
+      "playerName": "Need RB",
+      "position": "RB",
+      "team": "TST",
+      "draftSuggestionRank": 1,
+      "suggestionScore": 61.19,
+      "blackbirdRank": 6,
+      "leagueValueScore": 51.7,
+      "projectionTrustLabel": "low",
+      "projectionTrustScore": 30,
+      "projectionSource": "h10_league_projection",
+      "projectionUnit": "season",
+      "role": "probable_starter",
+      "roleConfidence": "low",
+      "pointsAboveReplacement": 0,
+      "replacementMedianPoints": 260,
+      "suggestionType": "need",
+      "timingAction": "fill need if value holds",
+      "planFit": null,
+      "reasons": [
+        "Static Blackbird Rank #6; live score adjusts for roster and timing context.",
+        "RB need level is urgent.",
+        "Role-aware PAR is 0.0 points above replacement.",
+        "Role proxy is probable starter with low confidence."
+      ],
+      "cautions": [
+        "Projection trust is low.",
+        "Projection caveat: missing projected components."
+      ],
+      "dataGaps": [
+        "coaching environment",
+        "confirmed depth chart",
+        "confirmed snap share",
+        "depth chart role",
+        "injury risk",
+        "projected snap share",
+        "role stability",
+        "team defense environment",
+        "team offense environment"
+      ]
+    },
+    {
+      "playerId": "lb",
+      "playerName": "Starter LB",
+      "position": "LB",
+      "team": "TST",
+      "draftSuggestionRank": 2,
+      "suggestionScore": 51.35,
+      "blackbirdRank": 2,
+      "leagueValueScore": 52.15,
+      "projectionTrustLabel": "low",
+      "projectionTrustScore": 30,
+      "projectionSource": "h10_league_projection",
+      "projectionUnit": "season",
+      "role": "probable_starter",
+      "roleConfidence": "low",
+      "pointsAboveReplacement": 0,
+      "replacementMedianPoints": 259,
+      "suggestionType": "value",
+      "timingAction": "value available",
+      "planFit": null,
+      "reasons": [
+        "Static Blackbird Rank #2; live score adjusts for roster and timing context.",
+        "Role-aware PAR is 0.0 points above replacement.",
+        "Role proxy is probable starter with low confidence."
+      ],
+      "cautions": [
+        "Projection trust is low.",
+        "Projection caveat: missing projected components."
+      ],
+      "dataGaps": [
+        "coaching environment",
+        "confirmed depth chart",
+        "confirmed snap share",
+        "depth chart role",
+        "injury risk",
+        "projected snap share",
+        "role stability",
+        "team defense environment",
+        "team offense environment"
+      ]
+    },
+    {
+      "playerId": "te",
+      "playerName": "Premium TE",
+      "position": "TE",
+      "team": "TST",
+      "draftSuggestionRank": 3,
+      "suggestionScore": 49.34,
+      "blackbirdRank": 3,
+      "leagueValueScore": 52.11,
+      "projectionTrustLabel": "low",
+      "projectionTrustScore": 30,
+      "projectionSource": "h10_league_projection",
+      "projectionUnit": "season",
+      "role": "probable_starter",
+      "roleConfidence": "low",
+      "pointsAboveReplacement": 0,
+      "replacementMedianPoints": 220,
+      "suggestionType": "value",
+      "timingAction": "value available",
+      "planFit": null,
+      "reasons": [
+        "Static Blackbird Rank #3; live score adjusts for roster and timing context.",
+        "Role-aware PAR is 0.0 points above replacement.",
+        "Role proxy is probable starter with low confidence."
+      ],
+      "cautions": [
+        "Projection trust is low.",
+        "Projection caveat: missing projected components."
+      ],
+      "dataGaps": [
+        "coaching environment",
+        "confirmed depth chart",
+        "confirmed snap share",
+        "depth chart role",
+        "injury risk",
+        "projected snap share",
+        "role stability",
+        "team defense environment",
+        "team offense environment"
+      ]
+    },
+    {
+      "playerId": "wr",
+      "playerName": "Ceiling WR",
+      "position": "WR",
+      "team": "TST",
+      "draftSuggestionRank": 4,
+      "suggestionScore": 47.31,
+      "blackbirdRank": 4,
+      "leagueValueScore": 52.02,
+      "projectionTrustLabel": "low",
+      "projectionTrustScore": 30,
+      "projectionSource": "h10_league_projection",
+      "projectionUnit": "season",
+      "role": "probable_starter",
+      "roleConfidence": "low",
+      "pointsAboveReplacement": 0,
+      "replacementMedianPoints": 245,
+      "suggestionType": "value",
+      "timingAction": "value available",
+      "planFit": null,
+      "reasons": [
+        "Static Blackbird Rank #4; live score adjusts for roster and timing context.",
+        "Role-aware PAR is 0.0 points above replacement.",
+        "Role proxy is probable starter with low confidence."
+      ],
+      "cautions": [
+        "Projection trust is low.",
+        "Projection caveat: missing projected components."
+      ],
+      "dataGaps": [
+        "coaching environment",
+        "confirmed depth chart",
+        "confirmed snap share",
+        "depth chart role",
+        "injury risk",
+        "projected snap share",
+        "role stability",
+        "team defense environment",
+        "team offense environment"
+      ]
+    },
+    {
+      "playerId": "dl",
+      "playerName": "Starter DL",
+      "position": "DL",
+      "team": "TST",
+      "draftSuggestionRank": 5,
+      "suggestionScore": 45.22,
+      "blackbirdRank": 5,
+      "leagueValueScore": 51.78,
+      "projectionTrustLabel": "low",
+      "projectionTrustScore": 30,
+      "projectionSource": "h10_league_projection",
+      "projectionUnit": "season",
+      "role": "probable_starter",
+      "roleConfidence": "low",
+      "pointsAboveReplacement": 0,
+      "replacementMedianPoints": 214,
+      "suggestionType": "value",
+      "timingAction": "value available",
+      "planFit": null,
+      "reasons": [
+        "Static Blackbird Rank #5; live score adjusts for roster and timing context.",
+        "Role-aware PAR is 0.0 points above replacement.",
+        "Role proxy is probable starter with low confidence."
+      ],
+      "cautions": [
+        "Projection trust is low.",
+        "Projection caveat: missing projected components."
+      ],
+      "dataGaps": [
+        "coaching environment",
+        "confirmed depth chart",
+        "confirmed snap share",
+        "depth chart role",
+        "injury risk",
+        "projected snap share",
+        "role stability",
+        "team defense environment",
+        "team offense environment"
+      ]
+    },
+    {
+      "playerId": "def",
+      "playerName": "Defense",
+      "position": "DEF",
+      "team": "TST",
+      "draftSuggestionRank": 6,
+      "suggestionScore": 33.3,
+      "blackbirdRank": 7,
+      "leagueValueScore": 49.27,
+      "projectionTrustLabel": "low",
+      "projectionTrustScore": 30,
+      "projectionSource": "h10_league_projection",
+      "projectionUnit": "season",
+      "role": "team_unit",
+      "roleConfidence": "medium",
+      "pointsAboveReplacement": 0,
+      "replacementMedianPoints": 120,
+      "suggestionType": "avoid_forcing",
+      "timingAction": "avoid forcing",
+      "planFit": null,
+      "reasons": [
+        "Static Blackbird Rank #7; live score adjusts for roster and timing context.",
+        "Role-aware PAR is 0.0 points above replacement.",
+        "Role proxy is team unit with medium confidence."
+      ],
+      "cautions": [
+        "DEF has avoid-forcing context at this stage.",
+        "Projection trust is low.",
+        "Projection caveat: missing projected components."
+      ],
+      "dataGaps": [
+        "coaching environment",
+        "depth chart role",
+        "individual role not applicable to team defense",
+        "injury risk",
+        "projected snap share",
+        "role stability",
+        "team defense environment",
+        "team offense environment"
+      ]
+    },
+    {
+      "playerId": "db",
+      "playerName": "Starter DB",
+      "position": "DB",
+      "team": "TST",
+      "draftSuggestionRank": 7,
+      "suggestionScore": 30.1,
+      "blackbirdRank": 9,
+      "leagueValueScore": 45.88,
+      "projectionTrustLabel": "very_low",
+      "projectionTrustScore": 20,
+      "projectionSource": "h10_league_projection",
+      "projectionUnit": "season",
+      "role": "probable_starter",
+      "roleConfidence": "low",
+      "pointsAboveReplacement": 0,
+      "replacementMedianPoints": 196,
+      "suggestionType": "value",
+      "timingAction": "value available",
+      "planFit": null,
+      "reasons": [
+        "Static Blackbird Rank #9; live score adjusts for roster and timing context.",
+        "Role-aware PAR is 0.0 points above replacement.",
+        "Role proxy is probable starter with low confidence."
+      ],
+      "cautions": [
+        "Context confidence is low.",
+        "Projection trust is very low.",
+        "Projection caveat: missing projected components."
+      ],
+      "dataGaps": [
+        "coaching environment",
+        "confirmed depth chart",
+        "confirmed depth chart for backup deweighting",
+        "confirmed snap share",
+        "depth chart role",
+        "injury risk",
+        "projected snap share",
+        "role stability",
+        "team defense environment",
+        "team offense environment"
+      ]
+    },
+    {
+      "playerId": "k",
+      "playerName": "Kicker",
+      "position": "K",
+      "team": "TST",
+      "draftSuggestionRank": 8,
+      "suggestionScore": 28.01,
+      "blackbirdRank": 8,
+      "leagueValueScore": 48.43,
+      "projectionTrustLabel": "low",
+      "projectionTrustScore": 30,
+      "projectionSource": "h10_league_projection",
+      "projectionUnit": "season",
+      "role": "probable_starter",
+      "roleConfidence": "low",
+      "pointsAboveReplacement": 0,
+      "replacementMedianPoints": 115,
+      "suggestionType": "avoid_forcing",
+      "timingAction": "avoid forcing",
+      "planFit": null,
+      "reasons": [
+        "Static Blackbird Rank #8; live score adjusts for roster and timing context.",
+        "Role-aware PAR is 0.0 points above replacement.",
+        "Role proxy is probable starter with low confidence."
+      ],
+      "cautions": [
+        "K has avoid-forcing context at this stage.",
+        "Projection trust is low.",
+        "Projection caveat: missing projected components."
+      ],
+      "dataGaps": [
+        "coaching environment",
+        "confirmed depth chart",
+        "confirmed snap share",
+        "depth chart role",
+        "injury risk",
+        "projected snap share",
+        "role stability",
+        "team defense environment",
+        "team offense environment"
+      ]
+    }
+  ],
+  "lbNeed": [
+    {
+      "playerId": "lb",
+      "playerName": "Starter LB",
+      "position": "LB",
+      "team": "TST",
+      "draftSuggestionRank": 1,
+      "suggestionScore": 69.35,
+      "blackbirdRank": 2,
+      "leagueValueScore": 52.15,
+      "projectionTrustLabel": "low",
+      "projectionTrustScore": 30,
+      "projectionSource": "h10_league_projection",
+      "projectionUnit": "season",
+      "role": "probable_starter",
+      "roleConfidence": "low",
+      "pointsAboveReplacement": 0,
+      "replacementMedianPoints": 259,
+      "suggestionType": "need",
+      "timingAction": "fill need if value holds",
+      "planFit": null,
+      "reasons": [
+        "Static Blackbird Rank #2; live score adjusts for roster and timing context.",
+        "LB need level is urgent.",
+        "Role-aware PAR is 0.0 points above replacement.",
+        "Role proxy is probable starter with low confidence."
+      ],
+      "cautions": [
+        "Projection trust is low.",
+        "Projection caveat: missing projected components."
+      ],
+      "dataGaps": [
+        "coaching environment",
+        "confirmed depth chart",
+        "confirmed snap share",
+        "depth chart role",
+        "injury risk",
+        "projected snap share",
+        "role stability",
+        "team defense environment",
+        "team offense environment"
+      ]
+    },
+    {
+      "playerId": "te",
+      "playerName": "Premium TE",
+      "position": "TE",
+      "team": "TST",
+      "draftSuggestionRank": 2,
+      "suggestionScore": 49.34,
+      "blackbirdRank": 3,
+      "leagueValueScore": 52.11,
+      "projectionTrustLabel": "low",
+      "projectionTrustScore": 30,
+      "projectionSource": "h10_league_projection",
+      "projectionUnit": "season",
+      "role": "probable_starter",
+      "roleConfidence": "low",
+      "pointsAboveReplacement": 0,
+      "replacementMedianPoints": 220,
+      "suggestionType": "value",
+      "timingAction": "value available",
+      "planFit": null,
+      "reasons": [
+        "Static Blackbird Rank #3; live score adjusts for roster and timing context.",
+        "Role-aware PAR is 0.0 points above replacement.",
+        "Role proxy is probable starter with low confidence."
+      ],
+      "cautions": [
+        "Projection trust is low.",
+        "Projection caveat: missing projected components."
+      ],
+      "dataGaps": [
+        "coaching environment",
+        "confirmed depth chart",
+        "confirmed snap share",
+        "depth chart role",
+        "injury risk",
+        "projected snap share",
+        "role stability",
+        "team defense environment",
+        "team offense environment"
+      ]
+    },
+    {
+      "playerId": "wr",
+      "playerName": "Ceiling WR",
+      "position": "WR",
+      "team": "TST",
+      "draftSuggestionRank": 3,
+      "suggestionScore": 47.31,
+      "blackbirdRank": 4,
+      "leagueValueScore": 52.02,
+      "projectionTrustLabel": "low",
+      "projectionTrustScore": 30,
+      "projectionSource": "h10_league_projection",
+      "projectionUnit": "season",
+      "role": "probable_starter",
+      "roleConfidence": "low",
+      "pointsAboveReplacement": 0,
+      "replacementMedianPoints": 245,
+      "suggestionType": "value",
+      "timingAction": "value available",
+      "planFit": null,
+      "reasons": [
+        "Static Blackbird Rank #4; live score adjusts for roster and timing context.",
+        "Role-aware PAR is 0.0 points above replacement.",
+        "Role proxy is probable starter with low confidence."
+      ],
+      "cautions": [
+        "Projection trust is low.",
+        "Projection caveat: missing projected components."
+      ],
+      "dataGaps": [
+        "coaching environment",
+        "confirmed depth chart",
+        "confirmed snap share",
+        "depth chart role",
+        "injury risk",
+        "projected snap share",
+        "role stability",
+        "team defense environment",
+        "team offense environment"
+      ]
+    },
+    {
+      "playerId": "dl",
+      "playerName": "Starter DL",
+      "position": "DL",
+      "team": "TST",
+      "draftSuggestionRank": 4,
+      "suggestionScore": 45.22,
+      "blackbirdRank": 5,
+      "leagueValueScore": 51.78,
+      "projectionTrustLabel": "low",
+      "projectionTrustScore": 30,
+      "projectionSource": "h10_league_projection",
+      "projectionUnit": "season",
+      "role": "probable_starter",
+      "roleConfidence": "low",
+      "pointsAboveReplacement": 0,
+      "replacementMedianPoints": 214,
+      "suggestionType": "value",
+      "timingAction": "value available",
+      "planFit": null,
+      "reasons": [
+        "Static Blackbird Rank #5; live score adjusts for roster and timing context.",
+        "Role-aware PAR is 0.0 points above replacement.",
+        "Role proxy is probable starter with low confidence."
+      ],
+      "cautions": [
+        "Projection trust is low.",
+        "Projection caveat: missing projected components."
+      ],
+      "dataGaps": [
+        "coaching environment",
+        "confirmed depth chart",
+        "confirmed snap share",
+        "depth chart role",
+        "injury risk",
+        "projected snap share",
+        "role stability",
+        "team defense environment",
+        "team offense environment"
+      ]
+    },
+    {
+      "playerId": "rb",
+      "playerName": "Need RB",
+      "position": "RB",
+      "team": "TST",
+      "draftSuggestionRank": 5,
+      "suggestionScore": 43.19,
+      "blackbirdRank": 6,
+      "leagueValueScore": 51.7,
+      "projectionTrustLabel": "low",
+      "projectionTrustScore": 30,
+      "projectionSource": "h10_league_projection",
+      "projectionUnit": "season",
+      "role": "probable_starter",
+      "roleConfidence": "low",
+      "pointsAboveReplacement": 0,
+      "replacementMedianPoints": 260,
+      "suggestionType": "value",
+      "timingAction": "value available",
+      "planFit": null,
+      "reasons": [
+        "Static Blackbird Rank #6; live score adjusts for roster and timing context.",
+        "Role-aware PAR is 0.0 points above replacement.",
+        "Role proxy is probable starter with low confidence."
+      ],
+      "cautions": [
+        "Projection trust is low.",
+        "Projection caveat: missing projected components."
+      ],
+      "dataGaps": [
+        "coaching environment",
+        "confirmed depth chart",
+        "confirmed snap share",
+        "depth chart role",
+        "injury risk",
+        "projected snap share",
+        "role stability",
+        "team defense environment",
+        "team offense environment"
+      ]
+    },
+    {
+      "playerId": "def",
+      "playerName": "Defense",
+      "position": "DEF",
+      "team": "TST",
+      "draftSuggestionRank": 6,
+      "suggestionScore": 33.3,
+      "blackbirdRank": 7,
+      "leagueValueScore": 49.27,
+      "projectionTrustLabel": "low",
+      "projectionTrustScore": 30,
+      "projectionSource": "h10_league_projection",
+      "projectionUnit": "season",
+      "role": "team_unit",
+      "roleConfidence": "medium",
+      "pointsAboveReplacement": 0,
+      "replacementMedianPoints": 120,
+      "suggestionType": "avoid_forcing",
+      "timingAction": "avoid forcing",
+      "planFit": null,
+      "reasons": [
+        "Static Blackbird Rank #7; live score adjusts for roster and timing context.",
+        "Role-aware PAR is 0.0 points above replacement.",
+        "Role proxy is team unit with medium confidence."
+      ],
+      "cautions": [
+        "DEF has avoid-forcing context at this stage.",
+        "Projection trust is low.",
+        "Projection caveat: missing projected components."
+      ],
+      "dataGaps": [
+        "coaching environment",
+        "depth chart role",
+        "individual role not applicable to team defense",
+        "injury risk",
+        "projected snap share",
+        "role stability",
+        "team defense environment",
+        "team offense environment"
+      ]
+    },
+    {
+      "playerId": "db",
+      "playerName": "Starter DB",
+      "position": "DB",
+      "team": "TST",
+      "draftSuggestionRank": 7,
+      "suggestionScore": 30.1,
+      "blackbirdRank": 9,
+      "leagueValueScore": 45.88,
+      "projectionTrustLabel": "very_low",
+      "projectionTrustScore": 20,
+      "projectionSource": "h10_league_projection",
+      "projectionUnit": "season",
+      "role": "probable_starter",
+      "roleConfidence": "low",
+      "pointsAboveReplacement": 0,
+      "replacementMedianPoints": 196,
+      "suggestionType": "value",
+      "timingAction": "value available",
+      "planFit": null,
+      "reasons": [
+        "Static Blackbird Rank #9; live score adjusts for roster and timing context.",
+        "Role-aware PAR is 0.0 points above replacement.",
+        "Role proxy is probable starter with low confidence."
+      ],
+      "cautions": [
+        "Context confidence is low.",
+        "Projection trust is very low.",
+        "Projection caveat: missing projected components."
+      ],
+      "dataGaps": [
+        "coaching environment",
+        "confirmed depth chart",
+        "confirmed depth chart for backup deweighting",
+        "confirmed snap share",
+        "depth chart role",
+        "injury risk",
+        "projected snap share",
+        "role stability",
+        "team defense environment",
+        "team offense environment"
+      ]
+    },
+    {
+      "playerId": "k",
+      "playerName": "Kicker",
+      "position": "K",
+      "team": "TST",
+      "draftSuggestionRank": 8,
+      "suggestionScore": 28.01,
+      "blackbirdRank": 8,
+      "leagueValueScore": 48.43,
+      "projectionTrustLabel": "low",
+      "projectionTrustScore": 30,
+      "projectionSource": "h10_league_projection",
+      "projectionUnit": "season",
+      "role": "probable_starter",
+      "roleConfidence": "low",
+      "pointsAboveReplacement": 0,
+      "replacementMedianPoints": 115,
+      "suggestionType": "avoid_forcing",
+      "timingAction": "avoid forcing",
+      "planFit": null,
+      "reasons": [
+        "Static Blackbird Rank #8; live score adjusts for roster and timing context.",
+        "Role-aware PAR is 0.0 points above replacement.",
+        "Role proxy is probable starter with low confidence."
+      ],
+      "cautions": [
+        "K has avoid-forcing context at this stage.",
+        "Projection trust is low.",
+        "Projection caveat: missing projected components."
+      ],
+      "dataGaps": [
+        "coaching environment",
+        "confirmed depth chart",
+        "confirmed snap share",
+        "depth chart role",
+        "injury risk",
+        "projected snap share",
+        "role stability",
+        "team defense environment",
+        "team offense environment"
+      ]
+    }
+  ],
+  "diagnostics": {
+    "inputRows": 9,
+    "availableRows": 8,
+    "draftedRowsExcluded": 1,
+    "rankChangedFromStatic": true,
+    "bannedLanguageFound": [],
+    "noPersistence": true
+  },
+  "checks": [
+    {
+      "name": "available_only",
+      "passed": true,
+      "detail": "rows=8"
+    },
+    {
+      "name": "changes_with_roster_state",
+      "passed": true,
+      "detail": "Need RB vs Starter LB"
+    },
+    {
+      "name": "rank_separate_from_blackbird",
+      "passed": true,
+      "detail": "dynamic rank differs where live context requires it"
+    },
+    {
+      "name": "no_persistence",
+      "passed": true,
+      "detail": "read-only diagnostic"
+    },
+    {
+      "name": "no_banned_language",
+      "passed": true,
+      "detail": "none"
+    }
+  ]
+}
+```

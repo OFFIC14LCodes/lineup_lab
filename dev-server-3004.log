@@ -1,0 +1,15 @@
+   ▲ Next.js 15.5.19
+   - Local:        http://localhost:3004
+   - Network:      http://192.168.254.9:3004
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 3.7s
+ ○ Compiling / ...
+ ✓ Compiled / in 9.8s (608 modules)
+ GET / 200 in 10835ms
+ ○ Compiling /dashboard ...
+ ✓ Compiled /dashboard in 1988ms (682 modules)
+ GET /dashboard 200 in 3120ms
+ ✓ Compiled /leagues in 449ms (694 modules)
+ GET /leagues 200 in 1618ms

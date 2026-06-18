@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ChevronDown, RefreshCw, Search, Users, X } from "lucide-react";
 
 import type { WarRoomValueOverlayRow, WarRoomValueOverlayResult } from "@/lib/draft/h10-war-room-overlay";
@@ -273,6 +273,20 @@ type SelectedPlayerSummary = {
   team: string | null;
 };
 
+type RadarAlert = {
+  id: string;
+  label: string;
+  text: string;
+  tone: "gold" | "red" | "brand" | "green";
+};
+
+type TopSuggestionSnapshot = {
+  key: string;
+  name: string;
+  position: string | null;
+  team: string | null;
+};
+
 type HistoricalPlayerProfileResponse = {
   status?: string;
   profile: PlayerProfileReadModel;
@@ -461,6 +475,14 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
     strategy: null,
     error: null,
   });
+  const [recentlyDraftedPickNo, setRecentlyDraftedPickNo] = useState<number | null>(null);
+  const [recentlyDraftedPlayerKey, setRecentlyDraftedPlayerKey] = useState<string | null>(null);
+  const [draftSignalUpdated, setDraftSignalUpdated] = useState(false);
+  const [picksUntilTurnChanged, setPicksUntilTurnChanged] = useState(false);
+  const [targetLostAlert, setTargetLostAlert] = useState<RadarAlert | null>(null);
+  const previousPickCountRef = useRef<number | null>(null);
+  const previousTopSuggestionRef = useRef<TopSuggestionSnapshot | null>(null);
+  const previousPicksUntilTurnRef = useRef<number | null>(null);
 
   const loadState = useCallback(async () => {
     try {
@@ -682,6 +704,76 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
     setVisibleBoardRows(50);
   }, [boardSort, boardViewMode, matchFilter, positionFilter, search]);
 
+  useEffect(() => {
+    if (!state) return;
+    const currentPickCount = state.picks.length;
+    const previousPickCount = previousPickCountRef.current;
+    if (previousPickCount === null) {
+      previousPickCountRef.current = currentPickCount;
+      return;
+    }
+    previousPickCountRef.current = currentPickCount;
+    if (currentPickCount <= previousPickCount) return;
+
+    const newestPick = state.lastPick ?? state.picks[state.picks.length - 1] ?? null;
+    if (!newestPick) return;
+    const draftedKey = pickIdentityKey(newestPick);
+    setRecentlyDraftedPickNo(newestPick.pick_no);
+    setRecentlyDraftedPlayerKey(draftedKey);
+
+    const previousTop = previousTopSuggestionRef.current;
+    if (previousTop && pickMatchesTopSuggestion(newestPick, previousTop)) {
+      setTargetLostAlert({
+        id: `target-lost-${newestPick.pick_no}`,
+        label: "Target lost",
+        text: `${previousTop.name} was drafted.`,
+        tone: "gold",
+      });
+    }
+
+    const timeout = window.setTimeout(() => {
+      setRecentlyDraftedPickNo(null);
+      setRecentlyDraftedPlayerKey(null);
+      setTargetLostAlert(null);
+    }, 1500);
+    return () => window.clearTimeout(timeout);
+  }, [state]);
+
+  useEffect(() => {
+    const topSuggestion = state?.recommendations[0] ?? null;
+    const currentSnapshot = topSuggestion ? topSuggestionSnapshot(topSuggestion) : null;
+    const previousSnapshot = previousTopSuggestionRef.current;
+    if (previousSnapshot === null) {
+      previousTopSuggestionRef.current = currentSnapshot;
+      return;
+    }
+    if (!currentSnapshot) {
+      previousTopSuggestionRef.current = currentSnapshot;
+      return;
+    }
+    if (currentSnapshot.key === previousSnapshot.key) return;
+
+    setDraftSignalUpdated(true);
+    previousTopSuggestionRef.current = currentSnapshot;
+    const timeout = window.setTimeout(() => setDraftSignalUpdated(false), 1200);
+    return () => window.clearTimeout(timeout);
+  }, [state?.recommendations]);
+
+  useEffect(() => {
+    const current = state?.picksUntilMyNextPick ?? null;
+    const previous = previousPicksUntilTurnRef.current;
+    if (previous === null) {
+      previousPicksUntilTurnRef.current = current;
+      return;
+    }
+    previousPicksUntilTurnRef.current = current;
+    if (current === null || previous === null || current >= previous) return;
+
+    setPicksUntilTurnChanged(true);
+    const timeout = window.setTimeout(() => setPicksUntilTurnChanged(false), 800);
+    return () => window.clearTimeout(timeout);
+  }, [state?.picksUntilMyNextPick]);
+
   const blackbirdPlayerPool = useMemo(
     () => mergeDraftableAndRemainingPlayers(
       mergeDraftableAndRemainingPlayers(state?.blackbirdRankPlayers ?? [], state?.draftablePlayers ?? []),
@@ -847,6 +939,15 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
     }),
     [currentTime, error, lastStateLoadedAt, state?.currentPickNumber, state?.currentRound, state?.picks.length, state?.room.status, syncError, syncing]
   );
+  const radarAlerts = useMemo(
+    () => buildRadarAlerts({
+      livePlanStatus,
+      picksUntilTurn: state?.picksUntilMyNextPick ?? null,
+      picks: state?.picks ?? [],
+      targetLostAlert,
+    }),
+    [livePlanStatus, state?.picks, state?.picksUntilMyNextPick, targetLostAlert]
+  );
 
   const gmBrief = useMemo(() => {
     if (!state) return buildWarRoomGmBrief(null);
@@ -961,7 +1062,13 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
               <span>Pick {state.currentPickNumber}</span>
               <span>Round {state.currentRound}</span>
               {state.picksUntilMyNextPick !== null && state.picksUntilMyNextPick !== undefined ? (
-                <span className="flex items-center gap-1.5 rounded-full border border-electric/30 bg-electric/10 px-2.5 py-0.5 font-black text-electric">
+                <span
+                  className={`flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 font-black text-electric transition-all duration-300 ${
+                    picksUntilTurnChanged
+                      ? "animate-pulse border-electric/40 bg-electric/15 ring-1 ring-electric/40"
+                      : "border-electric/30 bg-electric/10"
+                  }`}
+                >
                   <span className="text-base">{state.picksUntilMyNextPick}</span>
                   <span className="text-xs font-medium">until turn</span>
                 </span>
@@ -1018,7 +1125,13 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
                 ) : null}
               </div>
             </div>
-            <SleeperStyleDraftBoard picks={state.picks} teams={draftBoardTeams} myDraftSlot={state.myDraftSlot} currentPickNumber={state.currentPickNumber} />
+            <SleeperStyleDraftBoard
+              picks={state.picks}
+              teams={draftBoardTeams}
+              myDraftSlot={state.myDraftSlot}
+              currentPickNumber={state.currentPickNumber}
+              recentlyDraftedPickNo={recentlyDraftedPickNo}
+            />
             {selectedTeam ? <TeamRosterStrip team={selectedTeam} picks={selectedTeamPicks} /> : null}
           </section>
 
@@ -1115,7 +1228,12 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
                 </div>
               </div>
             </div>
-            <AvailablePlayersTable rows={visibleBlackbirdRows} emptyText={boardEmptyText} onSelectPlayer={openPlayerProfile} />
+            <AvailablePlayersTable
+              rows={visibleBlackbirdRows}
+              emptyText={boardEmptyText}
+              onSelectPlayer={openPlayerProfile}
+              recentlyDraftedPlayerKey={recentlyDraftedPlayerKey}
+            />
             <div className="flex flex-col gap-2 border-t border-line bg-panel2/40 p-4 sm:flex-row sm:items-center sm:justify-between">
               <p className="text-xs text-slate-400">
                 Showing {visibleBlackbirdRows.length} of {filteredBoardRows.length} filtered players. Search, filters, load-more, and sort are local to this browser view.
@@ -1136,13 +1254,18 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
             topPlayer={state.recommendations[0] ?? null}
             picksUntilTurn={state.picksUntilMyNextPick}
             isDrafting={state.room.status === "drafting"}
+            draftSignalUpdated={draftSignalUpdated}
+            syncing={syncing}
             onSelectPlayer={() => {
               const top = state.recommendations[0];
               if (top) void openAvailablePlayerProfile(top);
             }}
           />
 
-          {/* 2. Recommended Targets — full target list */}
+          {/* 2. Recent Signals — live draft movement */}
+          <RecentSignalsPanel alerts={radarAlerts} />
+
+          {/* 3. Recommended Targets — full target list */}
           <SidePanel title="Recommended Targets">
             {state.h10InternalTrustedExperimentAllowed ? (
               <InternalTrustedRecommendationPanel
@@ -1186,7 +1309,7 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
             <ScoringMetadata metadata={state.scoringMetadata} />
           </SidePanel>
 
-          {/* 3. My Roster Construction — collapsible, open by default */}
+          {/* 4. My Roster Construction — collapsible, open by default */}
           <details
             open={rosterOpen}
             onToggle={(e) => setRosterOpen(e.currentTarget.open)}
@@ -1205,7 +1328,7 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
             </div>
           </details>
 
-          {/* 4. Pre-Draft Strategy — collapsible, closed by default */}
+          {/* 5. Pre-Draft Strategy — collapsible, closed by default */}
           {!strategyProminent ? (
             <details
               open={strategyOpen}
@@ -1221,7 +1344,7 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
             </details>
           ) : null}
 
-          {/* 5. Live Plan Details — collapsible, closed by default */}
+          {/* 6. Live Plan Details — collapsible, closed by default */}
           <details
             open={liveDetailsOpen}
             onToggle={(e) => setLiveDetailsOpen(e.currentTarget.open)}
@@ -1235,7 +1358,7 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
             </div>
           </details>
 
-          {/* 6. Blackbird Value Preview — gated, collapsible, closed by default */}
+          {/* 7. Blackbird Value Preview — gated, collapsible, closed by default */}
           {!state.h10RecommendationExperimentEnabled && (state.rankingsUploaded || state.recommendations.length > 0) && (state.h10RecommendationPreview || state.h10RecommendationDiagnostics) ? (
             <details
               open={valuePreviewOpen}
@@ -1279,11 +1402,13 @@ function SleeperStyleDraftBoard({
   teams,
   myDraftSlot,
   currentPickNumber,
+  recentlyDraftedPickNo,
 }: {
   picks: PickLine[];
   teams: DraftBoardTeam[];
   myDraftSlot: number | null;
   currentPickNumber: number;
+  recentlyDraftedPickNo: number | null;
 }) {
   if (!teams.length) {
     return (
@@ -1337,7 +1462,15 @@ function SleeperStyleDraftBoard({
               const pick = picksByRoundAndSlot.get(`${round}:${team.draftSlot}`);
               const expectedPickNo = expectedPickNumber(round, team.draftSlot, teams.length);
               const isCurrent = expectedPickNo === currentPickNumber;
-              return <DraftPickCard key={`${round}-${team.rosterId}`} pick={pick ?? null} expectedPickNo={expectedPickNo} isCurrent={isCurrent} />;
+              return (
+                <DraftPickCard
+                  key={`${round}-${team.rosterId}`}
+                  pick={pick ?? null}
+                  expectedPickNo={expectedPickNo}
+                  isCurrent={isCurrent}
+                  isRecentlyDrafted={pick?.pick_no === recentlyDraftedPickNo}
+                />
+              );
             }),
           ])}
         </div>
@@ -1359,7 +1492,17 @@ function PositionLegend() {
   );
 }
 
-function DraftPickCard({ pick, expectedPickNo, isCurrent }: { pick: PickLine | null; expectedPickNo: number; isCurrent: boolean }) {
+function DraftPickCard({
+  pick,
+  expectedPickNo,
+  isCurrent,
+  isRecentlyDrafted,
+}: {
+  pick: PickLine | null;
+  expectedPickNo: number;
+  isCurrent: boolean;
+  isRecentlyDrafted: boolean;
+}) {
   if (!pick) {
     return (
       <div className={`min-h-[72px] min-w-0 bg-background/70 p-1.5 ${isCurrent ? "outline outline-2 outline-electric/70" : ""}`}>
@@ -1371,7 +1514,11 @@ function DraftPickCard({ pick, expectedPickNo, isCurrent }: { pick: PickLine | n
 
   const position = normalizeDraftBoardPosition(pick.position);
   return (
-    <div className={`min-h-[72px] min-w-0 border p-1.5 ${draftBoardPositionCardClass(pick.position)}`}>
+    <div
+      className={`min-h-[72px] min-w-0 border p-1.5 transition-all duration-500 ${draftBoardPositionCardClass(pick.position)} ${
+        isRecentlyDrafted ? "bg-electric/10 ring-2 ring-electric/50 shadow-[0_0_24px_rgba(26,110,252,0.22)]" : ""
+      }`}
+    >
       <div className="flex items-center justify-between gap-2 text-[11px]">
         <span className="font-semibold text-white/75">#{pick.pick_no}</span>
         <span className="rounded-full bg-black/25 px-1.5 py-0.5 font-bold text-white">{position}</span>
@@ -1554,44 +1701,18 @@ function DraftSignalPanel({
   topPlayer,
   picksUntilTurn,
   isDrafting,
+  draftSignalUpdated,
+  syncing,
   onSelectPlayer,
 }: {
   livePlanStatus: LivePlanStatus | null;
   topPlayer: AvailablePlayer | null;
   picksUntilTurn: number | null;
   isDrafting: boolean;
+  draftSignalUpdated: boolean;
+  syncing: boolean;
   onSelectPlayer: () => void;
 }) {
-  const activeSignals = livePlanStatus
-    ? [
-        ...livePlanStatus.triggeredContingencies.slice(0, 2).map((item) => ({
-          label: "Contingency active",
-          text: item.label,
-          tone: "gold" as const,
-        })),
-        ...livePlanStatus.tierRiskStatus
-          .filter((item) => item.riskLevel !== "low")
-          .slice(0, 2)
-          .map((item) => ({ label: "Tier risk rising", text: item.summary, tone: "red" as const })),
-        ...livePlanStatus.valueFallStatus.slice(0, 2).map((item) => ({
-          label: "Unexpected value signal",
-          text: item.summary,
-          tone: "brand" as const,
-        })),
-        ...livePlanStatus.waitPlanStatus
-          .filter((item) => item.status !== "not_waiting")
-          .slice(0, 2)
-          .map((item) => ({
-            label: item.status === "supported" ? "Wait plan supported" : "Wait plan weakening",
-            text: item.summary,
-            tone: item.status === "supported" ? ("green" as const) : ("gold" as const),
-          })),
-      ].slice(0, 6)
-    : [];
-
-  const visibleSignals = activeSignals.slice(0, 2);
-  const hiddenSignals = activeSignals.slice(2);
-
   const tierLabel: Record<RecommendationTier, string> = {
     elite_target: "Elite Target",
     strong_target: "Strong Target",
@@ -1619,6 +1740,11 @@ function DraftSignalPanel({
             ) : (
               <span className="text-xs text-slate-500">No plan data</span>
             )}
+            {syncing ? (
+              <span className="rounded-full border border-electric/25 bg-electric/10 px-2 py-0.5 text-[10px] font-black uppercase tracking-wide text-electric">
+                Recalculating board
+              </span>
+            ) : null}
           </div>
           {picksUntilTurn !== null ? (
             <span className="text-xs text-slate-400">
@@ -1632,39 +1758,28 @@ function DraftSignalPanel({
         ) : null}
       </div>
 
-      {activeSignals.length > 0 ? (
-        <div className="mt-3 space-y-2">
-          {visibleSignals.map((signal, i) => (
-            <LiveSignal key={`signal-${i}`} label={signal.label} text={signal.text} tone={signal.tone} />
-          ))}
-          {hiddenSignals.length > 0 ? (
-            <details>
-              <summary className="cursor-pointer text-xs text-slate-500 hover:text-slate-300">
-                +{hiddenSignals.length} more signal{hiddenSignals.length === 1 ? "" : "s"}
-              </summary>
-              <div className="mt-2 space-y-2">
-                {hiddenSignals.map((signal, i) => (
-                  <LiveSignal key={`hidden-signal-${i}`} label={signal.label} text={signal.text} tone={signal.tone} />
-                ))}
-              </div>
-            </details>
-          ) : null}
-        </div>
-      ) : livePlanStatus ? (
-        <p className="mt-3 text-xs text-slate-500">No active signals.</p>
-      ) : null}
-
       <div className="mt-3">
         <div className="mb-1.5 text-[10px] font-black uppercase tracking-wide text-slate-500">Top Recommendation</div>
         {topPlayer ? (
           <button
             type="button"
-            className="w-full rounded-md border border-electric/20 bg-electric/5 px-3 py-3 text-left transition-colors hover:border-electric/40 hover:bg-electric/10"
+            className={`w-full rounded-md border px-3 py-3 text-left transition-colors duration-500 hover:border-electric/40 hover:bg-electric/10 ${
+              draftSignalUpdated
+                ? "border-electric/40 bg-electric/10 ring-1 ring-electric/40"
+                : "border-electric/20 bg-electric/5"
+            }`}
             onClick={onSelectPlayer}
           >
             <div className="flex items-start justify-between gap-2">
               <div>
-                <div className="font-bold text-slate-100">{topPlayer.player_name}</div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="font-bold text-slate-100">{topPlayer.player_name}</span>
+                  {draftSignalUpdated ? (
+                    <span className="rounded-full border border-electric/25 bg-electric/10 px-2 py-0.5 text-[10px] font-black uppercase tracking-wide text-electric">
+                      Draft Signal updated
+                    </span>
+                  ) : null}
+                </div>
                 <div className="mt-0.5 text-xs text-slate-400">
                   {topPlayer.position ?? "—"} · {topPlayer.team ?? "—"}
                 </div>
@@ -1684,6 +1799,40 @@ function DraftSignalPanel({
           </div>
         )}
       </div>
+    </SidePanel>
+  );
+}
+
+function RecentSignalsPanel({ alerts }: { alerts: RadarAlert[] }) {
+  const visibleSignals = alerts.slice(0, 3);
+  const hiddenSignals = alerts.slice(3);
+
+  return (
+    <SidePanel title="Recent Signals">
+      <div className="text-xs text-slate-500">Live draft movement and board changes</div>
+      {visibleSignals.length ? (
+        <div className="mt-3 space-y-2">
+          {visibleSignals.map((signal) => (
+            <RecentSignalRow key={signal.id} label={signal.label} text={signal.text} tone={signal.tone} />
+          ))}
+          {hiddenSignals.length > 0 ? (
+            <details>
+              <summary className="cursor-pointer text-xs text-slate-500 hover:text-slate-300">
+                +{hiddenSignals.length} more signal{hiddenSignals.length === 1 ? "" : "s"}
+              </summary>
+              <div className="mt-2 space-y-2">
+                {hiddenSignals.map((signal) => (
+                  <RecentSignalRow key={signal.id} label={signal.label} text={signal.text} tone={signal.tone} />
+                ))}
+              </div>
+            </details>
+          ) : null}
+        </div>
+      ) : (
+        <p className="mt-3 rounded-md border border-line/70 bg-background/35 px-3 py-2 text-xs text-slate-500">
+          No active signals right now.
+        </p>
+      )}
     </SidePanel>
   );
 }
@@ -1800,7 +1949,46 @@ function LiveSignal({ label, text, tone }: { label: string; text: string; tone: 
   );
 }
 
-function AvailablePlayersTable({ rows, emptyText, onSelectPlayer }: { rows: BlackbirdBoardRow[]; emptyText: string; onSelectPlayer: (row: BlackbirdBoardRow) => void }) {
+function RecentSignalRow({ label, text, tone }: { label: string; text: string; tone: RadarAlert["tone"] }) {
+  const toneClass =
+    tone === "red"
+      ? "border-l-red-300 text-red-100"
+      : tone === "green"
+        ? "border-l-emerald-300 text-emerald-100"
+        : tone === "brand"
+          ? "border-l-electric text-slate-100"
+          : "border-l-gold text-slate-100";
+  const dotClass =
+    tone === "red"
+      ? "bg-red-300"
+      : tone === "green"
+        ? "bg-emerald-300"
+        : tone === "brand"
+          ? "bg-electric"
+          : "bg-gold";
+
+  return (
+    <div className={`rounded-lg border border-l-4 border-line/70 bg-background/35 px-3 py-2 text-sm ${toneClass}`}>
+      <div className="flex items-center gap-2">
+        <span className={`h-1.5 w-1.5 rounded-full ${dotClass}`} />
+        <span className="text-[11px] font-black uppercase tracking-wide text-slate-400">{label}</span>
+      </div>
+      <div className="mt-1 leading-relaxed text-slate-200">{text}</div>
+    </div>
+  );
+}
+
+function AvailablePlayersTable({
+  rows,
+  emptyText,
+  onSelectPlayer,
+  recentlyDraftedPlayerKey,
+}: {
+  rows: BlackbirdBoardRow[];
+  emptyText: string;
+  onSelectPlayer: (row: BlackbirdBoardRow) => void;
+  recentlyDraftedPlayerKey: string | null;
+}) {
   return (
     <div className="overflow-x-auto">
       <table className="w-full min-w-[960px] text-left text-sm">
@@ -1817,71 +2005,79 @@ function AvailablePlayersTable({ rows, emptyText, onSelectPlayer }: { rows: Blac
           </tr>
         </thead>
         <tbody>
-          {rows.map((row) => (
-            <tr key={`${row.playerId ?? row.playerName}-${row.blackbirdBoardRank}`} className="border-t border-line/70">
-              <td className="px-3 py-3">
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="text-lg font-black text-electric">{row.draftSuggestionRank === null ? "-" : `#${row.draftSuggestionRank}`}</span>
-                  {row.blackbirdValueScore === null ? null : (
-                    <span className="rounded-full border border-electric/25 bg-electric/10 px-2 py-1 text-xs font-black text-electric">
-                      {formatNumber(row.blackbirdValueScore)}
-                    </span>
-                  )}
-                </div>
-                <div className="mt-1 text-[11px] text-slate-500">{formatTimingAction(row.needTimingAction)}</div>
-                {row.draftSuggestionType ? (
-                  <div className="mt-1">
-                    <SignalChip tone="electric">{row.draftSuggestionType.replace(/_/g, " ")}</SignalChip>
+          {rows.map((row) => {
+            const isRecentlyDrafted = boardRowIdentityKeys(row).includes(recentlyDraftedPlayerKey ?? "__none__");
+            return (
+              <tr
+                key={`${row.playerId ?? row.playerName}-${row.blackbirdBoardRank}`}
+                className={`border-t border-line/70 transition-colors duration-500 ${
+                  isRecentlyDrafted ? "bg-electric/10 ring-1 ring-inset ring-electric/30" : ""
+                } ${row.drafted ? "opacity-75" : ""}`}
+              >
+                <td className="px-3 py-3">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-lg font-black text-electric">{row.draftSuggestionRank === null ? "-" : `#${row.draftSuggestionRank}`}</span>
+                    {row.blackbirdValueScore === null ? null : (
+                      <span className="rounded-full border border-electric/25 bg-electric/10 px-2 py-1 text-xs font-black text-electric">
+                        {formatNumber(row.blackbirdValueScore)}
+                      </span>
+                    )}
                   </div>
-                ) : null}
-              </td>
-              <td className="px-3 py-3">
-                <button
-                  type="button"
-                  className="block max-w-[260px] truncate text-left font-medium text-slate-100 underline decoration-electric/40 underline-offset-4 hover:text-electric"
-                  onClick={() => onSelectPlayer(row)}
-                >
-                  {row.playerName}
-                </button>
-                <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-slate-500">
-                  <span>{row.playerId ? "Matched context" : "Fallback context"}</span>
-                  <span>{row.dataStatus.ordering.replace("_", " ")}</span>
-                  {row.drafted ? <span className="rounded-full border border-line px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-slate-400">Drafted</span> : null}
-                </div>
-                <div className="mt-2 flex flex-wrap gap-1">
-                  {row.planFitReasons.slice(0, 2).map((reason) => (
-                    <SignalChip key={reason} tone="slate">{reason}</SignalChip>
-                  ))}
-                  {row.contextualDataGaps.slice(0, 1).map((gap) => (
-                    <SignalChip key={gap} tone="gold">{gap}</SignalChip>
-                  ))}
-                </div>
-                <p className="mt-2 text-xs leading-relaxed text-slate-400">{blackbirdRankSummary(row)}</p>
-              </td>
-              <td className="px-3 py-3"><PositionBadge position={row.position} /></td>
-              <td className="px-3 py-3">{row.team || "-"}</td>
-              <td className="px-3 py-3">
-                {row.dataStatus.projection === "available" ? (
-                  <div className="min-w-[210px]">
-                    <div className="grid grid-cols-3 gap-2">
-                      <ProjectionMini label="Floor" value={row.projectionLow} />
-                      <ProjectionMini label="Median" value={row.projectionPoints} />
-                      <ProjectionMini label="Ceiling" value={row.projectionHigh} />
+                  <div className="mt-1 text-[11px] text-slate-500">{formatTimingAction(row.needTimingAction)}</div>
+                  {row.draftSuggestionType ? (
+                    <div className="mt-1">
+                      <SignalChip tone="electric">{row.draftSuggestionType.replace(/_/g, " ")}</SignalChip>
                     </div>
-                    <div className="mt-1 flex flex-wrap items-center gap-2 text-[11px] text-slate-500">
-                      <span>{projectionUnitLabel(row)}</span>
-                      <ProjectionTrustBadge row={row} />
-                    </div>
+                  ) : null}
+                </td>
+                <td className="px-3 py-3">
+                  <button
+                    type="button"
+                    className="block max-w-[260px] truncate text-left font-medium text-slate-100 underline decoration-electric/40 underline-offset-4 hover:text-electric"
+                    onClick={() => onSelectPlayer(row)}
+                  >
+                    {row.playerName}
+                  </button>
+                  <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-slate-500">
+                    <span>{row.playerId ? "Matched context" : "Fallback context"}</span>
+                    <span>{row.dataStatus.ordering.replace("_", " ")}</span>
+                    {row.drafted ? <span className="rounded-full border border-line px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-slate-400">Drafted</span> : null}
                   </div>
-                ) : "Projection unavailable"}
-              </td>
-              <td className="px-3 py-3 font-black text-electric">{row.blackbirdValueScore === null ? "-" : `${formatNumber(row.blackbirdValueScore)}/100`}</td>
-              <td className="px-3 py-3"><ProjectionTrustBadge row={row} /></td>
-              <td className="px-3 py-3">
-                <RiskScoreBlock row={row} />
-              </td>
-            </tr>
-          ))}
+                  <div className="mt-2 flex flex-wrap gap-1">
+                    {row.planFitReasons.slice(0, 2).map((reason) => (
+                      <SignalChip key={reason} tone="slate">{reason}</SignalChip>
+                    ))}
+                    {row.contextualDataGaps.slice(0, 1).map((gap) => (
+                      <SignalChip key={gap} tone="gold">{gap}</SignalChip>
+                    ))}
+                  </div>
+                  <p className="mt-2 text-xs leading-relaxed text-slate-400">{blackbirdRankSummary(row)}</p>
+                </td>
+                <td className="px-3 py-3"><PositionBadge position={row.position} /></td>
+                <td className="px-3 py-3">{row.team || "-"}</td>
+                <td className="px-3 py-3">
+                  {row.dataStatus.projection === "available" ? (
+                    <div className="min-w-[210px]">
+                      <div className="grid grid-cols-3 gap-2">
+                        <ProjectionMini label="Floor" value={row.projectionLow} />
+                        <ProjectionMini label="Median" value={row.projectionPoints} />
+                        <ProjectionMini label="Ceiling" value={row.projectionHigh} />
+                      </div>
+                      <div className="mt-1 flex flex-wrap items-center gap-2 text-[11px] text-slate-500">
+                        <span>{projectionUnitLabel(row)}</span>
+                        <ProjectionTrustBadge row={row} />
+                      </div>
+                    </div>
+                  ) : "Projection unavailable"}
+                </td>
+                <td className="px-3 py-3 font-black text-electric">{row.blackbirdValueScore === null ? "-" : `${formatNumber(row.blackbirdValueScore)}/100`}</td>
+                <td className="px-3 py-3"><ProjectionTrustBadge row={row} /></td>
+                <td className="px-3 py-3">
+                  <RiskScoreBlock row={row} />
+                </td>
+              </tr>
+            );
+          })}
           {rows.length === 0 ? <EmptyTable colSpan={8} text={emptyText} /> : null}
         </tbody>
       </table>
@@ -1917,6 +2113,171 @@ function boardRowMatchesSearch(row: BlackbirdBoardRow, normalizedQuery: string):
     row.source.player.matched_player_id,
   ];
   return aliases.some((value) => typeof value === "string" && value.toLowerCase().includes(normalizedQuery));
+}
+
+function topSuggestionSnapshot(player: AvailablePlayer): TopSuggestionSnapshot {
+  return {
+    key: availablePlayerIdentityKey(player),
+    name: player.player_name ?? "Top target",
+    position: player.position,
+    team: player.team,
+  };
+}
+
+function availablePlayerIdentityKey(player: AvailablePlayer): string {
+  return (
+    [
+      player.matched_player_id,
+      player.sleeper_player_id,
+      normalizedIdentityParts(player.player_name, player.position, player.team),
+    ].find((value): value is string => Boolean(value && value.trim())) ?? "unknown-player"
+  );
+}
+
+function pickIdentityKey(pick: PickLine): string {
+  return normalizedIdentityParts(pick.player_name, pick.position, pick.team);
+}
+
+function boardRowIdentityKeys(row: BlackbirdBoardRow): string[] {
+  return [
+    row.playerId,
+    normalizedIdentityParts(row.playerName, row.position, row.team),
+  ].filter((value): value is string => Boolean(value && value.trim()));
+}
+
+function pickMatchesTopSuggestion(pick: PickLine, top: TopSuggestionSnapshot): boolean {
+  const pickName = normalizeIdentityValue(pick.player_name);
+  const topName = normalizeIdentityValue(top.name);
+  if (!pickName || !topName || pickName !== topName) return false;
+
+  const pickPosition = normalizeIdentityValue(pick.position);
+  const topPosition = normalizeIdentityValue(top.position);
+  const pickTeam = normalizeIdentityValue(pick.team);
+  const topTeam = normalizeIdentityValue(top.team);
+  const positionMatches = !pickPosition || !topPosition || pickPosition === topPosition;
+  const teamMatches = !pickTeam || !topTeam || pickTeam === topTeam;
+  return positionMatches && teamMatches;
+}
+
+function normalizedIdentityParts(name: string | null | undefined, position: string | null | undefined, team: string | null | undefined): string {
+  return [name, position, team].map(normalizeIdentityValue).filter(Boolean).join("|");
+}
+
+function normalizeIdentityValue(value: string | null | undefined): string {
+  return value?.trim().toLowerCase().replace(/[^a-z0-9]+/g, " ").replace(/\s+/g, " ").trim() ?? "";
+}
+
+function buildRadarAlerts(input: {
+  livePlanStatus: LivePlanStatus | null;
+  picksUntilTurn: number | null;
+  picks: PickLine[];
+  targetLostAlert: RadarAlert | null;
+}): RadarAlert[] {
+  const alerts: RadarAlert[] = [];
+
+  if (input.targetLostAlert) alerts.push(input.targetLostAlert);
+
+  const turnAlert = detectTurnAlert(input.picksUntilTurn);
+  if (turnAlert) alerts.push(turnAlert);
+
+  if (input.livePlanStatus) {
+    alerts.push(
+      ...input.livePlanStatus.tierRiskStatus
+        .filter((item) => item.riskLevel !== "low")
+        .slice(0, 2)
+        .map((item, index) => ({
+          id: `tier-risk-${item.position}-${index}`,
+          label: "Tier risk",
+          text: item.summary,
+          tone: "gold" as const,
+        }))
+    );
+  }
+
+  const positionRun = detectPositionRun(input.picks);
+  if (positionRun) alerts.push(positionRun);
+
+  if (input.livePlanStatus) {
+    alerts.push(
+      ...input.livePlanStatus.valueFallStatus.slice(0, 2).map((item, index) => ({
+        id: `value-slide-${index}`,
+        label: "Value available",
+        text: item.summary,
+        tone: "brand" as const,
+      })),
+      ...input.livePlanStatus.triggeredContingencies.slice(0, 2).map((item, index) => ({
+        id: `contingency-${index}`,
+        label: "Fallback active",
+        text: item.label,
+        tone: "gold" as const,
+      })),
+      ...input.livePlanStatus.waitPlanStatus
+        .filter((item) => item.status !== "not_waiting" && item.status !== "supported")
+        .slice(0, 2)
+        .map((item, index) => ({
+          id: `wait-plan-${item.position}-${index}`,
+          label: "Wait plan weakening",
+          text: item.summary,
+          tone: "gold" as const,
+        }))
+    );
+  }
+
+  return dedupeRadarAlerts(alerts).slice(0, 6);
+}
+
+function detectTurnAlert(picksUntilTurn: number | null): RadarAlert | null {
+  if (picksUntilTurn === null) return null;
+  if (picksUntilTurn <= 0) {
+    return {
+      id: "on-clock",
+      label: "On clock",
+      text: "You are up now.",
+      tone: "red",
+    };
+  }
+  if (picksUntilTurn <= 2) {
+    return {
+      id: `turn-approaching-${picksUntilTurn}`,
+      label: "Turn approaching",
+      text: `${picksUntilTurn} pick${picksUntilTurn === 1 ? "" : "s"} until your turn.`,
+      tone: "gold",
+    };
+  }
+  return null;
+}
+
+function detectPositionRun(picks: PickLine[]): RadarAlert | null {
+  return positionRunFromWindow(picks.slice(-5), 3) ?? positionRunFromWindow(picks.slice(-8), 4);
+}
+
+function positionRunFromWindow(picks: PickLine[], threshold: number): RadarAlert | null {
+  if (picks.length < threshold) return null;
+  const counts = new Map<string, number>();
+  for (const pick of picks) {
+    const position = normalizeDraftBoardPosition(pick.position);
+    if (position === "UNK") continue;
+    counts.set(position, (counts.get(position) ?? 0) + 1);
+  }
+  const topPosition = [...counts.entries()].sort((a, b) => b[1] - a[1])[0] ?? null;
+  if (!topPosition || topPosition[1] < threshold) return null;
+
+  return {
+    id: `position-run-${topPosition[0]}-${picks[picks.length - 1]?.pick_no ?? "latest"}`,
+    label: "Position run",
+    text: `${topPosition[1]} of last ${picks.length} picks: ${topPosition[0]}.`,
+    tone: "gold",
+  };
+}
+
+function dedupeRadarAlerts(alerts: RadarAlert[]): RadarAlert[] {
+  const seen = new Set<string>();
+  return alerts.filter((alert) => {
+    const key = `${alert.label}:${alert.text}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
 }
 
 function buildBoardFilterLabels(input: { search: string; positionFilter: string; matchFilter: string }): string[] {
@@ -2070,6 +2431,19 @@ function ReasonGroup({ title, items, tone }: { title: string; items: string[]; t
   );
 }
 
+function withVisibleProjectionRange(row: BlackbirdBoardRow, profile: PlayerProfileResponse | null): BlackbirdBoardRow {
+  const projection = profile?.projection;
+  if (!projection) return row;
+  if (row.dataStatus.projection === "available" && row.projectionPoints !== null && row.projectionLow !== null && row.projectionHigh !== null) return row;
+
+  return {
+    ...row,
+    projectionPoints: row.projectionPoints ?? projection.medianPoints,
+    projectionLow: row.projectionLow ?? projection.floorPoints,
+    projectionHigh: row.projectionHigh ?? projection.ceilingPoints,
+  };
+}
+
 function PlayerProfileModal({
   loadState,
   fallbackPlayer,
@@ -2085,13 +2459,14 @@ function PlayerProfileModal({
 }) {
   const profile = loadState.profile;
   const title = profile?.player.fullName ?? fallbackPlayer?.playerName ?? "Player Profile";
-  const reasonStack = boardRow ? buildWarRoomPlayerReasonStack(boardRow) : null;
+  const reasonStack = boardRow ? buildWarRoomPlayerReasonStack(withVisibleProjectionRange(boardRow, profile)) : null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/70 px-3 py-6 sm:px-6">
       <div className="w-full max-w-5xl rounded-lg border border-line bg-panel shadow-2xl">
         <div className="flex items-start justify-between gap-3 border-b border-line px-4 py-4 sm:px-5">
           <div className="min-w-0">
+            <div className="mb-1 text-[11px] font-black uppercase tracking-wide text-electric">Scouting Lens</div>
             <h2 className="break-words text-xl font-black text-slate-50">{title}</h2>
             <p className="mt-1 text-sm text-slate-400">
               {profile?.player.position ?? fallbackPlayer?.position ?? "-"} · {profile?.player.team ?? fallbackPlayer?.team ?? "-"} ·{" "}
@@ -2145,61 +2520,22 @@ function PlayerProfileModal({
                 )}
               </section>
 
-              <section className="rounded-md border border-line bg-panel2 px-3 py-3">
-                <h3 className="text-sm font-black uppercase tracking-wide text-slate-300">Previous Seasons</h3>
-                {profile.history.length ? (
-                  <div className="mt-3 overflow-x-auto">
-                    <table className="w-full min-w-[780px] text-left text-sm">
-                      <thead className="text-xs uppercase text-slate-500">
-                        <tr>
-                          <th className="px-2 py-2">Season</th>
-                          <th className="px-2 py-2">Team</th>
-                          <th className="px-2 py-2">G</th>
-                          <th className="px-2 py-2">GS</th>
-                          <th className="px-2 py-2">Fantasy Pts</th>
-                          <th className="px-2 py-2">Stat Line</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {profile.history.map((row) => (
-                          <tr key={row.season} className="border-t border-line/70">
-                            <td className="px-2 py-3 font-bold text-slate-100">{row.season}</td>
-                            <td className="px-2 py-3">{row.team ?? "-"}</td>
-                            <td className="px-2 py-3">{row.gamesPlayed ?? "-"}</td>
-                            <td className="px-2 py-3">{row.gamesStarted ?? "-"}</td>
-                            <td className="px-2 py-3">{row.fantasyPoints === null ? "-" : formatNumber(row.fantasyPoints)}</td>
-                            <td className="px-2 py-3">
-                              {row.statLine.length ? (
-                                <div className="flex flex-wrap gap-1">
-                                  {row.statLine.slice(0, 8).map((stat) => (
-                                    <span key={`${row.season}-${stat.key}`} className="rounded-full border border-line bg-background px-2 py-1 text-[11px] text-slate-300">
-                                      {stat.label} {formatNumber(stat.value)}
-                                    </span>
-                                  ))}
-                                </div>
-                              ) : (
-                                <span className="text-slate-500">Stat line unavailable</span>
-                              )}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                ) : (
-                  <p className="mt-3 text-sm text-slate-400">No previous season stat rows are available for this player.</p>
-                )}
-              </section>
             </>
           ) : null}
-          <HistoricalPlayerProfilePanel state={historicalProfileState} />
+          <HistoricalPlayerProfilePanel state={historicalProfileState} projectedSeasons={profile?.history ?? []} />
         </div>
       </div>
     </div>
   );
 }
 
-function HistoricalPlayerProfilePanel({ state }: { state: HistoricalProfileLoadState }) {
+function HistoricalPlayerProfilePanel({
+  state,
+  projectedSeasons,
+}: {
+  state: HistoricalProfileLoadState;
+  projectedSeasons: PlayerProfileResponse["history"];
+}) {
   const profile = state.profile;
   const evidence = buildPlayerProfileEvidence({
     profile,
@@ -2237,6 +2573,8 @@ function HistoricalPlayerProfilePanel({ state }: { state: HistoricalProfileLoadS
   const statSummary = buildHistoricalStatSummary(profile);
   const recentWeeklyRows = profile.weeklyGameLog.slice(0, 8);
   const scoringLabel = historicalScoringLabel(state.scoring);
+  const highValueUsage = profile.highValueUsageSummary;
+  const hasHighValueUsage = Boolean(highValueUsage && highValueUsage.sourceStatus === "available" && highValueUsage.gamesWithHighValueUsage > 0);
   const coverageLabel = formatCoverageLabel(profile.careerMetadata?.coverageLabel ?? null);
   const careerWindow = profile.careerMetadata?.firstStatSeason && profile.careerMetadata.latestStatSeason
     ? `${profile.careerMetadata.firstStatSeason}-${profile.careerMetadata.latestStatSeason}`
@@ -2290,7 +2628,12 @@ function HistoricalPlayerProfilePanel({ state }: { state: HistoricalProfileLoadS
       </div>
 
       <HistoricalRoleUsagePanel profile={profile} />
-      <HistoricalHighValueUsagePanel profile={profile} />
+
+      {hasHighValueUsage ? (
+        <ModalDisclosure title="Target & Route Usage">
+          <HistoricalHighValueUsagePanel profile={profile} compactHeader />
+        </ModalDisclosure>
+      ) : null}
 
       {profile.warnings.length ? (
         <div className="mt-3 flex flex-wrap gap-1">
@@ -2313,89 +2656,152 @@ function HistoricalPlayerProfilePanel({ state }: { state: HistoricalProfileLoadS
         </div>
       ) : null}
 
-      {profile.seasonSummaries.length ? (
-        <div className="mt-4 overflow-x-auto">
-          <table className="w-full min-w-[620px] text-left text-sm">
-            <thead className="text-xs uppercase text-slate-500">
-              <tr>
-                <th className="px-2 py-2">Season</th>
-                <th className="px-2 py-2">Games</th>
-                <th className="px-2 py-2">Points</th>
-                <th className="px-2 py-2">PPG</th>
-                <th className="px-2 py-2">Floor</th>
-                <th className="px-2 py-2">Ceiling</th>
-                <th className="px-2 py-2">Position Rank</th>
-              </tr>
-            </thead>
-            <tbody>
-              {profile.seasonSummaries.slice(0, 8).map((row) => (
-                <tr key={`${row.season ?? "unknown"}-${row.positionRank ?? "rank"}`} className="border-t border-line/70">
-                  <td className="px-2 py-3 font-bold text-slate-100">{row.season ?? "-"}</td>
-                  <td className="px-2 py-3">{formatNumber(row.gamesPlayed)}</td>
-                  <td className="px-2 py-3">{formatNumber(row.totalFantasyPoints)}</td>
-                  <td className="px-2 py-3">{formatNullableNumber(row.pointsPerGame)}</td>
-                  <td className="px-2 py-3">{formatNullableNumber(row.floor ?? null)}</td>
-                  <td className="px-2 py-3">{formatNullableNumber(row.ceiling ?? null)}</td>
-                  <td className="px-2 py-3">{row.positionRank === null ? "-" : `#${row.positionRank}`}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      ) : null}
+      <ModalDisclosure title="Season & Game Log">
+        <ProjectedSeasonsTable rows={projectedSeasons} />
 
-      <div className="mt-4">
-        <div className="text-xs font-black uppercase tracking-wide text-slate-400">Recent Weekly Game Log</div>
-        {recentWeeklyRows.length ? (
-          <div className="mt-2 overflow-x-auto">
-            <table className="w-full min-w-[720px] text-left text-sm">
+        {profile.seasonSummaries.length ? (
+          <div className="mt-4 overflow-x-auto">
+            <table className="w-full min-w-[620px] text-left text-sm">
               <thead className="text-xs uppercase text-slate-500">
                 <tr>
-                  <th className="px-2 py-2">Week</th>
-                  <th className="px-2 py-2">Team</th>
-                  <th className="px-2 py-2">Opp</th>
+                  <th className="px-2 py-2">Season</th>
+                  <th className="px-2 py-2">Games</th>
                   <th className="px-2 py-2">Points</th>
-                  <th className="px-2 py-2">Line</th>
+                  <th className="px-2 py-2">PPG</th>
+                  <th className="px-2 py-2">Floor</th>
+                  <th className="px-2 py-2">Ceiling</th>
+                  <th className="px-2 py-2">Position Rank</th>
                 </tr>
               </thead>
               <tbody>
-                {recentWeeklyRows.map((row) => (
-                  <tr key={`${row.season ?? "season"}-${row.week ?? "week"}-${row.team ?? "team"}`} className="border-t border-line/70">
-                    <td className="px-2 py-3 font-bold text-slate-100">
-                      {row.season ?? "-"} W{row.week ?? "-"}
-                    </td>
-                    <td className="px-2 py-3">{row.team ?? "-"}</td>
-                    <td className="px-2 py-3">{row.opponent ?? "-"}</td>
-                    <td className="px-2 py-3">{formatNumber(row.calculatedFantasyPoints)}</td>
-                    <td className="px-2 py-3 text-slate-300">{buildWeeklyStatLine(row, profile.header.position)}</td>
+                {profile.seasonSummaries.slice(0, 8).map((row) => (
+                  <tr key={`${row.season ?? "unknown"}-${row.positionRank ?? "rank"}`} className="border-t border-line/70">
+                    <td className="px-2 py-3 font-bold text-slate-100">{row.season ?? "-"}</td>
+                    <td className="px-2 py-3">{formatNumber(row.gamesPlayed)}</td>
+                    <td className="px-2 py-3">{formatNumber(row.totalFantasyPoints)}</td>
+                    <td className="px-2 py-3">{formatNullableNumber(row.pointsPerGame)}</td>
+                    <td className="px-2 py-3">{formatNullableNumber(row.floor ?? null)}</td>
+                    <td className="px-2 py-3">{formatNullableNumber(row.ceiling ?? null)}</td>
+                    <td className="px-2 py-3">{row.positionRank === null ? "-" : `#${row.positionRank}`}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-        ) : (
-          <p className="mt-2 text-sm text-slate-400">Weekly game log is not available for this profile.</p>
-        )}
-        {profile.weeklyGameLogTruncated ? <p className="mt-2 text-xs text-slate-500">Showing the most recent 8 weekly rows.</p> : null}
-      </div>
+        ) : null}
+
+        <div className="mt-4">
+          <div className="text-xs font-black uppercase tracking-wide text-slate-400">Recent Weekly Game Log</div>
+          {recentWeeklyRows.length ? (
+            <div className="mt-2 overflow-x-auto">
+              <table className="w-full min-w-[720px] text-left text-sm">
+                <thead className="text-xs uppercase text-slate-500">
+                  <tr>
+                    <th className="px-2 py-2">Week</th>
+                    <th className="px-2 py-2">Team</th>
+                    <th className="px-2 py-2">Opp</th>
+                    <th className="px-2 py-2">Points</th>
+                    <th className="px-2 py-2">Line</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {recentWeeklyRows.map((row) => (
+                    <tr key={`${row.season ?? "season"}-${row.week ?? "week"}-${row.team ?? "team"}`} className="border-t border-line/70">
+                      <td className="px-2 py-3 font-bold text-slate-100">
+                        {row.season ?? "-"} W{row.week ?? "-"}
+                      </td>
+                      <td className="px-2 py-3">{row.team ?? "-"}</td>
+                      <td className="px-2 py-3">{row.opponent ?? "-"}</td>
+                      <td className="px-2 py-3">{formatNumber(row.calculatedFantasyPoints)}</td>
+                      <td className="px-2 py-3 text-slate-300">{buildWeeklyStatLine(row, profile.header.position)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <p className="mt-2 text-sm text-slate-400">Weekly game log is not available for this profile.</p>
+          )}
+          {profile.weeklyGameLogTruncated ? <p className="mt-2 text-xs text-slate-500">Showing the most recent 8 weekly rows.</p> : null}
+        </div>
+      </ModalDisclosure>
     </section>
   );
 }
 
-function HistoricalHighValueUsagePanel({ profile }: { profile: HistoricalProfile }) {
+function ProjectedSeasonsTable({ rows }: { rows: PlayerProfileResponse["history"] }) {
+  return (
+    <div>
+      <div className="text-xs font-black uppercase tracking-wide text-slate-400">Projected Seasons</div>
+      {rows.length ? (
+        <div className="mt-2 overflow-x-auto">
+          <table className="w-full min-w-[780px] text-left text-sm">
+            <thead className="text-xs uppercase text-slate-500">
+              <tr>
+                <th className="px-2 py-2">Season</th>
+                <th className="px-2 py-2">Team</th>
+                <th className="px-2 py-2">G</th>
+                <th className="px-2 py-2">GS</th>
+                <th className="px-2 py-2">Fantasy Pts</th>
+                <th className="px-2 py-2">Stat Line</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row) => (
+                <tr key={row.season} className="border-t border-line/70">
+                  <td className="px-2 py-3 font-bold text-slate-100">{row.season}</td>
+                  <td className="px-2 py-3">{row.team ?? "-"}</td>
+                  <td className="px-2 py-3">{row.gamesPlayed ?? "-"}</td>
+                  <td className="px-2 py-3">{row.gamesStarted ?? "-"}</td>
+                  <td className="px-2 py-3">{row.fantasyPoints === null ? "-" : formatNumber(row.fantasyPoints)}</td>
+                  <td className="px-2 py-3">
+                    {row.statLine.length ? (
+                      <div className="flex flex-wrap gap-1">
+                        {row.statLine.slice(0, 8).map((stat) => (
+                          <span key={`${row.season}-${stat.key}`} className="rounded-full border border-line bg-background px-2 py-1 text-[11px] text-slate-300">
+                            {stat.label} {formatNumber(stat.value)}
+                          </span>
+                        ))}
+                      </div>
+                    ) : (
+                      <span className="text-slate-500">Stat line unavailable</span>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <p className="mt-2 text-sm text-slate-400">No previous season stat rows are available for this player.</p>
+      )}
+    </div>
+  );
+}
+
+function ModalDisclosure({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <details className="mt-3 rounded-xl border border-line/70 bg-background/35">
+      <summary className="flex cursor-pointer items-center justify-between px-4 py-3 text-sm font-semibold text-slate-300 hover:text-electric">
+        <span>{title}</span>
+        <ChevronDown className="h-4 w-4 opacity-60" />
+      </summary>
+      <div className="border-t border-line/50 p-4">{children}</div>
+    </details>
+  );
+}
+
+function HistoricalHighValueUsagePanel({ profile, compactHeader = false }: { profile: HistoricalProfile; compactHeader?: boolean }) {
   const usage = profile.highValueUsageSummary;
   if (!usage || usage.sourceStatus !== "available" || usage.gamesWithHighValueUsage === 0) return null;
   const metrics = highValueUsageMetrics(profile);
   return (
-    <div className="mt-3 rounded-md border border-line/70 bg-background/45 px-3 py-3">
+    <div className="rounded-md border border-line/70 bg-background/45 px-3 py-3">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <div className="text-xs font-black uppercase tracking-wide text-slate-400">High-Value Usage</div>
-          <p className="mt-2 text-xs text-slate-500">
-            Compact play-by-play evidence only; not yet included in Blackbird Rank.
-          </p>
+          {compactHeader ? null : <div className="text-xs font-semibold text-slate-400">Target & Route Usage</div>}
           {usage.modifiers.length ? (
-            <div className="mt-2 flex flex-wrap gap-1">
+            <div className={`${compactHeader ? "" : "mt-2"} flex flex-wrap gap-1`}>
               {usage.modifiers.slice(0, 5).map((modifier) => (
                 <span key={modifier} className="rounded-full border border-slate-500/25 bg-slate-500/10 px-2 py-1 text-[11px] text-slate-300">
                   {formatCoverageLabel(modifier)}
@@ -2429,7 +2835,7 @@ function HistoricalRoleUsagePanel({ profile }: { profile: HistoricalProfile }) {
   if (!usage || !role) {
     return (
       <div className="mt-3 rounded-md border border-line/70 bg-background/45 px-3 py-3">
-        <div className="text-xs font-black uppercase tracking-wide text-slate-400">Role & Usage</div>
+        <div className="text-xs font-semibold text-slate-400">Role & Target Share</div>
         <p className="mt-2 text-sm text-slate-400">Usage profile is not available yet.</p>
       </div>
     );
@@ -2439,7 +2845,7 @@ function HistoricalRoleUsagePanel({ profile }: { profile: HistoricalProfile }) {
     <div className="mt-3 rounded-md border border-line/70 bg-background/45 px-3 py-3">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <div className="text-xs font-black uppercase tracking-wide text-slate-400">Role & Usage</div>
+          <div className="text-xs font-semibold text-slate-400">Role & Target Share</div>
           <div className="mt-2 flex flex-wrap gap-2">
             <span className="rounded-full border border-slate-500/25 bg-slate-500/10 px-2 py-1 text-[11px] font-bold uppercase tracking-wide text-slate-300">
               {formatCoverageLabel(role.roleLabel)}
@@ -2451,7 +2857,6 @@ function HistoricalRoleUsagePanel({ profile }: { profile: HistoricalProfile }) {
               Trend {formatCoverageLabel(role.roleTrend)}
             </span>
           </div>
-          <p className="mt-2 text-xs text-slate-500">{roleUsageSourceNote(usage)}</p>
         </div>
         <div className="grid grid-cols-2 gap-2 text-xs sm:min-w-[360px] sm:grid-cols-3">
           {metrics.map((metric) => (
@@ -2564,19 +2969,6 @@ function snapRoleMetrics(usage: NonNullable<HistoricalProfile["usageSummary"]>, 
   return metrics;
 }
 
-function roleUsageSourceNote(usage: NonNullable<HistoricalProfile["usageSummary"]>) {
-  if (usage.gamesWithSnapData > 0 && usage.gamesWithParticipationData > 0) {
-    return "Usage profile includes weekly stats, snap counts, and participation context.";
-  }
-  if (usage.gamesWithSnapData > 0) {
-    return "Usage profile includes weekly stats and snap count context.";
-  }
-  if (usage.gamesWithParticipationData > 0) {
-    return "Usage profile includes weekly stats and participation context; snap counts were not matched for this player.";
-  }
-  return "Usage profile is based on available weekly stat data. Snap source exists, but this player has no matched snap data.";
-}
-
 function formatCoverageLabel(value: string | null) {
   if (!value) return "Unknown";
   return value
@@ -2590,7 +2982,7 @@ function HistoricalEvidenceCard({ evidence }: { evidence: PlayerProfileEvidence 
     <div className="mt-3 rounded-md border border-line/70 bg-background/55 px-3 py-2">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <div className="text-[11px] font-black uppercase tracking-wide text-slate-500">Historical Evidence</div>
+          <div className="text-xs font-semibold text-slate-400">Scout Summary</div>
           <p className="mt-1 text-sm text-slate-300">{evidence.summary}</p>
           <p className="mt-1 text-[11px] text-slate-500">{evidence.note}</p>
         </div>

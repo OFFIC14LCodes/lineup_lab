@@ -1,0 +1,99 @@
+   ▲ Next.js 15.5.19
+   - Local:        http://localhost:3005
+   - Network:      http://192.168.254.9:3005
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 3s
+ ○ Compiling / ...
+ ✓ Compiled / in 8.4s (608 modules)
+ GET / 200 in 9120ms
+ ○ Compiling /leagues/[leagueId] ...
+ ✓ Compiled /leagues/[leagueId] in 2.2s (703 modules)
+ GET /leagues/8d1a3d47-0b1d-494c-bdab-1590fa630d7d 200 in 4643ms
+ ○ Compiling /settings ...
+ ✓ Compiled /settings in 1771ms (841 modules)
+ GET /settings 200 in 2751ms
+ ○ Compiling /drafts/[draftRoomId] ...
+ ✓ Compiled /drafts/[draftRoomId] in 2.3s (891 modules)
+ GET /drafts/2f62d6e3-d309-4d50-8e7e-2ef05a83771c 200 in 4751ms
+ ○ Compiling /api/draft-rooms/[draftRoomId]/sync ...
+ ✓ Compiled /api/draft-rooms/[draftRoomId]/sync in 1426ms (937 modules)
+ POST /api/draft-rooms/2f62d6e3-d309-4d50-8e7e-2ef05a83771c/sync 500 in 3532ms
+ ○ Compiling /api/draft-rooms/[draftRoomId]/state ...
+ ✓ Compiled /api/draft-rooms/[draftRoomId]/state in 846ms (939 modules)
+ GET /api/draft-rooms/2f62d6e3-d309-4d50-8e7e-2ef05a83771c/state 200 in 5644ms
+ GET /api/draft-rooms/2f62d6e3-d309-4d50-8e7e-2ef05a83771c/pre-draft-strategy 200 in 11047ms
+ GET /api/draft-rooms/2f62d6e3-d309-4d50-8e7e-2ef05a83771c/state 200 in 7811ms
+ GET /api/draft-rooms/2f62d6e3-d309-4d50-8e7e-2ef05a83771c/state 200 in 2817ms
+ GET /api/draft-rooms/2f62d6e3-d309-4d50-8e7e-2ef05a83771c/pre-draft-strategy 200 in 1882ms
+ GET /api/draft-rooms/2f62d6e3-d309-4d50-8e7e-2ef05a83771c/state 200 in 1827ms
+ ○ Compiling /rankings ...
+ ✓ Compiled /rankings in 2.2s (968 modules)
+ GET /api/draft-rooms/2f62d6e3-d309-4d50-8e7e-2ef05a83771c/state 200 in 770ms
+ GET /drafts/2f62d6e3-d309-4d50-8e7e-2ef05a83771c 200 in 768ms
+ GET /rankings 200 in 4670ms
+ GET /drafts/f85238ff-b2ee-4053-8493-e38c4cb63bd3 200 in 434ms
+ POST /api/draft-rooms/f85238ff-b2ee-4053-8493-e38c4cb63bd3/sync 200 in 1086ms
+ GET /api/draft-rooms/f85238ff-b2ee-4053-8493-e38c4cb63bd3/pre-draft-strategy 200 in 2845ms
+ GET /api/draft-rooms/f85238ff-b2ee-4053-8493-e38c4cb63bd3/state 200 in 3360ms
+ GET /api/draft-rooms/f85238ff-b2ee-4053-8493-e38c4cb63bd3/pre-draft-strategy 200 in 2243ms
+ GET /api/draft-rooms/f85238ff-b2ee-4053-8493-e38c4cb63bd3/state 200 in 2461ms
+ GET /api/draft-rooms/f85238ff-b2ee-4053-8493-e38c4cb63bd3/state 200 in 2658ms
+ GET /api/draft-rooms/f85238ff-b2ee-4053-8493-e38c4cb63bd3/state 200 in 2514ms
+ ✓ Compiled in 784ms (337 modules)
+ GET /drafts/f85238ff-b2ee-4053-8493-e38c4cb63bd3 200 in 168ms
+ GET /api/draft-rooms/f85238ff-b2ee-4053-8493-e38c4cb63bd3/state 200 in 1842ms
+ ✓ Compiled in 468ms (337 modules)
+ ✓ Compiled in 251ms (323 modules)
+ ✓ Compiled in 432ms (337 modules)
+ ✓ Compiled in 377ms (337 modules)
+ ✓ Compiled in 529ms (337 modules)
+ ✓ Compiled in 372ms (337 modules)
+ ✓ Compiled in 349ms (337 modules)
+ ✓ Compiled in 334ms (337 modules)
+ ✓ Compiled in 1913ms (921 modules)
+ ✓ Compiled in 395ms (337 modules)
+ ✓ Compiled in 418ms (337 modules)
+ ✓ Compiled in 681ms (337 modules)
+ ✓ Compiled in 539ms (337 modules)
+ ✓ Compiled in 2.4s (926 modules)
+ ✓ Compiled in 423ms (339 modules)
+ ✓ Compiled in 1009ms (339 modules)
+ ✓ Compiled in 1009ms (339 modules)
+ ✓ Compiled in 1721ms (926 modules)
+ ✓ Compiled in 780ms (926 modules)
+ ✓ Compiled in 736ms (926 modules)
+ ✓ Compiled in 493ms (926 modules)
+ ✓ Compiled in 670ms (926 modules)
+ ✓ Compiled in 560ms (926 modules)
+ ✓ Compiled in 1566ms (926 modules)
+ ✓ Compiled in 337ms (339 modules)
+ ✓ Compiled in 901ms (926 modules)
+ ✓ Compiled in 2.7s (926 modules)
+ ✓ Compiled in 1634ms (926 modules)
+ ✓ Compiled in 1191ms (926 modules)
+ ✓ Compiled in 1287ms (926 modules)
+ ✓ Compiled in 1845ms (926 modules)
+ ✓ Compiled in 1797ms (926 modules)
+ ✓ Compiled in 1716ms (926 modules)
+ ✓ Compiled in 1443ms (926 modules)
+ ✓ Compiled in 1316ms (926 modules)
+ ✓ Compiled in 939ms (926 modules)
+ ✓ Compiled in 977ms (926 modules)
+ ✓ Compiled in 380ms (339 modules)
+ ✓ Compiled in 1653ms (926 modules)
+ ✓ Compiled in 1387ms (926 modules)
+ ✓ Compiled in 147ms (325 modules)
+ ✓ Compiled in 1302ms (926 modules)
+ ✓ Compiled in 1474ms (926 modules)
+ ✓ Compiled in 1430ms (926 modules)
+ ✓ Compiled in 1495ms (926 modules)
+ ✓ Compiled in 1122ms (926 modules)
+ ✓ Compiled in 1669ms (926 modules)
+ ✓ Compiled in 1956ms (926 modules)
+ ✓ Compiled in 1624ms (926 modules)
+ ✓ Compiled in 501ms (339 modules)
+ ✓ Compiled in 444ms (339 modules)
+ ✓ Compiled in 1725ms (926 modules)
+ ✓ Compiled in 592ms (339 modules)

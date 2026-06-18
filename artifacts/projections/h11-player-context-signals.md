@@ -1,0 +1,593 @@
+# h11-player-context-signals
+
+Verdict: passed
+
+## Summary
+
+```json
+{
+  "totalPlayers": 9,
+  "playersWithAge": 8,
+  "playersWithYearsExperience": 8,
+  "playersWithInferredRole": 7,
+  "playersWithProjectedSnapShare": 0,
+  "playersWithCoachingEnvironmentScore": 0,
+  "playersWithInjuryRisk": 7,
+  "playersWithRoleStability": 7,
+  "topDataGaps": [
+    {
+      "gap": "actual snap share",
+      "count": 9
+    },
+    {
+      "gap": "coaching environment",
+      "count": 9
+    },
+    {
+      "gap": "team environment",
+      "count": 9
+    },
+    {
+      "gap": "confirmed depth chart role",
+      "count": 2
+    },
+    {
+      "gap": "confirmed injury status",
+      "count": 2
+    },
+    {
+      "gap": "role stability",
+      "count": 2
+    },
+    {
+      "gap": "age",
+      "count": 1
+    },
+    {
+      "gap": "resolved player identity",
+      "count": 1
+    },
+    {
+      "gap": "years experience",
+      "count": 1
+    }
+  ],
+  "confidenceDistribution": {
+    "very_low": 2,
+    "low": 2,
+    "medium": 5,
+    "high": 0
+  }
+}
+```
+
+## Checks
+
+- PASS age_available_counted: 8
+- PASS years_experience_available_counted: 8
+- PASS derived_role_counted: 7
+- PASS snap_share_not_fabricated: 0
+- PASS coaching_score_not_fabricated: 0
+- PASS injury_proxy_counted: 7
+- PASS role_stability_proxy_counted: 7
+- PASS contextual_value_uses_available_fields: 78 > 50
+- PASS unknown_fields_neutral_defaulted: coaching=50, snap=50
+- PASS unknown_fields_shown_as_data_gaps: actual snap share, coaching environment, confirmed depth chart role, confirmed injury status, role stability, team environment
+- PASS derived_signals_labeled_proxy: role stability reasons
+- PASS no_external_sources_claimed: internal/source-ready only
+
+## Full Artifact
+
+```json
+{
+  "generatedAt": "2026-06-16T01:18:13.902Z",
+  "verdict": "passed",
+  "summary": {
+    "totalPlayers": 9,
+    "playersWithAge": 8,
+    "playersWithYearsExperience": 8,
+    "playersWithInferredRole": 7,
+    "playersWithProjectedSnapShare": 0,
+    "playersWithCoachingEnvironmentScore": 0,
+    "playersWithInjuryRisk": 7,
+    "playersWithRoleStability": 7,
+    "topDataGaps": [
+      {
+        "gap": "actual snap share",
+        "count": 9
+      },
+      {
+        "gap": "coaching environment",
+        "count": 9
+      },
+      {
+        "gap": "team environment",
+        "count": 9
+      },
+      {
+        "gap": "confirmed depth chart role",
+        "count": 2
+      },
+      {
+        "gap": "confirmed injury status",
+        "count": 2
+      },
+      {
+        "gap": "role stability",
+        "count": 2
+      },
+      {
+        "gap": "age",
+        "count": 1
+      },
+      {
+        "gap": "resolved player identity",
+        "count": 1
+      },
+      {
+        "gap": "years experience",
+        "count": 1
+      }
+    ],
+    "confidenceDistribution": {
+      "very_low": 2,
+      "low": 2,
+      "medium": 5,
+      "high": 0
+    }
+  },
+  "sampleContextCards": {
+    "QB": {
+      "playerId": "qb",
+      "playerName": "Context QB",
+      "position": "QB",
+      "team": "BUF",
+      "age": 28,
+      "yearsExperience": 6,
+      "depthChartRole": "starter",
+      "projectedSnapShare": null,
+      "coachingEnvironment": {
+        "score": null,
+        "label": "unknown",
+        "reasons": [
+          "No approved coaching data source is connected; value model should use neutral default."
+        ]
+      },
+      "teamEnvironment": {
+        "score": null,
+        "label": "unknown",
+        "reasons": [
+          "No approved team environment model is connected; value model should use neutral default."
+        ]
+      },
+      "injuryRisk": {
+        "label": "low",
+        "reasons": [
+          "Derived proxy: missed 0 of 17 historical games."
+        ]
+      },
+      "roleStability": {
+        "label": "high",
+        "reasons": [
+          "Derived proxy: strong historical availability and steady weekly production."
+        ]
+      },
+      "confidence": "medium",
+      "dataSources": [
+        "historical games played",
+        "historical weekly stat consistency",
+        "identity resolution",
+        "player age",
+        "projected volume",
+        "projection confidence",
+        "synthetic diagnostic fixture",
+        "years experience"
+      ],
+      "dataGaps": [
+        "actual snap share",
+        "coaching environment",
+        "team environment"
+      ]
+    },
+    "RB": {
+      "playerId": "rb",
+      "playerName": "Context RB",
+      "position": "RB",
+      "team": "SEA",
+      "age": 24,
+      "yearsExperience": 3,
+      "depthChartRole": "starter",
+      "projectedSnapShare": null,
+      "coachingEnvironment": {
+        "score": null,
+        "label": "unknown",
+        "reasons": [
+          "No approved coaching data source is connected; value model should use neutral default."
+        ]
+      },
+      "teamEnvironment": {
+        "score": null,
+        "label": "unknown",
+        "reasons": [
+          "No approved team environment model is connected; value model should use neutral default."
+        ]
+      },
+      "injuryRisk": {
+        "label": "medium",
+        "reasons": [
+          "Derived proxy: missed 3 of 17 historical games."
+        ]
+      },
+      "roleStability": {
+        "label": "high",
+        "reasons": [
+          "Derived proxy: strong historical availability and steady weekly production."
+        ]
+      },
+      "confidence": "medium",
+      "dataSources": [
+        "historical games played",
+        "historical weekly stat consistency",
+        "identity resolution",
+        "player age",
+        "projected volume",
+        "projection confidence",
+        "synthetic diagnostic fixture",
+        "years experience"
+      ],
+      "dataGaps": [
+        "actual snap share",
+        "coaching environment",
+        "team environment"
+      ]
+    },
+    "WR": {
+      "playerId": "wr",
+      "playerName": "Context WR",
+      "position": "WR",
+      "team": "DET",
+      "age": 22,
+      "yearsExperience": 1,
+      "depthChartRole": "starter",
+      "projectedSnapShare": null,
+      "coachingEnvironment": {
+        "score": null,
+        "label": "unknown",
+        "reasons": [
+          "No approved coaching data source is connected; value model should use neutral default."
+        ]
+      },
+      "teamEnvironment": {
+        "score": null,
+        "label": "unknown",
+        "reasons": [
+          "No approved team environment model is connected; value model should use neutral default."
+        ]
+      },
+      "injuryRisk": {
+        "label": "low",
+        "reasons": [
+          "Derived proxy: missed 1 of 17 historical games."
+        ]
+      },
+      "roleStability": {
+        "label": "high",
+        "reasons": [
+          "Derived proxy: strong historical availability and steady weekly production."
+        ]
+      },
+      "confidence": "medium",
+      "dataSources": [
+        "historical games played",
+        "historical weekly stat consistency",
+        "identity resolution",
+        "player age",
+        "projected volume",
+        "projection confidence",
+        "synthetic diagnostic fixture",
+        "years experience"
+      ],
+      "dataGaps": [
+        "actual snap share",
+        "coaching environment",
+        "team environment"
+      ]
+    },
+    "TE": {
+      "playerId": "te",
+      "playerName": "Context TE",
+      "position": "TE",
+      "team": "LV",
+      "age": 23,
+      "yearsExperience": 1,
+      "depthChartRole": "starter",
+      "projectedSnapShare": null,
+      "coachingEnvironment": {
+        "score": null,
+        "label": "unknown",
+        "reasons": [
+          "No approved coaching data source is connected; value model should use neutral default."
+        ]
+      },
+      "teamEnvironment": {
+        "score": null,
+        "label": "unknown",
+        "reasons": [
+          "No approved team environment model is connected; value model should use neutral default."
+        ]
+      },
+      "injuryRisk": {
+        "label": "low",
+        "reasons": [
+          "Derived proxy: missed 0 of 17 historical games."
+        ]
+      },
+      "roleStability": {
+        "label": "high",
+        "reasons": [
+          "Derived proxy: strong historical availability and steady weekly production."
+        ]
+      },
+      "confidence": "medium",
+      "dataSources": [
+        "historical games played",
+        "historical weekly stat consistency",
+        "identity resolution",
+        "player age",
+        "projected volume",
+        "projection confidence",
+        "synthetic diagnostic fixture",
+        "years experience"
+      ],
+      "dataGaps": [
+        "actual snap share",
+        "coaching environment",
+        "team environment"
+      ]
+    },
+    "DL": {
+      "playerId": "dl",
+      "playerName": "Context DL",
+      "position": "DL",
+      "team": "DAL",
+      "age": 27,
+      "yearsExperience": 5,
+      "depthChartRole": "starter",
+      "projectedSnapShare": null,
+      "coachingEnvironment": {
+        "score": null,
+        "label": "unknown",
+        "reasons": [
+          "No approved coaching data source is connected; value model should use neutral default."
+        ]
+      },
+      "teamEnvironment": {
+        "score": null,
+        "label": "unknown",
+        "reasons": [
+          "No approved team environment model is connected; value model should use neutral default."
+        ]
+      },
+      "injuryRisk": {
+        "label": "medium",
+        "reasons": [
+          "Derived proxy: missed 4 of 17 historical games."
+        ]
+      },
+      "roleStability": {
+        "label": "medium",
+        "reasons": [
+          "Derived proxy: partial historical availability or moderate weekly production consistency."
+        ]
+      },
+      "confidence": "low",
+      "dataSources": [
+        "historical games played",
+        "historical weekly stat consistency",
+        "identity resolution",
+        "player age",
+        "projected volume",
+        "projection confidence",
+        "synthetic diagnostic fixture",
+        "years experience"
+      ],
+      "dataGaps": [
+        "actual snap share",
+        "coaching environment",
+        "team environment"
+      ]
+    },
+    "LB": {
+      "playerId": "lb",
+      "playerName": "Context LB",
+      "position": "LB",
+      "team": "BAL",
+      "age": 26,
+      "yearsExperience": 4,
+      "depthChartRole": "starter",
+      "projectedSnapShare": null,
+      "coachingEnvironment": {
+        "score": null,
+        "label": "unknown",
+        "reasons": [
+          "No approved coaching data source is connected; value model should use neutral default."
+        ]
+      },
+      "teamEnvironment": {
+        "score": null,
+        "label": "unknown",
+        "reasons": [
+          "No approved team environment model is connected; value model should use neutral default."
+        ]
+      },
+      "injuryRisk": {
+        "label": "low",
+        "reasons": [
+          "Derived proxy: missed 1 of 17 historical games."
+        ]
+      },
+      "roleStability": {
+        "label": "high",
+        "reasons": [
+          "Derived proxy: strong historical availability and steady weekly production."
+        ]
+      },
+      "confidence": "medium",
+      "dataSources": [
+        "historical games played",
+        "historical weekly stat consistency",
+        "identity resolution",
+        "player age",
+        "projected volume",
+        "projection confidence",
+        "synthetic diagnostic fixture",
+        "years experience"
+      ],
+      "dataGaps": [
+        "actual snap share",
+        "coaching environment",
+        "team environment"
+      ]
+    },
+    "DB": {
+      "playerId": "db",
+      "playerName": "Context DB",
+      "position": "DB",
+      "team": "NYJ",
+      "age": 25,
+      "yearsExperience": 3,
+      "depthChartRole": "committee",
+      "projectedSnapShare": null,
+      "coachingEnvironment": {
+        "score": null,
+        "label": "unknown",
+        "reasons": [
+          "No approved coaching data source is connected; value model should use neutral default."
+        ]
+      },
+      "teamEnvironment": {
+        "score": null,
+        "label": "unknown",
+        "reasons": [
+          "No approved team environment model is connected; value model should use neutral default."
+        ]
+      },
+      "injuryRisk": {
+        "label": "high",
+        "reasons": [
+          "Derived proxy: missed 8 of 17 historical games."
+        ]
+      },
+      "roleStability": {
+        "label": "low",
+        "reasons": [
+          "Derived proxy: limited availability or unstable weekly production sample."
+        ]
+      },
+      "confidence": "low",
+      "dataSources": [
+        "historical games played",
+        "historical weekly stat consistency",
+        "identity resolution",
+        "player age",
+        "projected volume",
+        "projection confidence",
+        "synthetic diagnostic fixture",
+        "years experience"
+      ],
+      "dataGaps": [
+        "actual snap share",
+        "coaching environment",
+        "team environment"
+      ]
+    }
+  },
+  "contextualValueIntegration": {
+    "knownContextValueScore": 57.76,
+    "unknownContextValueScore": 60.2,
+    "knownDepthChartComponent": 78,
+    "unknownDepthChartComponent": 50,
+    "unknownCoachingComponent": 50,
+    "unknownSnapShareComponent": 50,
+    "unknownDataGaps": [
+      "actual snap share",
+      "coaching environment",
+      "confirmed depth chart role",
+      "confirmed injury status",
+      "projected snap share",
+      "role stability",
+      "team defense environment",
+      "team environment",
+      "team offense environment"
+    ]
+  },
+  "checks": [
+    {
+      "name": "age_available_counted",
+      "passed": true,
+      "detail": "8"
+    },
+    {
+      "name": "years_experience_available_counted",
+      "passed": true,
+      "detail": "8"
+    },
+    {
+      "name": "derived_role_counted",
+      "passed": true,
+      "detail": "7"
+    },
+    {
+      "name": "snap_share_not_fabricated",
+      "passed": true,
+      "detail": "0"
+    },
+    {
+      "name": "coaching_score_not_fabricated",
+      "passed": true,
+      "detail": "0"
+    },
+    {
+      "name": "injury_proxy_counted",
+      "passed": true,
+      "detail": "7"
+    },
+    {
+      "name": "role_stability_proxy_counted",
+      "passed": true,
+      "detail": "7"
+    },
+    {
+      "name": "contextual_value_uses_available_fields",
+      "passed": true,
+      "detail": "78 > 50"
+    },
+    {
+      "name": "unknown_fields_neutral_defaulted",
+      "passed": true,
+      "detail": "coaching=50, snap=50"
+    },
+    {
+      "name": "unknown_fields_shown_as_data_gaps",
+      "passed": true,
+      "detail": "actual snap share, coaching environment, confirmed depth chart role, confirmed injury status, role stability, team environment"
+    },
+    {
+      "name": "derived_signals_labeled_proxy",
+      "passed": true,
+      "detail": "role stability reasons"
+    },
+    {
+      "name": "no_external_sources_claimed",
+      "passed": true,
+      "detail": "internal/source-ready only"
+    }
+  ],
+  "acquisitionPlan": [
+    "Use internal player age, years experience, team, position, identity status, projection confidence, historical games, and weekly stat consistency first.",
+    "Use derived/proxy role stability, missed-game injury risk, and projected role only when historical or projection-volume inputs exist.",
+    "Leave coaching environment, team environment, confirmed injury status, and actual snap share unknown until approved data sources are connected.",
+    "Feed context through situationContext so the value model can use available fields while neutral-defaulting unknowns."
+  ]
+}
+```

@@ -1,0 +1,90 @@
+   ▲ Next.js 15.5.19
+   - Local:        http://localhost:3003
+   - Network:      http://192.168.254.9:3003
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 2.9s
+ ○ Compiling / ...
+ ✓ Compiled / in 10.6s (608 modules)
+ GET / 200 in 11517ms
+ ○ Compiling /dashboard ...
+ ✓ Compiled /dashboard in 1957ms (682 modules)
+ GET /dashboard 200 in 3084ms
+ ✓ Compiled /leagues in 468ms (694 modules)
+ GET /leagues 200 in 1437ms
+ ○ Compiling /rankings ...
+ ✓ Compiled /rankings in 1738ms (716 modules)
+ GET /rankings 200 in 4185ms
+ ○ Compiling /settings ...
+ ✓ Compiled /settings in 4s (874 modules)
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Projects\lineup_lab\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Projects\\lineup_lab\\.next\\routes-manifest.json',
+  page: '/settings'
+}
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 4.3s (1221 modules)
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Projects\lineup_lab\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Projects\\lineup_lab\\.next\\routes-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Projects\lineup_lab\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Projects\\lineup_lab\\.next\\routes-manifest.json',
+  page: '/settings'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Projects\lineup_lab\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Projects\\lineup_lab\\.next\\routes-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Projects\lineup_lab\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Projects\\lineup_lab\\.next\\routes-manifest.json'
+}
+ GET /settings 500 in 16608ms
+ GET /settings 500 in 358ms
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Projects\lineup_lab\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Projects\\lineup_lab\\.next\\routes-manifest.json',
+  page: '/'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Projects\lineup_lab\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Projects\\lineup_lab\\.next\\routes-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Projects\lineup_lab\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Projects\\lineup_lab\\.next\\routes-manifest.json',
+  page: '/'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Projects\lineup_lab\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Projects\\lineup_lab\\.next\\routes-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Projects\lineup_lab\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Projects\\lineup_lab\\.next\\routes-manifest.json'
+}
+ GET / 500 in 1536ms
+ GET / 500 in 323ms

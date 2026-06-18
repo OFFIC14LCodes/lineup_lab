@@ -1,0 +1,209 @@
+# nflverse-diagnostics
+
+```json
+{
+  "generatedAt": "2026-06-16T20:10:26.964Z",
+  "dataDir": null,
+  "files": {
+    "players": {
+      "fileKey": "players",
+      "fileName": "players.csv",
+      "exists": true,
+      "rowCount": 25040,
+      "fieldCount": 39,
+      "requiredColumns": [
+        "gsis_id",
+        "display_name",
+        "position_group",
+        "position",
+        "nfl_id",
+        "pfr_id",
+        "espn_id",
+        "smart_id",
+        "birth_date",
+        "height",
+        "weight",
+        "college_name",
+        "latest_team",
+        "years_of_experience",
+        "rookie_season",
+        "draft_year",
+        "draft_round",
+        "draft_pick",
+        "draft_team"
+      ],
+      "missingColumns": [],
+      "parseErrors": []
+    },
+    "rosters": {
+      "fileKey": "rosters",
+      "fileName": "rosters_2025.csv",
+      "exists": true,
+      "rowCount": 3137,
+      "fieldCount": 36,
+      "requiredColumns": [
+        "season",
+        "team",
+        "position",
+        "depth_chart_position",
+        "full_name",
+        "gsis_id",
+        "espn_id",
+        "pfr_id",
+        "sleeper_id",
+        "smart_id",
+        "years_exp",
+        "rookie_year",
+        "draft_club",
+        "draft_number",
+        "week",
+        "game_type"
+      ],
+      "missingColumns": [],
+      "parseErrors": []
+    },
+    "playerStats": {
+      "fileKey": "playerStats",
+      "fileName": "player_stats_2025.csv",
+      "exists": true,
+      "rowCount": 19421,
+      "fieldCount": 115,
+      "requiredColumns": [
+        "player_id",
+        "player_display_name",
+        "position",
+        "position_group",
+        "season",
+        "week",
+        "team",
+        "opponent_team",
+        "passing_yards",
+        "passing_tds",
+        "carries",
+        "rushing_yards",
+        "targets",
+        "receptions",
+        "receiving_yards",
+        "def_tackles_solo",
+        "def_sacks",
+        "fantasy_points",
+        "fantasy_points_ppr"
+      ],
+      "missingColumns": [],
+      "parseErrors": []
+    },
+    "schedules": {
+      "fileKey": "schedules",
+      "fileName": "schedules_2025.csv",
+      "exists": true,
+      "rowCount": 285,
+      "fieldCount": 46,
+      "requiredColumns": [
+        "game_id",
+        "season",
+        "game_type",
+        "week",
+        "gameday",
+        "away_team",
+        "home_team",
+        "away_score",
+        "home_score",
+        "away_qb_id",
+        "home_qb_id"
+      ],
+      "missingColumns": [],
+      "parseErrors": []
+    }
+  },
+  "rowCounts": {
+    "players": 25040,
+    "rosters": 3137,
+    "playerStats": 19421,
+    "schedules": 285
+  },
+  "fantasyRelevantPlayers": 20439,
+  "positionCounts": {
+    "DL": 3533,
+    "RB": 2679,
+    "LB": 3459,
+    "K": 382,
+    "WR": 3290,
+    "DB": 4491,
+    "TE": 1594,
+    "QB": 1011
+  },
+  "identityCoverage": {
+    "playersWithGsisId": 25040,
+    "playersWithEspnId": 16769,
+    "playersWithPfrId": 22556,
+    "playersWithNflId": 11437,
+    "playersWithSmartId": 25040
+  },
+  "weeklyStatRows2025": 19421,
+  "rosterRows2025": 3137,
+  "statColumnCoverage": {
+    "offensiveColumnsPresent": [
+      "completions",
+      "attempts",
+      "passing_yards",
+      "passing_tds",
+      "passing_interceptions",
+      "sacks_suffered",
+      "carries",
+      "rushing_yards",
+      "rushing_tds",
+      "receptions",
+      "targets",
+      "receiving_yards",
+      "receiving_tds",
+      "target_share",
+      "air_yards_share",
+      "wopr"
+    ],
+    "offensiveColumnsMissing": [],
+    "defensiveColumnsPresent": [
+      "def_tackles_solo",
+      "def_tackles_with_assist",
+      "def_tackle_assists",
+      "def_tackles_for_loss",
+      "def_tackles_for_loss_yards",
+      "def_fumbles_forced",
+      "def_sacks",
+      "def_sack_yards",
+      "def_qb_hits",
+      "def_interceptions",
+      "def_interception_yards",
+      "def_pass_defended",
+      "def_tds",
+      "def_fumbles",
+      "def_safeties"
+    ],
+    "defensiveColumnsMissing": [],
+    "kickingColumnsPresent": [
+      "fg_made",
+      "fg_att",
+      "fg_missed",
+      "fg_blocked",
+      "fg_made_0_19",
+      "fg_made_20_29",
+      "fg_made_30_39",
+      "fg_made_40_49",
+      "fg_made_50_59",
+      "fg_made_60_",
+      "pat_made",
+      "pat_att",
+      "pat_missed",
+      "pat_blocked"
+    ],
+    "kickingColumnsMissing": [],
+    "idpRowsWithPositiveDefensiveStats": 10688,
+    "offensiveRowsWithPositiveOffensiveStats": 5593,
+    "kickerRowsWithPositiveKickingStats": 561
+  },
+  "limitations": [
+    "No Supabase writes are performed by this diagnostic.",
+    "Depth chart role, injury status, snap share, and coaching context are not confirmed by these four files."
+  ],
+  "verdict": "passed"
+}
+```

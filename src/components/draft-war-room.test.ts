@@ -158,19 +158,25 @@ describe("DraftWarRoom H11 strategy UI wiring", () => {
       "Historical profile data is not available in this deployment yet.",
       "Historical profile lookup is ambiguous and needs review.",
       "League projection profile is not available for this player yet.",
+      "Scouting Lens",
+      "projectedSeasons={profile?.history ?? []}",
+      "ProjectedSeasonsTable",
       "Profile match confidence:",
       "Career coverage:",
       "Trend:",
       "Career Games",
       "Career Points",
       "Career PPG",
-      "Role & Usage",
-      "High-Value Usage",
-      "Compact play-by-play evidence only; not yet included in Blackbird Rank.",
+      "Role & Target Share",
+      "Target & Route Usage",
+      "Season & Game Log",
+      "Projected Seasons",
+      "ModalDisclosure",
+      "compactHeader",
+      "hasHighValueUsage",
+      "sourceStatus === \"available\"",
       "highValueUsageMetrics",
       "highValueRoleWarnings",
-      "Usage profile includes weekly stats, snap counts, and participation context.",
-      "Snap source exists, but this player has no matched snap data.",
       "70%+ Games",
       "Snap Trend",
       "roleUsageMetrics",
@@ -186,7 +192,7 @@ describe("DraftWarRoom H11 strategy UI wiring", () => {
       "Scored using Blackbird default profile scoring",
       "League scoring unavailable; using default profile scoring",
       "buildPlayerProfileEvidence",
-      "Historical Evidence",
+      "Scout Summary",
       "evidence.note",
       "Positive Signals",
     ].forEach((text) => expect(source).toContain(text));
@@ -291,11 +297,12 @@ describe("DraftWarRoom H11 strategy UI wiring", () => {
     const sidebarMarkup = source.slice(source.indexOf("<aside className=\"min-w-0 space-y-5\">"), source.indexOf("</aside>"));
     const sidebarOrder = [
       "/* 1. Draft Signal",
-      "/* 2. Recommended Targets",
-      "/* 3. My Roster Construction",
-      "/* 4. Pre-Draft Strategy",
-      "/* 5. Live Plan Details",
-      "/* 6. Blackbird Value Preview",
+      "/* 2. Recent Signals",
+      "/* 3. Recommended Targets",
+      "/* 4. My Roster Construction",
+      "/* 5. Pre-Draft Strategy",
+      "/* 6. Live Plan Details",
+      "/* 7. Blackbird Value Preview",
       "SHOW_SCORING_FOUNDATION_STATUS",
     ].map((text) => sidebarMarkup.indexOf(text));
     expect(sidebarOrder.every((index) => index >= 0)).toBe(true);
@@ -331,5 +338,68 @@ describe("DraftWarRoom H11 strategy UI wiring", () => {
     expect(orderingSection).not.toContain("syncError");
     expect(source.toLowerCase()).not.toContain("anthropic");
     expect(source.toLowerCase()).not.toContain("openai");
+  });
+
+  it("renders WR-6B recent signals and live draft cues without changing ordering", () => {
+    [
+      "useRef",
+      "recentlyDraftedPickNo",
+      "recentlyDraftedPlayerKey",
+      "draftSignalUpdated",
+      "picksUntilTurnChanged",
+      "targetLostAlert",
+      "previousPickCountRef",
+      "previousTopSuggestionRef",
+      "previousPicksUntilTurnRef",
+      "buildRadarAlerts",
+      "RecentSignalsPanel",
+      "RecentSignalRow",
+      "detectTurnAlert",
+      "detectPositionRun",
+      "positionRunFromWindow",
+      "pickMatchesTopSuggestion",
+      "Target lost",
+      "Recent Signals",
+      "Live draft movement and board changes",
+      "Recalculating board",
+      "Draft Signal updated",
+      "No active signals right now.",
+      "Turn approaching",
+      "Tier risk",
+      "Position run",
+      "Value available",
+      "Fallback active",
+      "Wait plan weakening",
+      "position-run-",
+      "recentlyDraftedPickNo={recentlyDraftedPickNo}",
+      "recentlyDraftedPlayerKey={recentlyDraftedPlayerKey}",
+      "isRecentlyDrafted",
+      "ring-electric/50",
+      "row.drafted ? \"opacity-75\"",
+    ].forEach((text) => expect(source).toContain(text));
+
+    const orderingSection = source.slice(source.indexOf("const boardRowsForMode"), source.indexOf("const visibleBlackbirdRows"));
+    expect(orderingSection).not.toContain("buildRadarAlerts");
+    expect(orderingSection).not.toContain("recentlyDraftedPickNo");
+    expect(orderingSection).not.toContain("draftSignalUpdated");
+    expect(orderingSection).not.toContain("targetLostAlert");
+
+    const draftSignalSection = source.slice(source.indexOf("function DraftSignalPanel"), source.indexOf("function RecentSignalsPanel"));
+    expect(draftSignalSection).not.toContain("Recent Signals");
+    expect(draftSignalSection).not.toContain("radarAlerts");
+
+    const recentSignalsSection = source.slice(source.indexOf("function RecentSignalsPanel"), source.indexOf("function LivePlanStatusPanel"));
+    expect(recentSignalsSection).toContain("alerts.slice(0, 3)");
+    expect(recentSignalsSection).toContain("alerts.slice(3)");
+    expect(recentSignalsSection).toContain("+{hiddenSignals.length} more signal");
+
+    const radarBuilderSection = source.slice(source.indexOf("function buildRadarAlerts"), source.indexOf("function detectTurnAlert"));
+    expect(radarBuilderSection.indexOf("input.targetLostAlert")).toBeLessThan(radarBuilderSection.indexOf("detectTurnAlert"));
+    expect(radarBuilderSection.indexOf("Tier risk")).toBeLessThan(radarBuilderSection.indexOf("detectPositionRun"));
+    expect(radarBuilderSection.indexOf("detectPositionRun")).toBeLessThan(radarBuilderSection.indexOf("Value available"));
+    expect(radarBuilderSection.indexOf("Value available")).toBeLessThan(radarBuilderSection.indexOf("Fallback active"));
+    expect(radarBuilderSection.indexOf("Fallback active")).toBeLessThan(radarBuilderSection.indexOf("Wait plan weakening"));
+    expect(radarBuilderSection).toContain("item.status !== \"supported\"");
+    expect(radarBuilderSection).not.toContain("Syncing");
   });
 });
