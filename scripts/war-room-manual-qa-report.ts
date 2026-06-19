@@ -17,8 +17,10 @@ function main() {
   const artifacts = writeWarRoomManualQaArtifacts(report);
   console.log("Blackbird War Room Manual QA Report");
   console.log(`  recommendation: ${report.recommendation}`);
+  console.log(`  launch candidate status: ${report.launch_candidate_status}`);
   console.log(`  summary: pass=${report.summary.pass} warn=${report.summary.warn} fail=${report.summary.fail} not_tested=${report.summary.not_tested}`);
   console.log(`  triage items: ${report.triage.length}`);
+  console.log(`  launch candidate triage items: ${report.launch_candidate_triage.length}`);
   console.log("  artifacts:");
   console.log(`    ${artifacts.jsonPath}`);
   console.log(`    ${artifacts.markdownPath}`);

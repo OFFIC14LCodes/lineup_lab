@@ -25,9 +25,10 @@ export function buildHistoricalMockDraftEngineReport(input: {
   generatedAt?: string;
 }): HistoricalMockDraftEngineReport {
   const draftOrder = generateHistoricalDraftOrder(input.scenario);
-  const enoughInput = input.scenario.playerUniverseInput.players.length >= input.scenario.teams * input.scenario.rounds;
+  const players = input.scenario.playerUniverseInput.players ?? [];
+  const enoughInput = players.length >= input.scenario.teams * input.scenario.rounds;
   const strategyResults = input.scenario.strategySet.map((strategy) =>
-    simulateStrategyDraft({ strategy, scenario: input.scenario, draftOrder }),
+    simulateStrategyDraft({ strategy, scenario: input.scenario, players, draftOrder }),
   );
 
   return {
@@ -80,9 +81,10 @@ export function runHistoricalMockDraftEngine(input: {
 }): HistoricalMockDraftEngineReport {
   const cwd = input.cwd ?? process.cwd();
   const scenario = JSON.parse(readFileSync(path.resolve(cwd, input.scenarioPath), "utf8")) as HistoricalMockDraftScenario;
+  const hydratedScenario = hydrateScenarioPlayerUniverse(scenario, cwd);
   return buildHistoricalMockDraftEngineReport({
     projectionSeason: input.projectionSeason,
-    scenario,
+    scenario: hydratedScenario,
     scenarioPath: input.scenarioPath,
   });
 }
@@ -130,12 +132,13 @@ function roundSlots(teams: number, round: number, type: HistoricalMockDraftOrder
 function simulateStrategyDraft(input: {
   strategy: HistoricalMockDraftStrategy;
   scenario: HistoricalMockDraftScenario;
+  players: HistoricalMockDraftPlayer[];
   draftOrder: HistoricalMockDraftOrderPick[];
 }): HistoricalMockDraftStrategyResult {
-  const available = new Map(input.scenario.playerUniverseInput.players.map((player) => [player.playerId, player]));
+  const available = new Map(input.players.map((player) => [player.playerId, player]));
   const rosters = new Map<number, HistoricalMockDraftPickLog[]>();
   const pickLog: HistoricalMockDraftPickLog[] = [];
-  const fallback = input.strategy === "blackbird_rank_only" && input.scenario.playerUniverseInput.players.some((player) => !player.blackbirdRank)
+  const fallback = input.strategy === "blackbird_rank_only" && input.players.some((player) => !player.blackbirdRank)
     ? "blackbirdRank missing for at least one player; internalDraftRank/projection fallback used where needed."
     : null;
 
@@ -290,6 +293,33 @@ function normalizePosition(position: string): string {
   if (["DEF", "D/ST"].includes(upper)) return "DST";
   if (["DL", "LB", "DB"].includes(upper)) return "IDP";
   return upper;
+}
+
+function hydrateScenarioPlayerUniverse(scenario: HistoricalMockDraftScenario, cwd: string): HistoricalMockDraftScenario {
+  if (scenario.playerUniverseInput.players?.length || !scenario.playerUniverseInput.artifactPath) return scenario;
+  const artifact = JSON.parse(readFileSync(path.resolve(cwd, scenario.playerUniverseInput.artifactPath), "utf8")) as {
+    playerUniverseInput?: { players?: HistoricalMockDraftPlayer[] };
+    h36PlayerUniverse?: HistoricalMockDraftPlayer[];
+    rows?: Array<HistoricalMockDraftPlayer & { player_id?: string; player_name?: string; team?: string | null; projection_points?: number; blackbird_rank?: number }>;
+  };
+  const players =
+    artifact.playerUniverseInput?.players ??
+    artifact.h36PlayerUniverse ??
+    artifact.rows?.map((row) => ({
+      playerId: row.playerId ?? row.player_id ?? "",
+      sleeperId: row.sleeperId ?? null,
+      playerName: row.playerName ?? row.player_name ?? "",
+      position: row.position,
+      nflTeam: row.nflTeam ?? row.team ?? null,
+      blackbirdRank: row.blackbirdRank ?? row.blackbird_rank ?? null,
+      internalDraftRank: row.internalDraftRank ?? null,
+      projectionRank: row.projectionRank ?? null,
+      adpRank: row.adpRank ?? null,
+      marketRank: row.marketRank ?? null,
+      projectedPoints: row.projectedPoints ?? row.projection_points ?? null,
+    })) ??
+    [];
+  return { ...scenario, playerUniverseInput: { ...scenario.playerUniverseInput, players } };
 }
 
 function seededRandom(seed: number): number {

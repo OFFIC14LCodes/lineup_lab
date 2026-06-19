@@ -10,7 +10,7 @@ import {
   writeHistoricalSeasonOutcomeScorerArtifacts,
 } from "./historical-season-outcome-scorer";
 import type { HistoricalMockDraftEngineReport } from "./historical-mock-draft-engine-types";
-import type { HistoricalSeasonOutcomeScenario, HistoricalWeeklyResult } from "./historical-season-outcome-scorer-types";
+import type { HistoricalPlayerRegistryRow, HistoricalSeasonOutcomeScenario, HistoricalWeeklyResult } from "./historical-season-outcome-scorer-types";
 
 describe("historical season outcome scorer", () => {
   it("parses scenario and loads H36 draft artifact shape", () => {
@@ -47,6 +47,75 @@ describe("historical season outcome scorer", () => {
 
     expect(report.weeklyInputCoverage.exactIdMatches).toBeGreaterThan(0);
     expect(report.weeklyInputCoverage.missingPlayerScores).toBeGreaterThan(0);
+  });
+
+  it("treats exact season-level matched players with absent week rows as true zero weeks", () => {
+    const report = buildHistoricalSeasonOutcomeScorerReport({
+      projectionSeason: 2026,
+      scenario: scenario(),
+      draftReport: singlePlayerDraft("season-match", "Season Match", "RB"),
+      weeklyResults: [result(1, "season-match", "Season Match", "RB", 12)],
+    });
+    const weekTwoPlayer = report.strategyOutcomes[0]?.weekly_scores[1]?.starters[0];
+
+    expect(weekTwoPlayer).toMatchObject({ points: 0, matchedBy: "player_id", scoreStatus: "true_zero_week" });
+    expect(report.weeklyInputCoverage.trueZeroWeekRows).toBe(1);
+    expect(report.weeklyInputCoverage.missingPlayerScores).toBe(0);
+    expect(report.weeklyInputCoverage.missingScoreRateBeforeZeroWeekTreatment).toBe(0.5);
+    expect(report.weeklyInputCoverage.missingScoreRateAfterZeroWeekTreatment).toBe(0);
+  });
+
+  it("requires exact season-level identity before applying true zero weeks", () => {
+    const report = buildHistoricalSeasonOutcomeScorerReport({
+      projectionSeason: 2026,
+      scenario: scenario(),
+      draftReport: singlePlayerDraft("draft-id", "Name Candidate", "RB"),
+      weeklyResults: [
+        result(1, "other-id", "Name Candidate", "RB", 9),
+        result(2, "wrong-position", "Name Candidate", "WR", 7),
+      ],
+    });
+    const weekTwoPlayer = report.strategyOutcomes[0]?.weekly_scores[1]?.starters[0];
+
+    expect(report.strategyOutcomes[0]?.weekly_scores[0]?.starters[0]).toMatchObject({ matchedBy: "name_position", scoreStatus: "scored_from_weekly_result" });
+    expect(weekTwoPlayer).toMatchObject({ matchedBy: "missing", scoreStatus: "missing_weekly_source" });
+    expect(report.weeklyInputCoverage.trueZeroWeekRows).toBe(0);
+    expect(report.weeklyInputCoverage.missingPlayerScores).toBe(1);
+  });
+
+  it("treats exact registry-only players with no season weekly rows as registry-backed zero-season", () => {
+    const report = buildHistoricalSeasonOutcomeScorerReport({
+      projectionSeason: 2026,
+      scenario: scenario(),
+      draftReport: singlePlayerDraft("registry-id", "Registry Player", "RB"),
+      weeklyResults: [result(1, "other-weekly-id", "Other Player", "WR", 4)],
+      playerRegistry: [registryRow("registry-id", "Registry Player", "RB")],
+    });
+    const player = report.strategyOutcomes[0]?.weekly_scores[0]?.starters[0];
+
+    expect(player).toMatchObject({ points: 0, matchedBy: "gsis_id", scoreStatus: "registry_backed_zero_season" });
+    expect(report.weeklyInputCoverage.registryBackedZeroSeasonRows).toBe(2);
+    expect(report.weeklyInputCoverage.missingPlayerScores).toBe(0);
+    expect(report.weeklyInputCoverage.missingScoreRateAfterRegistryZeroSeasonTreatment).toBe(0);
+    expect(report.weeklyInputCoverage.playersWithRegistryOnlyExactMatch).toBe(1);
+  });
+
+  it("does not score name-only registry candidates or conflicting registry identities", () => {
+    const report = buildHistoricalSeasonOutcomeScorerReport({
+      projectionSeason: 2026,
+      scenario: scenario(),
+      draftReport: singlePlayerDraft("draft-id", "Registry Candidate", "RB"),
+      weeklyResults: [result(1, "other-weekly-id", "Other Player", "WR", 4)],
+      playerRegistry: [
+        registryRow("other-id", "Registry Candidate", "RB"),
+        registryRow("draft-id", "Registry Candidate", "WR"),
+      ],
+    });
+    const player = report.strategyOutcomes[0]?.weekly_scores[0]?.starters[0];
+
+    expect(player).toMatchObject({ matchedBy: "missing", scoreStatus: "review_candidate_not_scored" });
+    expect(report.weeklyInputCoverage.registryBackedZeroSeasonRows).toBe(0);
+    expect(report.weeklyInputCoverage.missingPlayerScores).toBe(2);
   });
 
   it("optimizes best-ball lineups with FLEX and SUPERFLEX eligibility", () => {
@@ -167,6 +236,17 @@ function draftReport(): HistoricalMockDraftEngineReport {
   };
 }
 
+function singlePlayerDraft(playerId: string, playerName: string, position: string): HistoricalMockDraftEngineReport {
+  return {
+    ...draftReport(),
+    strategyResults: [
+      strategy("blackbird_rank_only", [
+        { ...pick(playerId, playerName, position), strategy: "blackbird_rank_only", overallPick: 1, round: 1, pickInRound: 1, draftSlot: 1 },
+      ]),
+    ],
+  };
+}
+
 function strategy(strategyName: "blackbird_rank_only" | "projection_only", picks: ReturnType<typeof pick>[]) {
   return {
     strategy: strategyName,
@@ -220,6 +300,10 @@ function weeklyResults(): HistoricalWeeklyResult[] {
 
 function result(week: number, playerId: string, playerName: string, position: string, points: number): HistoricalWeeklyResult {
   return { week, player_id: playerId, player_name: playerName, position, fantasy_points: points };
+}
+
+function registryRow(gsis_id: string, display_name: string, position: string): HistoricalPlayerRegistryRow {
+  return { gsis_id, display_name, position };
 }
 
 function player(playerId: string, position: string, points: number) {

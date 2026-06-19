@@ -1,5 +1,5 @@
 {
-  "historicalSeason": 2026,
+  "historicalSeason": 2025,
   "leagueType": "dynasty_best_ball",
   "teams": 4,
   "rounds": 4,
@@ -23,7 +23,7 @@
     "need_based",
     "random_within_adp_band"
   ],
-  "randomSeed": 2026,
+  "randomSeed": 2025,
   "playerUniverseInput": {
     "players": [
       { "playerId": "p1", "sleeperId": "s1", "playerName": "Historical QB 1", "position": "QB", "nflTeam": "KC", "blackbirdRank": 8, "projectionRank": 3, "adpRank": 10, "marketRank": 9, "projectedPoints": 305 },
@@ -45,16 +45,16 @@
     ]
   },
   "projectionSnapshotInput": {
-    "snapshotSeason": 2026,
-    "asOf": "2026-08-01",
+    "snapshotSeason": 2025,
+    "asOf": "2025-08-01",
     "source": "template preseason-only snapshot"
   },
   "adpInput": {
-    "asOf": "2026-08-01",
+    "asOf": "2025-08-01",
     "source": "template preseason ADP"
   },
   "marketRankInput": {
-    "asOf": "2026-08-01",
+    "asOf": "2025-08-01",
     "source": "template preseason market rank"
   }
 }

@@ -67,3 +67,64 @@ Fill each section with `pass`, `warn`, `fail`, or `not_tested`, then run:
 ```powershell
 npm run war-room:manual-qa-report -- --projection-season=2026 --input=data/war-room/war-room-manual-qa.local.json
 ```
+
+## Launch Candidate Pass
+
+Use the launch-candidate status as the final War Room v1 go/no-go triage after H33 E2E QA is passing and browser QA has been recorded.
+
+Required pass sections:
+
+```text
+draft_connection
+draft_state_loading
+board_modes
+draft_suggestions
+full_blackbird_rank
+available_blackbird_rank
+available_filtering
+pick_updates
+roster_construction
+plan_alignment
+gm_brief
+player_modal
+search_filter_load_more
+sync_status
+data_policy_holdbacks
+v8_2_safety
+console_errors
+```
+
+Allowed warning sections, if still readable and usable:
+
+```text
+responsive_tablet
+responsive_mobile
+error_stale_states
+```
+
+Blocker sections:
+
+```text
+draft_connection
+draft_state_loading
+board_modes
+pick_updates
+available_filtering
+v8_2_safety
+console_errors
+```
+
+Record issues in the relevant section `notes` field. Use concrete reproduction details: draft room, viewport, action taken, expected result, actual result, and whether the browser console logged an error.
+
+Rerun the report after updating local QA results:
+
+```powershell
+npm run war-room:manual-qa-report -- --projection-season=2026 --input=data/war-room/war-room-manual-qa.local.json
+```
+
+Final interpretation:
+
+- `launch_candidate_pass`: ready for launch-candidate approval.
+- `launch_candidate_pass_with_warnings`: launchable only if warnings are accepted as readable/usable polish items.
+- `launch_candidate_needs_bugfix`: fix scoped UI/sync issues and retest before approval.
+- `launch_candidate_blocked`: not ready; a blocker failed, a required section is missing, or a required section is not tested.

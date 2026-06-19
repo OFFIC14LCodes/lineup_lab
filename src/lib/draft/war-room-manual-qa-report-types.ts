@@ -6,6 +6,12 @@ export type WarRoomManualQaRecommendation =
   | "war_room_manual_qa_needs_bugfix"
   | "war_room_manual_qa_blocked";
 
+export type WarRoomLaunchCandidateStatus =
+  | "launch_candidate_pass"
+  | "launch_candidate_pass_with_warnings"
+  | "launch_candidate_needs_bugfix"
+  | "launch_candidate_blocked";
+
 export type WarRoomManualQaSectionName =
   | "environment"
   | "draft_connection"
@@ -50,6 +56,9 @@ export type WarRoomManualQaTriageItem = {
   area: WarRoomManualQaSectionName;
   description: string;
   suggested_next_action: string;
+  is_blocker?: boolean;
+  recommended_fix_or_action?: string;
+  manual_retest_required?: boolean;
 };
 
 export type WarRoomManualQaReport = {
@@ -59,10 +68,12 @@ export type WarRoomManualQaReport = {
   projectionSeason: number;
   inputPath: string | null;
   recommendation: WarRoomManualQaRecommendation;
+  launch_candidate_status: WarRoomLaunchCandidateStatus;
   sections: WarRoomManualQaSection[];
   summary: Record<WarRoomManualQaStatus, number>;
   missingRequiredSections: WarRoomManualQaSectionName[];
   triage: WarRoomManualQaTriageItem[];
+  launch_candidate_triage: WarRoomManualQaTriageItem[];
   safetyGates: Array<{ name: string; passed: boolean; detail: string }>;
   overallNotes: string;
 };

@@ -9,7 +9,10 @@ dev-profile-smoke.*.log
 *.tsbuildinfo
 data/raw/
 data/backtesting/historical-mock-draft-scenario.local.json
+data/backtesting/historical-mock-draft-scenario.*.generated.json
 data/backtesting/historical-season-outcome-scenario.local.json
+data/backtesting/historical-weekly-results-2025.csv
+data/backtesting/historical-weekly-results-2026.csv
 artifacts/projections/h9-comprehensive-scored-projections.json
 artifacts/projections/h9-comprehensive-stat-projections.json
 # Blackbird generated profile artifacts

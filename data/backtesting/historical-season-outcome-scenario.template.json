@@ -1,7 +1,7 @@
 {
-  "historicalSeason": 2026,
-  "draftEngineArtifactPath": "artifacts/projections/backtesting/historical-mock-draft-engine-2026.json",
-  "weeklyResultsInputPath": null,
+  "historicalSeason": 2025,
+  "draftEngineArtifactPath": "artifacts/projections/backtesting/historical-mock-draft-engine-2025.json",
+  "weeklyResultsInputPath": "artifacts/projections/backtesting/historical-weekly-results-2025.normalized.json",
   "leagueType": "dynasty_best_ball",
   "rosterSettings": {
     "QB": 1,

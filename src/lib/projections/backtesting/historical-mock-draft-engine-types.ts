@@ -41,7 +41,7 @@ export type HistoricalMockDraftScenario = {
   scoringSettings: Record<string, unknown>;
   strategySet: HistoricalMockDraftStrategy[];
   randomSeed: number;
-  playerUniverseInput: { players: HistoricalMockDraftPlayer[] };
+  playerUniverseInput: { players?: HistoricalMockDraftPlayer[]; artifactPath?: string };
   projectionSnapshotInput: Record<string, unknown>;
   adpInput?: Record<string, unknown> | null;
   marketRankInput?: Record<string, unknown> | null;

@@ -1,4 +1,4 @@
-import { existsSync, mkdtempSync, rmSync } from "node:fs";
+import { existsSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 
@@ -8,6 +8,7 @@ import {
   buildHistoricalMockDraftEngineReport,
   generateHistoricalDraftOrder,
   writeHistoricalMockDraftEngineArtifacts,
+  runHistoricalMockDraftEngine,
 } from "./historical-mock-draft-engine";
 import type { HistoricalMockDraftScenario } from "./historical-mock-draft-engine-types";
 
@@ -90,6 +91,23 @@ describe("historical mock draft engine", () => {
       expect(existsSync(artifacts.jsonPath)).toBe(true);
       expect(existsSync(artifacts.markdownPath)).toBe(true);
       expect(existsSync(artifacts.csvPath)).toBe(true);
+    } finally {
+      rmSync(cwd, { recursive: true, force: true });
+    }
+  });
+
+  it("loads a player universe from a local artifact path", () => {
+    const cwd = mkdtempSync(path.join(tmpdir(), "historical-mock-draft-artifact-"));
+    try {
+      const artifactPath = path.join(cwd, "universe.json");
+      writeFileSync(artifactPath, JSON.stringify({ playerUniverseInput: { players: scenario().playerUniverseInput.players } }));
+      const scenarioPath = path.join(cwd, "scenario.json");
+      writeFileSync(scenarioPath, JSON.stringify({ ...scenario(), playerUniverseInput: { artifactPath: "universe.json" } }));
+
+      const report = runHistoricalMockDraftEngine({ projectionSeason: 2026, scenarioPath: "scenario.json", cwd });
+
+      expect(report.recommendation).toBe("historical_mock_draft_engine_ready_for_season_scoring");
+      expect(report.strategyResults[0].pickLog).toHaveLength(16);
     } finally {
       rmSync(cwd, { recursive: true, force: true });
     }

@@ -3,6 +3,7 @@ import type { HistoricalMockDraftEngineReport, HistoricalMockDraftStrategy } fro
 export type HistoricalOutcomeScoringRecommendation =
   | "historical_outcome_scoring_ready_for_strategy_comparison"
   | "historical_outcome_scoring_needs_actual_weekly_results"
+  | "historical_outcome_scoring_needs_source_expansion"
   | "historical_outcome_scoring_needs_identifier_mapping"
   | "historical_outcome_scoring_needs_bugfix"
   | "historical_outcome_scoring_blocked";
@@ -11,6 +12,7 @@ export type HistoricalSeasonOutcomeScenario = {
   historicalSeason: number;
   draftEngineArtifactPath: string;
   weeklyResultsInputPath?: string | null;
+  playerRegistryInputPath?: string | null;
   leagueType: string;
   rosterSettings: Record<string, number>;
   scoringSettings: Record<string, unknown>;
@@ -49,12 +51,34 @@ export type HistoricalWeeklyResultsInput = {
   results: HistoricalWeeklyResult[];
 };
 
+export type HistoricalLineupScoreStatus =
+  | "scored_from_weekly_result"
+  | "true_zero_week"
+  | "registry_backed_zero_season"
+  | "missing_weekly_source"
+  | "missing_identifier_mapping"
+  | "review_candidate_not_scored";
+
+export type HistoricalPlayerRegistryRow = {
+  player_id?: string | null;
+  sleeper_id?: string | null;
+  gsis_id?: string | null;
+  player_name?: string | null;
+  display_name?: string | null;
+  full_name?: string | null;
+  position?: string | null;
+  team?: string | null;
+  latest_team?: string | null;
+  status?: string | null;
+};
+
 export type HistoricalLineupPlayer = {
   playerId: string;
   playerName: string;
   position: string;
   points: number;
   matchedBy: "player_id" | "sleeper_id" | "gsis_id" | "name_position" | "missing";
+  scoreStatus?: HistoricalLineupScoreStatus;
 };
 
 export type HistoricalWeeklyTeamScore = {
@@ -107,9 +131,22 @@ export type HistoricalSeasonOutcomeScorerReport = {
   weeklyInputCoverage: {
     resultRows: number;
     weeks: number[];
+    scoredWeeklyResultRows: number;
     exactIdMatches: number;
     namePositionFallbackMatches: number;
+    trueZeroWeekRows: number;
+    registryBackedZeroSeasonRows: number;
     missingPlayerScores: number;
+    missingScoreRateBeforeH40: number;
+    missingScoreRateBeforeZeroWeekTreatment: number;
+    missingScoreRateAfterTrueZeroWeekTreatment: number;
+    missingScoreRateAfterZeroWeekTreatment: number;
+    missingScoreRateAfterRegistryZeroSeasonTreatment: number;
+    playersWithSeasonLevelExactMatch: number;
+    playersWithRegistryOnlyExactMatch: number;
+    playersMissingFromBothWeeklyAndRegistrySource: number;
+    playersMissingFromWeeklySourceEntirely: number;
+    registryBackedZeroSeasonUnavailable: boolean;
   };
   draftEngineSummary: Pick<HistoricalMockDraftEngineReport, "recommendation" | "draftOrderType"> | null;
   strategyOutcomes: HistoricalSeasonTeamOutcome[];

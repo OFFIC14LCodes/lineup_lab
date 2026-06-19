@@ -1,10 +1,14 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
+import Papa from "papaparse";
+
 import type { HistoricalMockDraftEngineReport, HistoricalMockDraftPickLog } from "./historical-mock-draft-engine-types";
 import type {
   HistoricalLineupPlayer,
   HistoricalLineupSettings,
+  HistoricalLineupScoreStatus,
+  HistoricalPlayerRegistryRow,
   HistoricalSeasonOutcomeScenario,
   HistoricalSeasonOutcomeScorerArtifactPaths,
   HistoricalSeasonOutcomeScorerReport,
@@ -24,14 +28,15 @@ export function buildHistoricalSeasonOutcomeScorerReport(input: {
   scenario: HistoricalSeasonOutcomeScenario;
   draftReport: HistoricalMockDraftEngineReport | null;
   weeklyResults: HistoricalWeeklyResult[] | null;
+  playerRegistry?: HistoricalPlayerRegistryRow[] | null;
   scenarioPath?: string;
   generatedAt?: string;
 }): HistoricalSeasonOutcomeScorerReport {
   const actualWeeklyResultsFound = Boolean(input.weeklyResults?.length);
   const strategyOutcomes = actualWeeklyResultsFound && input.draftReport
-    ? scoreDraftReport(input.draftReport, input.weeklyResults ?? [], input.scenario)
+    ? scoreDraftReport(input.draftReport, input.weeklyResults ?? [], input.playerRegistry ?? [], input.scenario)
     : [];
-  const coverage = summarizeCoverage(input.draftReport, input.weeklyResults ?? [], strategyOutcomes);
+  const coverage = summarizeCoverage(input.draftReport, input.weeklyResults ?? [], input.playerRegistry ?? [], strategyOutcomes);
   const strategyComparison = strategyOutcomes.length ? compareStrategies(strategyOutcomes) : null;
   const myTeamFocus = strategyOutcomes.length && input.draftReport ? buildMyTeamFocus(input.draftReport, strategyOutcomes) : null;
 
@@ -41,7 +46,7 @@ export function buildHistoricalSeasonOutcomeScorerReport(input: {
     readOnly: true,
     projectionSeason: input.projectionSeason,
     scenarioPath: input.scenarioPath ?? null,
-    recommendation: recommend(Boolean(input.draftReport), actualWeeklyResultsFound, coverage.missingPlayerScores, coverage.exactIdMatches + coverage.namePositionFallbackMatches),
+    recommendation: recommend(Boolean(input.draftReport), actualWeeklyResultsFound, coverage.missingPlayerScores, coverage.exactIdMatches + coverage.namePositionFallbackMatches + coverage.trueZeroWeekRows),
     actualWeeklyResultsFound,
     weeklyInputCoverage: coverage,
     draftEngineSummary: input.draftReport
@@ -65,7 +70,9 @@ export function buildHistoricalSeasonOutcomeScorerReport(input: {
       gate("war_room_scoring_unchanged", true, "War Room scoring logic is not imported or recalculated."),
       gate("v8_2_not_enabled", true, "No v8.2 feature flag is read or written."),
       gate("historical_backtest_no_future_leakage", true, "H36 draft artifact is loaded before outcomes and not recomputed."),
-      gate("actual_outcomes_scoring_phase_only", true, "Actual outcomes are consumed only by H37 scoring."),
+      gate("outcomes_used_only_after_draft", true, "Actual outcomes and zero-week treatment are consumed only after H36 draft rosters exist."),
+      gate("registry_zero_season_exact_id_only", true, "Registry-backed zero-season treatment uses exact player_id, sleeper_id, or gsis_id only."),
+      gate("loose_fuzzy_not_confirmed", true, "Loose fuzzy/name-only candidates are not confirmed as scoring identities."),
       gate("dry_run_only", true, "Report is dry-run/read-only."),
     ],
   };
@@ -84,11 +91,16 @@ export function runHistoricalSeasonOutcomeScorer(input: {
   const weeklyResults = weeklyPath && existsSync(weeklyPath)
     ? readJson<HistoricalWeeklyResultsInput>(weeklyPath).results
     : null;
+  const registryPath = scenario.playerRegistryInputPath
+    ? path.resolve(cwd, scenario.playerRegistryInputPath)
+    : path.resolve(cwd, "data", "nflverse", "players.csv");
+  const playerRegistry = existsSync(registryPath) ? readPlayerRegistryRows(registryPath) : null;
   return buildHistoricalSeasonOutcomeScorerReport({
     projectionSeason: input.projectionSeason,
     scenario,
     draftReport,
     weeklyResults,
+    playerRegistry,
     scenarioPath: input.scenarioPath,
   });
 }
@@ -156,15 +168,18 @@ export function optimizeBestBallLineup(input: {
 function scoreDraftReport(
   draftReport: HistoricalMockDraftEngineReport,
   weeklyResults: HistoricalWeeklyResult[],
+  playerRegistry: HistoricalPlayerRegistryRow[],
   scenario: HistoricalSeasonOutcomeScenario,
 ): HistoricalSeasonTeamOutcome[] {
   const resultByWeek = groupWeeklyResults(weeklyResults);
+  const resultByExactId = groupWeeklyResultsByExactId(weeklyResults);
+  const registryByExactId = groupRegistryByExactId(playerRegistry);
   return draftReport.strategyResults
     .filter((strategy) => scenario.strategiesToScore.includes(strategy.strategy))
     .flatMap((strategy) =>
       strategy.teamRosters.map((team) => {
         const weekly_scores = scenario.weeksToScore.map((week) => {
-          const roster = team.picks.map((pick) => matchPlayerWeek(pick, resultByWeek.get(week) ?? []));
+          const roster = team.picks.map((pick) => matchPlayerWeek(pick, resultByWeek.get(week) ?? [], resultByExactId, registryByExactId));
           const optimized = optimizeBestBallLineup({ roster, lineupSettings: scenario.lineupSettings });
           return { week, teamKey: `${strategy.strategy}:slot-${team.draftSlot}`, ...optimized };
         });
@@ -192,12 +207,39 @@ function scoreDraftReport(
     );
 }
 
-function matchPlayerWeek(pick: HistoricalMockDraftPickLog, rows: HistoricalWeeklyResult[]): HistoricalLineupPlayer {
+function matchPlayerWeek(
+  pick: HistoricalMockDraftPickLog,
+  rows: HistoricalWeeklyResult[],
+  resultByExactId: Map<string, HistoricalWeeklyResult[]>,
+  registryByExactId: Map<string, HistoricalPlayerRegistryRow[]>,
+): HistoricalLineupPlayer {
   const exact = rows.find((row) => row.player_id === pick.playerId || row.sleeper_id === pick.playerId || row.gsis_id === pick.playerId);
   if (exact) return lineupPlayer(pick, exact, exact.player_id === pick.playerId ? "player_id" : exact.sleeper_id === pick.playerId ? "sleeper_id" : "gsis_id");
+  const seasonExactRows = resultByExactId.get(pick.playerId) ?? [];
+  if (seasonExactRows.length) {
+    const matchedBy = seasonExactRows.some((row) => row.player_id === pick.playerId)
+      ? "player_id"
+      : seasonExactRows.some((row) => row.sleeper_id === pick.playerId)
+        ? "sleeper_id"
+        : "gsis_id";
+    return { playerId: pick.playerId, playerName: pick.playerName, position: normalizePosition(pick.position), points: 0, matchedBy, scoreStatus: "true_zero_week" };
+  }
+  const registryRows = registryByExactId.get(pick.playerId) ?? [];
+  const registry = registryRows.find((row) => !registryConflict(row, pick));
+  if (registry) {
+    const matchedBy = registry.player_id === pick.playerId
+      ? "player_id"
+      : registry.sleeper_id === pick.playerId
+        ? "sleeper_id"
+        : "gsis_id";
+    return { playerId: pick.playerId, playerName: pick.playerName, position: normalizePosition(pick.position), points: 0, matchedBy, scoreStatus: "registry_backed_zero_season" };
+  }
+  if (registryRows.length) {
+    return { playerId: pick.playerId, playerName: pick.playerName, position: normalizePosition(pick.position), points: 0, matchedBy: "missing", scoreStatus: "review_candidate_not_scored" };
+  }
   const fallback = rows.find((row) => normalize(row.player_name) === normalize(pick.playerName) && normalizePosition(row.position) === normalizePosition(pick.position));
   if (fallback) return lineupPlayer(pick, fallback, "name_position");
-  return { playerId: pick.playerId, playerName: pick.playerName, position: normalizePosition(pick.position), points: 0, matchedBy: "missing" };
+  return { playerId: pick.playerId, playerName: pick.playerName, position: normalizePosition(pick.position), points: 0, matchedBy: "missing", scoreStatus: "missing_weekly_source" };
 }
 
 function compareStrategies(outcomes: HistoricalSeasonTeamOutcome[]): HistoricalStrategyComparison {
@@ -263,15 +305,46 @@ function recommend(draftFound: boolean, weeklyFound: boolean, missingScores: num
 function summarizeCoverage(
   draftReport: HistoricalMockDraftEngineReport | null,
   weeklyResults: HistoricalWeeklyResult[],
+  playerRegistry: HistoricalPlayerRegistryRow[],
   outcomes: HistoricalSeasonTeamOutcome[],
 ) {
   const allPlayers = outcomes.flatMap((outcome) => outcome.weekly_scores.flatMap((week) => [...week.starters, ...week.bench]));
+  const exactIdMatches = allPlayers.filter((player) => scoreStatus(player) === "scored_from_weekly_result" && ["player_id", "sleeper_id", "gsis_id"].includes(player.matchedBy)).length;
+  const trueZeroWeekRows = allPlayers.filter((player) => scoreStatus(player) === "true_zero_week").length;
+  const registryBackedZeroSeasonRows = allPlayers.filter((player) => scoreStatus(player) === "registry_backed_zero_season").length;
+  const missingPlayerScores = draftReport && weeklyResults.length
+    ? allPlayers.filter((player) => ["missing_weekly_source", "missing_identifier_mapping", "review_candidate_not_scored"].includes(scoreStatus(player))).length
+    : 0;
+  const seasonExactPlayerIds = new Set<string>();
+  const registryOnlyExactPlayerIds = new Set<string>();
+  const missingWeeklySourcePlayerIds = new Set<string>();
+  for (const player of allPlayers) {
+    if (scoreStatus(player) === "scored_from_weekly_result" || scoreStatus(player) === "true_zero_week") seasonExactPlayerIds.add(player.playerId);
+    if (scoreStatus(player) === "registry_backed_zero_season") registryOnlyExactPlayerIds.add(player.playerId);
+    if (["missing_weekly_source", "missing_identifier_mapping", "review_candidate_not_scored"].includes(scoreStatus(player))) missingWeeklySourcePlayerIds.add(player.playerId);
+  }
+  const missingBeforeZeroTreatment = missingPlayerScores + trueZeroWeekRows + registryBackedZeroSeasonRows;
+  const missingAfterTrueZeroTreatment = missingPlayerScores + registryBackedZeroSeasonRows;
+  const denominator = exactIdMatches + trueZeroWeekRows + registryBackedZeroSeasonRows + missingPlayerScores;
   return {
     resultRows: weeklyResults.length,
     weeks: [...new Set(weeklyResults.map((row) => row.week))].sort((a, b) => a - b),
-    exactIdMatches: allPlayers.filter((player) => ["player_id", "sleeper_id", "gsis_id"].includes(player.matchedBy)).length,
-    namePositionFallbackMatches: allPlayers.filter((player) => player.matchedBy === "name_position").length,
-    missingPlayerScores: draftReport && weeklyResults.length ? allPlayers.filter((player) => player.matchedBy === "missing").length : 0,
+    scoredWeeklyResultRows: exactIdMatches,
+    exactIdMatches,
+    namePositionFallbackMatches: allPlayers.filter((player) => scoreStatus(player) === "scored_from_weekly_result" && player.matchedBy === "name_position").length,
+    trueZeroWeekRows,
+    registryBackedZeroSeasonRows,
+    missingPlayerScores,
+    missingScoreRateBeforeH40: denominator ? round(missingBeforeZeroTreatment / denominator) : 0,
+    missingScoreRateBeforeZeroWeekTreatment: denominator ? round(missingBeforeZeroTreatment / denominator) : 0,
+    missingScoreRateAfterTrueZeroWeekTreatment: denominator ? round(missingAfterTrueZeroTreatment / denominator) : 0,
+    missingScoreRateAfterZeroWeekTreatment: denominator ? round(missingAfterTrueZeroTreatment / denominator) : 0,
+    missingScoreRateAfterRegistryZeroSeasonTreatment: denominator ? round(missingPlayerScores / denominator) : 0,
+    playersWithSeasonLevelExactMatch: seasonExactPlayerIds.size,
+    playersWithRegistryOnlyExactMatch: registryOnlyExactPlayerIds.size,
+    playersMissingFromBothWeeklyAndRegistrySource: missingWeeklySourcePlayerIds.size,
+    playersMissingFromWeeklySourceEntirely: missingWeeklySourcePlayerIds.size,
+    registryBackedZeroSeasonUnavailable: playerRegistry.length === 0,
   };
 }
 
@@ -291,8 +364,38 @@ function groupWeeklyResults(rows: HistoricalWeeklyResult[]): Map<number, Histori
   }, new Map<number, HistoricalWeeklyResult[]>());
 }
 
+function groupWeeklyResultsByExactId(rows: HistoricalWeeklyResult[]): Map<string, HistoricalWeeklyResult[]> {
+  const grouped = new Map<string, HistoricalWeeklyResult[]>();
+  for (const row of rows) {
+    for (const id of [row.player_id, row.sleeper_id, row.gsis_id].filter(Boolean) as string[]) {
+      grouped.set(id, [...(grouped.get(id) ?? []), row]);
+    }
+  }
+  return grouped;
+}
+
+function groupRegistryByExactId(rows: HistoricalPlayerRegistryRow[]): Map<string, HistoricalPlayerRegistryRow[]> {
+  const grouped = new Map<string, HistoricalPlayerRegistryRow[]>();
+  for (const row of rows) {
+    for (const id of [row.player_id, row.sleeper_id, row.gsis_id].filter(Boolean) as string[]) {
+      grouped.set(id, [...(grouped.get(id) ?? []), row]);
+    }
+  }
+  return grouped;
+}
+
+function registryConflict(row: HistoricalPlayerRegistryRow, pick: HistoricalMockDraftPickLog): boolean {
+  const registryPosition = normalizePosition(row.position ?? "");
+  return Boolean(registryPosition && registryPosition !== normalizePosition(pick.position));
+}
+
 function lineupPlayer(pick: HistoricalMockDraftPickLog, row: HistoricalWeeklyResult, matchedBy: HistoricalLineupPlayer["matchedBy"]): HistoricalLineupPlayer {
-  return { playerId: pick.playerId, playerName: pick.playerName, position: normalizePosition(pick.position), points: row.fantasy_points, matchedBy };
+  return { playerId: pick.playerId, playerName: pick.playerName, position: normalizePosition(pick.position), points: row.fantasy_points, matchedBy, scoreStatus: "scored_from_weekly_result" };
+}
+
+function scoreStatus(player: HistoricalLineupPlayer): HistoricalLineupScoreStatus {
+  if (player.scoreStatus) return player.scoreStatus;
+  return player.matchedBy === "missing" ? "missing_weekly_source" : "scored_from_weekly_result";
 }
 
 function sumPositionalPoints(weeks: HistoricalWeeklyTeamScore[]): Record<string, number> {
@@ -334,6 +437,27 @@ function readJson<T>(filePath: string): T {
   return JSON.parse(readFileSync(filePath, "utf8")) as T;
 }
 
+function readPlayerRegistryRows(filePath: string): HistoricalPlayerRegistryRow[] {
+  const parsed = Papa.parse<Record<string, unknown>>(readFileSync(filePath, "utf8"), { header: true, skipEmptyLines: true, dynamicTyping: false });
+  if (parsed.errors.length) throw new Error(`Failed to parse ${filePath}: ${parsed.errors[0]?.message}`);
+  return parsed.data.map((row) => ({
+    player_id: stringValue(row.player_id),
+    sleeper_id: stringValue(row.sleeper_id),
+    gsis_id: stringValue(row.gsis_id),
+    player_name: stringValue(row.player_name),
+    display_name: stringValue(row.display_name),
+    full_name: stringValue(row.full_name),
+    position: stringValue(row.position),
+    team: stringValue(row.team),
+    latest_team: stringValue(row.latest_team),
+    status: stringValue(row.status),
+  }));
+}
+
+function stringValue(value: unknown): string | null {
+  return typeof value === "string" && value.trim() ? value.trim() : value === null || value === undefined ? null : String(value).trim() || null;
+}
+
 function gate(name: string, passed: boolean, detail: string) {
   return { name, passed, detail };
 }
@@ -353,9 +477,19 @@ function renderMarkdown(report: HistoricalSeasonOutcomeScorerReport): string {
     "",
     `- Result rows: ${report.weeklyInputCoverage.resultRows}`,
     `- Weeks: ${report.weeklyInputCoverage.weeks.join(", ") || "none"}`,
+    `- Scored weekly result rows: ${report.weeklyInputCoverage.scoredWeeklyResultRows}`,
     `- Exact ID matches: ${report.weeklyInputCoverage.exactIdMatches}`,
     `- Name/position fallback matches: ${report.weeklyInputCoverage.namePositionFallbackMatches}`,
+    `- True zero-week rows: ${report.weeklyInputCoverage.trueZeroWeekRows}`,
+    `- Registry-backed zero-season rows: ${report.weeklyInputCoverage.registryBackedZeroSeasonRows}`,
     `- Missing player scores: ${report.weeklyInputCoverage.missingPlayerScores}`,
+    `- Missing score rate before H40: ${report.weeklyInputCoverage.missingScoreRateBeforeH40}`,
+    `- Missing score rate after true zero-week treatment: ${report.weeklyInputCoverage.missingScoreRateAfterTrueZeroWeekTreatment}`,
+    `- Missing score rate after registry zero-season treatment: ${report.weeklyInputCoverage.missingScoreRateAfterRegistryZeroSeasonTreatment}`,
+    `- Players with season-level exact match: ${report.weeklyInputCoverage.playersWithSeasonLevelExactMatch}`,
+    `- Players with registry-only exact match: ${report.weeklyInputCoverage.playersWithRegistryOnlyExactMatch}`,
+    `- Players missing from both weekly and registry source: ${report.weeklyInputCoverage.playersMissingFromBothWeeklyAndRegistrySource}`,
+    `- Registry-backed zero-season unavailable: ${report.weeklyInputCoverage.registryBackedZeroSeasonUnavailable}`,
     "",
     "## Strategy Comparison",
     "",
