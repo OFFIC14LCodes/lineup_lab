@@ -250,7 +250,9 @@ describe("DraftWarRoom H11 strategy UI wiring", () => {
 
   it("supports H13.4 board search, position chips, counts, and load-more as view-only controls", () => {
     [
-      "const BOARD_POSITION_FILTERS = [\"All\", \"QB\", \"RB\", \"WR\", \"TE\", \"K\", \"DEF\", \"DL\", \"LB\", \"DB\"]",
+      "const BOARD_POSITION_FILTER_ORDER = [\"QB\", \"RB\", \"WR\", \"TE\", \"K\", \"DEF\", \"DL\", \"LB\", \"DB\"]",
+      "const boardPositionFilters = useMemo(",
+      "BOARD_POSITION_FILTER_ORDER.filter((position) => availableBoardPositions.has(position))",
       "const boardRowsForMode = useMemo(() =>",
       "const availableBoardPositions = useMemo(() =>",
       "normalizeBoardSearch(search)",
@@ -265,6 +267,10 @@ describe("DraftWarRoom H11 strategy UI wiring", () => {
       "Showing {visibleBlackbirdRows.length} of {filteredBoardRows.length} filtered",
       "{boardRowsForMode.length} in this view",
       "Search, filters, load-more, and sort are local to this browser view.",
+      "Suggested Spot",
+      "SuggestedDraftSpotCell",
+      "formatSuggestedDraftSpotRange(row.suggestedDraftSpot)",
+      "Edge: {formatMarketEdge(spot.marketEdgePicks)}",
       "aria-pressed={active}",
       "disabled={!available}",
       "onClick={() => setPositionFilter(position)}",
@@ -280,7 +286,8 @@ describe("DraftWarRoom H11 strategy UI wiring", () => {
     expect(baseRowsSection).toContain("if (boardViewMode === \"available_blackbird\") return !row.drafted;");
     expect(baseRowsSection).toContain("return true;");
     expect(baseRowsSection).toContain("return a.blackbirdBoardRank - b.blackbirdBoardRank;");
-    expect(filteringSection).toContain("positionFilter === \"All\" || row.position === positionFilter");
+    expect(filteringSection).toContain("positionFilter === \"All\" || boardRowEligiblePositions(row).includes(positionFilter)");
+    expect(source).toContain("row.positionEligibility?.filterPositions.length");
     expect(filteringSection).toContain("!needle || boardRowMatchesSearch(row, needle)");
     expect(filteringSection).toContain("matchFilter === \"Matched\"");
     expect(filteringSection).not.toContain("sort(");
@@ -295,6 +302,9 @@ describe("DraftWarRoom H11 strategy UI wiring", () => {
     expect(boardBuildSection).toContain("filterDraftablePlayers(blackbirdPlayerPool, { rosterRequirements: state.rosterRequirements })");
     expect(boardBuildSection).toContain("filterDraftablePlayers(state.recommendations, { rosterRequirements: state.rosterRequirements }).players");
     expect(boardBuildSection).toContain("players: draftableBlackbirdPlayerPool.players");
+    expect(boardBuildSection).toContain("draftTiming: {");
+    expect(boardBuildSection).toContain("currentPick: state?.currentPickNumber ?? null");
+    expect(boardBuildSection).toContain("picksUntilNextTurn: state?.picksUntilMyNextPick ?? null");
     const buildBlackbirdBoardCall = boardBuildSection.slice(boardBuildSection.indexOf("return buildBlackbirdBoard({"), boardBuildSection.indexOf("const livePlanStatus"));
     expect(buildBlackbirdBoardCall).not.toContain("players: blackbirdPlayerPool");
     expect(source).toContain("topPlayer={eligibleRecommendations[0] ?? null}");
@@ -314,6 +324,11 @@ describe("DraftWarRoom H11 strategy UI wiring", () => {
       "No major roster gaps detected yet.",
       "Plan alignment will appear once Draft Suggestions are loaded.",
       "PlanAlignmentChips",
+      "SuggestedDraftSpotDetailPanel",
+      "Market ADP",
+      "Value Edge",
+      "Reach Risk",
+      "Wait Risk",
       "buildWarRoomPlanAlignmentLabels",
       "Plan Fit",
       "Need Fit",

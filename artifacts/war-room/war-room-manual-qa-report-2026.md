@@ -1,6 +1,6 @@
 # War Room V1 Manual QA Report
 
-- Generated: 2026-06-19T19:34:58.352Z
+- Generated: 2026-06-19T20:17:26.561Z
 - Projection season: 2026
 - Recommendation: war_room_manual_qa_passed
 - Launch candidate status: launch_candidate_pass

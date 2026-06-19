@@ -6,7 +6,10 @@ import { filterFallbackPlayers, type FallbackRelevanceDiagnostics } from "@/lib/
 import { buildH10RecommendationPreviewPayload } from "@/lib/draft/war-room-recommendation-preview-state";
 import { normalizePlayerName, normalizePrimaryPosition } from "@/lib/players/normalize";
 import { buildDraftTargetScore, type DraftTargetScorePlayer } from "@/lib/draft/scoring";
+import type { CurrentSeasonAdpEnrichedPlayer } from "@/lib/projections/backtesting/current-season-adp-enrichment-types";
 import { filterDraftablePlayers } from "@/lib/draft/player-draftability";
+import { buildPlayerPositionEligibility } from "@/lib/draft/player-position-eligibility";
+import { findPlayerAgeMetadata, loadPlayerAgeLookup } from "@/lib/draft/player-age-source";
 import { buildDraftBoardTeams } from "@/lib/rosterforge/draft-board-teams";
 import { buildDraftPositionContext } from "@/lib/rosterforge/draft-position";
 import {
@@ -330,7 +333,7 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
     : remainingPlayers;
   const staticDraftablePlayers = filterDraftablePlayers(unfilteredStaticDraftablePlayers, { rosterRequirements }).players;
   const draftablePlayers = mergeDraftableAndRemainingPlayers(staticDraftablePlayers, remainingPlayers);
-  const counts = countPositions(myPicks, playerRowsBySleeperId);
+  const counts = countPositions(myPicks, playerRowsBySleeperId, rosterRequirements);
   const positionNeeds = buildPositionNeeds(counts, rosterRequirements);
   const topNeeds = buildTopNeeds(positionNeeds);
 
@@ -404,13 +407,19 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
     leagueId: room.league_id as string,
     players: projectionUniverseCandidates,
   });
-  const blackbirdRankPlayers = filterDraftablePlayers(buildBlackbirdRankPlayerUniverse({
-    leagueId: room.league_id as string,
-    projectionOverlays: persistedProjectionOverlays,
-    playerRows,
-    rankedPlayers: draftablePlayers,
-    draftedPlayers: draftedPlayersForBlackbirdRank,
-  }), { rosterRequirements }).players;
+  const correctedBlackbirdRankUniverse = loadCorrectedBlackbirdRankUniverseFromArtifact(2026);
+  const blackbirdRankPlayers = filterDraftablePlayers(
+    correctedBlackbirdRankUniverse.length
+      ? correctedBlackbirdRankUniverse
+      : buildBlackbirdRankPlayerUniverse({
+          leagueId: room.league_id as string,
+          projectionOverlays: persistedProjectionOverlays,
+          playerRows,
+          rankedPlayers: draftablePlayers,
+          draftedPlayers: draftedPlayersForBlackbirdRank,
+        }),
+    { rosterRequirements }
+  ).players;
   const blackbirdRankScoring = buildDraftTargetScore({
     players: blackbirdRankPlayers as DraftTargetScorePlayer[],
     league: {
@@ -685,6 +694,51 @@ function buildBlackbirdRankPlayerUniverse(input: {
   return mergeDraftableAndRemainingPlayers(mergeDraftableAndRemainingPlayers(rows, input.rankedPlayers), input.draftedPlayers ?? []);
 }
 
+function loadCorrectedBlackbirdRankUniverseFromArtifact(season: number): DraftTargetScorePlayer[] {
+  const artifactPath = path.join(process.cwd(), "artifacts", "projections", "backtesting", `current-season-adp-enriched-universe-${season}.json`);
+  if (!existsSync(artifactPath)) return [];
+  try {
+    const artifact = JSON.parse(readFileSync(artifactPath, "utf8")) as { rows?: CurrentSeasonAdpEnrichedPlayer[] };
+    const ageLookup = loadPlayerAgeLookup(season);
+    return (artifact.rows ?? []).map((row) => {
+      const age = findPlayerAgeMetadata(ageLookup, row);
+      return ({
+      sleeper_player_id: row.sleeperId,
+      matched_player_id: row.playerId,
+      player_name: row.playerName,
+      position: normalizePrimaryPosition(row.position) ?? row.position,
+      team: row.team,
+      age: age.age,
+      yearsExperience: age.yearsExperience,
+      fantasyPositions: age.fantasyPositions,
+      rank: row.modelRank,
+      adp: row.adp,
+      projected_points: row.projectedPoints,
+      dynasty_value: null,
+      best_ball_value: null,
+      superflex_value: row.position === "QB" && row.modelRank !== null ? Math.max(0, 100 - row.modelRank) : null,
+      te_premium_value: null,
+      match_status: row.externalMarketMatchConfidence === "exact" ? "exact_id" : "name_match",
+      match_confidence: row.externalMarketMatchConfidence === "exact" ? 1 : 0.8,
+      is_ranked: row.modelRank !== null,
+      is_fallback: false,
+      activePolicyClass: row.activePolicyClass,
+      policyGroup: row.policyGroup,
+      confidence: row.confidence,
+      confidenceScore: row.confidenceScore,
+      gsisId: row.gsisId,
+      marketRank: row.marketRank,
+      marketFormat: row.marketFormat,
+      marketMatchType: row.externalMarketMatchConfidence,
+      externalMarketMatchConfidence: row.externalMarketMatchConfidence,
+      marketAnchorRank: row.marketAnchorRank,
+    });
+    }) as DraftTargetScorePlayer[];
+  } catch {
+    return [];
+  }
+}
+
 function buildDraftedPickPlayers(draftPicks: DraftPickRow[], playerRows: PlayerRow[]): DraftTargetScorePlayer[] {
   const bySleeperId = new Map(
     playerRows
@@ -753,6 +807,7 @@ function buildProjectionUniverseCandidates(playerRows: PlayerRow[]): DraftTarget
         te_premium_value: null,
         age: player.age,
         years_exp: player.years_exp,
+        fantasyPositions: player.fantasy_positions_json ?? player.eligible_positions_json ?? null,
         match_status: "projection_universe",
         match_confidence: 1,
         is_ranked: false,
@@ -1074,17 +1129,63 @@ function emptyFallbackDiagnostics(includeDiagnosticFallbacks: boolean): Fallback
   };
 }
 
-function countPositions(picks: DraftPickRow[], playersBySleeperId: Map<string, PlayerRow>) {
+function countPositions(
+  picks: DraftPickRow[],
+  playersBySleeperId: Map<string, PlayerRow>,
+  rosterRequirements: ReturnType<typeof buildNormalizedRosterRequirements>
+) {
   const counts = Object.fromEntries(POSITION_GROUPS.map((position) => [position, 0])) as Record<PositionGroup, number>;
 
   for (const pick of picks) {
     const player = pick.sleeper_player_id ? playersBySleeperId.get(pick.sleeper_player_id) : null;
-    const normalizedPosition = normalizeDraftedPosition(pick.position, player);
+    const normalizedPosition = assignDraftedPosition(pick.position, pick.player_name, player, counts, rosterRequirements);
     if (!normalizedPosition) continue;
     counts[normalizedPosition] += 1;
   }
 
   return counts;
+}
+
+function assignDraftedPosition(
+  rawPosition: string | null,
+  playerName: string | null,
+  player: PlayerRow | null | undefined,
+  counts: Record<PositionGroup, number>,
+  rosterRequirements: ReturnType<typeof buildNormalizedRosterRequirements>
+): PositionGroup | null {
+  const primaryPosition = normalizeDraftedPosition(rawPosition, player);
+  if (!primaryPosition) return null;
+
+  const eligibility = buildPlayerPositionEligibility({
+    player_name: playerName,
+    position: primaryPosition,
+    fantasy_positions_json: player?.fantasy_positions_json ?? null,
+    eligible_positions_json: player?.eligible_positions_json ?? null,
+  });
+  const eligiblePositions = eligibility.rosterFitPositions.length ? eligibility.rosterFitPositions : [primaryPosition];
+  const sorted = [...eligiblePositions].sort((a, b) => {
+    const aDeficit = Math.max(0, rosterRequirements.directStarters[a] - (counts[a] ?? 0));
+    const bDeficit = Math.max(0, rosterRequirements.directStarters[b] - (counts[b] ?? 0));
+    if (aDeficit !== bDeficit) return bDeficit - aDeficit;
+    const aUsesPosition = rosterRequirements.directStarters[a] > 0 || sharedDemandForCountAssignment(a, rosterRequirements) > 0;
+    const bUsesPosition = rosterRequirements.directStarters[b] > 0 || sharedDemandForCountAssignment(b, rosterRequirements) > 0;
+    if (aUsesPosition !== bUsesPosition) return aUsesPosition ? -1 : 1;
+    if (a === primaryPosition) return -1;
+    if (b === primaryPosition) return 1;
+    return 0;
+  });
+
+  return sorted[0] ?? primaryPosition;
+}
+
+function sharedDemandForCountAssignment(
+  position: PositionGroup,
+  rosterRequirements: ReturnType<typeof buildNormalizedRosterRequirements>
+) {
+  if (position === "QB") return rosterRequirements.superflexCount;
+  if (position === "RB" || position === "WR" || position === "TE") return rosterRequirements.offensiveFlexCount + rosterRequirements.superflexCount;
+  if (position === "DL" || position === "LB" || position === "DB") return rosterRequirements.idpFlexCount;
+  return 0;
 }
 
 function normalizeDraftedPosition(rawPosition: string | null, player: PlayerRow | null | undefined): PositionGroup | null {

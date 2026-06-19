@@ -9,6 +9,10 @@ import type { ScoredDraftTarget } from "@/lib/draft/scoring";
 import type { WarRoomRecommendationRow } from "@/lib/draft/war-room-recommendations";
 import { applyCalibratedTrust, calibratePlayerTrustConfidence } from "@/lib/draft/player-trust-confidence";
 import { buildReplacementValueModel, type PlayerPAR } from "@/lib/draft/replacement-value";
+import { buildDynastyAssetValue } from "@/lib/draft/dynasty-asset-value";
+import type { DynastyAssetValue } from "@/lib/draft/dynasty-asset-value-types";
+import { buildEligibleDraftPositions } from "@/lib/draft/league-position-eligibility";
+import { buildPlayerPositionEligibility, type PlayerPositionEligibility } from "@/lib/draft/player-position-eligibility";
 import { classifyPlayerRole, type PlayerRoleClassification } from "@/lib/projections/player-role-classification";
 import { buildProjectionTrust, type ProjectionTrust } from "@/lib/projections/projection-trust";
 
@@ -18,6 +22,7 @@ export type BlackbirdLeagueRankRow = {
   playerId: string;
   playerName: string;
   position: string;
+  positionEligibility?: PlayerPositionEligibility;
   team: string | null;
   drafted: boolean;
   blackbirdRank: number;
@@ -36,6 +41,7 @@ export type BlackbirdLeagueRankRow = {
   replacementValue: PlayerPAR;
   pointsAboveReplacement: number | null;
   valueComponents: BlackbirdContextualValue["valueScoreComponents"];
+  dynastyAssetValue?: DynastyAssetValue | null;
   confidence: BlackbirdContextualValue["confidence"];
   risk: BlackbirdContextualValue["risk"];
   reasons: string[];
@@ -129,6 +135,7 @@ export function buildBlackbirdLeagueRank(input: BuildBlackbirdLeagueRankInput): 
       const unit = projectionUnit(row.player, row.overlay, contextual);
       const version = inferProjectionVersion(row.overlay, contextual);
       const sourcePlayer = row.player as TrustMetadataSourcePlayer;
+      const positionEligibility = buildPlayerPositionEligibility(row.player);
       const baseProjectionTrust = buildProjectionTrust({
         playerId,
         playerName,
@@ -176,6 +183,7 @@ export function buildBlackbirdLeagueRank(input: BuildBlackbirdLeagueRankInput): 
         playerId,
         playerName,
         position: normalizePosition(row.player.position ?? row.overlay?.position ?? row.recommendation?.position ?? "UNK"),
+        positionEligibility,
         team: row.player.team ?? row.overlay?.team ?? row.recommendation?.team ?? null,
         drafted: isDrafted(playerId, row.player, row.overlay, row.recommendation, drafted),
         blackbirdRank: contextual.blackbirdRank ?? 999999,
@@ -194,6 +202,7 @@ export function buildBlackbirdLeagueRank(input: BuildBlackbirdLeagueRankInput): 
         replacementValue: emptyReplacementValue(playerId, normalizePosition(row.player.position ?? row.overlay?.position ?? row.recommendation?.position ?? "UNK")),
         pointsAboveReplacement: row.overlay?.pointsAboveReplacement ?? row.recommendation?.h10.pointsAboveReplacement ?? null,
         valueComponents: contextual.valueScoreComponents,
+        dynastyAssetValue: null,
         confidence: calibratedTrust.confidence,
         risk: contextual.risk,
         reasons: contextual.reasons,
@@ -254,19 +263,41 @@ export function buildBlackbirdLeagueRank(input: BuildBlackbirdLeagueRankInput): 
     const roleClassification = roleByPlayerId.get(row.playerId) ?? row.roleClassification;
     const replacementValue = replacementByPlayerId.get(row.playerId) ?? row.replacementValue;
     const pointsAboveReplacement = replacementValue.pointsAboveReplacement ?? row.pointsAboveReplacement;
-    const leagueValueScore = adjustedLeagueValueScore(row, replacementValue, roleClassification);
+    const dynastyAssetValue = input.leagueContext?.isDynasty
+      ? buildDynastyAssetValue({
+          playerName: row.playerName,
+          position: row.position,
+          age: finiteNumber(baseRows.find((base) => playerIdFor(base.player, base.overlay, base.recommendation) === row.playerId)?.player.age),
+          projectionValue: row.valueComponents.projectionValue,
+          replacementValue: replacementValue.parPercentileByPosition ?? null,
+          scarcityValue: replacementValue.parPercentileByPosition ?? row.valueComponents.positionScarcity,
+          formatFit: (row.valueComponents.rosterFormatFit + row.valueComponents.leagueFormatFit) / 2,
+          projectedPoints: row.projectedFantasyPoints.median,
+          pointsAboveReplacement,
+          risk: row.risk,
+          trustScore: row.projectionTrust.trustScore,
+          trustLabel: row.projectionTrust.trustLabel,
+          marketRank: row.source.externalMarketRank ?? row.source.adp,
+          blackbirdRank: row.blackbirdRank,
+          leagueContext: input.leagueContext,
+        })
+      : null;
+    const leagueValueScore = adjustedLeagueValueScore(row, replacementValue, roleClassification, dynastyAssetValue, input.leagueContext);
     return {
       ...row,
       roleClassification,
       replacementValue,
       pointsAboveReplacement,
+      dynastyAssetValue,
       leagueValueScore,
       valueComponents: {
         ...row.valueComponents,
         positionScarcity: replacementValue.parPercentileByPosition ?? row.valueComponents.positionScarcity,
+        ageCurve: dynastyAssetValue?.ageCurve.runwayScore ?? row.valueComponents.ageCurve,
+        dynastyValue: dynastyAssetValue?.dynastyAssetScoreDisplay ?? row.valueComponents.dynastyValue,
         depthChartRole: roleComponentScore(roleClassification.role),
       },
-      reasons: Array.from(new Set([...row.reasons, ...roleClassification.reasons, ...replacementValue.reasons])).slice(0, 8),
+      reasons: Array.from(new Set([...row.reasons, ...(dynastyAssetValue?.explanation ?? []), ...positionFlexibilityReasons(row, input.leagueContext), ...roleClassification.reasons, ...replacementValue.reasons])).slice(0, 10),
       dataGaps: Array.from(new Set([...row.dataGaps, ...roleClassification.dataGaps, ...replacementValue.dataGaps])).sort(),
     };
   });
@@ -296,7 +327,13 @@ export function buildBlackbirdLeagueRank(input: BuildBlackbirdLeagueRankInput): 
   };
 }
 
-function adjustedLeagueValueScore(row: BlackbirdLeagueRankRow, replacementValue: PlayerPAR, role: PlayerRoleClassification): number {
+function adjustedLeagueValueScore(
+  row: BlackbirdLeagueRankRow,
+  replacementValue: PlayerPAR,
+  role: PlayerRoleClassification,
+  dynastyAssetValue: DynastyAssetValue | null = null,
+  leagueContext: BlackbirdLeagueContext | undefined = undefined
+): number {
   const baseScore = row.leagueValueScore;
   const parScore = replacementValue.parPercentileByPosition ?? 50;
   const roleScore = roleComponentScore(role.role);
@@ -309,7 +346,7 @@ function adjustedLeagueValueScore(row: BlackbirdLeagueRankRow, replacementValue:
   const rolePenalty = ["backup", "deep_reserve", "rookie_unknown", "unknown"].includes(role.role) ? -5 : role.role === "rotational" ? -1.5 : 0;
   const riskPenalty = row.risk === "high" ? -5 : row.risk === "medium" ? -2 : 0;
   const dataGapPenalty = -Math.min(7, Math.max(0, row.dataGaps.length - 3) * 0.8);
-  const score =
+  const redraftScore =
     baseScore * 0.38 +
     parScore * 0.32 +
     roleScore * 0.1 +
@@ -323,7 +360,77 @@ function adjustedLeagueValueScore(row: BlackbirdLeagueRankRow, replacementValue:
     rolePenalty +
     riskPenalty +
     dataGapPenalty;
-  return clamp(round2(Math.max(Math.min(score, sourceRankScoreCap(row)), sourceRankScoreFloor(row), marketSanityScoreFloor(row))), 0, 100);
+  const flexibilityBonus = positionFlexibilityBonus(row, leagueContext);
+  if (leagueContext?.isDynasty && dynastyAssetValue) {
+    const dynastyScore =
+      redraftScore * 0.42 +
+      dynastyAssetValue.dynastyAssetScoreDisplay * 0.58 +
+      dynastyPositionCalibration(row.position, dynastyAssetValue) +
+      flexibilityBonus;
+    return clamp(round2(Math.max(Math.min(dynastyScore, dynastySourceRankScoreCap(row, dynastyAssetValue)), dynastySourceRankScoreFloor(row, dynastyAssetValue))), 0, 100);
+  }
+  return clamp(round2(Math.max(Math.min(redraftScore + flexibilityBonus, sourceRankScoreCap(row)), sourceRankScoreFloor(row), marketSanityScoreFloor(row))), 0, 100);
+}
+
+function positionFlexibilityBonus(row: BlackbirdLeagueRankRow, leagueContext: BlackbirdLeagueContext | undefined): number {
+  const eligibility = row.positionEligibility;
+  if (!eligibility || eligibility.valueModelPositions.length <= 1) return 0;
+  const supported = supportedValuePositions(eligibility, leagueContext);
+  if (supported.length <= 1) return 0;
+  if (eligibility.eligibilityClass === "trusted_idp_multi_position") return 1.25;
+  if (eligibility.eligibilityClass === "travis_hunter_wr_db") return 0.75;
+  return 0;
+}
+
+function positionFlexibilityReasons(row: BlackbirdLeagueRankRow, leagueContext: BlackbirdLeagueContext | undefined): string[] {
+  const eligibility = row.positionEligibility;
+  if (!eligibility || positionFlexibilityBonus(row, leagueContext) <= 0) return [];
+  if (eligibility.eligibilityClass === "trusted_idp_multi_position") return ["Trusted IDP multi-position flexibility adds a small capped value note."];
+  if (eligibility.eligibilityClass === "travis_hunter_wr_db") return ["Travis Hunter WR/DB flexibility adds a tiny capped value note."];
+  return [];
+}
+
+function supportedValuePositions(eligibility: PlayerPositionEligibility, leagueContext: BlackbirdLeagueContext | undefined): string[] {
+  const eligibleLeaguePositions = buildEligibleDraftPositions({
+    rosterPositions: leagueContext?.rosterPositions,
+  });
+  return eligibility.valueModelPositions.filter((position) => eligibleLeaguePositions.has(position));
+}
+
+function dynastyPositionCalibration(position: string, value: DynastyAssetValue): number {
+  if (position === "RB" && value.ageCurve.declineRisk === "severe") return -5;
+  if (position === "RB" && value.ageCurve.declineRisk === "high") return -2;
+  if (position === "TE" && value.ageCurve.agePhase === "ascending" && value.components.scarcityValue >= 65) return 3;
+  if (position === "WR" && ["rookie", "ascending", "prime"].includes(value.ageCurve.agePhase)) return 1;
+  return 0;
+}
+
+function dynastySourceRankScoreFloor(row: BlackbirdLeagueRankRow, dynastyAssetValue: DynastyAssetValue): number {
+  if (row.source.externalMarketRank === null && row.source.adp === null) return 0;
+  if (row.projectedFantasyPoints.median === null) return 0;
+  if (row.position === "RB" && dynastyAssetValue.ageCurve.declineRisk === "severe") return 0;
+  return Math.max(Math.min(sourceRankScoreFloor(row), 82), dynastyMarketSanityScoreFloor(row, dynastyAssetValue));
+}
+
+function dynastySourceRankScoreCap(row: BlackbirdLeagueRankRow, dynastyAssetValue: DynastyAssetValue): number {
+  if (row.position === "RB" && dynastyAssetValue.ageCurve.declineRisk === "severe") return 82;
+  if (row.position === "TE" && dynastyAssetValue.ageCurve.agePhase === "ascending") return 100;
+  return sourceRankScoreCap(row);
+}
+
+function dynastyMarketSanityScoreFloor(row: BlackbirdLeagueRankRow, dynastyAssetValue: DynastyAssetValue): number {
+  if (row.projectedFantasyPoints.median === null) return 0;
+  if (!["QB", "RB", "WR", "TE"].includes(row.position)) return 0;
+  if (row.projectionTrust.trustLabel === "very_low" || row.projectionTrust.trustLabel === "low") return 0;
+  if (dynastyAssetValue.ageCurve.declineRisk === "severe") return 0;
+  if (dynastyAssetValue.ageCurve.runwayScore < 70) return 0;
+  const adp = row.source.adp;
+  if (adp === null || adp <= 0) return 0;
+  if (adp <= 12) return 82;
+  if (adp <= 24) return 78;
+  if (adp <= 36) return 72;
+  if (adp <= 60) return 66;
+  return 0;
 }
 
 function sourceRankAnchorScore(row: BlackbirdLeagueRankRow): number {

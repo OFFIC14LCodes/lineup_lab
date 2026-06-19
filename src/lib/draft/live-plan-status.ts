@@ -264,7 +264,7 @@ function buildPlanFit(row: BlackbirdBoardRow, status: LivePlanStatus | null): { 
   if (activePosition?.plannedWindow) reasons.push("Fits active round window.");
   if (activeContingency) reasons.push("Fits active contingency.");
   if (activePosition?.status === "thin" || activePosition?.status === "behind") reasons.push("Fills roster thin spot.");
-  if (valueFall?.signal === "unexpected_contextual_value") reasons.push("Unexpected contextual value signal.");
+  if (valueFall?.signal === "unexpected_contextual_value") reasons.push("Value differs from the nearby rank tier.");
   if (wait?.status === "supported") reasons.push("Position can likely wait.");
   if (wait?.status === "weakening" || wait?.status === "dangerous") reasons.push("Wait targets are drying up.");
   if (tierRisk) reasons.push("Tier risk is rising.");
@@ -278,7 +278,7 @@ function buildPlanFit(row: BlackbirdBoardRow, status: LivePlanStatus | null): { 
   if (activePosition?.status === "thin" || activePosition?.status === "behind") return { planFit: "strong_fit", planFitReasons: unique(reasons) };
   if (wait?.status === "supported") return { planFit: "acceptable_fit", planFitReasons: unique(reasons) };
   if (!row.dataStatus.projection || row.dataStatus.projection === "unavailable") return { planFit: "insufficient_data", planFitReasons: unique(reasons) };
-  return { planFit: row.blackbirdBoardRank <= 24 ? "acceptable_fit" : "depth_only", planFitReasons: unique(reasons.length ? reasons : ["Plan fit uses contextual rank and live roster state."]) };
+  return { planFit: row.blackbirdBoardRank <= 24 ? "acceptable_fit" : "depth_only", planFitReasons: unique(reasons.length ? reasons : ["Plan fit uses Blackbird rank and live roster state."]) };
 }
 
 function buildPositionPlanStatus(

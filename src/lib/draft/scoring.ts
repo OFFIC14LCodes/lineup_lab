@@ -34,6 +34,12 @@ export type DraftTargetScorePlayer = {
   age?: number | null;
   years_exp?: number | null;
   yearsExperience?: number | null;
+  fantasyPositions?: string[] | null;
+  fantasy_positions?: string[] | null;
+  fantasy_positions_json?: string[] | null;
+  eligiblePositions?: string[] | null;
+  eligible_positions?: string[] | null;
+  eligible_positions_json?: string[] | null;
   rank: number | null;
   adp: number | null;
   projected_points: number | null;

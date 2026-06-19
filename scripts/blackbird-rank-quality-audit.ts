@@ -9,6 +9,7 @@ import {
 } from "@/lib/draft/blackbird-rank-quality-audit";
 import { buildMarketAnchorBoardPreview } from "@/lib/draft/market-anchor-board-preview";
 import { filterDraftablePlayers } from "@/lib/draft/player-draftability";
+import { findPlayerAgeMetadata, loadPlayerAgeLookup } from "@/lib/draft/player-age-source";
 import type { ScoredDraftTarget } from "@/lib/draft/scoring";
 import { isMarketAnchorRankEnabled } from "@/lib/projections/feature-flags";
 import type { CurrentSeasonAdpEnrichedPlayer } from "@/lib/projections/backtesting/current-season-adp-enrichment-types";
@@ -30,8 +31,9 @@ if (!existsSync(artifactPath)) {
 }
 
 const artifact = JSON.parse(readFileSync(artifactPath, "utf8")) as { rows?: CurrentSeasonAdpEnrichedPlayer[]; marketFormat?: string };
+const ageLookup = loadPlayerAgeLookup(projectionSeason);
 const rosterPositions = ["QB", "RB", "RB", "WR", "WR", "TE", "FLEX", "SUPER_FLEX", "BN", "BN", "BN", "BN", "BN", "BN"];
-const players = (artifact.rows ?? []).map(toDraftTarget);
+const players = (artifact.rows ?? []).map((row) => toDraftTarget(row, ageLookup));
 const eligible = filterDraftablePlayers(players, { rosterPositions });
 const board = buildBlackbirdBoard({
   players: eligible.players,
@@ -96,16 +98,27 @@ function writeArtifacts(report: ReturnType<typeof buildBlackbirdRankQualityAudit
   return { jsonPath, markdownPath, csvPath };
 }
 
-function toDraftTarget(row: CurrentSeasonAdpEnrichedPlayer): ScoredDraftTarget & {
+function toDraftTarget(row: CurrentSeasonAdpEnrichedPlayer, ageLookup: ReturnType<typeof loadPlayerAgeLookup>): ScoredDraftTarget & {
   activePolicyClass?: string | null;
   policyGroup?: string | null;
+  confidence?: string | null;
+  confidenceScore?: number | null;
+  gsisId?: string | null;
+  marketRank?: number | null;
+  marketMatchType?: string | null;
+  externalMarketMatchConfidence?: string | null;
+  marketAnchorRank?: number | null;
 } {
+  const age = findPlayerAgeMetadata(ageLookup, row);
   return {
     sleeper_player_id: row.sleeperId,
     matched_player_id: row.playerId,
     player_name: row.playerName,
     position: row.position,
     team: row.team,
+    age: age.age,
+    yearsExperience: age.yearsExperience,
+    fantasyPositions: age.fantasyPositions,
     rank: row.modelRank,
     adp: row.adp,
     projected_points: row.projectedPoints,
@@ -126,5 +139,12 @@ function toDraftTarget(row: CurrentSeasonAdpEnrichedPlayer): ScoredDraftTarget &
     positionScoringMode: ["QB", "RB", "WR", "TE"].includes(row.position) ? "offense_v1_1" : "unsupported",
     activePolicyClass: row.activePolicyClass,
     policyGroup: row.policyGroup,
+    confidence: row.confidence,
+    confidenceScore: row.confidenceScore,
+    gsisId: row.gsisId,
+    marketRank: row.marketRank,
+    marketMatchType: row.externalMarketMatchConfidence,
+    externalMarketMatchConfidence: row.externalMarketMatchConfidence,
+    marketAnchorRank: row.marketAnchorRank,
   };
 }

@@ -50,6 +50,12 @@ type AvailablePlayer = {
   age?: number | null;
   years_exp?: number | null;
   yearsExperience?: number | null;
+  fantasyPositions?: string[] | null;
+  fantasy_positions?: string[] | null;
+  fantasy_positions_json?: string[] | null;
+  eligiblePositions?: string[] | null;
+  eligible_positions?: string[] | null;
+  eligible_positions_json?: string[] | null;
   rank: number | null;
   adp: number | null;
   projected_points: number | null;
@@ -387,7 +393,7 @@ type StrategyLoadState = {
   error: string | null;
 };
 
-const BOARD_POSITION_FILTERS = ["All", "QB", "RB", "WR", "TE", "K", "DEF", "DL", "LB", "DB"];
+const BOARD_POSITION_FILTER_ORDER = ["QB", "RB", "WR", "TE", "K", "DEF", "DL", "LB", "DB"];
 const MATCH_FILTERS = ["All", "Matched", "Issues"];
 const BOARD_SORTS: Array<{ value: BlackbirdBoardSortKey; label: string }> = [
   { value: "blackbird", label: "Blackbird rank" },
@@ -810,6 +816,11 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
         rosterPositions: Array.isArray(state?.league?.roster_positions_json) ? state.league.roster_positions_json : [],
         scoringSettings,
       },
+      draftTiming: {
+        currentPick: state?.currentPickNumber ?? null,
+        picksUntilNextTurn: state?.picksUntilMyNextPick ?? null,
+        teamCount: state?.teamCount ?? null,
+      },
       includeDrafted: true,
     });
   }, [
@@ -822,6 +833,9 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
     state?.hasIDP,
     state?.hasKicker,
     state?.hasTeamDefense,
+    state?.currentPickNumber,
+    state?.picksUntilMyNextPick,
+    state?.teamCount,
   ]);
 
   const livePlanStatus = useMemo(() => {
@@ -905,9 +919,17 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
   }, [boardViewMode, planFitBoardRows]);
 
   const availableBoardPositions = useMemo(() => {
-    const positions = new Set(boardRowsForMode.map((row) => row.position).filter((position): position is string => Boolean(position)));
+    const positions = new Set(
+      boardRowsForMode
+        .flatMap((row) => boardRowEligiblePositions(row))
+        .filter((position): position is string => Boolean(position))
+    );
     return positions;
   }, [boardRowsForMode]);
+  const boardPositionFilters = useMemo(
+    () => ["All", ...BOARD_POSITION_FILTER_ORDER.filter((position) => availableBoardPositions.has(position))],
+    [availableBoardPositions]
+  );
 
   useEffect(() => {
     if (positionFilter !== "All" && !availableBoardPositions.has(positionFilter)) {
@@ -918,7 +940,7 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
   const filteredBoardRows = useMemo(() => {
     const needle = normalizeBoardSearch(search);
     return boardRowsForMode
-      .filter((row) => positionFilter === "All" || row.position === positionFilter)
+      .filter((row) => positionFilter === "All" || boardRowEligiblePositions(row).includes(positionFilter))
       .filter((row) => !needle || boardRowMatchesSearch(row, needle))
       .filter((row) => {
         if (matchFilter === "Matched") return Boolean(row.playerId);
@@ -1199,7 +1221,7 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
                 </div>
               </div>
               <div className="mt-3 flex flex-wrap items-center gap-2">
-                {BOARD_POSITION_FILTERS.map((position) => {
+                {boardPositionFilters.map((position) => {
                   const available = position === "All" || availableBoardPositions.has(position);
                   const active = positionFilter === position;
                   return (
@@ -2002,10 +2024,11 @@ function AvailablePlayersTable({
 }) {
   return (
     <div className="overflow-x-auto">
-      <table className="w-full min-w-[820px] text-left text-sm">
+      <table className="w-full min-w-[980px] text-left text-sm">
         <thead className="bg-panel2 text-xs uppercase text-slate-400">
           <tr>
             <th className="px-3 py-3">Suggestion</th>
+            <th className="px-3 py-3">Suggested Spot</th>
             <th className="px-3 py-3">Player</th>
             <th className="px-3 py-3">Pos</th>
             <th className="px-3 py-3">Team</th>
@@ -2040,6 +2063,9 @@ function AvailablePlayersTable({
                   ) : null}
                 </td>
                 <td className="px-3 py-3">
+                  <SuggestedDraftSpotCell row={row} />
+                </td>
+                <td className="px-3 py-3">
                   <button
                     type="button"
                     className="block max-w-[260px] truncate text-left font-medium text-slate-100 underline decoration-electric/40 underline-offset-4 hover:text-electric"
@@ -2053,6 +2079,12 @@ function AvailablePlayersTable({
                     {row.drafted ? <span className="rounded-full border border-line px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-slate-400">Drafted</span> : null}
                   </div>
                   <div className="mt-2 flex flex-wrap gap-1">
+                    {row.dynastyAssetValue ? (
+                      <>
+                        <SignalChip tone="slate">{`Age: ${formatAgePhase(row)}`}</SignalChip>
+                        <SignalChip tone="slate">{`Runway: ${row.dynastyAssetValue.ageCurve.runwayScore}`}</SignalChip>
+                      </>
+                    ) : null}
                     {row.planFitReasons.slice(0, 2).map((reason) => (
                       <SignalChip key={reason} tone="slate">{reason}</SignalChip>
                     ))}
@@ -2062,7 +2094,7 @@ function AvailablePlayersTable({
                   </div>
                   <p className="mt-2 text-xs leading-relaxed text-slate-400">{blackbirdRankSummary(row)}</p>
                 </td>
-                <td className="px-3 py-3"><PositionBadge position={row.position} /></td>
+                <td className="px-3 py-3"><PositionBadge position={row.positionEligibility?.displayPosition || row.position} badges={row.positionEligibility?.positionBadges} /></td>
                 <td className="px-3 py-3">{row.team || "-"}</td>
                 <td className="px-3 py-3">
                   {row.dataStatus.projection === "available" ? (
@@ -2082,11 +2114,29 @@ function AvailablePlayersTable({
               </tr>
             );
           })}
-          {rows.length === 0 ? <EmptyTable colSpan={6} text={emptyText} /> : null}
+          {rows.length === 0 ? <EmptyTable colSpan={7} text={emptyText} /> : null}
         </tbody>
       </table>
     </div>
   );
+}
+
+function SuggestedDraftSpotCell({ row }: { row: BlackbirdBoardRow }) {
+  const spot = row.suggestedDraftSpot;
+  return (
+    <div className="min-w-[150px] text-xs">
+      <div className="font-semibold text-slate-200">{formatSuggestedDraftSpotRange(spot)}</div>
+      <div className="mt-1 font-mono text-[11px] text-slate-500">Edge: {formatMarketEdge(spot.marketEdgePicks)}</div>
+      <div className="mt-1">
+        <SignalChip tone={suggestedSpotTone(spot.label)}>{formatSuggestedSpotLabel(spot.label)}</SignalChip>
+      </div>
+    </div>
+  );
+}
+
+function boardRowEligiblePositions(row: BlackbirdBoardRow): string[] {
+  if (row.positionEligibility?.filterPositions.length) return row.positionEligibility.filterPositions;
+  return row.position ? [row.position] : [];
 }
 
 function SignalChip({ children, tone }: { children: string; tone: "electric" | "gold" | "slate" }) {
@@ -2101,6 +2151,40 @@ function SignalChip({ children, tone }: { children: string; tone: "electric" | "
       {children}
     </span>
   );
+}
+
+function formatSuggestedDraftSpotRange(spot: BlackbirdBoardRow["suggestedDraftSpot"]): string {
+  if (spot.label === "avoid" || spot.label === "do_not_reach") return "Market too rich";
+  if (spot.pickMin === null || spot.pickMax === null) return "Timing unknown";
+  const round = spot.round === null ? "Round -" : `Round ${spot.round}`;
+  return `${round}, picks ${spot.pickMin}-${spot.pickMax}`;
+}
+
+function formatMarketEdge(value: number | null): string {
+  if (value === null) return "n/a";
+  if (value > 0) return `+${value} picks`;
+  if (value < 0) return `${value} picks`;
+  return "even";
+}
+
+function formatSuggestedSpotLabel(label: BlackbirdBoardRow["suggestedDraftSpot"]["label"]): string {
+  const labels: Record<BlackbirdBoardRow["suggestedDraftSpot"]["label"], string> = {
+    take_now: "Take now",
+    target_this_round: "Target soon",
+    target_next_round: "Target next round",
+    wait_for_value: "Wait for value",
+    value_if_falls: "Value if falls",
+    do_not_reach: "Do not reach",
+    avoid: "Avoid",
+    unknown: "Timing unknown",
+  };
+  return labels[label];
+}
+
+function suggestedSpotTone(label: BlackbirdBoardRow["suggestedDraftSpot"]["label"]): "electric" | "gold" | "slate" {
+  if (label === "take_now" || label === "target_this_round") return "electric";
+  if (label === "wait_for_value" || label === "target_next_round" || label === "value_if_falls") return "gold";
+  return "slate";
 }
 
 function normalizeBoardSearch(value: string): string {
@@ -2361,7 +2445,11 @@ function PlayerReasonStackPanel({ stack, row }: { stack: WarRoomPlayerReasonStac
         <div className="grid shrink-0 grid-cols-2 gap-2 text-xs sm:grid-cols-4 lg:min-w-[500px]">
           <MiniDetail label="Blackbird Rank" value={`#${row.blackbirdBoardRank}`} />
           <MiniDetail label="Draft Suggestion" value={row.draftSuggestionRank === null ? "-" : `#${row.draftSuggestionRank}`} />
+          <MiniDetail label="Suggested Spot" value={formatSuggestedDraftSpotRange(row.suggestedDraftSpot)} />
           <MiniDetail label="Value" value={row.blackbirdValueScore === null ? "-" : `${formatNumber(row.blackbirdValueScore)}/100`} />
+          <MiniDetail label="Age Phase" value={row.dynastyAssetValue ? formatAgePhase(row) : "-"} />
+          <MiniDetail label="Runway" value={row.dynastyAssetValue ? String(row.dynastyAssetValue.ageCurve.runwayScore) : "-"} />
+          <MiniDetail label="Dynasty Asset" value={row.dynastyAssetValue ? `${formatNumber(row.dynastyAssetValue.dynastyAssetScoreDisplay)}/100` : "-"} />
           <MiniDetail label="Confidence" value={row.confidence} />
         </div>
       </div>
@@ -2370,9 +2458,36 @@ function PlayerReasonStackPanel({ stack, row }: { stack: WarRoomPlayerReasonStac
         <ReasonGroup title="Why Blackbird Likes" items={stack.valueReasons} tone="electric" />
         <ReasonGroup title="Fit With Your Roster" items={stack.fitReasons} tone="slate" />
         <ReasonGroup title="Projection Profile" items={stack.projectionReasons} tone="slate" />
+        {row.dynastyAssetValue ? (
+          <ReasonGroup title="Dynasty Asset Value" items={dynastyAssetReasonItems(row)} tone="electric" />
+        ) : null}
         <ReasonGroup title="Risk and Confidence" items={stack.riskReasons} tone="gold" />
         <ReasonGroup title="Draft Timing / Value Note" items={stack.timingReasons} tone="electric" />
         <ReasonGroup title="Data Gaps / Things to Verify" items={stack.dataGapReasons} tone="gold" />
+      </div>
+    </section>
+  );
+}
+
+function SuggestedDraftSpotDetailPanel({ row }: { row: BlackbirdBoardRow | null }) {
+  if (!row) return null;
+  const spot = row.suggestedDraftSpot;
+  return (
+    <section className="rounded-md border border-line bg-panel2 px-3 py-3">
+      <div className="flex flex-col justify-between gap-3 lg:flex-row lg:items-start">
+        <div className="min-w-0">
+          <h3 className="text-sm font-black uppercase tracking-wide text-slate-300">Suggested Draft Spot</h3>
+          <p className="mt-2 text-sm font-semibold text-slate-100">{formatSuggestedDraftSpotRange(spot)}</p>
+          <p className="mt-1 text-xs leading-relaxed text-slate-500">{spot.reason}</p>
+        </div>
+        <div className="grid shrink-0 grid-cols-2 gap-2 text-xs sm:grid-cols-3 lg:min-w-[520px]">
+          <MiniDetail label="Market ADP" value={row.adp === null ? "-" : formatNumber(row.adp)} />
+          <MiniDetail label="Blackbird Rank" value={`#${row.blackbirdBoardRank}`} />
+          <MiniDetail label="Value Edge" value={formatMarketEdge(spot.marketEdgePicks)} />
+          <MiniDetail label="Reach Risk" value={spot.reachRisk} />
+          <MiniDetail label="Wait Risk" value={spot.waitRisk} />
+          <MiniDetail label="Timing" value={formatSuggestedSpotLabel(spot.label)} />
+        </div>
       </div>
     </section>
   );
@@ -2448,6 +2563,7 @@ function PlayerProfileModal({
 
         <div className="space-y-4 px-4 py-4 sm:px-5">
           <PlayerReasonStackPanel stack={reasonStack} row={boardRow} />
+          <SuggestedDraftSpotDetailPanel row={boardRow} />
           {loadState.status === "loading" ? (
             <div className="rounded-md border border-line bg-panel2 px-3 py-3 text-sm text-slate-300">Loading player profile...</div>
           ) : null}
@@ -4111,10 +4227,10 @@ function PriorityBadge({ index }: { index: number }) {
   return <span className={`rounded-full border px-2 py-1 text-[11px] uppercase tracking-wide ${className}`}>{label}</span>;
 }
 
-function PositionBadge({ position }: { position: string | null }) {
+function PositionBadge({ position, badges }: { position: string | null; badges?: string[] }) {
   return (
     <span className="rounded-full border border-line bg-background px-2 py-1 text-[11px] uppercase tracking-wide text-slate-300">
-      {position ?? "UNK"}
+      {badges?.length ? badges.join("/") : position ?? "UNK"}
     </span>
   );
 }
@@ -4555,18 +4671,56 @@ function toWarRoomAiPick(pick: PickLine) {
 
 function blackbirdRankSummary(row: BlackbirdBoardRow): string {
   const detail = row.playerDetailContext;
-  const positives = detail?.whyBlackbirdLikes.filter(Boolean) ?? row.contextualReasons;
-  const cautions = detail?.whyBlackbirdIsCautious.filter(Boolean) ?? [];
+  const cautions = (detail?.whyBlackbirdIsCautious.filter(Boolean) ?? []).filter(isActionableBoardCaution);
   const projection = row.projectionPoints === null ? "projection unavailable" : `${formatNumber(row.projectionPoints)} median points`;
-  const value = row.blackbirdValueScore === null ? "value score unavailable" : `${formatNumber(row.blackbirdValueScore)} value`;
-  const reason = positives[0] ?? `${projection} and ${value} drive the ranking.`;
-  const primaryCaution = cautions[0] ?? row.contextualDataGaps[0] ?? null;
+  const value = row.blackbirdValueScore === null ? "Blackbird value unavailable" : `${formatNumber(row.blackbirdValueScore)} Blackbird value`;
+  const trust = row.projectionTrust.trustLabel.replace("_", " ");
+  const reason = "corrected Blackbird League Rank combines projection, league format, replacement value, market reference, and trust signals";
+  const dynasty = row.dynastyAssetValue
+    ? ` Dynasty asset value adds ${formatAgePhase(row)} runway (${row.dynastyAssetValue.ageCurve.runwayScore}) and multi-year value.`
+    : "";
+  const primaryCaution = cautions[0] ?? row.contextualDataGaps.find(isActionableBoardDataGap) ?? null;
   const caution = primaryCaution ? ` Caveat: ${primaryCaution}.` : "";
-  return `Ranked #${row.blackbirdBoardRank} for this league because ${reason.replace(/\.$/, "")}. ${projection}; ${value}.${caution}`.replace(/\s+/g, " ").trim();
+  return `Ranked #${row.blackbirdBoardRank} for this league because ${reason}. ${projection}; ${value}; ${trust} trust.${dynasty}${caution}`.replace(/\s+/g, " ").trim();
+}
+
+function formatAgePhase(row: Pick<BlackbirdBoardRow, "position" | "dynastyAssetValue">): string {
+  const phase = row.dynastyAssetValue?.ageCurve.agePhase.replace(/_/g, " ") ?? "unknown";
+  return `${phase} ${row.position ?? ""}`.trim();
+}
+
+function dynastyAssetReasonItems(row: BlackbirdBoardRow): string[] {
+  const asset = row.dynastyAssetValue;
+  if (!asset) return [];
+  return [
+    `Age Phase: ${formatAgePhase(row)}`,
+    `Runway Score: ${asset.ageCurve.runwayScore}`,
+    `Dynasty Asset Score: ${formatNumber(asset.dynastyAssetScoreDisplay)}/100`,
+    `Projection Value: ${formatNumber(asset.components.projectionValue)}`,
+    `Scarcity / Format Premium: ${formatNumber(asset.components.scarcityValue)} / ${formatNumber(asset.components.formatPremium)}`,
+    `Risk Adjustment: ${formatNumber(asset.components.riskAdjustment)}`,
+    ...asset.explanation,
+  ];
+}
+
+function isActionableBoardCaution(value: string): boolean {
+  const normalized = value.toLowerCase();
+  if (normalized.includes("h10 timing and value context is unavailable")) return false;
+  if (normalized.includes("replacement baseline is unavailable")) return false;
+  return true;
+}
+
+function isActionableBoardDataGap(value: string): boolean {
+  const normalized = value.toLowerCase();
+  if (normalized === "age") return false;
+  if (normalized === "h10 context") return false;
+  if (normalized === "replacement baseline") return false;
+  if (normalized === "role classification") return false;
+  return true;
 }
 
 function formatTimingAction(value: string | null | undefined) {
-  if (!value) return "Timing unavailable";
+  if (!value) return "No live timing signal";
   return value.replaceAll("_", " ");
 }
 

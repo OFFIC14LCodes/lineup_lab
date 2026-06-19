@@ -1,4 +1,6 @@
 import { isPositionDraftEligible, normalizeDraftEligiblePosition } from "./league-position-eligibility";
+import { buildEligibleDraftPositions } from "./league-position-eligibility";
+import { buildPlayerPositionEligibility } from "./player-position-eligibility";
 import type {
   DraftabilityFilteredExample,
   DraftabilityPlayerLike,
@@ -28,8 +30,11 @@ export function evaluatePlayerDraftability<T extends DraftabilityPlayerLike>(
   input: PlayerDraftabilityInput,
 ): PlayerDraftabilityResult {
   const reasons: DraftabilityReason[] = [];
-  const normalizedPosition = normalizeDraftEligiblePosition(player.position);
-  if (!isPositionDraftEligible(player.position, input)) reasons.push("position_not_eligible");
+  const positionEligibility = buildPlayerPositionEligibility(player);
+  const normalizedPosition = positionEligibility.primaryPosition ?? normalizeDraftEligiblePosition(player.position);
+  const eligibleLeaguePositions = buildEligibleDraftPositions(input);
+  const positionDraftEligible = positionEligibility.rosterFitPositions.some((position) => eligibleLeaguePositions.has(position));
+  if (!positionDraftEligible && !isPositionDraftEligible(player.position, input)) reasons.push("position_not_eligible");
 
   const policy = draftabilityPolicyFor(player);
   const policyGroup = normalizedString(player.policyGroup ?? player.policy_group);
@@ -59,6 +64,7 @@ export function evaluatePlayerDraftability<T extends DraftabilityPlayerLike>(
     policy,
     policyGroup,
     normalizedPosition,
+    eligiblePositions: positionEligibility.rosterFitPositions,
   };
 }
 

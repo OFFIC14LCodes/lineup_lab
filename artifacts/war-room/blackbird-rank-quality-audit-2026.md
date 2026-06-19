@@ -1,6 +1,6 @@
 # Blackbird Rank Quality Audit
 
-Generated: 2026-06-19T19:07:20.998Z
+Generated: 2026-06-19T21:25:31.738Z
 Projection season: 2026
 League format: SUPERFLEX_NO_K
 Verdict: passed
@@ -8,22 +8,22 @@ Recommendation: blackbird_rank_quality_passed
 
 ## Watchlist
 
-- Ja'Marr Chase: rank 5 (top 1-36 in most formats, still high in Superflex); bugs=none; pushing_down=trust low
-- Bijan Robinson: rank 9 (top 1-36 in most formats, still high in Superflex); bugs=none; pushing_down=trust low
-- Justin Jefferson: rank 22 (top 1-36 in most formats, still high in Superflex); bugs=none; pushing_down=trust low
-- CeeDee Lamb: rank 20 (top 1-36 in most formats, still high in Superflex); bugs=none; pushing_down=trust low
-- Saquon Barkley: rank 23 (top 1-36 in most formats, still high in Superflex); bugs=none; pushing_down=trust low
-- Jahmyr Gibbs: rank 3 (top 1-36 in most formats, still high in Superflex); bugs=none; pushing_down=trust low
-- Amon-Ra St. Brown: rank 7 (top 1-36 in most formats, still high in Superflex); bugs=none; pushing_down=trust low
-- Puka Nacua: rank 2 (top 1-36 in most formats, still high in Superflex); bugs=none; pushing_down=trust low
-- Malik Nabers: rank 39 (top 1-36 in most formats, still high in Superflex); bugs=none; pushing_down=trust low
-- Josh Allen: rank 1 (top 1-24 in Superflex); bugs=none; pushing_down=trust low
-- Lamar Jackson: rank 6 (top 1-24 in Superflex); bugs=none; pushing_down=trust low
-- Jayden Daniels: rank 24 (top 1-24 in Superflex); bugs=none; pushing_down=trust low
-- Joe Burrow: rank 25 (top 1-24 in Superflex); bugs=none; pushing_down=trust low
-- Jalen Hurts: rank 4 (top 1-24 in Superflex); bugs=none; pushing_down=trust low
-- Brock Bowers: rank 37 (top 12-60 depending on TE premium); bugs=none; pushing_down=trust low
-- Trey McBride: rank 28 (top 12-60 depending on TE premium); bugs=none; pushing_down=trust low
+- Ja'Marr Chase: rank 5 (top 1-36 in most formats, still high in Superflex); bugs=none; pushing_down=none
+- Bijan Robinson: rank 9 (top 1-36 in most formats, still high in Superflex); bugs=none; pushing_down=none
+- Justin Jefferson: rank 23 (top 1-36 in most formats, still high in Superflex); bugs=none; pushing_down=none
+- CeeDee Lamb: rank 21 (top 1-36 in most formats, still high in Superflex); bugs=none; pushing_down=none
+- Saquon Barkley: rank 24 (top 1-36 in most formats, still high in Superflex); bugs=none; pushing_down=none
+- Jahmyr Gibbs: rank 3 (top 1-36 in most formats, still high in Superflex); bugs=none; pushing_down=none
+- Amon-Ra St. Brown: rank 7 (top 1-36 in most formats, still high in Superflex); bugs=none; pushing_down=none
+- Puka Nacua: rank 2 (top 1-36 in most formats, still high in Superflex); bugs=none; pushing_down=none
+- Malik Nabers: rank 39 (top 1-36 in most formats, still high in Superflex); bugs=none; pushing_down=none
+- Josh Allen: rank 1 (top 1-24 in Superflex); bugs=none; pushing_down=none
+- Lamar Jackson: rank 6 (top 1-24 in Superflex); bugs=none; pushing_down=none
+- Jayden Daniels: rank 25 (top 1-24 in Superflex); bugs=none; pushing_down=none
+- Joe Burrow: rank 26 (top 1-24 in Superflex); bugs=none; pushing_down=none
+- Jalen Hurts: rank 4 (top 1-24 in Superflex); bugs=none; pushing_down=none
+- Brock Bowers: rank 37 (top 12-60 depending on TE premium); bugs=none; pushing_down=none
+- Trey McBride: rank 11 (top 12-60 depending on TE premium); bugs=none; pushing_down=none
 
 ## Sort Surfaces
 
@@ -46,21 +46,21 @@ Recommendation: blackbird_rank_quality_passed
 - #8 Patrick Mahomes QB KC: proj=346.8, PAR=140.1, market=9
 - #9 Bijan Robinson RB ATL: proj=344, PAR=197, market=10
 - #10 Bo Nix QB DEN: proj=333.2, PAR=126.5, market=12
-- #11 Drake Maye QB NE: proj=331.5, PAR=124.8, market=13
-- #12 Jared Goff QB DET: proj=331.5, PAR=124.8, market=14
-- #13 Baker Mayfield QB TB: proj=329.8, PAR=123.1, market=15
-- #14 Matthew Stafford QB LAR: proj=329.8, PAR=123.1, market=16
-- #15 Trevor Lawrence QB JAX: proj=324.7, PAR=118, market=17
-- #16 Caleb Williams QB CHI: proj=319.6, PAR=112.9, market=18
-- #17 Justin Herbert QB LAC: proj=317.9, PAR=111.2, market=19
-- #18 Dak Prescott QB DAL: proj=305.6, PAR=98.9, market=21
-- #19 Jaxon Smith-Njigba WR SEA: proj=302.6, PAR=118.6, market=22
-- #20 CeeDee Lamb WR DAL: proj=302.4, PAR=118.4, market=23
-- #21 De'Von Achane RB MIA: proj=301.5, PAR=154.5, market=24
-- #22 Justin Jefferson WR MIN: proj=283.9, PAR=99.9, market=31
-- #23 Saquon Barkley RB PHI: proj=279, PAR=132, market=33
-- #24 Jayden Daniels QB WAS: proj=225.6, PAR=18.9, market=68
-- #25 Joe Burrow QB CIN: proj=225.6, PAR=18.9, market=69
+- #11 Trey McBride TE ARI: proj=294.1, PAR=130.9, market=27
+- #12 Drake Maye QB NE: proj=331.5, PAR=124.8, market=13
+- #13 Jared Goff QB DET: proj=331.5, PAR=124.8, market=14
+- #14 Baker Mayfield QB TB: proj=329.8, PAR=123.1, market=15
+- #15 Matthew Stafford QB LAR: proj=329.8, PAR=123.1, market=16
+- #16 Trevor Lawrence QB JAX: proj=324.7, PAR=118, market=17
+- #17 Caleb Williams QB CHI: proj=319.6, PAR=112.9, market=18
+- #18 Justin Herbert QB LAC: proj=317.9, PAR=111.2, market=19
+- #19 Dak Prescott QB DAL: proj=305.6, PAR=98.9, market=21
+- #20 Jaxon Smith-Njigba WR SEA: proj=302.6, PAR=118.6, market=22
+- #21 CeeDee Lamb WR DAL: proj=302.4, PAR=118.4, market=23
+- #22 De'Von Achane RB MIA: proj=301.5, PAR=154.5, market=24
+- #23 Justin Jefferson WR MIN: proj=283.9, PAR=99.9, market=31
+- #24 Saquon Barkley RB PHI: proj=279, PAR=132, market=33
+- #25 Jayden Daniels QB WAS: proj=225.6, PAR=18.9, market=68
 
 ## Draftability Gate
 

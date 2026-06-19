@@ -49,6 +49,49 @@ describe("player draftability", () => {
     expect(result.filteredPositions).toEqual(["DEF", "K", "LB"]);
   });
 
+  it("passes if any trusted roster-fit multi-position eligibility is supported", () => {
+    const result = filterDraftablePlayers(
+      [{ player_name: "LB DL Flex", position: "LB", fantasyPositions: ["LB", "DL"] }],
+      { rosterPositions: ["DL", "BN"] },
+    );
+
+    expect(result.players.map((player) => player.player_name)).toEqual(["LB DL Flex"]);
+  });
+
+  it("lets Travis Hunter qualify through WR or DB depending on league settings", () => {
+    const idpOnly = filterDraftablePlayers(
+      [{ player_name: "Travis Hunter", position: "WR", fantasyPositions: ["WR", "DB"] }],
+      { rosterPositions: ["DB", "BN"] },
+    );
+    const offenseOnly = filterDraftablePlayers(
+      [{ player_name: "Travis Hunter", position: "WR", fantasyPositions: ["WR", "DB"] }],
+      { rosterPositions: ["WR", "BN"] },
+    );
+
+    expect(idpOnly.players.map((player) => player.player_name)).toEqual(["Travis Hunter"]);
+    expect(offenseOnly.players.map((player) => player.player_name)).toEqual(["Travis Hunter"]);
+  });
+
+  it("does not let suppressed offensive combos qualify through secondary positions", () => {
+    const result = filterDraftablePlayers(
+      [{ player_name: "Fake TE QB", position: "QB", fantasyPositions: ["QB", "TE"] }],
+      { rosterPositions: ["TE", "BN"] },
+    );
+
+    expect(result.players).toEqual([]);
+    expect(result.filteredReasons.position_not_eligible).toBe(1);
+  });
+
+  it("fails if no multi-position eligibility is supported", () => {
+    const result = filterDraftablePlayers(
+      [{ player_name: "IDP Flex", position: "LB", fantasyPositions: ["LB", "DL"] }],
+      { rosterPositions: ["QB", "RB", "WR", "TE", "BN"] },
+    );
+
+    expect(result.players).toEqual([]);
+    expect(result.filteredReasons.position_not_eligible).toBe(1);
+  });
+
   it("blocks shadow, manual, source expansion, and kicker-review policy rows", () => {
     const result = filterDraftablePlayers([
       { player_name: "Shadow", position: "WR", activePolicyClass: "final_policy_shadow_only" },

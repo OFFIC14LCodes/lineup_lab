@@ -137,6 +137,45 @@ describe("H11.3 Blackbird board", () => {
 
     expect(rows[0].playerName).toBe("Blackbird First");
     expect(rows[0].marketRank).toBe(1);
+    expect(rows[0].suggestedDraftSpot.marketEdgePicks).not.toBeNull();
+  });
+
+  it("adds suggested draft spot without changing Blackbird rank order", () => {
+    const { rows } = buildBlackbirdBoard({
+      players: [
+        player({ player_name: "Early Value", matched_player_id: "early", projected_points: 280, adp: 45 }),
+        player({ player_name: "Second Value", matched_player_id: "second", projected_points: 210, adp: 18 }),
+      ],
+      draftTiming: { teamCount: 12, currentPick: 20, picksUntilNextTurn: 12 },
+    });
+
+    expect(rows[0].playerName).toBe("Early Value");
+    expect(rows[0].suggestedDraftSpot.marketEdgePicks).toBeGreaterThan(0);
+    expect(rows[0].suggestedDraftSpot.reason).toContain("timing");
+    expect(rows.map((row) => row.playerName)).toEqual(["Early Value", "Second Value"]);
+  });
+
+  it("applies dynasty runway without using ADP as raw value", () => {
+    const { rows } = buildBlackbirdBoard({
+      players: [
+        player({ player_name: "Younger RB", matched_player_id: "young", sleeper_player_id: "young", age: 27, projected_points: 288, adp: 27, rank: 31 }),
+        player({ player_name: "Older RB", matched_player_id: "old", sleeper_player_id: "old", age: 32, projected_points: 293, adp: 18, rank: 30 }),
+      ],
+      leagueContext: {
+        isDynasty: true,
+        isSuperflex: true,
+        isTwoQb: false,
+        isBestBall: false,
+        tePremium: 0,
+        rosterPositions: ["QB", "RB", "RB", "WR", "WR", "TE", "FLEX", "SUPER_FLEX"],
+      },
+      draftTiming: { teamCount: 12 },
+    });
+
+    expect(rows[0].playerName).toBe("Younger RB");
+    expect(rows[0].dynastyAssetValue?.ageCurve.declineRisk).toBe("medium");
+    expect(rows[1].dynastyAssetValue?.ageCurve.declineRisk).toBe("severe");
+    expect(rows[1].suggestedDraftSpot.marketEdgePicks).not.toBeNull();
   });
 
   it("keeps board projection and detail projection consistent", () => {

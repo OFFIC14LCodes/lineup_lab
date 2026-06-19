@@ -6,6 +6,10 @@ import type { WarRoomRecommendationRow } from "@/lib/draft/war-room-recommendati
 import type { LivePlanFit } from "@/lib/draft/live-plan-status";
 import { buildBlackbirdValueExplanation, type BlackbirdValueExplanation } from "@/lib/draft/blackbird-value-explanations";
 import { applyCalibratedTrust, calibratePlayerTrustConfidence } from "@/lib/draft/player-trust-confidence";
+import { buildSuggestedDraftSpot } from "@/lib/draft/suggested-draft-spot";
+import type { SuggestedDraftSpot } from "@/lib/draft/suggested-draft-spot-types";
+import type { DynastyAssetValue } from "@/lib/draft/dynasty-asset-value-types";
+import { buildPlayerPositionEligibility, type PlayerPositionEligibility } from "@/lib/draft/player-position-eligibility";
 import { buildProjectionTrust, type ProjectionTrust } from "@/lib/projections/projection-trust";
 
 export type BlackbirdBoardSortKey = "blackbird" | "projection" | "value";
@@ -18,6 +22,7 @@ export type BlackbirdBoardRow = {
   playerId: string | null;
   playerName: string;
   position: string | null;
+  positionEligibility?: PlayerPositionEligibility;
   team: string | null;
   blackbirdValueScore: number | null;
   projectionPoints: number | null;
@@ -37,6 +42,8 @@ export type BlackbirdBoardRow = {
   confidence: string;
   risk: string;
   blackbirdTier: number | null;
+  suggestedDraftSpot: SuggestedDraftSpot;
+  dynastyAssetValue?: DynastyAssetValue | null;
   valueScoreComponents: BlackbirdContextualValue["valueScoreComponents"] | null;
   contextualReasons: string[];
   contextualDataGaps: string[];
@@ -69,6 +76,7 @@ export type BlackbirdBoardPlayerDetailContext = {
   playerId: string | null;
   playerName: string;
   position: string | null;
+  positionEligibility?: PlayerPositionEligibility;
   team: string | null;
   blackbirdRank: number;
   projection: number | null;
@@ -90,6 +98,8 @@ export type BlackbirdBoardPlayerDetailContext = {
   draftSuggestionScore: number | null;
   draftSuggestionType: string | null;
   blackbirdTier: number | null;
+  suggestedDraftSpot: SuggestedDraftSpot;
+  dynastyAssetValue?: DynastyAssetValue | null;
   timingAction: string | null;
   confidence: string;
   risk: string;
@@ -134,6 +144,12 @@ type TrustMetadataSourcePlayer = ScoredDraftTarget & {
   gsisId?: string | null;
 };
 
+type BoardDraftTimingContext = {
+  currentPick?: number | null;
+  picksUntilNextTurn?: number | null;
+  teamCount?: number | null;
+};
+
 export function buildBlackbirdBoard(input: {
   players: ScoredDraftTarget[];
   overlays?: WarRoomValueOverlayRow[];
@@ -141,6 +157,7 @@ export function buildBlackbirdBoard(input: {
   draftedPlayerIds?: string[];
   sortKey?: BlackbirdBoardSortKey;
   leagueContext?: BlackbirdLeagueContext;
+  draftTiming?: BoardDraftTimingContext;
   includeDrafted?: boolean;
 }): { rows: BlackbirdBoardRow[]; diagnostics: BlackbirdBoardDiagnostics } {
   const drafted = new Set(input.draftedPlayerIds ?? []);
@@ -173,6 +190,19 @@ export function buildBlackbirdBoard(input: {
         ...row.dataStatus,
         marketRank: row.source.leagueRank ? "available" as const : "unavailable" as const,
       },
+    }))
+    .map((row) => ({
+      ...row,
+      suggestedDraftSpot: buildSuggestedDraftSpot({
+        blackbirdRank: row.blackbirdBoardRank,
+        marketAdp: marketTimingValue(row),
+        currentPick: input.draftTiming?.currentPick ?? null,
+        picksUntilNextTurn: input.draftTiming?.picksUntilNextTurn ?? null,
+        teamCount: input.draftTiming?.teamCount ?? null,
+        tierRisk: row.risk,
+        trustLabel: row.projectionTrust.trustLabel,
+        drafted: row.drafted,
+      }),
     }))
     .map((row, _index, sortedRows) => ({
       ...row,
@@ -236,6 +266,7 @@ export function buildPlayerDetailContext(
     playerId: row.playerId,
     playerName: row.playerName,
     position: row.position,
+    positionEligibility: row.positionEligibility,
     team: row.team,
     blackbirdRank: row.blackbirdBoardRank,
     draftSuggestionRank: row.draftSuggestionRank,
@@ -263,6 +294,8 @@ export function buildPlayerDetailContext(
     projectionSource: row.projectionSource,
     projectionTrust: row.projectionTrust,
     blackbirdTier: row.blackbirdTier,
+    suggestedDraftSpot: row.suggestedDraftSpot,
+    dynastyAssetValue: row.dynastyAssetValue,
     timingAction: row.needTimingAction,
     confidence: row.confidence,
     risk: row.risk,
@@ -288,10 +321,14 @@ function neighborSummary(row: Omit<BlackbirdBoardRow, "playerDetailContext">) {
 
 function whyLikes(row: Omit<BlackbirdBoardRow, "playerDetailContext">): string[] {
   const reasons: string[] = [];
-  if (row.source.h10RecommendationRank !== null) reasons.push(`Blackbird preview rank ${row.source.h10RecommendationRank} is available.`);
-  if (row.blackbirdValueScore !== null) reasons.push(`Contextual value score ${row.blackbirdValueScore.toFixed(2)} is part of the board signal.`);
+  reasons.push("Corrected Blackbird League Rank is the primary board order.");
+  if (row.source.h10RecommendationRank !== null) reasons.push(`Live draft preview rank ${row.source.h10RecommendationRank} is available.`);
+  if (row.blackbirdValueScore !== null) reasons.push(`Blackbird value score is ${row.blackbirdValueScore.toFixed(2)}.`);
   if (row.projectionPoints !== null) reasons.push(`Projection signal is ${row.projectionPoints.toFixed(1)} points.`);
   if (row.pointsAboveReplacement !== null) reasons.push(`Role-aware PAR signal is ${row.pointsAboveReplacement.toFixed(1)}.`);
+  if (row.dynastyAssetValue) {
+    reasons.push(`Dynasty asset score is ${row.dynastyAssetValue.dynastyAssetScoreDisplay.toFixed(2)} with ${row.dynastyAssetValue.ageCurve.agePhase.replace(/_/g, " ")} runway.`);
+  }
   if (row.role) reasons.push(`Role proxy is ${row.role.replace(/_/g, " ")}.`);
   if (row.marketRank !== null) reasons.push(`Blackbird draft rank is ${row.marketRank}.`);
   if (row.draftSuggestionRank !== null) reasons.push(`Live draft suggestion rank is ${row.draftSuggestionRank}.`);
@@ -307,8 +344,6 @@ function whyCautious(row: Omit<BlackbirdBoardRow, "playerDetailContext">): strin
   if (row.projectionTrust.trustLabel === "very_low" || row.projectionTrust.trustLabel === "low") cautions.push(`Projection trust is ${row.projectionTrust.trustLabel.replace("_", " ")}.`);
   if (row.projectionTrust.fallbackReason) cautions.push(`Projection caveat: ${row.projectionTrust.fallbackReason.replace(/_/g, " ")}.`);
   if (row.role && ["backup", "deep_reserve", "rookie_unknown", "unknown"].includes(row.role)) cautions.push(`Role proxy is ${row.role.replace(/_/g, " ")}.`);
-  if (row.replacementMedianPoints === null) cautions.push("Replacement baseline is unavailable.");
-  if (row.dataStatus.h10 === "unavailable") cautions.push("H10 timing and value context is unavailable.");
   return cautions.length ? cautions : ["No major deterministic caution flag is present."];
 }
 
@@ -417,11 +452,13 @@ function buildRow(input: {
       (input.overlay?.entityId && input.drafted.has(input.overlay.entityId)) ||
       (input.recommendation?.entityId && input.drafted.has(input.recommendation.entityId))
   );
+  const positionEligibility = buildPlayerPositionEligibility(input.player);
 
   return {
     playerId,
     playerName: input.player.player_name ?? input.overlay?.displayName ?? input.recommendation?.displayName ?? "Unknown",
     position: normalizePosition(input.player.position ?? input.overlay?.position ?? input.recommendation?.position ?? null),
+    positionEligibility,
     team: input.player.team ?? input.overlay?.team ?? input.recommendation?.team ?? null,
     blackbirdValueScore: finiteNumber(blackbirdValueScore),
     draftSuggestionRank: null,
@@ -444,6 +481,17 @@ function buildRow(input: {
     confidence: calibratedTrust.confidence,
     risk: input.leagueRank?.risk ?? input.recommendation?.tierDropRisk ?? input.overlay?.riskLabel ?? riskFromWarnings(input.player.warnings),
     blackbirdTier: input.leagueRank?.blackbirdTier ?? null,
+    suggestedDraftSpot: {
+      pickMin: null,
+      pickMax: null,
+      round: null,
+      label: "unknown",
+      marketEdgePicks: null,
+      reachRisk: "unknown",
+      waitRisk: "unknown",
+      reason: "Suggested draft spot is calculated after Blackbird rank is assigned.",
+    },
+    dynastyAssetValue: input.leagueRank?.dynastyAssetValue ?? null,
     valueScoreComponents: input.leagueRank?.valueComponents ?? null,
     contextualReasons: input.leagueRank?.reasons ?? [],
     contextualDataGaps: input.leagueRank?.dataGaps ?? [],
@@ -474,6 +522,11 @@ function buildRow(input: {
       leagueRank: input.leagueRank,
     },
   };
+}
+
+function marketTimingValue(row: Omit<BlackbirdBoardRow, "playerDetailContext">): number | null {
+  const sourcePlayer = row.source.player as TrustMetadataSourcePlayer;
+  return finiteNumber(sourcePlayer.marketRank) ?? finiteNumber(row.adp) ?? null;
 }
 
 function findOverlay(

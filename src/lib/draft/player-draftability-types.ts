@@ -46,6 +46,12 @@ export type DraftabilityPlayerLike = {
   sourceVariant?: string | null;
   source_variant?: string | null;
   kickerPolicyAllowed?: boolean | null;
+  fantasyPositions?: string[] | null;
+  fantasy_positions?: string[] | null;
+  fantasy_positions_json?: string[] | null;
+  eligiblePositions?: string[] | null;
+  eligible_positions?: string[] | null;
+  eligible_positions_json?: string[] | null;
 };
 
 export type PlayerDraftabilityInput = LeaguePositionEligibilityInput;
@@ -56,6 +62,7 @@ export type PlayerDraftabilityResult = {
   policy: DraftabilityPolicy | null;
   policyGroup: string | null;
   normalizedPosition: PositionGroup | null;
+  eligiblePositions: PositionGroup[];
 };
 
 export type DraftabilityFilteredExample = {

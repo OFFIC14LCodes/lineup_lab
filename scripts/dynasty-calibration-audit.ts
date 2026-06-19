@@ -3,12 +3,13 @@ import path from "node:path";
 
 import { buildBlackbirdBoard } from "@/lib/draft/blackbird-board";
 import {
-  buildFullBoardRankIntegrityAudit,
-  renderFullBoardRankIntegrityCsv,
-  renderFullBoardRankIntegrityMarkdown,
-} from "@/lib/draft/full-board-rank-integrity-audit";
+  buildDynastyCalibrationAudit,
+  renderDynastyCalibrationAuditCsv,
+  renderDynastyCalibrationAuditMarkdown,
+} from "@/lib/draft/dynasty-calibration-audit";
 import { filterDraftablePlayers } from "@/lib/draft/player-draftability";
 import { findPlayerAgeMetadata, loadPlayerAgeLookup } from "@/lib/draft/player-age-source";
+import type { DynastyCalibrationAuditReport } from "@/lib/draft/dynasty-calibration-audit-types";
 import type { ScoredDraftTarget } from "@/lib/draft/scoring";
 import type { CurrentSeasonAdpEnrichedPlayer } from "@/lib/projections/backtesting/current-season-adp-enrichment-types";
 
@@ -19,7 +20,7 @@ const args = new Map(process.argv.slice(2).map((arg) => {
 
 const projectionSeason = Number(args.get("projection-season") ?? args.get("season"));
 if (!Number.isInteger(projectionSeason)) {
-  console.error("Usage: npm run war-room:full-board-rank:audit -- --projection-season=2026 --market-format=SUPERFLEX");
+  console.error("Usage: npm run war-room:dynasty-calibration:audit -- --projection-season=2026 --market-format=SUPERFLEX");
   process.exit(1);
 }
 
@@ -27,14 +28,23 @@ const marketFormat = (args.get("market-format") ?? "SUPERFLEX").toUpperCase();
 const artifactPath = args.get("input") ?? path.join("artifacts", "projections", "backtesting", `current-season-adp-enriched-universe-${projectionSeason}.json`);
 if (!existsSync(artifactPath)) throw new Error(`Missing current season enriched universe artifact: ${artifactPath}`);
 
-const artifact = JSON.parse(readFileSync(artifactPath, "utf8")) as { rows?: CurrentSeasonAdpEnrichedPlayer[]; marketFormat?: string };
+const artifact = JSON.parse(readFileSync(artifactPath, "utf8")) as { rows?: CurrentSeasonAdpEnrichedPlayer[] };
 const ageLookup = loadPlayerAgeLookup(projectionSeason);
 const rosterPositions = ["QB", "RB", "RB", "WR", "WR", "TE", "FLEX", "SUPER_FLEX", "BN", "BN", "BN", "BN", "BN", "BN"];
 const players = (artifact.rows ?? []).map((row) => toDraftTarget(row, ageLookup));
 const draftability = filterDraftablePlayers(players, { rosterPositions });
-const board = buildBlackbirdBoard({
+const commonInput = {
   players: draftability.players,
   draftedPlayerIds: [],
+  draftTiming: {
+    teamCount: 12,
+    currentPick: null,
+    picksUntilNextTurn: null,
+  },
+  includeDrafted: true,
+};
+const beforeBoard = buildBlackbirdBoard({
+  ...commonInput,
   leagueContext: {
     isSuperflex: true,
     isTwoQb: false,
@@ -47,48 +57,57 @@ const board = buildBlackbirdBoard({
     rosterPositions,
     scoringSettings: {},
   },
-  includeDrafted: true,
 });
-const legacyWatchlistExcludedCount = ["Tom Brady", "Drew Brees", "Andrew Luck", "Ben Roethlisberger", "Philip Rivers", "Eli Manning"]
-  .filter((name) => draftability.filteredExamples.some((row) => normalizedName(row.player_name ?? "") === normalizedName(name))).length;
-const unsupportedPositionExcludedCount = draftability.filteredReasons.position_not_eligible;
-const report = buildFullBoardRankIntegrityAudit({
+const afterBoard = buildBlackbirdBoard({
+  ...commonInput,
+  leagueContext: {
+    isSuperflex: marketFormat === "SUPERFLEX",
+    isTwoQb: false,
+    isDynasty: true,
+    isBestBall: false,
+    tePremium: 1,
+    hasIDP: false,
+    hasKicker: false,
+    hasTeamDefense: false,
+    rosterPositions,
+    scoringSettings: {},
+  },
+});
+const report = buildDynastyCalibrationAudit({
   projectionSeason,
   marketFormat,
-  leagueFormat: "SUPERFLEX_NO_K",
-  rows: board.rows,
-  legacyWatchlistExcludedCount,
-  unsupportedPositionExcludedCount,
+  beforeRows: beforeBoard.rows,
+  afterRows: afterBoard.rows,
+  unsupportedPlayersFiltered: draftability.filteredReasons.position_not_eligible,
+  unsupportedPositionsFiltered: draftability.filteredPositions,
 });
 const artifacts = writeArtifacts(report, projectionSeason);
 
-console.log("Full Board Rank Integrity Audit");
+console.log("Dynasty Calibration Audit");
 console.log(`  dry run: ${report.dryRun}`);
 console.log(`  read only: ${report.readOnly}`);
 console.log(`  projection season: ${report.projectionSeason}`);
 console.log(`  market format: ${report.marketFormat}`);
 console.log(`  recommendation: ${report.recommendation}`);
-console.log(`  draftable players: ${report.summary.total_draftable_players}`);
-console.log(`  suspicious drops: ${report.summary.players_with_suspicious_drops}`);
-console.log(`  suspicious boosts: ${report.summary.players_with_suspicious_boosts}`);
-console.log(`  low trust in top 100: ${report.summary.players_with_low_trust_in_top_100}`);
+console.log(`  top 50 age coverage: ${report.summary.top50RowsWithAge}/50`);
+for (const name of ["Jonathan Taylor", "Derrick Henry", "Brock Bowers", "Trey McBride", "Travis Kelce", "Justin Jefferson", "Malik Nabers", "Jayden Daniels"]) {
+  const row = report.rows.find((candidate) => normalizedName(candidate.playerName) === normalizedName(name));
+  console.log(`  ${name}: before ${row?.beforeRank ?? "missing"} -> after ${row?.afterRank ?? "missing"} age ${row?.age ?? "n/a"} asset ${row?.dynastyAssetScore ?? "n/a"}`);
+}
 console.log("  artifacts:");
 console.log(`    ${artifacts.jsonPath}`);
 console.log(`    ${artifacts.markdownPath}`);
 console.log(`    ${artifacts.csvPath}`);
-if (report.recommendation === "full_board_rank_has_blocking_leakage" || report.recommendation === "full_board_rank_blocked") {
-  process.exitCode = 1;
-}
 
-function writeArtifacts(report: ReturnType<typeof buildFullBoardRankIntegrityAudit>, season: number) {
+function writeArtifacts(report: DynastyCalibrationAuditReport, season: number) {
   const outputDir = path.join(process.cwd(), "artifacts", "war-room");
   mkdirSync(outputDir, { recursive: true });
-  const jsonPath = path.join(outputDir, `full-board-rank-integrity-audit-${season}.json`);
-  const markdownPath = path.join(outputDir, `full-board-rank-integrity-audit-${season}.md`);
-  const csvPath = path.join(outputDir, `full-board-rank-integrity-audit-${season}.csv`);
+  const jsonPath = path.join(outputDir, `dynasty-calibration-audit-${season}.json`);
+  const markdownPath = path.join(outputDir, `dynasty-calibration-audit-${season}.md`);
+  const csvPath = path.join(outputDir, `dynasty-calibration-audit-${season}.csv`);
   writeFileSync(jsonPath, `${JSON.stringify(report, null, 2)}\n`, "utf8");
-  writeFileSync(markdownPath, renderFullBoardRankIntegrityMarkdown(report), "utf8");
-  writeFileSync(csvPath, renderFullBoardRankIntegrityCsv(report), "utf8");
+  writeFileSync(markdownPath, renderDynastyCalibrationAuditMarkdown(report), "utf8");
+  writeFileSync(csvPath, renderDynastyCalibrationAuditCsv(report.rows), "utf8");
   return { jsonPath, markdownPath, csvPath };
 }
 
