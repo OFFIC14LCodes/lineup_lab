@@ -13,6 +13,12 @@ data/backtesting/historical-mock-draft-scenario.*.generated.json
 data/backtesting/historical-season-outcome-scenario.local.json
 data/backtesting/historical-weekly-results-2025.csv
 data/backtesting/historical-weekly-results-2026.csv
+data/backtesting/adp/historical-adp-2025.csv
+data/backtesting/adp/historical-adp-2024.csv
+data/backtesting/adp/historical-adp-2023.csv
+data/backtesting/adp/historical-adp-2026-wide.txt
+data/backtesting/adp/historical-adp-2026-wide.csv
+data/backtesting/adp/historical-adp-2026.csv
 artifacts/projections/h9-comprehensive-scored-projections.json
 artifacts/projections/h9-comprehensive-stat-projections.json
 # Blackbird generated profile artifacts

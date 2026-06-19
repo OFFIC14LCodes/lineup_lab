@@ -57,6 +57,12 @@ export function buildWarRoomAiContext(input: WarRoomAiContextInput): WarRoomAiCo
       riskSummary: [...(input.riskSummary ?? [])],
       confidenceSummary: [...(input.confidenceSummary ?? [])],
     },
+    marketAnchorPreview: {
+      marketAnchorPreviewEnabled: Boolean(input.marketAnchorPreview?.enabled),
+      marketAnchorSource: input.marketAnchorPreview?.enabled ? input.marketAnchorPreview.source ?? null : null,
+      marketAnchorMatchQuality: input.marketAnchorPreview?.enabled ? input.marketAnchorPreview.matchQuality ?? null : null,
+      marketAnchorWarnings: input.marketAnchorPreview?.enabled ? [...(input.marketAnchorPreview.warnings ?? [])] : [],
+    },
     safety: {
       noAiApiCalls: true,
       noSupabaseWrites: true,

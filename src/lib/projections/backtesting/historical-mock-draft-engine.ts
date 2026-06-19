@@ -2,6 +2,7 @@ import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
 import { buildMockDraftResultCaptureReport } from "@/lib/draft/mock-draft-result-capture";
+import { filterDraftEligiblePlayers } from "@/lib/draft/league-position-eligibility";
 import type { MockDraftResultCaptureInput } from "@/lib/draft/mock-draft-result-capture-types";
 
 import type {
@@ -15,6 +16,7 @@ import type {
   HistoricalMockDraftStrategy,
   HistoricalMockDraftStrategyResult,
 } from "./historical-mock-draft-engine-types";
+import { buildMarketAnchorRankedPlayers, rankForMarketAnchorStrategy } from "./historical-market-anchor-rank";
 
 const STARTER_TARGETS: Record<string, number> = { QB: 1, RB: 2, WR: 2, TE: 1 };
 
@@ -64,9 +66,14 @@ export function buildHistoricalMockDraftEngineReport(input: {
       gate("no_live_outputs_changed", true, "Historical engine reads local scenario data and writes local artifacts only."),
       gate("no_supabase_writes", true, "No Supabase client is imported or called."),
       gate("rankings_unchanged", true, "Live Blackbird Rank ordering is not imported or mutated."),
+      gate("live_rankings_unchanged", true, "Live Blackbird Rank ordering is not imported or mutated."),
       gate("draft_suggestions_unchanged", true, "Live Draft Suggestion ordering is not imported or mutated."),
+      gate("live_draft_suggestions_unchanged", true, "Live Draft Suggestion ordering is not imported or mutated."),
       gate("war_room_scoring_unchanged", true, "War Room scoring logic is not imported or recalculated."),
       gate("v8_2_not_enabled", true, "No v8.2 feature flag is read or written."),
+      gate("adp_not_used_as_value", true, "ADP/market rank is used only as a market anchor for historical strategy sorting."),
+      gate("market_anchor_backtest_only", true, "Market-aware rank fields are not written to live ranking surfaces."),
+      gate("roster_eligibility_preserved", true, "League position eligibility filters unsupported positions before every simulated pick."),
       gate("historical_backtest_no_future_leakage", true, "Only scenario preseason fields are used during draft simulation."),
       gate("actual_season_outcomes_not_used", true, "No actual season outcome data is loaded."),
       gate("dry_run_only", true, "Report is dry-run/read-only."),
@@ -135,18 +142,28 @@ function simulateStrategyDraft(input: {
   players: HistoricalMockDraftPlayer[];
   draftOrder: HistoricalMockDraftOrderPick[];
 }): HistoricalMockDraftStrategyResult {
-  const available = new Map(input.players.map((player) => [player.playerId, player]));
+  const inputPlayers = input.strategy === "blackbird_market_anchor" || input.strategy === "blackbird_market_anchor_need_based"
+    ? buildMarketAnchorRankedPlayers(input.players)
+    : input.players;
+  const available = new Map(inputPlayers.map((player) => [player.playerId, player]));
   const rosters = new Map<number, HistoricalMockDraftPickLog[]>();
   const pickLog: HistoricalMockDraftPickLog[] = [];
+  const unsupportedPositionsFiltered = new Set<string>();
+  let unsupportedPositionFilteredCount = 0;
   const fallback = input.strategy === "blackbird_rank_only" && input.players.some((player) => !player.blackbirdRank)
     ? "blackbirdRank missing for at least one player; internalDraftRank/projection fallback used where needed."
     : null;
 
   for (const orderPick of input.draftOrder) {
     const roster = rosters.get(orderPick.draftSlot) ?? [];
+    const eligibility = filterDraftEligiblePlayers([...available.values()], {
+      rosterPositions: rosterPositionsFromSettings(input.scenario.rosterSettings),
+    });
+    for (const position of eligibility.filteredPositions) unsupportedPositionsFiltered.add(position);
+    unsupportedPositionFilteredCount += eligibility.filteredCount;
     const player = choosePlayer({
       strategy: input.strategy,
-      available: [...available.values()],
+      available: eligibility.players,
       roster,
       seed: input.scenario.randomSeed + orderPick.overallPick,
     });
@@ -181,6 +198,8 @@ function simulateStrategyDraft(input: {
     benchDepthEstimate: benchDepth(myTeamRoster),
     draftCapitalByPosition: draftCapitalByPosition(myTeamRoster),
     reachesValueNotes: reachesValueNotes(input.strategy, pickLog),
+    unsupportedPositionsFiltered: [...unsupportedPositionsFiltered].sort(),
+    unsupportedPositionFilteredCount,
     blackbirdFallbackUsed: fallback,
     rosterReview: review,
   };
@@ -198,6 +217,11 @@ function choosePlayer(input: {
     return sortByStrategy(input.available.filter((player) => normalizePosition(player.position) === need), "projection_only")[0]
       ?? sortByStrategy(input.available, "projection_only")[0];
   }
+  if (input.strategy === "blackbird_market_anchor_need_based") {
+    const need = biggestNeed(input.roster);
+    return sortByStrategy(input.available.filter((player) => normalizePosition(player.position) === need), "blackbird_market_anchor")[0]
+      ?? sortByStrategy(input.available, "blackbird_market_anchor")[0];
+  }
   if (input.strategy === "random_within_adp_band") {
     const band = sortByStrategy(input.available, "adp_only").slice(0, Math.min(5, input.available.length));
     return band[Math.floor(seededRandom(input.seed) * band.length)];
@@ -211,6 +235,7 @@ function sortByStrategy(players: HistoricalMockDraftPlayer[], strategy: Historic
 
 function rankFor(player: HistoricalMockDraftPlayer, strategy: HistoricalMockDraftStrategy): number {
   if (strategy === "blackbird_rank_only") return player.blackbirdRank ?? player.internalDraftRank ?? player.projectionRank ?? Number.MAX_SAFE_INTEGER;
+  if (strategy === "blackbird_market_anchor" || strategy === "blackbird_market_anchor_need_based") return rankForMarketAnchorStrategy(player);
   if (strategy === "projection_only" || strategy === "need_based") return player.projectionRank ?? Number.MAX_SAFE_INTEGER;
   if (strategy === "adp_only" || strategy === "random_within_adp_band") return player.adpRank ?? Number.MAX_SAFE_INTEGER;
   if (strategy === "market_rank") return player.marketRank ?? Number.MAX_SAFE_INTEGER;
@@ -219,6 +244,7 @@ function rankFor(player: HistoricalMockDraftPlayer, strategy: HistoricalMockDraf
 
 function rankSource(strategy: HistoricalMockDraftStrategy, player: HistoricalMockDraftPlayer): string {
   if (strategy === "blackbird_rank_only") return player.blackbirdRank ? "blackbirdRank" : player.internalDraftRank ? "internalDraftRank" : "projectionRankFallback";
+  if (strategy === "blackbird_market_anchor" || strategy === "blackbird_market_anchor_need_based") return "marketAnchorRank";
   if (strategy === "projection_only" || strategy === "need_based") return "projectionRank";
   if (strategy === "adp_only" || strategy === "random_within_adp_band") return "adpRank";
   return "marketRank";
@@ -295,28 +321,61 @@ function normalizePosition(position: string): string {
   return upper;
 }
 
+function rosterPositionsFromSettings(settings: Record<string, number>): string[] {
+  return Object.entries(settings).flatMap(([position, count]) => {
+    if (!Number.isFinite(count) || count <= 0) return [];
+    return Array.from({ length: count }, () => position);
+  });
+}
+
 function hydrateScenarioPlayerUniverse(scenario: HistoricalMockDraftScenario, cwd: string): HistoricalMockDraftScenario {
   if (scenario.playerUniverseInput.players?.length || !scenario.playerUniverseInput.artifactPath) return scenario;
   const artifact = JSON.parse(readFileSync(path.resolve(cwd, scenario.playerUniverseInput.artifactPath), "utf8")) as {
     playerUniverseInput?: { players?: HistoricalMockDraftPlayer[] };
     h36PlayerUniverse?: HistoricalMockDraftPlayer[];
-    rows?: Array<HistoricalMockDraftPlayer & { player_id?: string; player_name?: string; team?: string | null; projection_points?: number; blackbird_rank?: number }>;
+    rows?: Array<HistoricalMockDraftPlayer & {
+      player_id?: string;
+      sleeper_id?: string | null;
+      gsis_id?: string | null;
+      player_name?: string;
+      team?: string | null;
+      projection_points?: number;
+      blackbird_rank?: number;
+      blackbird_rank_fallback?: number | null;
+      adp?: number | null;
+      market_rank?: number | null;
+      external_market_rank?: number | null;
+      external_market_source?: string | null;
+      external_market_match_confidence?: string | null;
+      external_market_notes?: string[] | null;
+    }>;
   };
+  const directPlayers = artifact.playerUniverseInput?.players ?? artifact.h36PlayerUniverse;
   const players =
-    artifact.playerUniverseInput?.players ??
-    artifact.h36PlayerUniverse ??
+    directPlayers?.map((player) => ({
+      ...player,
+      adpRank: player.adpRank ?? (player as HistoricalMockDraftPlayer & { adp?: number | null }).adp ?? null,
+      marketRank: player.marketRank ?? (player as HistoricalMockDraftPlayer & { external_market_rank?: number | null }).external_market_rank ?? null,
+    })) ??
     artifact.rows?.map((row) => ({
       playerId: row.playerId ?? row.player_id ?? "",
-      sleeperId: row.sleeperId ?? null,
+      sleeperId: row.sleeperId ?? row.sleeper_id ?? null,
+      gsisId: row.gsisId ?? row.gsis_id ?? null,
       playerName: row.playerName ?? row.player_name ?? "",
       position: row.position,
       nflTeam: row.nflTeam ?? row.team ?? null,
       blackbirdRank: row.blackbirdRank ?? row.blackbird_rank ?? null,
-      internalDraftRank: row.internalDraftRank ?? null,
-      projectionRank: row.projectionRank ?? null,
-      adpRank: row.adpRank ?? null,
-      marketRank: row.marketRank ?? null,
+      internalDraftRank: row.internalDraftRank ?? row.blackbird_rank_fallback ?? null,
+      projectionRank: row.projectionRank ?? row.blackbird_rank_fallback ?? null,
+      adpRank: row.adpRank ?? row.adp ?? null,
+      marketRank: row.marketRank ?? row.external_market_rank ?? row.market_rank ?? null,
       projectedPoints: row.projectedPoints ?? row.projection_points ?? null,
+      confidence: row.confidence ?? null,
+      sourceConfidence: row.sourceConfidence ?? null,
+      confidenceScore: row.confidenceScore ?? null,
+      externalMarketSource: row.externalMarketSource ?? row.external_market_source ?? null,
+      externalMarketMatchConfidence: row.externalMarketMatchConfidence ?? row.external_market_match_confidence ?? null,
+      externalMarketNotes: row.externalMarketNotes ?? row.external_market_notes ?? null,
     })) ??
     [];
   return { ...scenario, playerUniverseInput: { ...scenario.playerUniverseInput, players } };

@@ -17,7 +17,16 @@ import type {
 } from "./historical-strategy-comparison-report-types";
 
 const OUTPUT_DIR = path.join("artifacts", "projections", "backtesting");
-const STRATEGIES: HistoricalMockDraftStrategy[] = ["blackbird_rank_only", "projection_only", "adp_only", "market_rank", "need_based", "random_within_adp_band"];
+const STRATEGIES: HistoricalMockDraftStrategy[] = [
+  "blackbird_rank_only",
+  "blackbird_market_anchor",
+  "blackbird_market_anchor_need_based",
+  "projection_only",
+  "adp_only",
+  "market_rank",
+  "need_based",
+  "random_within_adp_band",
+];
 
 export function runHistoricalStrategyComparisonReport(input: {
   season: number;
@@ -69,9 +78,14 @@ export function runHistoricalStrategyComparisonReport(input: {
       gate("no_live_outputs_changed", true, "Report reads local H36/H37 artifacts and writes local backtesting reports only."),
       gate("no_supabase_writes", true, "No Supabase client is imported or called."),
       gate("rankings_unchanged", true, "Live Blackbird Rank ordering is not imported or mutated."),
+      gate("live_rankings_unchanged", true, "Live Blackbird Rank ordering is not imported or mutated."),
       gate("draft_suggestions_unchanged", true, "Draft Suggestion ordering is not imported or mutated."),
+      gate("live_draft_suggestions_unchanged", true, "Draft Suggestion ordering is not imported or mutated."),
       gate("war_room_scoring_unchanged", true, "War Room scoring logic is not imported or recalculated."),
       gate("v8_2_not_enabled", true, "No v8.2 feature flag is read or written."),
+      gate("adp_not_used_as_value", true, "Historical comparison treats ADP/market rank only as a strategy input, not value."),
+      gate("market_anchor_backtest_only", true, "Market-aware strategies are reported only from local historical artifacts."),
+      gate("roster_eligibility_preserved", true, "H36 strategy logs are produced after roster eligibility filtering."),
       gate("historical_backtest_no_future_leakage", true, "Comparison consumes completed H36 draft artifact and H37 outcome artifact only."),
       gate("missing_score_coverage_reported", missingScoreCoverage.universePlayers > 0 || missingScoreCoverage.h37MissingPlayerScores > 0, "Missing score coverage is included in the report."),
       gate("dry_run_only", true, "Report is dry-run/read-only."),

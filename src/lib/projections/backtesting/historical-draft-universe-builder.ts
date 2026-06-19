@@ -178,6 +178,7 @@ function toH36Players(rows: HistoricalDraftUniverseRow[]): HistoricalMockDraftPl
   return rows.map((row) => ({
     playerId: row.player_id,
     sleeperId: row.sleeper_id,
+    gsisId: row.gsis_id,
     playerName: row.player_name,
     position: row.position,
     nflTeam: row.team,
@@ -191,7 +192,16 @@ function toH36Players(rows: HistoricalDraftUniverseRow[]): HistoricalMockDraftPl
 }
 
 function buildGeneratedScenario(input: { season: number; artifactPath: string }): HistoricalMockDraftScenario {
-  const strategies: HistoricalMockDraftStrategy[] = ["blackbird_rank_only", "projection_only", "adp_only", "market_rank", "need_based", "random_within_adp_band"];
+  const strategies: HistoricalMockDraftStrategy[] = [
+    "blackbird_rank_only",
+    "blackbird_market_anchor",
+    "blackbird_market_anchor_need_based",
+    "projection_only",
+    "adp_only",
+    "market_rank",
+    "need_based",
+    "random_within_adp_band",
+  ];
   return {
     historicalSeason: input.season,
     leagueType: "best_ball",

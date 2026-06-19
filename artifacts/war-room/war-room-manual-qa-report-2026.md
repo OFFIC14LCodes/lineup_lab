@@ -1,9 +1,9 @@
 # War Room V1 Manual QA Report
 
-- Generated: 2026-06-19T14:30:04.998Z
+- Generated: 2026-06-19T18:52:37.202Z
 - Projection season: 2026
-- Recommendation: war_room_manual_qa_blocked
-- Launch candidate status: launch_candidate_blocked
+- Recommendation: war_room_manual_qa_passed
+- Launch candidate status: launch_candidate_pass
 - Dry run: true
 - Read only: true
 
@@ -31,7 +31,8 @@
 | responsive_tablet | pass | false |  |
 | responsive_mobile | pass | false |  |
 | data_policy_holdbacks | pass | true |  |
-| unsupported_position_filtering | not_tested | true | Retest after H45: no K recommendations should appear in leagues without K slots. |
+| unsupported_position_filtering | pass | true | Verified unsupported positions are not recommended; no K recommendation appears in leagues without K slots. |
+| legacy_archive_filtering | pass | true | Verified Andrew Luck, Tom Brady, and Drew Brees do not appear in Draft Suggestions, Full Blackbird Rank, Available Blackbird Rank, Draft Signal, Recommended Targets, GM Brief, Plan Alignment, or Recent Signals. |
 | v8_2_safety | pass | true |  |
 | console_errors | pass | true |  |
 
@@ -39,11 +40,9 @@
 
 | Severity | Area | Suggested Next Action |
 | --- | --- | --- |
-| blocker | unsupported_position_filtering | Complete this browser QA step and rerun the report. |
 
 ## Launch Candidate Triage
 
 | Severity | Area | Blocker | Manual Retest | Recommended Action |
 | --- | --- | --- | --- | --- |
-| blocker | unsupported_position_filtering | true | true | Complete this required launch-candidate QA section before go/no-go. |
 

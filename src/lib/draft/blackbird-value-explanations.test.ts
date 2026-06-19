@@ -22,8 +22,8 @@ describe("H9.15.3 deterministic value explanations", () => {
   it("compares two players with deterministic deciding factors", () => {
     const rows = buildBlackbirdLeagueRank({
       players: [
-        player({ matched_player_id: "a", player_name: "Alpha", projected_points: 260 }),
-        player({ matched_player_id: "b", player_name: "Beta", projected_points: 180 }),
+        player({ matched_player_id: "a", player_name: "Alpha", projected_points: 260, rank: 10, adp: 12 }),
+        player({ matched_player_id: "b", player_name: "Beta", projected_points: 180, rank: 140, adp: 145 }),
       ],
       overlays: [
         overlay({ entityId: "a", displayName: "Alpha", medianPoints: 260, floorPoints: 220, ceilingPoints: 300 }),

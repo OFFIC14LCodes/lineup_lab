@@ -29,8 +29,8 @@ import type { WarRoomRecommendationResult, WarRoomRecommendationRow, WarRoomReco
 import { buildWarRoomAiContext, buildWarRoomGmBrief, type WarRoomAiBoardPlayer, type WarRoomGmBrief } from "@/lib/ai";
 import { buildWarRoomPlayerReasonStack, type WarRoomPlayerReasonStack } from "@/lib/draft/war-room-player-reasons";
 import { buildWarRoomPlanAlignmentLabels } from "@/lib/draft/war-room-plan-alignment";
-import { buildProjectionModelSelectionStatus } from "@/lib/projections/model-selection-status";
-import { filterDraftEligiblePlayers } from "@/lib/draft/league-position-eligibility";
+import { buildMarketAnchorRankSelectionStatus, buildProjectionModelSelectionStatus } from "@/lib/projections/model-selection-status";
+import { filterDraftablePlayers } from "@/lib/draft/player-draftability";
 
 type RecommendationTier = "elite_target" | "strong_target" | "good_value" | "depth_option" | "avoid_for_now";
 type InputCompleteness = "full" | "partial" | "rankings_only" | "fallback_only";
@@ -774,15 +774,15 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
     ),
     [state?.blackbirdRankPlayers, state?.draftablePlayers, state?.remainingPlayers]
   );
-  const eligibleBlackbirdPlayerPool = useMemo(
+  const draftableBlackbirdPlayerPool = useMemo(
     () => state
-      ? filterDraftEligiblePlayers(blackbirdPlayerPool, { rosterRequirements: state.rosterRequirements })
+      ? filterDraftablePlayers(blackbirdPlayerPool, { rosterRequirements: state.rosterRequirements })
       : { players: blackbirdPlayerPool, filteredPositions: [], filteredCount: 0 },
     [blackbirdPlayerPool, state]
   );
   const eligibleRecommendations = useMemo(
     () => state
-      ? filterDraftEligiblePlayers(state.recommendations, { rosterRequirements: state.rosterRequirements }).players
+      ? filterDraftablePlayers(state.recommendations, { rosterRequirements: state.rosterRequirements }).players
       : [],
     [state]
   );
@@ -793,7 +793,7 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
         ? state.league.scoring_settings_json
         : null;
     return buildBlackbirdBoard({
-      players: eligibleBlackbirdPlayerPool.players,
+      players: draftableBlackbirdPlayerPool.players,
       overlays: state?.h10ValueOverlay ?? [],
       recommendations: state?.h10RecommendationPreview ?? [],
       draftedPlayerIds: state?.draftedPlayerIds ?? [],
@@ -813,7 +813,7 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
       includeDrafted: true,
     });
   }, [
-    eligibleBlackbirdPlayerPool.players,
+    draftableBlackbirdPlayerPool.players,
     boardSort,
     state?.draftedPlayerIds,
     state?.h10RecommendationPreview,
@@ -847,7 +847,7 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
           ? state.league.scoring_settings_json
           : null;
       const leagueRank = buildBlackbirdLeagueRank({
-        players: eligibleBlackbirdPlayerPool.players,
+        players: draftableBlackbirdPlayerPool.players,
         overlays: state?.h10ValueOverlay ?? [],
         recommendations: state?.h10RecommendationPreview ?? [],
         draftedPlayerIds: state?.draftedPlayerIds ?? [],
@@ -888,7 +888,7 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
       });
       return withFallbackDraftSuggestionRanks(rowsWithLiveSuggestions);
     },
-    [blackbirdBoard.rows, eligibleBlackbirdPlayerPool.players, livePlanStatus, state]
+    [blackbirdBoard.rows, draftableBlackbirdPlayerPool.players, livePlanStatus, state]
   );
 
   const boardRowsForMode = useMemo(() => {
@@ -1012,6 +1012,12 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
         lastUpdatedAt: liveState.lastUpdatedAt,
         secondsSinceUpdate: liveState.secondsSinceUpdate,
         warnings: liveState.warnings,
+      },
+      marketAnchorPreview: {
+        enabled: false,
+        source: null,
+        matchQuality: null,
+        warnings: [],
       },
       riskSummary: [
         livePlanStatus?.statusSummary ?? null,
@@ -1311,7 +1317,7 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
               />
             )}
             <NeedsList needs={state.topNeeds} compact />
-            <ScoringMetadata metadata={state.scoringMetadata} filteredUnsupportedPositions={eligibleBlackbirdPlayerPool.filteredPositions} />
+            <ScoringMetadata metadata={state.scoringMetadata} filteredUnsupportedPositions={draftableBlackbirdPlayerPool.filteredPositions} />
           </SidePanel>
 
           {/* 4. My Roster Construction — collapsible, open by default */}
@@ -3136,6 +3142,7 @@ function SidePanel({ title, children }: { title: string; children: React.ReactNo
 
 function ScoringFoundationStatusPanel() {
   const modelStatus = buildProjectionModelSelectionStatus();
+  const marketAnchorStatus = buildMarketAnchorRankSelectionStatus();
   const rows = [
     ["Current live scoring path", "current path / v7-family"],
     ["v8.2 status", "ready_for_controlled_flag_review"],
@@ -3152,6 +3159,12 @@ function ScoringFoundationStatusPanel() {
     ["Blackbird Rank using v8.2", modelStatus.blackbirdRankUsesV82 ? "yes" : "no"],
     ["Draft Suggestions using v8.2", modelStatus.draftSuggestionsUseV82 ? "yes" : "no"],
     ["Supabase production writes using v8.2", modelStatus.supabaseWrites ? "yes" : "no"],
+    ["Market Anchor Rank", marketAnchorStatus.label],
+    ["Market Anchor flag name", marketAnchorStatus.featureFlagName],
+    ["Market Anchor default", marketAnchorStatus.defaultState],
+    ["Market Anchor live usage", marketAnchorStatus.liveUsage ? "yes" : "no"],
+    ["Blackbird Rank using Market Anchor by default", marketAnchorStatus.blackbirdRankUsesMarketAnchorByDefault ? "yes" : "no"],
+    ["Draft Suggestions using Market Anchor", marketAnchorStatus.draftSuggestionsUseMarketAnchor ? "yes" : "no"],
   ];
   return (
     <section className="rf-panel p-4">

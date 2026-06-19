@@ -6,6 +6,7 @@ import { filterFallbackPlayers, type FallbackRelevanceDiagnostics } from "@/lib/
 import { buildH10RecommendationPreviewPayload } from "@/lib/draft/war-room-recommendation-preview-state";
 import { normalizePlayerName, normalizePrimaryPosition } from "@/lib/players/normalize";
 import { buildDraftTargetScore, type DraftTargetScorePlayer } from "@/lib/draft/scoring";
+import { filterDraftablePlayers } from "@/lib/draft/player-draftability";
 import { buildDraftBoardTeams } from "@/lib/rosterforge/draft-board-teams";
 import { buildDraftPositionContext } from "@/lib/rosterforge/draft-position";
 import {
@@ -257,7 +258,7 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
     includeDiagnosticFallbacks,
   });
 
-  const remainingPlayers = hasRankings
+  const unfilteredRemainingPlayers = hasRankings
     ? rankingRows
         .filter((ranking) => {
           const byId = ranking.sleeper_player_id && draftedIds.has(ranking.sleeper_player_id);
@@ -294,7 +295,8 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
         .sort((a, b) => (a.rank ?? 99999) - (b.rank ?? 99999))
         .slice(0, 150)
     : selectBalancedFallbackPlayers(fallbackRelevance.players, rosterRequirements, fallbackValueRows, 150);
-  const staticDraftablePlayers = hasRankings
+  const remainingPlayers = filterDraftablePlayers(unfilteredRemainingPlayers, { rosterRequirements }).players;
+  const unfilteredStaticDraftablePlayers = hasRankings
     ? rankingRows
         .map((ranking) => {
           const matchedPlayer =
@@ -326,6 +328,7 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
         .sort((a, b) => (a.rank ?? 99999) - (b.rank ?? 99999))
         .slice(0, 250)
     : remainingPlayers;
+  const staticDraftablePlayers = filterDraftablePlayers(unfilteredStaticDraftablePlayers, { rosterRequirements }).players;
   const draftablePlayers = mergeDraftableAndRemainingPlayers(staticDraftablePlayers, remainingPlayers);
   const counts = countPositions(myPicks, playerRowsBySleeperId);
   const positionNeeds = buildPositionNeeds(counts, rosterRequirements);
@@ -401,13 +404,13 @@ export async function getDraftRoomState(userId: string, draftRoomId: string) {
     leagueId: room.league_id as string,
     players: projectionUniverseCandidates,
   });
-  const blackbirdRankPlayers = buildBlackbirdRankPlayerUniverse({
+  const blackbirdRankPlayers = filterDraftablePlayers(buildBlackbirdRankPlayerUniverse({
     leagueId: room.league_id as string,
     projectionOverlays: persistedProjectionOverlays,
     playerRows,
     rankedPlayers: draftablePlayers,
     draftedPlayers: draftedPlayersForBlackbirdRank,
-  });
+  }), { rosterRequirements }).players;
   const blackbirdRankScoring = buildDraftTargetScore({
     players: blackbirdRankPlayers as DraftTargetScorePlayer[],
     league: {

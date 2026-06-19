@@ -5,6 +5,7 @@ import type { ProjectionUniverseEligibilityStatus } from "./backtesting";
 import type { ProjectionV82FeatureFlagReadinessReport, ProjectionV82FeatureFlagReadinessRow } from "./backtesting";
 
 export const BLACKBIRD_ENABLE_V8_2_EXPECTED_GAMES = "BLACKBIRD_ENABLE_V8_2_EXPECTED_GAMES";
+export const BLACKBIRD_ENABLE_MARKET_ANCHOR_RANK = "BLACKBIRD_ENABLE_MARKET_ANCHOR_RANK";
 
 export type ExpectedGamesModelSelection = "current_path" | "v8_2_candidate_path" | "blocked_or_excluded";
 
@@ -40,6 +41,12 @@ export type ExpectedGamesModelSelectionResult = {
 
 export function isV82ExpectedGamesEnabled(env: Pick<NodeJS.ProcessEnv, string> = process.env): boolean {
   const raw = env[BLACKBIRD_ENABLE_V8_2_EXPECTED_GAMES];
+  if (raw === undefined) return false;
+  return raw.trim().toLowerCase() === "true" || raw.trim() === "1";
+}
+
+export function isMarketAnchorRankEnabled(env: Pick<NodeJS.ProcessEnv, string> = process.env): boolean {
+  const raw = env[BLACKBIRD_ENABLE_MARKET_ANCHOR_RANK];
   if (raw === undefined) return false;
   return raw.trim().toLowerCase() === "true" || raw.trim() === "1";
 }

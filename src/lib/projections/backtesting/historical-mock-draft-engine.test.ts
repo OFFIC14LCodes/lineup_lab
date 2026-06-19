@@ -17,7 +17,7 @@ describe("historical mock draft engine", () => {
     const report = buildHistoricalMockDraftEngineReport({ projectionSeason: 2026, scenario: scenario() });
 
     expect(report.recommendation).toBe("historical_mock_draft_engine_ready_for_season_scoring");
-    expect(report.strategyResults).toHaveLength(6);
+    expect(report.strategyResults).toHaveLength(8);
   });
 
   it("generates 12-team snake order with round and pick metadata", () => {
@@ -53,6 +53,29 @@ describe("historical mock draft engine", () => {
     expect(report.strategyResults.find((result) => result.strategy === "projection_only")?.pickLog[0].playerId).toBe("p3");
     expect(report.strategyResults.find((result) => result.strategy === "adp_only")?.pickLog[0].playerId).toBe("p3");
     expect(report.strategyResults.find((result) => result.strategy === "market_rank")?.pickLog[0].playerId).toBe("p3");
+  });
+
+  it("runs market-aware strategies without duplicates", () => {
+    const report = buildHistoricalMockDraftEngineReport({ projectionSeason: 2026, scenario: scenario() });
+    const anchor = report.strategyResults.find((result) => result.strategy === "blackbird_market_anchor");
+    const needAnchor = report.strategyResults.find((result) => result.strategy === "blackbird_market_anchor_need_based");
+
+    expect(anchor?.pickLog[0].rankSource).toBe("marketAnchorRank");
+    expect(anchor?.pickLog.map((pick) => pick.playerId)).toHaveLength(new Set(anchor?.pickLog.map((pick) => pick.playerId)).size);
+    expect(needAnchor?.pickLog[0].rankSource).toBe("marketAnchorRank");
+  });
+
+  it("preserves roster eligibility and excludes K when no K slot even with great market rank", () => {
+    const input = scenario();
+    input.playerUniverseInput.players = [
+      { playerId: "k1", playerName: "Kicker", position: "K", blackbirdRank: 1, projectionRank: 1, marketRank: 1, projectedPoints: 999 },
+      ...(input.playerUniverseInput.players ?? []),
+    ];
+    const result = buildHistoricalMockDraftEngineReport({ projectionSeason: 2026, scenario: input })
+      .strategyResults.find((row) => row.strategy === "blackbird_market_anchor");
+
+    expect(result?.pickLog.some((pick) => pick.position === "K")).toBe(false);
+    expect(result?.unsupportedPositionsFiltered).toContain("K");
   });
 
   it("runs need-based strategy and deterministic random-within-band strategy", () => {
@@ -141,7 +164,7 @@ function scenario(): HistoricalMockDraftScenario {
     myDraftSlot: 2,
     rosterSettings: { QB: 1, RB: 2, WR: 2, TE: 1 },
     scoringSettings: {},
-    strategySet: ["blackbird_rank_only", "projection_only", "adp_only", "market_rank", "need_based", "random_within_adp_band"],
+    strategySet: ["blackbird_rank_only", "blackbird_market_anchor", "blackbird_market_anchor_need_based", "projection_only", "adp_only", "market_rank", "need_based", "random_within_adp_band"],
     randomSeed: 2026,
     playerUniverseInput: { players },
     projectionSnapshotInput: { asOf: "2026-08-01" },

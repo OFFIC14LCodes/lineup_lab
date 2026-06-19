@@ -2,7 +2,8 @@ import type { DraftTargetScorePlayer } from "@/lib/draft/scoring";
 import type { NormalizedRosterRequirements } from "@/lib/draft/roster-slots";
 import type { WarRoomValueOverlayRow } from "@/lib/draft/h10-war-room-overlay";
 import type { WarRoomMatchingCoverageSummary } from "@/lib/draft/war-room-matching-coverage";
-import { normalizeDraftEligiblePosition, buildEligibleDraftPositions } from "@/lib/draft/league-position-eligibility";
+import { normalizeDraftEligiblePosition } from "@/lib/draft/league-position-eligibility";
+import { evaluatePlayerDraftability } from "@/lib/draft/player-draftability";
 import { buildNeedTimingDiagnostic, type FutureAvailability, type NeedTimingAction, type NeedUrgency, type OpportunityCost, type RosterNeedStatus, type TierDropRisk } from "@/lib/draft/need-timing-intelligence";
 
 export type WarRoomRecommendationTier =
@@ -243,16 +244,21 @@ function filterRecommendationInputsByEligibility(input: BuildWarRoomRecommendati
   filteredUnsupportedPositions: string[];
   filteredUnsupportedPositionCount: number;
 } {
-  const eligible = buildEligibleDraftPositions({ rosterRequirements: input.rosterRequirements });
   const filteredPositions = new Set<string>();
   const pairs = input.remainingPlayers.map((player, index) => ({
     player,
     overlay: input.h10ValueOverlay[index],
   }));
   const filteredPairs = pairs.filter(({ player, overlay }) => {
-    const position = normalizeDraftEligiblePosition(player.position ?? overlay?.position ?? null);
-    if (position && eligible.has(position)) return true;
-    if (position) filteredPositions.add(position);
+    const result = evaluatePlayerDraftability(
+      { ...player, position: player.position ?? overlay?.position ?? null },
+      { rosterRequirements: input.rosterRequirements },
+    );
+    if (result.draftable) return true;
+    if (result.reasons.includes("position_not_eligible")) {
+      const position = normalizeDraftEligiblePosition(player.position ?? overlay?.position ?? null);
+      if (position) filteredPositions.add(position);
+    }
     return false;
   });
 

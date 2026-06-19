@@ -238,6 +238,23 @@ describe("buildWarRoomRecommendations", () => {
     expect(result.rows[0].displayName).toBe("Eligible TE");
   });
 
+  it("excludes blocked archive rows from recommendations even with elite value", () => {
+    const result = build({
+      players: [
+        player({ player_name: "Andrew Luck", matched_player_id: "luck", position: "QB", rank: 1, activePolicyClass: "final_policy_blocked_archive" } as Partial<DraftTargetScorePlayer>),
+        player({ player_name: "Eligible RB", matched_player_id: "rb", position: "RB", rank: 2 }),
+      ],
+      overlays: [
+        overlay({ entityId: "luck", displayName: "Andrew Luck", position: "QB", pointsAboveReplacement: 100, riskAdjustedValue: 100 }),
+        overlay({ entityId: "rb", displayName: "Eligible RB", position: "RB", pointsAboveReplacement: 20, riskAdjustedValue: 20 }),
+      ],
+      rosterSlots: ["QB", "RB", "WR", "TE", "FLEX", "SUPER_FLEX", "BN"],
+    });
+
+    expect(result.rows.map((row) => row.displayName)).not.toContain("Andrew Luck");
+    expect(result.rows[0].displayName).toBe("Eligible RB");
+  });
+
   it("no pick context avoids false urgency and emits a limitation", () => {
     const result = build({ picksUntilMyNextPick: null, currentPickNumber: null });
 

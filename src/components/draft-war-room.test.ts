@@ -97,8 +97,8 @@ describe("DraftWarRoom H11 strategy UI wiring", () => {
       "Unexpected value signal",
       "Data Gaps",
       "withFallbackDraftSuggestionRanks",
-      "filterDraftEligiblePlayers",
-      "eligibleBlackbirdPlayerPool",
+      "filterDraftablePlayers",
+      "draftableBlackbirdPlayerPool",
       "eligibleRecommendations",
       "Filtered unsupported positions:",
       "Search, filters, load-more, and sort are local to this browser view.",
@@ -289,12 +289,12 @@ describe("DraftWarRoom H11 strategy UI wiring", () => {
   });
 
   it("filters unsupported positions before building actionable board surfaces", () => {
-    const boardBuildSection = source.slice(source.indexOf("const eligibleBlackbirdPlayerPool"), source.indexOf("const livePlanStatus"));
+    const boardBuildSection = source.slice(source.indexOf("const draftableBlackbirdPlayerPool"), source.indexOf("const livePlanStatus"));
     const gmBriefSection = source.slice(source.indexOf("const gmBrief"), source.indexOf("if (error && !state)"));
 
-    expect(boardBuildSection).toContain("filterDraftEligiblePlayers(blackbirdPlayerPool, { rosterRequirements: state.rosterRequirements })");
-    expect(boardBuildSection).toContain("filterDraftEligiblePlayers(state.recommendations, { rosterRequirements: state.rosterRequirements }).players");
-    expect(boardBuildSection).toContain("players: eligibleBlackbirdPlayerPool.players");
+    expect(boardBuildSection).toContain("filterDraftablePlayers(blackbirdPlayerPool, { rosterRequirements: state.rosterRequirements })");
+    expect(boardBuildSection).toContain("filterDraftablePlayers(state.recommendations, { rosterRequirements: state.rosterRequirements }).players");
+    expect(boardBuildSection).toContain("players: draftableBlackbirdPlayerPool.players");
     const buildBlackbirdBoardCall = boardBuildSection.slice(boardBuildSection.indexOf("return buildBlackbirdBoard({"), boardBuildSection.indexOf("const livePlanStatus"));
     expect(buildBlackbirdBoardCall).not.toContain("players: blackbirdPlayerPool");
     expect(source).toContain("topPlayer={eligibleRecommendations[0] ?? null}");

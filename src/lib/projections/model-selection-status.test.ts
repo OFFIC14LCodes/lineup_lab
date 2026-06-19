@@ -4,8 +4,11 @@ import path from "node:path";
 import { describe, expect, it } from "vitest";
 
 import {
+  MARKET_ANCHOR_RANK_FEATURE_FLAG,
   PROJECTION_MODEL_SELECTION_FEATURE_FLAG,
+  buildMarketAnchorRankSelectionStatus,
   buildProjectionModelSelectionStatus,
+  isMarketAnchorRankFlagEnabled,
   isProjectionV82FlagEnabled,
 } from "./model-selection-status";
 
@@ -75,5 +78,36 @@ describe("projection model selection status", () => {
 
   it("confirms missing artifacts fail closed", () => {
     expect(buildProjectionModelSelectionStatus({}).missingArtifactsFailClosed).toBe(true);
+  });
+
+  it("defaults market anchor rank to disabled preview-only status", () => {
+    expect(buildMarketAnchorRankSelectionStatus({})).toEqual({
+      featureFlagName: "BLACKBIRD_ENABLE_MARKET_ANCHOR_RANK",
+      flagEnabled: false,
+      defaultState: "disabled",
+      label: "Market Anchor Rank: disabled",
+      liveUsage: false,
+      draftSuggestionsUseMarketAnchor: false,
+      blackbirdRankUsesMarketAnchorByDefault: false,
+      supabaseWrites: false,
+    });
+  });
+
+  it("reports market anchor preview enabled only for true, TRUE, and 1 without live usage", () => {
+    expect(isMarketAnchorRankFlagEnabled("true")).toBe(true);
+    expect(isMarketAnchorRankFlagEnabled("TRUE")).toBe(true);
+    expect(isMarketAnchorRankFlagEnabled("1")).toBe(true);
+    expect(isMarketAnchorRankFlagEnabled("false")).toBe(false);
+    expect(isMarketAnchorRankFlagEnabled("0")).toBe(false);
+    expect(isMarketAnchorRankFlagEnabled("enabled")).toBe(false);
+    expect(isMarketAnchorRankFlagEnabled(undefined)).toBe(false);
+
+    const status = buildMarketAnchorRankSelectionStatus({ [MARKET_ANCHOR_RANK_FEATURE_FLAG]: "true" });
+    expect(status.flagEnabled).toBe(true);
+    expect(status.label).toBe("Market Anchor Rank: preview enabled");
+    expect(status.liveUsage).toBe(false);
+    expect(status.blackbirdRankUsesMarketAnchorByDefault).toBe(false);
+    expect(status.draftSuggestionsUseMarketAnchor).toBe(false);
+    expect(status.supabaseWrites).toBe(false);
   });
 });

@@ -35,6 +35,7 @@ export const WAR_ROOM_MANUAL_QA_SECTIONS: WarRoomManualQaSectionName[] = [
   "responsive_mobile",
   "data_policy_holdbacks",
   "unsupported_position_filtering",
+  "legacy_archive_filtering",
   "v8_2_safety",
   "console_errors",
 ];
@@ -52,6 +53,7 @@ const DEFAULT_CRITICAL = new Set<WarRoomManualQaSectionName>([
   "sync_status",
   "data_policy_holdbacks",
   "unsupported_position_filtering",
+  "legacy_archive_filtering",
   "v8_2_safety",
   "console_errors",
 ]);
@@ -73,6 +75,7 @@ export const WAR_ROOM_LAUNCH_CANDIDATE_REQUIRED_PASS_SECTIONS = new Set<WarRoomM
   "sync_status",
   "data_policy_holdbacks",
   "unsupported_position_filtering",
+  "legacy_archive_filtering",
   "v8_2_safety",
   "console_errors",
 ]);
@@ -90,6 +93,7 @@ export const WAR_ROOM_LAUNCH_CANDIDATE_BLOCKER_SECTIONS = new Set<WarRoomManualQ
   "pick_updates",
   "available_filtering",
   "unsupported_position_filtering",
+  "legacy_archive_filtering",
   "v8_2_safety",
   "console_errors",
 ]);

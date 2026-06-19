@@ -26,6 +26,17 @@ describe("historical strategy comparison report", () => {
     expect(leaderboard.find((row) => row.strategy === "projection_only")?.blackbird_delta_points).toBe(25);
   });
 
+  it("includes market-aware strategies in the leaderboard when outcomes exist", () => {
+    const leaderboard = buildStrategyLeaderboard([
+      outcome("blackbird_rank_only", "slot-1", 100),
+      outcome("blackbird_market_anchor", "slot-1", 102),
+      outcome("blackbird_market_anchor_need_based", "slot-1", 104),
+    ]);
+
+    expect(leaderboard.map((row) => row.strategy)).toContain("blackbird_market_anchor");
+    expect(leaderboard.map((row) => row.strategy)).toContain("blackbird_market_anchor_need_based");
+  });
+
   it("reports Blackbird focus, team-level comparison, and positional summaries", () => {
     const cwd = setupWorkspace();
     try {

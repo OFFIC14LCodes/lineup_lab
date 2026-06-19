@@ -34,6 +34,7 @@ export type WarRoomManualQaSectionName =
   | "responsive_mobile"
   | "data_policy_holdbacks"
   | "unsupported_position_filtering"
+  | "legacy_archive_filtering"
   | "v8_2_safety"
   | "console_errors";
 

@@ -116,7 +116,7 @@ export function buildBlackbirdContextualValue(input: BlackbirdContextualValueInp
   const dynastyValue = formatValue(input.player.dynasty_value, Boolean(input.leagueContext?.isDynasty), ageCurve);
   const redraftValue = redraftScore(input.player, projectionValue, Boolean(input.leagueContext?.isDynasty));
   const bestBallFit = bestBallScore(input.player.best_ball_value, floorCeilingShape, Boolean(input.leagueContext?.isBestBall));
-  const superflexFit = superflexScore(input.player.superflex_value, position, input.leagueContext);
+  const superflexFit = superflexScore(input.player.superflex_value, position, input.leagueContext, input.player.rank);
   const idpFormatFit = idpScore(position, input.leagueContext, confidence);
   const situationScore = situationScoreFor(situation);
   const coachingEnvironment = neutralOrScore(situation.coachingEnvironmentScore);
@@ -344,9 +344,16 @@ function bestBallScore(value: number | null, floorCeilingShape: number, active: 
   return value === null ? floorCeilingShape : clamp(value * 0.65 + floorCeilingShape * 0.35, 0, 100);
 }
 
-function superflexScore(value: number | null, position: string, context?: BlackbirdLeagueContext): number {
+function superflexScore(value: number | null, position: string, context?: BlackbirdLeagueContext, sourceRank?: number | null): number {
   if (!(context?.isSuperflex || context?.isTwoQb)) return 50;
   if (position !== "QB") return 45;
+  if (sourceRank !== null && sourceRank !== undefined) {
+    if (sourceRank <= 12) return value === null ? 94 : clamp(value * 0.65 + 28, 0, 100);
+    if (sourceRank <= 24) return value === null ? 88 : clamp(value * 0.65 + 22, 0, 100);
+    if (sourceRank <= 60) return value === null ? 78 : clamp(value * 0.65 + 16, 0, 100);
+    if (sourceRank <= 100) return value === null ? 68 : clamp(value * 0.65 + 10, 0, 100);
+    return value === null ? 54 : clamp(value * 0.65 + 4, 0, 100);
+  }
   return value === null ? 82 : clamp(value * 0.65 + 28, 0, 100);
 }
 

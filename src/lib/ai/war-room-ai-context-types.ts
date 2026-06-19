@@ -74,6 +74,12 @@ export type WarRoomAiContextInput = {
     secondsSinceUpdate?: number | null;
     warnings?: string[];
   };
+  marketAnchorPreview?: {
+    enabled: boolean;
+    source?: string | null;
+    matchQuality?: string | null;
+    warnings?: string[];
+  };
   riskSummary?: string[];
   confidenceSummary?: string[];
   topN?: number;
@@ -118,6 +124,12 @@ export type WarRoomAiContext = {
   riskConfidenceContext: {
     riskSummary: string[];
     confidenceSummary: string[];
+  };
+  marketAnchorPreview: {
+    marketAnchorPreviewEnabled: boolean;
+    marketAnchorSource: string | null;
+    marketAnchorMatchQuality: string | null;
+    marketAnchorWarnings: string[];
   };
   safety: {
     noAiApiCalls: true;

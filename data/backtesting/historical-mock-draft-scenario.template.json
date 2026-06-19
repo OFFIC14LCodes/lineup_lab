@@ -17,6 +17,8 @@
   "scoringSettings": {},
   "strategySet": [
     "blackbird_rank_only",
+    "blackbird_market_anchor",
+    "blackbird_market_anchor_need_based",
     "projection_only",
     "adp_only",
     "market_rank",

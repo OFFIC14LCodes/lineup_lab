@@ -6,6 +6,8 @@ import { describe, expect, it } from "vitest";
 
 import {
   BLACKBIRD_ENABLE_V8_2_EXPECTED_GAMES,
+  BLACKBIRD_ENABLE_MARKET_ANCHOR_RANK,
+  isMarketAnchorRankEnabled,
   isV82ExpectedGamesEnabled,
   loadV82FeatureFlagReadinessRows,
   selectExpectedGamesModelForProjectionRow,
@@ -22,6 +24,16 @@ describe("v8.2 expected-games feature flag scaffold", () => {
     expect(isV82ExpectedGamesEnabled({ [BLACKBIRD_ENABLE_V8_2_EXPECTED_GAMES]: "true" })).toBe(true);
     expect(isV82ExpectedGamesEnabled({ [BLACKBIRD_ENABLE_V8_2_EXPECTED_GAMES]: "TRUE" })).toBe(true);
     expect(isV82ExpectedGamesEnabled({ [BLACKBIRD_ENABLE_V8_2_EXPECTED_GAMES]: "1" })).toBe(true);
+  });
+
+  it("defaults market anchor rank disabled and only accepts explicit truthy values", () => {
+    expect(isMarketAnchorRankEnabled({})).toBe(false);
+    expect(isMarketAnchorRankEnabled({ [BLACKBIRD_ENABLE_MARKET_ANCHOR_RANK]: "false" })).toBe(false);
+    expect(isMarketAnchorRankEnabled({ [BLACKBIRD_ENABLE_MARKET_ANCHOR_RANK]: "0" })).toBe(false);
+    expect(isMarketAnchorRankEnabled({ [BLACKBIRD_ENABLE_MARKET_ANCHOR_RANK]: "yes" })).toBe(false);
+    expect(isMarketAnchorRankEnabled({ [BLACKBIRD_ENABLE_MARKET_ANCHOR_RANK]: "true" })).toBe(true);
+    expect(isMarketAnchorRankEnabled({ [BLACKBIRD_ENABLE_MARKET_ANCHOR_RANK]: "TRUE" })).toBe(true);
+    expect(isMarketAnchorRankEnabled({ [BLACKBIRD_ENABLE_MARKET_ANCHOR_RANK]: "1" })).toBe(true);
   });
 
   it("uses current path when the flag is unset or disabled", () => {

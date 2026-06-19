@@ -262,6 +262,7 @@ function adjustedLeagueValueScore(row: BlackbirdLeagueRankRow, replacementValue:
   const roleScore = roleComponentScore(role.role);
   const trustScore = row.projectionTrust.trustScore;
   const formatFit = (row.valueComponents.rosterFormatFit + row.valueComponents.leagueFormatFit) / 2;
+  const sourceRankAnchor = sourceRankAnchorScore(row);
   const fallbackPenalty = row.source.fallbackProjection ? -9 : 0;
   const missingProjectionPenalty = row.projectedFantasyPoints.median === null ? -24 : 0;
   const trustPenalty = row.projectionTrust.trustLabel === "very_low" ? -8 : row.projectionTrust.trustLabel === "low" ? -4 : 0;
@@ -273,7 +274,8 @@ function adjustedLeagueValueScore(row: BlackbirdLeagueRankRow, replacementValue:
     parScore * 0.32 +
     roleScore * 0.1 +
     trustScore * 0.1 +
-    formatFit * 0.07 +
+    sourceRankAnchor * 0.12 +
+    formatFit * 0.05 +
     row.valueComponents.floorCeilingShape * 0.03 +
     fallbackPenalty +
     missingProjectionPenalty +
@@ -281,7 +283,60 @@ function adjustedLeagueValueScore(row: BlackbirdLeagueRankRow, replacementValue:
     rolePenalty +
     riskPenalty +
     dataGapPenalty;
-  return clamp(round2(score), 0, 100);
+  return clamp(round2(Math.max(Math.min(score, sourceRankScoreCap(row)), sourceRankScoreFloor(row), marketSanityScoreFloor(row))), 0, 100);
+}
+
+function sourceRankAnchorScore(row: BlackbirdLeagueRankRow): number {
+  if (row.projectedFantasyPoints.median === null) return 0;
+  if (!["QB", "RB", "WR", "TE"].includes(row.position)) return 0;
+  if (row.projectionTrust.trustLabel === "very_low") return 0;
+  const rank = row.source.externalMarketRank;
+  if (rank === null || rank <= 0) return 0;
+  if (rank <= 12) return 100;
+  if (rank <= 24) return 92;
+  if (rank <= 36) return 84;
+  if (rank <= 60) return 70;
+  if (rank <= 100) return 54;
+  if (rank <= 150) return 34;
+  return 0;
+}
+
+function sourceRankScoreFloor(row: BlackbirdLeagueRankRow): number {
+  if (row.projectedFantasyPoints.median === null) return 0;
+  if (!["QB", "RB", "WR", "TE"].includes(row.position)) return 0;
+  if (row.projectionTrust.trustLabel === "very_low") return 0;
+  const rank = row.source.externalMarketRank;
+  if (rank === null || rank <= 0) return 0;
+  if (rank <= 12) return 88;
+  if (rank <= 24) return 84;
+  if (rank <= 36) return 80;
+  if (rank <= 60) return 74;
+  return 0;
+}
+
+function marketSanityScoreFloor(row: BlackbirdLeagueRankRow): number {
+  if (row.projectedFantasyPoints.median === null) return 0;
+  if (!["QB", "RB", "WR", "TE"].includes(row.position)) return 0;
+  if (row.projectionTrust.trustLabel === "very_low") return 0;
+  const adp = row.source.adp;
+  if (adp === null || adp <= 0) return 0;
+  if (adp <= 12) return 84;
+  if (adp <= 24) return 80;
+  if (adp <= 36) return 76;
+  if (adp <= 60) return 70;
+  return 0;
+}
+
+function sourceRankScoreCap(row: BlackbirdLeagueRankRow): number {
+  if (row.projectedFantasyPoints.median === null) return 100;
+  if (!["QB", "RB", "WR", "TE"].includes(row.position)) return 100;
+  const rank = row.source.externalMarketRank;
+  if (rank === null || rank <= 200) return 100;
+  const projection = row.projectedFantasyPoints.median;
+  if (projection < 160) return 72;
+  if (projection < 220) return 78;
+  if (projection < 260) return 84;
+  return 100;
 }
 
 function roleComponentScore(role: PlayerRoleClassification["role"]): number {

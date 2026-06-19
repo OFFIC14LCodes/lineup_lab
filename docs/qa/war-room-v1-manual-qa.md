@@ -59,7 +59,8 @@ Use this checklist against a real or test Sleeper draft room after the determini
 2. Verify the scoring status panel is dev-only.
 3. Verify unsupported positions are not recommended.
 4. Verify no K recommendation appears in leagues without K slots.
-5. Do not change projection, ranking, suggestion, or scoring behavior during QA.
+5. Verify legacy/retired archived players such as Andrew Luck, Tom Brady, and Drew Brees do not appear in any actionable board, signal, recommendation, GM Brief, Plan Alignment, or Recent Signals surface.
+6. Do not change projection, ranking, suggestion, or scoring behavior during QA.
 
 ## Recording Results
 
@@ -93,6 +94,7 @@ search_filter_load_more
 sync_status
 data_policy_holdbacks
 unsupported_position_filtering
+legacy_archive_filtering
 v8_2_safety
 console_errors
 ```
@@ -114,6 +116,7 @@ board_modes
 pick_updates
 available_filtering
 unsupported_position_filtering
+legacy_archive_filtering
 v8_2_safety
 console_errors
 ```

@@ -34,6 +34,9 @@ describe("buildWarRoomAiContext", () => {
         secondsSinceUpdate: 12,
         warnings: [],
       },
+      marketAnchorPreview: {
+        marketAnchorPreviewEnabled: false,
+      },
     });
     expect(context.topPlayers.draftSuggestions.map((row) => row.playerName)).toEqual(["A Player", "B Player"]);
     expect(context.topPlayers.fullBlackbirdRank.map((row) => row.playerName)).toEqual(["Drafted Star", "A Player"]);
@@ -73,6 +76,27 @@ describe("buildWarRoomAiContext", () => {
     expect(context.topPlayers.draftSuggestions[0]?.playerName).toBe("A Player");
     expect(context.topPlayers.availableBlackbirdRank).toHaveLength(1);
     expect(context.topPlayers.availableBlackbirdRank[0]?.playerName).toBe("A Player");
+  });
+
+  it("includes market anchor preview state only when supplied", () => {
+    const disabled = buildWarRoomAiContext(input());
+    const enabled = buildWarRoomAiContext({
+      ...input(),
+      marketAnchorPreview: {
+        enabled: true,
+        source: "current_season_adp_enrichment",
+        matchQuality: "medium",
+        warnings: ["Market anchor uses name/team/position matching; review before production activation."],
+      },
+    });
+
+    expect(disabled.marketAnchorPreview).toMatchObject({ marketAnchorPreviewEnabled: false });
+    expect(enabled.marketAnchorPreview).toEqual({
+      marketAnchorPreviewEnabled: true,
+      marketAnchorSource: "current_season_adp_enrichment",
+      marketAnchorMatchQuality: "medium",
+      marketAnchorWarnings: ["Market anchor uses name/team/position matching; review before production activation."],
+    });
   });
 });
 

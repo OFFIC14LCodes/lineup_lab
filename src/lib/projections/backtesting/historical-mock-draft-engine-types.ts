@@ -4,6 +4,8 @@ export type HistoricalMockDraftLeagueType = "redraft" | "dynasty" | "best_ball" 
 export type HistoricalMockDraftOrderType = "snake" | "third_round_reversal";
 export type HistoricalMockDraftStrategy =
   | "blackbird_rank_only"
+  | "blackbird_market_anchor"
+  | "blackbird_market_anchor_need_based"
   | "projection_only"
   | "adp_only"
   | "market_rank"
@@ -18,6 +20,7 @@ export type HistoricalMockDraftRecommendation =
 export type HistoricalMockDraftPlayer = {
   playerId: string;
   sleeperId?: string | null;
+  gsisId?: string | null;
   playerName: string;
   position: string;
   nflTeam?: string | null;
@@ -27,6 +30,12 @@ export type HistoricalMockDraftPlayer = {
   adpRank?: number | null;
   marketRank?: number | null;
   projectedPoints?: number | null;
+  confidence?: string | number | null;
+  sourceConfidence?: string | number | null;
+  confidenceScore?: number | null;
+  externalMarketSource?: string | null;
+  externalMarketMatchConfidence?: string | null;
+  externalMarketNotes?: string[] | null;
 };
 
 export type HistoricalMockDraftScenario = {
@@ -73,6 +82,8 @@ export type HistoricalMockDraftStrategyResult = {
   benchDepthEstimate: string;
   draftCapitalByPosition: Record<string, number[]>;
   reachesValueNotes: string[];
+  unsupportedPositionsFiltered?: string[];
+  unsupportedPositionFilteredCount?: number;
   blackbirdFallbackUsed?: string | null;
   rosterReview?: MockDraftResultCaptureReport | null;
 };

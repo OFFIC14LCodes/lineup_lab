@@ -1,6 +1,6 @@
 # Historical Mock Draft Engine
 
-- Generated: 2026-06-19T03:07:56.703Z
+- Generated: 2026-06-19T15:34:23.146Z
 - Projection season: 2025
 - Recommendation: historical_mock_draft_engine_ready_for_season_scoring
 - Draft order: third_round_reversal
@@ -12,6 +12,8 @@
 | Strategy | Picks | My roster | Starter coverage | Bench depth |
 | --- | --- | --- | --- | --- |
 | blackbird_rank_only | 180 | Lamar Jackson (QB), Justin Herbert (QB), Geno Smith (QB), De'Von Achane (RB), Tua Tagovailoa (QB), Rachaad White (RB), Ben Roethlisberger (QB), Deebo Samuel (WR), Christian McCaffrey (RB), Tyler Lockett (WR), Pat Freiermuth (TE), Wan'Dale Robinson (WR), Zach Ertz (TE), Demarcus Robinson (WR), J.K. Dobbins (RB) | Core starters covered. | 9 bench/depth picks. |
+| blackbird_market_anchor | 180 | Lamar Jackson (QB), Justin Herbert (QB), Geno Smith (QB), De'Von Achane (RB), Tua Tagovailoa (QB), Rachaad White (RB), Ben Roethlisberger (QB), Deebo Samuel (WR), Christian McCaffrey (RB), Tyler Lockett (WR), Pat Freiermuth (TE), Wan'Dale Robinson (WR), Zach Ertz (TE), Demarcus Robinson (WR), J.K. Dobbins (RB) | Core starters covered. | 9 bench/depth picks. |
+| blackbird_market_anchor_need_based | 180 | Lamar Jackson (QB), Tony Pollard (RB), Puka Nacua (WR), Travis Kelce (TE), Chuba Hubbard (RB), DJ Moore (WR), Tua Tagovailoa (QB), Christian McCaffrey (RB), Chris Godwin (WR), Pat Freiermuth (TE), Tyler Allgeier (RB), George Pickens (WR), Daniel Jones (QB), Latavius Murray (RB), Chris Olave (WR) | Core starters covered. | 9 bench/depth picks. |
 | projection_only | 180 | Lamar Jackson (QB), Justin Herbert (QB), Geno Smith (QB), De'Von Achane (RB), Tua Tagovailoa (QB), Rachaad White (RB), Ben Roethlisberger (QB), Deebo Samuel (WR), Christian McCaffrey (RB), Tyler Lockett (WR), Pat Freiermuth (TE), Wan'Dale Robinson (WR), Zach Ertz (TE), Demarcus Robinson (WR), J.K. Dobbins (RB) | Core starters covered. | 9 bench/depth picks. |
 | adp_only | 180 | A.J. Green (WR), Alfred Blue (RB), Andrew Luck (QB), Antoine Wesley (WR), Blake Corum (RB), Boston Scott (RB), Bucky Irving (RB), Cade Otton (TE), Chase Brown (RB), Chig Okonkwo (TE), Cooper Kupp (WR), Corey Davis (WR), Darius Slayton (WR), Darrel Williams (RB), Demarcus Robinson (WR) | Core starters covered. | 9 bench/depth picks. |
 | market_rank | 180 | Lamar Jackson (QB), Justin Herbert (QB), Geno Smith (QB), De'Von Achane (RB), Tua Tagovailoa (QB), Rachaad White (RB), Ben Roethlisberger (QB), Deebo Samuel (WR), Christian McCaffrey (RB), Tyler Lockett (WR), Pat Freiermuth (TE), Wan'Dale Robinson (WR), Zach Ertz (TE), Demarcus Robinson (WR), J.K. Dobbins (RB) | Core starters covered. | 9 bench/depth picks. |
