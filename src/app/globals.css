@@ -4,8 +4,9 @@
 
 :root {
   color-scheme: dark;
-  --font-display: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
-  --font-body: "Trebuchet MS", "Segoe UI", sans-serif;
+  --font-display: var(--font-sora), ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, "SFMono-Regular", Consolas, monospace;
 }
 
 * {
@@ -42,9 +43,8 @@ textarea {
 
 .brand-display {
   font-family: var(--font-display);
-  font-style: italic;
-  font-weight: 900;
-  letter-spacing: 0.04em;
+  font-weight: 800;
+  letter-spacing: 0.01em;
   text-transform: uppercase;
 }
 

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Inter, JetBrains_Mono, Sora } from "next/font/google";
 import Link from "next/link";
 
 import { BrandLockup } from "@/components/brand";
@@ -6,6 +7,24 @@ import { NavLinks } from "@/components/nav-links";
 import { getSessionUser } from "@/lib/supabase/auth";
 
 import "./globals.css";
+
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  variable: "--font-inter",
+});
+
+const sora = Sora({
+  subsets: ["latin"],
+  weight: ["600", "700", "800"],
+  variable: "--font-sora",
+});
+
+const jetBrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-jetbrains-mono",
+});
 
 export const metadata: Metadata = {
   title: "Blackbird GM",
@@ -17,8 +36,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const userInitial = user?.email?.[0]?.toUpperCase();
 
   return (
-    <html lang="en">
-      <body className="min-h-screen bg-background text-slate-100 antialiased">
+    <html lang="en" className={`${inter.variable} ${sora.variable} ${jetBrainsMono.variable}`}>
+      <body className="min-h-screen bg-background font-sans text-slate-100 antialiased">
         <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
           <div className="absolute inset-x-0 top-[-14rem] h-[28rem] bg-[radial-gradient(circle_at_top,_rgba(26,110,252,0.14),_transparent_62%)]" />
           <div className="absolute right-[-12rem] top-24 h-[28rem] w-[28rem] rounded-full bg-[radial-gradient(circle,_rgba(26,110,252,0.07),_transparent_68%)] blur-3xl" />

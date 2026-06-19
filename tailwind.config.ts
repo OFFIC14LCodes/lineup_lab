@@ -15,6 +15,12 @@ const config: Config = {
       },
       boxShadow: {
         glow: "0 24px 80px rgba(26, 110, 252, 0.22)"
+      },
+      fontFamily: {
+        display: ["var(--font-display)", "ui-sans-serif", "system-ui", "sans-serif"],
+        body: ["var(--font-body)", "ui-sans-serif", "system-ui", "sans-serif"],
+        sans: ["var(--font-body)", "ui-sans-serif", "system-ui", "sans-serif"],
+        mono: ["var(--font-mono)", "ui-monospace", "SFMono-Regular", "Consolas", "monospace"]
       }
     }
   },

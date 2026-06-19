@@ -59,9 +59,9 @@ function BoardPreview() {
               Live
             </span>
           </div>
-          <p className="mt-0.5 text-[11px] text-slate-500">Pick 23 · Round 3 · 4 picks until your turn</p>
+          <p className="mt-0.5 font-mono text-[11px] text-slate-500">Pick 23 · Round 3 · 4 picks until your turn</p>
         </div>
-        <span className="text-[11px] text-slate-500">Slot 6 / 12</span>
+        <span className="font-mono text-[11px] text-slate-500">Slot 6 / 12</span>
       </div>
 
       {/* Column labels */}
@@ -80,7 +80,7 @@ function BoardPreview() {
             key={row.rank}
             className={`grid grid-cols-[28px_1fr_44px_40px_52px] items-center gap-3 px-4 py-2.5 text-sm ${row.drafted ? "opacity-30" : "hover:bg-panel2/40"}`}
           >
-            <span className="text-[11px] font-black text-slate-500">#{row.rank}</span>
+            <span className="font-mono text-[11px] font-black text-slate-500">#{row.rank}</span>
             <span className={`truncate font-semibold ${row.drafted ? "text-slate-500 line-through" : "text-slate-100"}`}>
               {row.name}
             </span>
@@ -88,7 +88,7 @@ function BoardPreview() {
               {row.pos}
             </span>
             <span className="text-[11px] text-slate-400">{row.team}</span>
-            <span className={`text-right text-[11px] font-bold tabular-nums ${row.val.startsWith("+") ? "text-electric" : "text-slate-500"}`}>
+            <span className={`text-right font-mono text-[11px] font-bold tabular-nums ${row.val.startsWith("+") ? "text-electric" : "text-slate-500"}`}>
               {row.val}
             </span>
           </div>
@@ -97,8 +97,8 @@ function BoardPreview() {
 
       {/* Footer */}
       <div className="flex items-center justify-between border-t border-line/30 px-4 py-3 text-[11px] text-slate-500">
-        <span>4 available · <span className="text-electric font-semibold">2 suggested</span></span>
-        <span>Rounds 3–5 window</span>
+        <span className="font-mono">4 available · <span className="font-semibold text-electric">2 suggested</span></span>
+        <span className="font-mono">Rounds 3–5 window</span>
       </div>
     </div>
   );
@@ -121,7 +121,7 @@ export default function Home() {
           </div>
 
           <div>
-            <h1 className="brand-display text-6xl leading-none text-white sm:text-7xl lg:text-[5.5rem]">
+            <h1 className="font-display text-6xl font-extrabold leading-none text-white sm:text-7xl lg:text-[5.5rem]">
               Blackbird <span className="text-electric">GM</span>
             </h1>
             <p className="mt-3 text-sm font-semibold uppercase tracking-[0.22em] text-slate-400">

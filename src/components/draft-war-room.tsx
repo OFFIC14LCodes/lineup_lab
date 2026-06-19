@@ -1064,8 +1064,8 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
           <div className="min-w-0">
             <h1 className="break-words text-2xl font-black sm:text-3xl">{state.league?.name ?? "Draft War Room"}</h1>
             <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-slate-400">
-              <span>Pick {state.currentPickNumber}</span>
-              <span>Round {state.currentRound}</span>
+              <span className="font-mono">Pick {state.currentPickNumber}</span>
+              <span className="font-mono">Round {state.currentRound}</span>
               {state.picksUntilMyNextPick !== null && state.picksUntilMyNextPick !== undefined ? (
                 <span
                   className={`flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 font-black text-electric transition-all duration-300 ${
@@ -1074,11 +1074,11 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
                       : "border-electric/30 bg-electric/10"
                   }`}
                 >
-                  <span className="text-base">{state.picksUntilMyNextPick}</span>
+                  <span className="font-mono text-base">{state.picksUntilMyNextPick}</span>
                   <span className="text-xs font-medium">until turn</span>
                 </span>
               ) : null}
-              <span>{state.picks.length} drafted</span>
+              <span className="font-mono">{state.picks.length} drafted</span>
             </div>
           </div>
           <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
@@ -1108,7 +1108,7 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
                 <div>
                   <h2 className="text-xl font-bold">Draft Board</h2>
                   <p className="mt-1 text-sm text-slate-400">
-                    {(state.teamCount ?? draftBoardTeams.length) || "Unknown"} teams · Slot {state.myDraftSlot ?? "-"} · {recentPicks.length} recent picks
+                    <span className="font-mono">{(state.teamCount ?? draftBoardTeams.length) || "Unknown"} teams · Slot {state.myDraftSlot ?? "-"} · {recentPicks.length} recent picks</span>
                   </p>
                 </div>
                 {draftBoardTeams.length ? (
@@ -1511,7 +1511,7 @@ function DraftPickCard({
   if (!pick) {
     return (
       <div className={`min-h-[72px] min-w-0 bg-background/70 p-1.5 ${isCurrent ? "outline outline-2 outline-electric/70" : ""}`}>
-        <div className="text-[11px] font-semibold text-slate-600">#{expectedPickNo}</div>
+        <div className="font-mono text-[11px] font-semibold text-slate-600">#{expectedPickNo}</div>
         {isCurrent ? <div className="mt-3 text-xs font-bold text-electric">On clock</div> : null}
       </div>
     );
@@ -1525,7 +1525,7 @@ function DraftPickCard({
       }`}
     >
       <div className="flex items-center justify-between gap-2 text-[11px]">
-        <span className="font-semibold text-white/75">#{pick.pick_no}</span>
+        <span className="font-mono font-semibold text-white/75">#{pick.pick_no}</span>
         <span className="rounded-full bg-black/25 px-1.5 py-0.5 font-bold text-white">{position}</span>
       </div>
       <div className="mt-1.5 line-clamp-2 text-[13px] font-black leading-tight text-white">{pick.player_name ?? "Unknown"}</div>
@@ -1548,7 +1548,7 @@ function TeamRosterStrip({ team, picks }: { team: DraftBoardTeam; picks: PickLin
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
           <div className="text-sm font-black text-slate-100">{team.label}</div>
-          <div className="text-xs text-slate-500">Slot {team.draftSlot} · {picks.length} picks</div>
+          <div className="font-mono text-xs text-slate-500">Slot {team.draftSlot} · {picks.length} picks</div>
         </div>
         <div className="flex flex-wrap gap-1">
           {positions.map((position) => (
@@ -1565,7 +1565,7 @@ function TeamRosterStrip({ team, picks }: { team: DraftBoardTeam; picks: PickLin
               <span className="font-bold text-slate-100">{pick.player_name ?? "Unknown"}</span>
               <span className={`rounded-full border px-2 py-0.5 font-bold ${draftBoardPositionBadgeClass(pick.position)}`}>{normalizeDraftBoardPosition(pick.position)}</span>
             </div>
-            <div className="mt-1 text-slate-500">Pick {pick.pick_no} · Round {pick.round ?? "-"}</div>
+            <div className="mt-1 font-mono text-slate-500">Pick {pick.pick_no} · Round {pick.round ?? "-"}</div>
           </div>
         ))}
         {!picks.length ? <p className="text-sm text-slate-400">No synced picks for this team yet. Sync Sleeper draft picks to populate this roster view.</p> : null}
@@ -1753,7 +1753,7 @@ function DraftSignalPanel({
           </div>
           {picksUntilTurn !== null ? (
             <span className="text-xs text-slate-400">
-              <span className="font-black text-slate-100">{picksUntilTurn}</span>{" "}
+              <span className="font-mono font-black text-slate-100">{picksUntilTurn}</span>{" "}
               pick{picksUntilTurn === 1 ? "" : "s"} to turn
             </span>
           ) : null}
@@ -2021,9 +2021,9 @@ function AvailablePlayersTable({
               >
                 <td className="px-3 py-3">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="text-lg font-black text-electric">{row.draftSuggestionRank === null ? "-" : `#${row.draftSuggestionRank}`}</span>
+                    <span className="font-mono text-lg font-black text-electric">{row.draftSuggestionRank === null ? "-" : `#${row.draftSuggestionRank}`}</span>
                     {row.blackbirdValueScore === null ? null : (
-                      <span className="rounded-full border border-electric/25 bg-electric/10 px-2 py-1 text-xs font-black text-electric">
+                      <span className="rounded-full border border-electric/25 bg-electric/10 px-2 py-1 font-mono text-xs font-black text-electric">
                         {formatNumber(row.blackbirdValueScore)}
                       </span>
                     )}
@@ -2075,7 +2075,7 @@ function AvailablePlayersTable({
                     </div>
                   ) : "Projection unavailable"}
                 </td>
-                <td className="px-3 py-3 font-black text-electric">{row.blackbirdValueScore === null ? "-" : `${formatNumber(row.blackbirdValueScore)}/100`}</td>
+                <td className="px-3 py-3 font-mono font-black text-electric">{row.blackbirdValueScore === null ? "-" : `${formatNumber(row.blackbirdValueScore)}/100`}</td>
                 <td className="px-3 py-3"><ProjectionTrustBadge row={row} /></td>
                 <td className="px-3 py-3">
                   <RiskScoreBlock row={row} />
@@ -2298,7 +2298,7 @@ function ProjectionMini({ label, value }: { label: string; value: number | null 
   return (
     <div className="rounded-md border border-line bg-background/60 px-2 py-1.5">
       <div className="text-[10px] uppercase tracking-wide text-slate-500">{label}</div>
-      <div className="mt-0.5 font-black text-slate-100">{formatNullableNumber(value)}</div>
+      <div className="mt-0.5 font-mono font-black text-slate-100">{formatNullableNumber(value)}</div>
     </div>
   );
 }
@@ -2338,7 +2338,7 @@ function RiskMeter({ label, value }: { label: string; value: number }) {
     <div className={`rounded-md border px-2 py-1.5 ${className}`}>
       <div className="flex items-center justify-between gap-2">
         <span className="text-[10px] uppercase tracking-wide opacity-80">{label}</span>
-        <span className="font-black">{value}/10</span>
+        <span className="font-mono font-black">{value}/10</span>
       </div>
     </div>
   );
@@ -2348,7 +2348,7 @@ function MiniDetail({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-md border border-line/70 bg-panel2 px-2 py-1">
       <div className="uppercase tracking-wide text-slate-500">{label}</div>
-      <div className="mt-0.5 font-bold text-slate-200">{value}</div>
+      <div className="mt-0.5 font-mono font-bold text-slate-200">{value}</div>
     </div>
   );
 }
@@ -2655,7 +2655,7 @@ function HistoricalPlayerProfilePanel({
           {statSummary.map((stat) => (
             <div key={stat.label} className="rounded-md border border-line/70 bg-background/50 px-2 py-2">
               <div className="text-[11px] uppercase tracking-wide text-slate-500">{stat.label}</div>
-              <div className="mt-1 font-black text-slate-100">{formatNumber(stat.value)}</div>
+              <div className="mt-1 font-mono font-black text-slate-100">{formatNumber(stat.value)}</div>
             </div>
           ))}
         </div>
@@ -2681,13 +2681,13 @@ function HistoricalPlayerProfilePanel({
               <tbody>
                 {profile.seasonSummaries.slice(0, 8).map((row) => (
                   <tr key={`${row.season ?? "unknown"}-${row.positionRank ?? "rank"}`} className="border-t border-line/70">
-                    <td className="px-2 py-3 font-bold text-slate-100">{row.season ?? "-"}</td>
-                    <td className="px-2 py-3">{formatNumber(row.gamesPlayed)}</td>
-                    <td className="px-2 py-3">{formatNumber(row.totalFantasyPoints)}</td>
-                    <td className="px-2 py-3">{formatNullableNumber(row.pointsPerGame)}</td>
-                    <td className="px-2 py-3">{formatNullableNumber(row.floor ?? null)}</td>
-                    <td className="px-2 py-3">{formatNullableNumber(row.ceiling ?? null)}</td>
-                    <td className="px-2 py-3">{row.positionRank === null ? "-" : `#${row.positionRank}`}</td>
+                    <td className="px-2 py-3 font-mono font-bold text-slate-100">{row.season ?? "-"}</td>
+                    <td className="px-2 py-3 font-mono">{formatNumber(row.gamesPlayed)}</td>
+                    <td className="px-2 py-3 font-mono">{formatNumber(row.totalFantasyPoints)}</td>
+                    <td className="px-2 py-3 font-mono">{formatNullableNumber(row.pointsPerGame)}</td>
+                    <td className="px-2 py-3 font-mono">{formatNullableNumber(row.floor ?? null)}</td>
+                    <td className="px-2 py-3 font-mono">{formatNullableNumber(row.ceiling ?? null)}</td>
+                    <td className="px-2 py-3 font-mono">{row.positionRank === null ? "-" : `#${row.positionRank}`}</td>
                   </tr>
                 ))}
               </tbody>
@@ -2712,12 +2712,12 @@ function HistoricalPlayerProfilePanel({
                 <tbody>
                   {recentWeeklyRows.map((row) => (
                     <tr key={`${row.season ?? "season"}-${row.week ?? "week"}-${row.team ?? "team"}`} className="border-t border-line/70">
-                      <td className="px-2 py-3 font-bold text-slate-100">
+                      <td className="px-2 py-3 font-mono font-bold text-slate-100">
                         {row.season ?? "-"} W{row.week ?? "-"}
                       </td>
                       <td className="px-2 py-3">{row.team ?? "-"}</td>
                       <td className="px-2 py-3">{row.opponent ?? "-"}</td>
-                      <td className="px-2 py-3">{formatNumber(row.calculatedFantasyPoints)}</td>
+                      <td className="px-2 py-3 font-mono">{formatNumber(row.calculatedFantasyPoints)}</td>
                       <td className="px-2 py-3 text-slate-300">{buildWeeklyStatLine(row, profile.header.position)}</td>
                     </tr>
                   ))}
@@ -2754,16 +2754,16 @@ function ProjectedSeasonsTable({ rows }: { rows: PlayerProfileResponse["history"
             <tbody>
               {rows.map((row) => (
                 <tr key={row.season} className="border-t border-line/70">
-                  <td className="px-2 py-3 font-bold text-slate-100">{row.season}</td>
+                  <td className="px-2 py-3 font-mono font-bold text-slate-100">{row.season}</td>
                   <td className="px-2 py-3">{row.team ?? "-"}</td>
-                  <td className="px-2 py-3">{row.gamesPlayed ?? "-"}</td>
-                  <td className="px-2 py-3">{row.gamesStarted ?? "-"}</td>
-                  <td className="px-2 py-3">{row.fantasyPoints === null ? "-" : formatNumber(row.fantasyPoints)}</td>
+                  <td className="px-2 py-3 font-mono">{row.gamesPlayed ?? "-"}</td>
+                  <td className="px-2 py-3 font-mono">{row.gamesStarted ?? "-"}</td>
+                  <td className="px-2 py-3 font-mono">{row.fantasyPoints === null ? "-" : formatNumber(row.fantasyPoints)}</td>
                   <td className="px-2 py-3">
                     {row.statLine.length ? (
                       <div className="flex flex-wrap gap-1">
                         {row.statLine.slice(0, 8).map((stat) => (
-                          <span key={`${row.season}-${stat.key}`} className="rounded-full border border-line bg-background px-2 py-1 text-[11px] text-slate-300">
+                          <span key={`${row.season}-${stat.key}`} className="rounded-full border border-line bg-background px-2 py-1 font-mono text-[11px] text-slate-300">
                             {stat.label} {formatNumber(stat.value)}
                           </span>
                         ))}
@@ -3166,7 +3166,7 @@ function StatLineGrid({ items, empty }: { items: Array<{ key: string; label: str
       {items.map((item) => (
         <div key={item.key} className="rounded-md border border-line/70 bg-background/50 px-2 py-2">
           <div className="text-[11px] uppercase tracking-wide text-slate-500">{item.label}</div>
-          <div className="mt-1 font-black text-slate-100">{formatNumber(item.value)}</div>
+          <div className="mt-1 font-mono font-black text-slate-100">{formatNumber(item.value)}</div>
         </div>
       ))}
     </div>
@@ -3212,7 +3212,7 @@ function ScoringFoundationStatusPanel() {
           {rows.map(([label, value]) => (
             <div key={label} className="flex items-start justify-between gap-3 rounded-md border border-line/70 bg-background/50 px-2.5 py-2">
               <span className="text-slate-500">{label}</span>
-              <span className="max-w-[190px] text-right font-bold text-slate-200">{value}</span>
+              <span className="max-w-[190px] text-right font-mono font-bold text-slate-200">{value}</span>
             </div>
           ))}
           <p className="text-[11px] leading-relaxed text-slate-500">
@@ -3539,7 +3539,7 @@ function PriorityMapPreview({ priorities }: { priorities: PreDraftStrategyRespon
         <div key={position} className="rounded-md border border-line bg-panel2 px-2 py-2">
           <div className="flex items-center justify-between gap-2">
             <span className={`rounded-full border px-2 py-1 text-[11px] font-bold ${draftBoardPositionBadgeClass(position)}`}>{normalizeDraftBoardPosition(position)}</span>
-            <span className="text-xs text-slate-400">{value.score}</span>
+            <span className="font-mono text-xs text-slate-400">{value.score}</span>
           </div>
           <div className="mt-2 truncate text-xs text-slate-300">{value.priority}</div>
         </div>
@@ -3552,7 +3552,7 @@ function H11MiniMetric({ label, value }: { label: string; value: string | number
   return (
     <div className="rounded-md border border-line bg-background/50 px-2 py-2">
       <div className="truncate text-[10px] uppercase tracking-wide text-slate-500">{label}</div>
-      <div className="mt-1 truncate text-sm font-bold text-slate-100">{value}</div>
+      <div className="mt-1 truncate font-mono text-sm font-bold text-slate-100">{value}</div>
     </div>
   );
 }
@@ -3941,7 +3941,7 @@ function H10RecommendationCard({ row }: { row: WarRoomRecommendationRow }) {
             {row.position ?? "-"} · {row.team ?? "-"}
           </div>
         </div>
-        <div className="shrink-0 rounded-md border border-line bg-background px-2 py-1 text-sm font-black text-slate-100">
+        <div className="shrink-0 rounded-md border border-line bg-background px-2 py-1 font-mono text-sm font-black text-slate-100">
           {row.recommendationScore.toFixed(1)}
         </div>
       </div>
@@ -4014,7 +4014,7 @@ function H10MiniStat({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-md border border-line/70 bg-background/50 px-2 py-1">
       <div className="uppercase tracking-wide text-slate-500">{label}</div>
-      <div className="mt-0.5 truncate text-slate-200">{value}</div>
+      <div className="mt-0.5 truncate font-mono text-slate-200">{value}</div>
     </div>
   );
 }
@@ -4104,7 +4104,7 @@ function DiagnosticsLine({ label, value, warning = false }: { label: string; val
   return (
     <div className="grid gap-1">
       <div className="uppercase tracking-wide text-slate-500">{label}</div>
-      <div className={warning ? "text-red-200" : "text-slate-300"}>{value}</div>
+      <div className={warning ? "font-mono text-red-200" : "font-mono text-slate-300"}>{value}</div>
     </div>
   );
 }
@@ -4236,7 +4236,7 @@ function ScoreBreakdown({ player }: { player: AvailablePlayer }) {
         {components.map((component) => (
           <div key={component.label} className="rounded-lg border border-line/70 bg-background/60 px-2 py-2">
             <div className="text-[11px] uppercase tracking-wide text-slate-500">{component.label}</div>
-            <div className="mt-1 text-sm font-bold text-slate-100">{component.value.toFixed(1)}</div>
+            <div className="mt-1 font-mono text-sm font-bold text-slate-100">{component.value.toFixed(1)}</div>
           </div>
         ))}
       </div>
@@ -4452,7 +4452,7 @@ function SharedDemandCard({ label, value }: { label: string; value: number }) {
   return (
     <div className="rounded-md border border-line bg-background/60 px-3 py-2 text-xs">
       <div className="uppercase tracking-wide text-slate-500">{label}</div>
-      <div className="mt-1 font-bold text-slate-100">{value} shared slot{value === 1 ? "" : "s"}</div>
+      <div className="mt-1 font-mono font-bold text-slate-100">{value} shared slot{value === 1 ? "" : "s"}</div>
     </div>
   );
 }

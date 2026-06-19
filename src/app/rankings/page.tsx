@@ -82,16 +82,16 @@ export default async function RankingsPage({
               <tbody>
                 {rankings.map((ranking) => (
                   <tr key={ranking.id} className="border-t border-line">
-                    <td className="px-3 py-3">{ranking.rank ?? "-"}</td>
+                    <td className="px-3 py-3 font-mono">{ranking.rank ?? "-"}</td>
                     <td className="px-3 py-3 font-bold">{ranking.player_name}</td>
                     <td className="px-3 py-3">{ranking.players?.full_name ?? ranking.sleeper_player_id ?? "-"}</td>
                     <td className="px-3 py-3">{ranking.position ?? "-"}</td>
                     <td className="px-3 py-3">{ranking.team ?? "-"}</td>
-                    <td className="px-3 py-3">{ranking.projected_points ?? "-"}</td>
-                    <td className="px-3 py-3">{ranking.adp ?? "-"}</td>
-                    <td className="px-3 py-3">{ranking.dynasty_value ?? "-"}</td>
+                    <td className="px-3 py-3 font-mono">{ranking.projected_points ?? "-"}</td>
+                    <td className="px-3 py-3 font-mono">{ranking.adp ?? "-"}</td>
+                    <td className="px-3 py-3 font-mono">{ranking.dynasty_value ?? "-"}</td>
                     <td className="px-3 py-3">{ranking.match_status ?? "unmatched"}</td>
-                    <td className="px-3 py-3">
+                    <td className="px-3 py-3 font-mono">
                       {ranking.match_confidence === null || ranking.match_confidence === undefined
                         ? "-"
                         : Number(ranking.match_confidence).toFixed(2)}

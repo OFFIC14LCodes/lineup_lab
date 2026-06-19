@@ -677,7 +677,7 @@ function Metric({ label, value, accent = false }: { label: string; value: string
   return (
     <div className="rounded-2xl border border-white/10 bg-slate-950/70 p-3">
       <div className="text-[11px] uppercase tracking-[0.2em] text-slate-500">{label}</div>
-      <div className={accent ? "mt-2 text-lg font-black text-brand" : "mt-2 text-lg font-black text-slate-100"}>{value}</div>
+      <div className={accent ? "mt-2 font-mono text-lg font-black text-brand" : "mt-2 font-mono text-lg font-black text-slate-100"}>{value}</div>
     </div>
   );
 }
@@ -686,7 +686,7 @@ function StatCard({ label, value, accent = false }: { label: string; value: stri
   return (
     <div className="rounded-2xl border border-white/10 bg-slate-950/60 p-4">
       <div className="text-xs uppercase tracking-[0.2em] text-slate-500">{label}</div>
-      <div className={accent ? "mt-2 text-2xl font-black text-brand" : "mt-2 text-2xl font-black text-slate-100"}>{value}</div>
+      <div className={accent ? "mt-2 font-mono text-2xl font-black text-brand" : "mt-2 font-mono text-2xl font-black text-slate-100"}>{value}</div>
     </div>
   );
 }
