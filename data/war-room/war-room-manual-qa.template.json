@@ -23,6 +23,11 @@
   "responsive_tablet": { "status": "not_tested", "critical": false, "notes": "" },
   "responsive_mobile": { "status": "not_tested", "critical": false, "notes": "" },
   "data_policy_holdbacks": { "status": "not_tested", "critical": true, "notes": "" },
+  "unsupported_position_filtering": {
+    "status": "pass",
+    "critical": true,
+    "notes": "Verify unsupported positions are not recommended. In leagues without K slots, no K recommendation appears."
+  },
   "v8_2_safety": { "status": "not_tested", "critical": true, "notes": "" },
   "console_errors": { "status": "not_tested", "critical": true, "notes": "" },
   "overall_notes": ""

@@ -30,6 +30,7 @@ import { buildWarRoomAiContext, buildWarRoomGmBrief, type WarRoomAiBoardPlayer, 
 import { buildWarRoomPlayerReasonStack, type WarRoomPlayerReasonStack } from "@/lib/draft/war-room-player-reasons";
 import { buildWarRoomPlanAlignmentLabels } from "@/lib/draft/war-room-plan-alignment";
 import { buildProjectionModelSelectionStatus } from "@/lib/projections/model-selection-status";
+import { filterDraftEligiblePlayers } from "@/lib/draft/league-position-eligibility";
 
 type RecommendationTier = "elite_target" | "strong_target" | "good_value" | "depth_option" | "avoid_for_now";
 type InputCompleteness = "full" | "partial" | "rankings_only" | "fallback_only";
@@ -773,6 +774,18 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
     ),
     [state?.blackbirdRankPlayers, state?.draftablePlayers, state?.remainingPlayers]
   );
+  const eligibleBlackbirdPlayerPool = useMemo(
+    () => state
+      ? filterDraftEligiblePlayers(blackbirdPlayerPool, { rosterRequirements: state.rosterRequirements })
+      : { players: blackbirdPlayerPool, filteredPositions: [], filteredCount: 0 },
+    [blackbirdPlayerPool, state]
+  );
+  const eligibleRecommendations = useMemo(
+    () => state
+      ? filterDraftEligiblePlayers(state.recommendations, { rosterRequirements: state.rosterRequirements }).players
+      : [],
+    [state]
+  );
 
   const blackbirdBoard = useMemo(() => {
     const scoringSettings =
@@ -780,7 +793,7 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
         ? state.league.scoring_settings_json
         : null;
     return buildBlackbirdBoard({
-      players: blackbirdPlayerPool,
+      players: eligibleBlackbirdPlayerPool.players,
       overlays: state?.h10ValueOverlay ?? [],
       recommendations: state?.h10RecommendationPreview ?? [],
       draftedPlayerIds: state?.draftedPlayerIds ?? [],
@@ -800,7 +813,7 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
       includeDrafted: true,
     });
   }, [
-    blackbirdPlayerPool,
+    eligibleBlackbirdPlayerPool.players,
     boardSort,
     state?.draftedPlayerIds,
     state?.h10RecommendationPreview,
@@ -834,7 +847,7 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
           ? state.league.scoring_settings_json
           : null;
       const leagueRank = buildBlackbirdLeagueRank({
-        players: blackbirdPlayerPool,
+        players: eligibleBlackbirdPlayerPool.players,
         overlays: state?.h10ValueOverlay ?? [],
         recommendations: state?.h10RecommendationPreview ?? [],
         draftedPlayerIds: state?.draftedPlayerIds ?? [],
@@ -875,7 +888,7 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
       });
       return withFallbackDraftSuggestionRanks(rowsWithLiveSuggestions);
     },
-    [blackbirdBoard.rows, blackbirdPlayerPool, livePlanStatus, state]
+    [blackbirdBoard.rows, eligibleBlackbirdPlayerPool.players, livePlanStatus, state]
   );
 
   const boardRowsForMode = useMemo(() => {
@@ -1243,13 +1256,13 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
           {/* 1. Draft Signal — primary decision surface */}
           <DraftSignalPanel
             livePlanStatus={livePlanStatus}
-            topPlayer={state.recommendations[0] ?? null}
+            topPlayer={eligibleRecommendations[0] ?? null}
             picksUntilTurn={state.picksUntilMyNextPick}
             isDrafting={state.room.status === "drafting"}
             draftSignalUpdated={draftSignalUpdated}
             syncing={syncing}
             onSelectPlayer={() => {
-              const top = state.recommendations[0];
+              const top = eligibleRecommendations[0];
               if (top) void openAvailablePlayerProfile(top);
             }}
           />
@@ -1261,7 +1274,7 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
           <SidePanel title="Recommended Targets">
             {state.h10InternalTrustedExperimentAllowed ? (
               <InternalTrustedRecommendationPanel
-                legacyRows={state.recommendations.slice(0, 10)}
+                legacyRows={eligibleRecommendations.slice(0, 10)}
                 rankingsUploaded={state.rankingsUploaded}
                 warningMessages={state.warningMessages}
                 usesLimitedDataPositions={state.hasIDP || state.hasKicker || state.hasTeamDefense}
@@ -1274,7 +1287,7 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
               <RecommendationSourcePanel
                 source={recommendationSource}
                 onSourceChange={setRecommendationSource}
-                legacyRows={state.recommendations.slice(0, 10)}
+                legacyRows={eligibleRecommendations.slice(0, 10)}
                 rankingsUploaded={state.rankingsUploaded}
                 warningMessages={state.warningMessages}
                 usesLimitedDataPositions={state.hasIDP || state.hasKicker || state.hasTeamDefense}
@@ -1282,7 +1295,7 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
                 blackbirdDiagnostics={state.h10RecommendationDiagnostics ?? null}
                 experimentDiagnostics={state.h10RecommendationExperimentDiagnostics ?? null}
               />
-            ) : !state.rankingsUploaded && !state.recommendations.length && (state.h10RecommendationPreview || state.h10RecommendationDiagnostics) ? (
+            ) : !state.rankingsUploaded && !eligibleRecommendations.length && (state.h10RecommendationPreview || state.h10RecommendationDiagnostics) ? (
               <H10RecommendationPreview
                 rows={state.h10RecommendationPreview ?? []}
                 diagnostics={state.h10RecommendationDiagnostics ?? null}
@@ -1291,14 +1304,14 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
               />
             ) : (
               <RecommendationList
-                players={state.recommendations.slice(0, 10)}
+                players={eligibleRecommendations.slice(0, 10)}
                 rankingsUploaded={state.rankingsUploaded}
                 warningMessages={state.warningMessages}
                 usesLimitedDataPositions={state.hasIDP || state.hasKicker || state.hasTeamDefense}
               />
             )}
             <NeedsList needs={state.topNeeds} compact />
-            <ScoringMetadata metadata={state.scoringMetadata} />
+            <ScoringMetadata metadata={state.scoringMetadata} filteredUnsupportedPositions={eligibleBlackbirdPlayerPool.filteredPositions} />
           </SidePanel>
 
           {/* 4. My Roster Construction — collapsible, open by default */}
@@ -4232,9 +4245,11 @@ function ScoreBreakdown({ player }: { player: AvailablePlayer }) {
 }
 
 function ScoringMetadata({
-  metadata
+  metadata,
+  filteredUnsupportedPositions,
 }: {
   metadata: DraftState["scoringMetadata"];
+  filteredUnsupportedPositions: string[];
 }) {
   return (
     <div className="mt-4 rounded-xl border border-line/80 bg-background/50 px-3 py-3">
@@ -4254,6 +4269,11 @@ function ScoringMetadata({
       <p className="mt-2 text-xs text-slate-500">
         Limits: {metadata.limitations.slice(0, 3).join(" ")}
       </p>
+      {filteredUnsupportedPositions.length ? (
+        <p className="mt-2 text-xs text-slate-500">
+          Filtered unsupported positions: {filteredUnsupportedPositions.join(", ")}
+        </p>
+      ) : null}
     </div>
   );
 }

@@ -2,6 +2,7 @@ import type { DraftTargetScorePlayer } from "@/lib/draft/scoring";
 import type { NormalizedRosterRequirements } from "@/lib/draft/roster-slots";
 import type { WarRoomValueOverlayRow } from "@/lib/draft/h10-war-room-overlay";
 import type { WarRoomMatchingCoverageSummary } from "@/lib/draft/war-room-matching-coverage";
+import { normalizeDraftEligiblePosition, buildEligibleDraftPositions } from "@/lib/draft/league-position-eligibility";
 import { buildNeedTimingDiagnostic, type FutureAvailability, type NeedTimingAction, type NeedUrgency, type OpportunityCost, type RosterNeedStatus, type TierDropRisk } from "@/lib/draft/need-timing-intelligence";
 
 export type WarRoomRecommendationTier =
@@ -114,6 +115,8 @@ export type WarRoomRecommendationResult = {
     idpTopRosterNeedRows: Array<Pick<WarRoomRecommendationRow, "displayName" | "position" | "recommendationScore" | "recommendationTier" | "scoreComponents" | "warningCodes">>;
     idpTopTierCliffRows: Array<Pick<WarRoomRecommendationRow, "displayName" | "position" | "recommendationScore" | "recommendationTier" | "scoreComponents" | "warningCodes">>;
     idpSuppressionReasons: Record<string, number>;
+    filteredUnsupportedPositions: string[];
+    filteredUnsupportedPositionCount: number;
     invariantFailures: string[];
     contextLimitations: string[];
   };
@@ -187,13 +190,19 @@ export const WAR_ROOM_RECOMMENDATION_CALIBRATION = {
 } as const;
 
 export function buildWarRoomRecommendations(input: BuildWarRoomRecommendationsInput): WarRoomRecommendationResult {
-  const contextLimitations = buildContextLimitations(input);
-  const scoreContext = buildScoreContext(input, contextLimitations);
-  const rows = input.remainingPlayers.map((player, index) =>
+  const eligibility = filterRecommendationInputsByEligibility(input);
+  const scopedInput = {
+    ...input,
+    remainingPlayers: eligibility.remainingPlayers,
+    h10ValueOverlay: eligibility.h10ValueOverlay,
+  };
+  const contextLimitations = buildContextLimitations(scopedInput, eligibility);
+  const scoreContext = buildScoreContext(scopedInput, contextLimitations);
+  const rows = eligibility.pairs.map(({ player, overlay }) =>
     buildRecommendationRow({
-      input,
+      input: scopedInput,
       player,
-      overlay: input.h10ValueOverlay[index] ?? null,
+      overlay,
       scoreContext,
     })
   );
@@ -219,9 +228,40 @@ export function buildWarRoomRecommendations(input: BuildWarRoomRecommendationsIn
       matchRateByPosition: input.matchCoverageSummary?.matchRateByPosition,
       highPriorityMissingProjectionExamples: input.matchCoverageSummary?.highPriorityMissingProjectionExamples,
       ...idpDiagnostics,
+      filteredUnsupportedPositions: eligibility.filteredUnsupportedPositions,
+      filteredUnsupportedPositionCount: eligibility.filteredUnsupportedPositionCount,
       invariantFailures: [...validateForbiddenFields(rankedRows), ...validateExplanations(rankedRows)],
       contextLimitations,
     },
+  };
+}
+
+function filterRecommendationInputsByEligibility(input: BuildWarRoomRecommendationsInput): {
+  remainingPlayers: DraftTargetScorePlayer[];
+  h10ValueOverlay: WarRoomValueOverlayRow[];
+  pairs: Array<{ player: DraftTargetScorePlayer; overlay: WarRoomValueOverlayRow | null }>;
+  filteredUnsupportedPositions: string[];
+  filteredUnsupportedPositionCount: number;
+} {
+  const eligible = buildEligibleDraftPositions({ rosterRequirements: input.rosterRequirements });
+  const filteredPositions = new Set<string>();
+  const pairs = input.remainingPlayers.map((player, index) => ({
+    player,
+    overlay: input.h10ValueOverlay[index],
+  }));
+  const filteredPairs = pairs.filter(({ player, overlay }) => {
+    const position = normalizeDraftEligiblePosition(player.position ?? overlay?.position ?? null);
+    if (position && eligible.has(position)) return true;
+    if (position) filteredPositions.add(position);
+    return false;
+  });
+
+  return {
+    remainingPlayers: filteredPairs.map((pair) => pair.player),
+    h10ValueOverlay: filteredPairs.map((pair) => pair.overlay).filter((row): row is WarRoomValueOverlayRow => Boolean(row)),
+    pairs: filteredPairs.map((pair) => ({ player: pair.player, overlay: pair.overlay ?? null })),
+    filteredUnsupportedPositions: [...filteredPositions].sort(),
+    filteredUnsupportedPositionCount: pairs.length - filteredPairs.length,
   };
 }
 
@@ -397,7 +437,10 @@ function buildScoreContext(input: BuildWarRoomRecommendationsInput, contextLimit
   };
 }
 
-function buildContextLimitations(input: BuildWarRoomRecommendationsInput): string[] {
+function buildContextLimitations(
+  input: BuildWarRoomRecommendationsInput,
+  eligibility?: { filteredUnsupportedPositionCount: number; filteredUnsupportedPositions: string[] },
+): string[] {
   const limitations: string[] = [];
   if (!input.positionCounts && !Array.isArray(input.positionNeeds) && !Array.isArray(input.topNeeds) && !input.myRoster?.length) {
     limitations.push("ROSTER_CONTEXT_MISSING");
@@ -408,6 +451,9 @@ function buildContextLimitations(input: BuildWarRoomRecommendationsInput): strin
   if (input.h10ValueOverlay.length === 0) limitations.push("H10_VALUE_OVERLAY_MISSING");
   if (input.h10ValueOverlay.length > 0 && input.h10ValueOverlay.length !== input.remainingPlayers.length) {
     limitations.push("OVERLAY_PLAYER_COUNT_MISMATCH");
+  }
+  if (eligibility && eligibility.filteredUnsupportedPositionCount > 0) {
+    limitations.push(`FILTERED_UNSUPPORTED_POSITIONS:${eligibility.filteredUnsupportedPositions.join(",")}`);
   }
   return limitations;
 }

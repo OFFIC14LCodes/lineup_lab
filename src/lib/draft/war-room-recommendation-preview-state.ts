@@ -88,6 +88,8 @@ export function buildH10RecommendationPreviewPayload(
         idpTopRosterNeedRows: [],
         idpTopTierCliffRows: [],
         idpSuppressionReasons: {},
+        filteredUnsupportedPositions: [],
+        filteredUnsupportedPositionCount: 0,
         invariantFailures: [error instanceof Error ? error.message : "Unable to build H10 recommendation preview."],
         contextLimitations: ["H10_RECOMMENDATION_PREVIEW_UNAVAILABLE"],
       },

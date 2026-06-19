@@ -184,6 +184,60 @@ describe("buildWarRoomRecommendations", () => {
     expect(result.rows.find((row) => row.position === "DEF")!.recommendationTier).not.toBe("priority_target");
   });
 
+  it("excludes K from recommendation rows when the league has no K slot", () => {
+    const result = build({
+      players: [
+        player({ player_name: "Top Kicker", matched_player_id: "k", position: "K", rank: 1 }),
+        player({ player_name: "Eligible RB", matched_player_id: "rb", position: "RB", rank: 2 }),
+      ],
+      overlays: [
+        overlay({ entityId: "k", displayName: "Top Kicker", position: "K", pointsAboveReplacement: 100, riskAdjustedValue: 100 }),
+        overlay({ entityId: "rb", displayName: "Eligible RB", position: "RB", pointsAboveReplacement: 20, riskAdjustedValue: 20 }),
+      ],
+      rosterSlots: ["QB", "RB", "WR", "TE", "FLEX", "BN"],
+    });
+
+    expect(result.rows.map((row) => row.position)).not.toContain("K");
+    expect(result.rows[0].displayName).toBe("Eligible RB");
+    expect(result.diagnostics.filteredUnsupportedPositions).toContain("K");
+    expect(result.diagnostics.filteredUnsupportedPositionCount).toBe(1);
+  });
+
+  it("excludes DST/DEF from recommendation rows when the league has no team-defense slot", () => {
+    const result = build({
+      players: [
+        player({ player_name: "Top DST", matched_player_id: "dst", position: "DST", rank: 1 }),
+        player({ player_name: "Eligible WR", matched_player_id: "wr", position: "WR", rank: 2 }),
+      ],
+      overlays: [
+        overlay({ entityId: "dst", entityType: "TEAM_DEFENSE", displayName: "Top DST", position: "DEF", pointsAboveReplacement: 100, riskAdjustedValue: 100 }),
+        overlay({ entityId: "wr", displayName: "Eligible WR", position: "WR", pointsAboveReplacement: 20, riskAdjustedValue: 20 }),
+      ],
+      rosterSlots: ["QB", "RB", "WR", "TE", "FLEX", "BN"],
+    });
+
+    expect(result.rows.map((row) => row.position)).not.toContain("DEF");
+    expect(result.rows[0].displayName).toBe("Eligible WR");
+    expect(result.diagnostics.filteredUnsupportedPositions).toContain("DEF");
+  });
+
+  it("excludes IDP recommendation rows when the league has no IDP slot", () => {
+    const result = build({
+      players: [
+        player({ player_name: "Top LB", matched_player_id: "lb", position: "LB", rank: 1 }),
+        player({ player_name: "Eligible TE", matched_player_id: "te", position: "TE", rank: 2 }),
+      ],
+      overlays: [
+        overlay({ entityId: "lb", displayName: "Top LB", position: "LB", pointsAboveReplacement: 100, riskAdjustedValue: 100 }),
+        overlay({ entityId: "te", displayName: "Eligible TE", position: "TE", pointsAboveReplacement: 20, riskAdjustedValue: 20 }),
+      ],
+      rosterSlots: ["QB", "RB", "WR", "TE", "FLEX", "BN"],
+    });
+
+    expect(result.rows.map((row) => row.position)).not.toContain("LB");
+    expect(result.rows[0].displayName).toBe("Eligible TE");
+  });
+
   it("no pick context avoids false urgency and emits a limitation", () => {
     const result = build({ picksUntilMyNextPick: null, currentPickNumber: null });
 

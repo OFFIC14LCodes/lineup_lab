@@ -97,6 +97,10 @@ describe("DraftWarRoom H11 strategy UI wiring", () => {
       "Unexpected value signal",
       "Data Gaps",
       "withFallbackDraftSuggestionRanks",
+      "filterDraftEligiblePlayers",
+      "eligibleBlackbirdPlayerPool",
+      "eligibleRecommendations",
+      "Filtered unsupported positions:",
       "Search, filters, load-more, and sort are local to this browser view.",
     ].forEach((text) => expect(source).toContain(text));
   });
@@ -282,6 +286,23 @@ describe("DraftWarRoom H11 strategy UI wiring", () => {
     expect(filteringSection).not.toContain("sort(");
     expect(filteringSection).not.toContain("buildLiveDraftSuggestions");
     expect(filteringSection).not.toContain("buildBlackbirdLeagueRank");
+  });
+
+  it("filters unsupported positions before building actionable board surfaces", () => {
+    const boardBuildSection = source.slice(source.indexOf("const eligibleBlackbirdPlayerPool"), source.indexOf("const livePlanStatus"));
+    const gmBriefSection = source.slice(source.indexOf("const gmBrief"), source.indexOf("if (error && !state)"));
+
+    expect(boardBuildSection).toContain("filterDraftEligiblePlayers(blackbirdPlayerPool, { rosterRequirements: state.rosterRequirements })");
+    expect(boardBuildSection).toContain("filterDraftEligiblePlayers(state.recommendations, { rosterRequirements: state.rosterRequirements }).players");
+    expect(boardBuildSection).toContain("players: eligibleBlackbirdPlayerPool.players");
+    const buildBlackbirdBoardCall = boardBuildSection.slice(boardBuildSection.indexOf("return buildBlackbirdBoard({"), boardBuildSection.indexOf("const livePlanStatus"));
+    expect(buildBlackbirdBoardCall).not.toContain("players: blackbirdPlayerPool");
+    expect(source).toContain("topPlayer={eligibleRecommendations[0] ?? null}");
+    expect(source).toContain("legacyRows={eligibleRecommendations.slice(0, 10)}");
+    expect(source).toContain("players={eligibleRecommendations.slice(0, 10)}");
+    expect(gmBriefSection).toContain("draftSuggestions: draftSuggestionRows.map(toWarRoomAiBoardPlayer)");
+    expect(gmBriefSection).toContain("fullBlackbirdRank: fullRankRows.map(toWarRoomAiBoardPlayer)");
+    expect(gmBriefSection).toContain("availableBlackbirdRank: availableRankRows.map(toWarRoomAiBoardPlayer)");
   });
 
   it("renders H13.5 roster construction and plan alignment without changing ordering", () => {

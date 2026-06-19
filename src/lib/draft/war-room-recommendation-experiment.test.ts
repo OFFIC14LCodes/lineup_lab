@@ -96,6 +96,8 @@ function result(overrides: {
       remainingPlayersLoaded: rows.length,
       overlayRowsLoaded: rows.length,
       recommendationsGenerated: overrides.recommendationsGenerated ?? rows.length,
+      filteredUnsupportedPositions: [],
+      filteredUnsupportedPositionCount: 0,
       rowsByTier: overrides.rowsByTier ?? { watchlist: rows.length },
       rowsByStatus: { recommendable: rows.length },
       rowsByPosition: { RB: rows.length },
