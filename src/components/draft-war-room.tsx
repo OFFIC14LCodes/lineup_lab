@@ -1996,7 +1996,7 @@ function AvailablePlayersTable({
 }) {
   return (
     <div className="overflow-x-auto">
-      <table className="w-full min-w-[960px] text-left text-sm">
+      <table className="w-full min-w-[820px] text-left text-sm">
         <thead className="bg-panel2 text-xs uppercase text-slate-400">
           <tr>
             <th className="px-3 py-3">Suggestion</th>
@@ -2005,8 +2005,6 @@ function AvailablePlayersTable({
             <th className="px-3 py-3">Team</th>
             <th className="px-3 py-3">Projection</th>
             <th className="px-3 py-3">Static Value</th>
-            <th className="px-3 py-3">Trust</th>
-            <th className="px-3 py-3">Risk</th>
           </tr>
         </thead>
         <tbody>
@@ -2070,20 +2068,15 @@ function AvailablePlayersTable({
                       </div>
                       <div className="mt-1 flex flex-wrap items-center gap-2 text-[11px] text-slate-500">
                         <span>{projectionUnitLabel(row)}</span>
-                        <ProjectionTrustBadge row={row} />
                       </div>
                     </div>
                   ) : "Projection unavailable"}
                 </td>
                 <td className="px-3 py-3 font-mono font-black text-electric">{row.blackbirdValueScore === null ? "-" : `${formatNumber(row.blackbirdValueScore)}/100`}</td>
-                <td className="px-3 py-3"><ProjectionTrustBadge row={row} /></td>
-                <td className="px-3 py-3">
-                  <RiskScoreBlock row={row} />
-                </td>
               </tr>
             );
           })}
-          {rows.length === 0 ? <EmptyTable colSpan={8} text={emptyText} /> : null}
+          {rows.length === 0 ? <EmptyTable colSpan={6} text={emptyText} /> : null}
         </tbody>
       </table>
     </div>
@@ -2299,47 +2292,6 @@ function ProjectionMini({ label, value }: { label: string; value: number | null 
     <div className="rounded-md border border-line bg-background/60 px-2 py-1.5">
       <div className="text-[10px] uppercase tracking-wide text-slate-500">{label}</div>
       <div className="mt-0.5 font-mono font-black text-slate-100">{formatNullableNumber(value)}</div>
-    </div>
-  );
-}
-
-function ProjectionTrustBadge({ row }: { row: BlackbirdBoardRow }) {
-  const trust = row.projectionTrust;
-  const className =
-    trust.trustLabel === "high"
-      ? "border-emerald-400/25 bg-emerald-500/10 text-emerald-200"
-      : trust.trustLabel === "medium"
-        ? "border-electric/25 bg-electric/10 text-electric"
-        : trust.trustLabel === "low"
-          ? "border-gold/30 bg-gold/10 text-gold"
-          : "border-red-400/25 bg-red-500/10 text-red-200";
-  return (
-    <span className={`rounded-full border px-2 py-0.5 text-[10px] uppercase tracking-wide ${className}`}>
-      {trust.trustLabel.replace("_", " ")} trust
-    </span>
-  );
-}
-
-function RiskScoreBlock({ row }: { row: BlackbirdBoardRow }) {
-  const teamRisk = teamRiskScore(row);
-  const playerRisk = playerPerformanceRiskScore(row);
-  return (
-    <div className="min-w-[150px] space-y-2">
-      <RiskMeter label="Team" value={teamRisk} />
-      <RiskMeter label="Player" value={playerRisk} />
-      <div className="text-[11px] text-slate-500">{row.confidence} confidence</div>
-    </div>
-  );
-}
-
-function RiskMeter({ label, value }: { label: string; value: number }) {
-  const className = value >= 7 ? "text-red-200 border-red-400/30 bg-red-500/10" : value >= 4 ? "text-gold border-gold/30 bg-gold/10" : "text-emerald-200 border-emerald-400/30 bg-emerald-500/10";
-  return (
-    <div className={`rounded-md border px-2 py-1.5 ${className}`}>
-      <div className="flex items-center justify-between gap-2">
-        <span className="text-[10px] uppercase tracking-wide opacity-80">{label}</span>
-        <span className="font-mono font-black">{value}/10</span>
-      </div>
     </div>
   );
 }
@@ -4598,39 +4550,6 @@ function blackbirdRankSummary(row: BlackbirdBoardRow): string {
   const primaryCaution = cautions[0] ?? row.contextualDataGaps[0] ?? null;
   const caution = primaryCaution ? ` Caveat: ${primaryCaution}.` : "";
   return `Ranked #${row.blackbirdBoardRank} for this league because ${reason.replace(/\.$/, "")}. ${projection}; ${value}.${caution}`.replace(/\s+/g, " ").trim();
-}
-
-function teamRiskScore(row: BlackbirdBoardRow): number {
-  let score = 3;
-  if (row.planFit === "strong_fit") score -= 1;
-  if (row.planFit === "contingency_fit" || row.planFit === "value_detour") score += 1;
-  if (row.planFit === "avoid_forcing") score += 4;
-  if (row.planFit === "insufficient_data") score += 2;
-  if (row.waitPlanTargetCount && row.waitPlanTargetCount > 0) score -= 1;
-  if (row.contextualDataGaps.length >= 4) score += 1;
-  if (row.pointsAboveReplacement !== null && row.pointsAboveReplacement < 0) score += 1;
-  return clampRisk(score);
-}
-
-function playerPerformanceRiskScore(row: BlackbirdBoardRow): number {
-  let score = row.risk === "high" ? 8 : row.risk === "medium" ? 5 : 3;
-  if (row.confidence === "very_low") score += 3;
-  else if (row.confidence === "low") score += 2;
-  else if (row.confidence === "high") score -= 1;
-  if (row.projectionLow !== null && row.projectionHigh !== null && row.projectionPoints !== null) {
-    const range = Math.abs(row.projectionHigh - row.projectionLow);
-    const rangeRate = range / Math.max(Math.abs(row.projectionPoints), 1);
-    if (rangeRate > 0.55) score += 2;
-    else if (rangeRate > 0.35) score += 1;
-  }
-  if (row.dataStatus.projection === "unavailable") score += 2;
-  if (row.role && ["backup", "deep_reserve", "rookie_unknown", "unknown"].includes(row.role)) score += 1;
-  if (row.roleConfidence === "very_low" || row.roleConfidence === "low") score += 1;
-  return clampRisk(score);
-}
-
-function clampRisk(value: number): number {
-  return Math.max(1, Math.min(10, Math.round(value)));
 }
 
 function formatTimingAction(value: string | null | undefined) {
