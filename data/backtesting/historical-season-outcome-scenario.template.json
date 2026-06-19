@@ -1,0 +1,38 @@
+{
+  "historicalSeason": 2026,
+  "draftEngineArtifactPath": "artifacts/projections/backtesting/historical-mock-draft-engine-2026.json",
+  "weeklyResultsInputPath": null,
+  "leagueType": "dynasty_best_ball",
+  "rosterSettings": {
+    "QB": 1,
+    "RB": 2,
+    "WR": 2,
+    "TE": 1,
+    "FLEX": 1,
+    "BENCH": 5
+  },
+  "scoringSettings": {},
+  "lineupSettings": {
+    "QB": 1,
+    "RB": 2,
+    "WR": 2,
+    "TE": 1,
+    "FLEX": 1,
+    "SUPERFLEX": 0,
+    "K": 0,
+    "DST": 0,
+    "DL": 0,
+    "LB": 0,
+    "DB": 0,
+    "IDP": 0
+  },
+  "strategiesToScore": [
+    "blackbird_rank_only",
+    "projection_only",
+    "adp_only",
+    "market_rank",
+    "need_based",
+    "random_within_adp_band"
+  ],
+  "weeksToScore": [1, 2, 3]
+}

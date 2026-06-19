@@ -1,0 +1,5 @@
+player_id,sleeper_id,gsis_id,player_name,position,team,status,roster_status,depth_chart_position,depth_chart_order,source,source_updated_at,notes
+5859,5859,00-0035676,A.J. Brown,WR,NE,active,active,WR,1,template,2026-06-18,Example active roster row
+,,00-0033873,Patrick Mahomes,QB,KC,active,active,QB,1,template,2026-06-18,Example GSIS match row
+,,,Template Free Agent,RB,FA,free_agent,free_agent,RB,,template,2026-06-18,Example free-agent row without ids
+1674,1674,00-0030228,A.J. Bouye,DB,CAR,retired,retired,DB,,template,2026-06-18,Example non-active legacy row

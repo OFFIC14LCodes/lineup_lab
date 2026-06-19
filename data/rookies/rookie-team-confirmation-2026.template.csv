@@ -1,0 +1,3 @@
+player_id,sleeper_id,gsis_id,player_name,position,college,nfl_team,draft_club,draft_round,draft_pick,source,source_updated_at,notes
+sample-rookie-1,,,Sample Rookie,WR,Sample State,CHI,CHI,1,10,manual_template,2026-06-18,Example row only; replace with real source data locally.
+,sample-sleeper-2,,Sample Edge,LB,Sample Tech,DEN,DEN,2,44,manual_template,2026-06-18,Example row only; ids are preferred when available.

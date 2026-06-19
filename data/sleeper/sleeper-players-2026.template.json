@@ -1,0 +1,17 @@
+[
+  {
+    "player_id": "123456",
+    "full_name": "Example Player",
+    "first_name": "Example",
+    "last_name": "Player",
+    "position": "QB",
+    "team": "KC",
+    "status": "Active",
+    "active": true,
+    "injury_status": null,
+    "fantasy_positions": ["QB"],
+    "search_rank": 100,
+    "years_exp": 2,
+    "age": 24
+  }
+]

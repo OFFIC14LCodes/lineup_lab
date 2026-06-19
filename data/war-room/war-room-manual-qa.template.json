@@ -1,0 +1,29 @@
+{
+  "environment": {
+    "status": "not_tested",
+    "critical": true,
+    "notes": "Browser, account, league, draft room, and console state."
+  },
+  "draft_connection": { "status": "not_tested", "critical": true, "notes": "" },
+  "draft_state_loading": { "status": "not_tested", "critical": true, "notes": "" },
+  "board_modes": { "status": "not_tested", "critical": true, "notes": "" },
+  "draft_suggestions": { "status": "not_tested", "critical": true, "notes": "" },
+  "full_blackbird_rank": { "status": "not_tested", "critical": true, "notes": "" },
+  "available_blackbird_rank": { "status": "not_tested", "critical": true, "notes": "" },
+  "available_filtering": { "status": "not_tested", "critical": true, "notes": "" },
+  "pick_updates": { "status": "not_tested", "critical": true, "notes": "" },
+  "roster_construction": { "status": "not_tested", "critical": false, "notes": "" },
+  "plan_alignment": { "status": "not_tested", "critical": false, "notes": "" },
+  "gm_brief": { "status": "not_tested", "critical": false, "notes": "" },
+  "player_modal": { "status": "not_tested", "critical": false, "notes": "" },
+  "search_filter_load_more": { "status": "not_tested", "critical": false, "notes": "" },
+  "sync_status": { "status": "not_tested", "critical": true, "notes": "" },
+  "error_stale_states": { "status": "not_tested", "critical": false, "notes": "" },
+  "responsive_desktop": { "status": "not_tested", "critical": false, "notes": "" },
+  "responsive_tablet": { "status": "not_tested", "critical": false, "notes": "" },
+  "responsive_mobile": { "status": "not_tested", "critical": false, "notes": "" },
+  "data_policy_holdbacks": { "status": "not_tested", "critical": true, "notes": "" },
+  "v8_2_safety": { "status": "not_tested", "critical": true, "notes": "" },
+  "console_errors": { "status": "not_tested", "critical": true, "notes": "" },
+  "overall_notes": ""
+}

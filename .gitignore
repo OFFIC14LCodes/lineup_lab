@@ -8,6 +8,8 @@ dev-h*.log
 dev-profile-smoke.*.log
 *.tsbuildinfo
 data/raw/
+data/backtesting/historical-mock-draft-scenario.local.json
+data/backtesting/historical-season-outcome-scenario.local.json
 artifacts/projections/h9-comprehensive-scored-projections.json
 artifacts/projections/h9-comprehensive-stat-projections.json
 # Blackbird generated profile artifacts
@@ -37,6 +39,32 @@ data/nflverse/snap_counts_2018_2025.csv
 data/nflverse/participation_2018_2025.csv
 data/nflverse/pbp_2023_2025.csv
 data/nflverse/pbp_2018_2025.csv
+data/current-rosters/current-rosters-2026.csv
+data/current-rosters/current-rosters-2026.raw.csv
+data/rookies/rookie-team-confirmation-2026.csv
+data/player-crosswalk/sleeper-nflverse-crosswalk-2026.csv
+data/sleeper/sleeper-players-2026.json
+data/sleeper/sleeper-players-2026.csv
+artifacts/projections/sleeper/*.json
+artifacts/projections/sleeper/*.csv
+data/depth-charts/depth-chart-2026.csv
+data/depth-charts/external/
+data/war-room/war-room-e2e-scenario.local.json
+data/war-room/war-room-manual-qa.local.json
+data/war-room/mock-draft-roster-review.local.json
+data/war-room/mock-draft-result-capture.local.json
+artifacts/war-room/*.json
+artifacts/war-room/*.csv
+artifacts/war-room/mock-draft-result-capture-*.json
+artifacts/war-room/mock-draft-result-capture-*.csv
+artifacts/war-room/war-room-manual-qa-report-*.json
+artifacts/war-room/war-room-manual-qa-report-*.csv
+artifacts/war-room/mock-draft-roster-review-*.json
+artifacts/war-room/mock-draft-roster-review-*.csv
+artifacts/projections/depth-charts/*.json
+artifacts/projections/depth-charts/*.csv
+artifacts/projections/rookies/*.json
+artifacts/projections/rookies/*.csv
 
 # Generated Blackbird projection artifacts
 artifacts/projections/**/*.json

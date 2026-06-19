@@ -28,6 +28,8 @@ import { buildPreDraftStrategyUiViewModel } from "@/lib/draft/pre-draft-strategy
 import type { WarRoomRecommendationResult, WarRoomRecommendationRow, WarRoomRecommendationTier } from "@/lib/draft/war-room-recommendations";
 import { buildWarRoomAiContext, buildWarRoomGmBrief, type WarRoomAiBoardPlayer, type WarRoomGmBrief } from "@/lib/ai";
 import { buildWarRoomPlayerReasonStack, type WarRoomPlayerReasonStack } from "@/lib/draft/war-room-player-reasons";
+import { buildWarRoomPlanAlignmentLabels } from "@/lib/draft/war-room-plan-alignment";
+import { buildProjectionModelSelectionStatus } from "@/lib/projections/model-selection-status";
 
 type RecommendationTier = "elite_target" | "strong_target" | "good_value" | "depth_option" | "avoid_for_now";
 type InputCompleteness = "full" | "partial" | "rankings_only" | "fallback_only";
@@ -414,16 +416,6 @@ const BOARD_VIEW_MODE_COPY: Record<BoardViewMode, { label: string; description: 
     empty: "No Available Blackbird Rank rows match these filters. Clear filters to review remaining ranked players.",
   },
 };
-const SCORING_FOUNDATION_STATUS = {
-  liveScoringPath: "current path / v7-family",
-  v82Status: "scaffolded, disabled",
-  featureFlag: "BLACKBIRD_ENABLE_V8_2_EXPECTED_GAMES",
-  flagDefault: "disabled",
-  warRoomUsingV82: "no",
-  blackbirdRankUsingV82: "no",
-  draftSuggestionsUsingV82: "no",
-  supabaseProductionWritesUsingV82: "no",
-} as const;
 const SHOW_SCORING_FOUNDATION_STATUS = process.env.NODE_ENV !== "production";
 const POSITION_SORT_ORDER: Record<string, number> = {
   QB: 1,
@@ -1095,7 +1087,7 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
 
       {strategyProminent ? <PreDraftStrategyPanel loadState={strategyState} prominent /> : null}
 
-      <div className="grid min-w-0 gap-5 xl:grid-cols-[minmax(0,1fr)_380px]">
+      <div className="grid min-w-0 gap-5 min-[2100px]:grid-cols-[minmax(0,1fr)_380px]">
         <section className="min-w-0 space-y-5">
           <section className="rf-panel overflow-hidden">
             <div className="border-b border-line p-4">
@@ -1148,7 +1140,7 @@ export function DraftWarRoom({ draftRoomId, disableAutoSync = false }: { draftRo
                     Draft Suggestions are dynamic and available-only. Full Blackbird Rank is the static league board. Available Blackbird Rank filters that static board to remaining players.
                   </p>
                 </div>
-                <div className="grid min-w-0 gap-2 sm:grid-cols-2 xl:grid-cols-[minmax(180px,1fr)_190px_120px_160px]">
+                <div className="grid min-w-0 gap-2 sm:grid-cols-2 xl:grid-cols-[minmax(220px,1fr)_220px_140px_180px]">
                   <label className="relative block">
                     <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
                     <input
@@ -1791,7 +1783,7 @@ function DraftSignalPanel({
             {topPlayer.reasons[0] ? (
               <p className="mt-2 text-xs leading-relaxed text-slate-400">{topPlayer.reasons[0]}</p>
             ) : null}
-            <PlanAlignmentChips labels={buildPlanAlignmentLabels(topPlayer)} compact />
+            <PlanAlignmentChips labels={buildWarRoomPlanAlignmentLabels(topPlayer)} compact />
           </button>
         ) : (
           <div className="rounded-md border border-line bg-panel2 px-3 py-2 text-xs text-slate-500">
@@ -3178,15 +3170,23 @@ function SidePanel({ title, children }: { title: string; children: React.ReactNo
 }
 
 function ScoringFoundationStatusPanel() {
+  const modelStatus = buildProjectionModelSelectionStatus();
   const rows = [
-    ["Current live scoring path", SCORING_FOUNDATION_STATUS.liveScoringPath],
-    ["v8.2 status", SCORING_FOUNDATION_STATUS.v82Status],
-    ["Feature flag", SCORING_FOUNDATION_STATUS.featureFlag],
-    ["Flag default", SCORING_FOUNDATION_STATUS.flagDefault],
-    ["War Room using v8.2", SCORING_FOUNDATION_STATUS.warRoomUsingV82],
-    ["Blackbird Rank using v8.2", SCORING_FOUNDATION_STATUS.blackbirdRankUsingV82],
-    ["Draft Suggestions using v8.2", SCORING_FOUNDATION_STATUS.draftSuggestionsUsingV82],
-    ["Supabase production writes using v8.2", SCORING_FOUNDATION_STATUS.supabaseProductionWritesUsingV82],
+    ["Current live scoring path", "current path / v7-family"],
+    ["v8.2 status", "ready_for_controlled_flag_review"],
+    ["Feature flag name", modelStatus.featureFlagName],
+    ["Flag state", modelStatus.flagEnabled ? "enabled" : "disabled"],
+    ["Flag default", "disabled"],
+    ["Current model selected in War Room", modelStatus.currentModelSelectedInWarRoom],
+    ["v8.2 production usage", modelStatus.liveUsage ? "yes" : "no"],
+    ["Safe subset readiness", modelStatus.safeSubsetReadiness],
+    ["Protected rows enforced", modelStatus.protectedRowsEnforced ? "yes" : "no"],
+    ["Missing artifact behavior", modelStatus.missingArtifactsFailClosed ? "fail closed" : "not fail closed"],
+    ["Projection universe", "5635 rows, 1245 blocked legacy/stale, 127 K excluded, hygiene review required"],
+    ["War Room using v8.2", modelStatus.warRoomUsesV82 ? "yes" : "no"],
+    ["Blackbird Rank using v8.2", modelStatus.blackbirdRankUsesV82 ? "yes" : "no"],
+    ["Draft Suggestions using v8.2", modelStatus.draftSuggestionsUseV82 ? "yes" : "no"],
+    ["Supabase production writes using v8.2", modelStatus.supabaseWrites ? "yes" : "no"],
   ];
   return (
     <section className="rf-panel p-4">
@@ -3676,7 +3676,7 @@ function RecommendationList({
             </div>
           </div>
           <ReasonList reasons={player.reasons} />
-          <PlanAlignmentChips labels={buildPlanAlignmentLabels(player)} />
+          <PlanAlignmentChips labels={buildWarRoomPlanAlignmentLabels(player)} />
           {player.warnings.length ? (
             <div className="mt-3 flex flex-wrap gap-2">
               {player.warnings.map((warning) => (
@@ -3710,20 +3710,6 @@ function PlanAlignmentChips({ labels, compact = false }: { labels: string[]; com
       ))}
     </div>
   );
-}
-
-function buildPlanAlignmentLabels(player: AvailablePlayer): string[] {
-  const labels: string[] = [];
-  const components = player.scoreComponents;
-  if (player.reasons.length || player.recommendationTier === "elite_target" || player.recommendationTier === "strong_target") labels.push("Plan Fit");
-  if ((components?.rosterNeedScore ?? 0) >= 10) labels.push("Need Fit");
-  if ((components?.valueScore ?? 0) >= 10 || (player.dynasty_value ?? player.best_ball_value ?? player.superflex_value ?? 0) > 0) labels.push("Value Fit");
-  if ((components?.scarcityScore ?? 0) >= 8) labels.push("Scarcity Fit");
-  if ((components?.formatFitScore ?? 0) >= 8) labels.push("Format Fit");
-  if (player.recommendationTier === "depth_option") labels.push("Depth Pick");
-  if (player.recommendationTier === "avoid_for_now") labels.push("Luxury Pick");
-  if (player.warnings.length || player.match_status !== "matched" || (player.match_confidence !== null && player.match_confidence < 0.75)) labels.push("Risk Check");
-  return Array.from(new Set(labels)).slice(0, 6);
 }
 
 function RecommendationSourcePanel({

@@ -1,0 +1,10 @@
+{
+  "player_id": "gsis_id",
+  "gsis_id": "gsis_id",
+  "sleeper_id": "sleeper_id",
+  "player_name": "player_name",
+  "position": "position",
+  "team": "team",
+  "status": "status",
+  "roster_status": "status"
+}

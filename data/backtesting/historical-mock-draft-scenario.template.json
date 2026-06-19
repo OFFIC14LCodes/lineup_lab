@@ -1,0 +1,60 @@
+{
+  "historicalSeason": 2026,
+  "leagueType": "dynasty_best_ball",
+  "teams": 4,
+  "rounds": 4,
+  "draftOrderType": "third_round_reversal",
+  "draftSlots": [1, 2, 3, 4],
+  "myDraftSlot": 2,
+  "rosterSettings": {
+    "QB": 1,
+    "RB": 2,
+    "WR": 2,
+    "TE": 1,
+    "FLEX": 1,
+    "BENCH": 5
+  },
+  "scoringSettings": {},
+  "strategySet": [
+    "blackbird_rank_only",
+    "projection_only",
+    "adp_only",
+    "market_rank",
+    "need_based",
+    "random_within_adp_band"
+  ],
+  "randomSeed": 2026,
+  "playerUniverseInput": {
+    "players": [
+      { "playerId": "p1", "sleeperId": "s1", "playerName": "Historical QB 1", "position": "QB", "nflTeam": "KC", "blackbirdRank": 8, "projectionRank": 3, "adpRank": 10, "marketRank": 9, "projectedPoints": 305 },
+      { "playerId": "p2", "sleeperId": "s2", "playerName": "Historical WR 1", "position": "WR", "nflTeam": "DAL", "blackbirdRank": 1, "projectionRank": 2, "adpRank": 2, "marketRank": 2, "projectedPoints": 260 },
+      { "playerId": "p3", "sleeperId": "s3", "playerName": "Historical RB 1", "position": "RB", "nflTeam": "BUF", "blackbirdRank": 2, "projectionRank": 1, "adpRank": 1, "marketRank": 1, "projectedPoints": 270 },
+      { "playerId": "p4", "sleeperId": "s4", "playerName": "Historical WR 2", "position": "WR", "nflTeam": "PHI", "blackbirdRank": 3, "projectionRank": 4, "adpRank": 4, "marketRank": 3, "projectedPoints": 245 },
+      { "playerId": "p5", "sleeperId": "s5", "playerName": "Historical RB 2", "position": "RB", "nflTeam": "SF", "blackbirdRank": 4, "projectionRank": 5, "adpRank": 3, "marketRank": 4, "projectedPoints": 235 },
+      { "playerId": "p6", "sleeperId": "s6", "playerName": "Historical TE 1", "position": "TE", "nflTeam": "DET", "blackbirdRank": 5, "projectionRank": 7, "adpRank": 8, "marketRank": 7, "projectedPoints": 190 },
+      { "playerId": "p7", "sleeperId": "s7", "playerName": "Historical WR 3", "position": "WR", "nflTeam": "MIA", "blackbirdRank": 6, "projectionRank": 6, "adpRank": 5, "marketRank": 5, "projectedPoints": 225 },
+      { "playerId": "p8", "sleeperId": "s8", "playerName": "Historical RB 3", "position": "RB", "nflTeam": "BAL", "blackbirdRank": 7, "projectionRank": 8, "adpRank": 6, "marketRank": 6, "projectedPoints": 215 },
+      { "playerId": "p9", "sleeperId": "s9", "playerName": "Historical QB 2", "position": "QB", "nflTeam": "LAC", "blackbirdRank": 9, "projectionRank": 9, "adpRank": 9, "marketRank": 10, "projectedPoints": 295 },
+      { "playerId": "p10", "sleeperId": "s10", "playerName": "Historical TE 2", "position": "TE", "nflTeam": "GB", "blackbirdRank": 10, "projectionRank": 12, "adpRank": 12, "marketRank": 11, "projectedPoints": 170 },
+      { "playerId": "p11", "sleeperId": "s11", "playerName": "Historical WR 4", "position": "WR", "nflTeam": "CIN", "blackbirdRank": 11, "projectionRank": 10, "adpRank": 7, "marketRank": 8, "projectedPoints": 210 },
+      { "playerId": "p12", "sleeperId": "s12", "playerName": "Historical RB 4", "position": "RB", "nflTeam": "NYJ", "blackbirdRank": 12, "projectionRank": 11, "adpRank": 11, "marketRank": 12, "projectedPoints": 205 },
+      { "playerId": "p13", "sleeperId": "s13", "playerName": "Historical QB 3", "position": "QB", "nflTeam": "HOU", "blackbirdRank": 13, "projectionRank": 13, "adpRank": 13, "marketRank": 13, "projectedPoints": 280 },
+      { "playerId": "p14", "sleeperId": "s14", "playerName": "Historical TE 3", "position": "TE", "nflTeam": "MIN", "blackbirdRank": 14, "projectionRank": 14, "adpRank": 14, "marketRank": 14, "projectedPoints": 155 },
+      { "playerId": "p15", "sleeperId": "s15", "playerName": "Historical WR 5", "position": "WR", "nflTeam": "SEA", "blackbirdRank": 15, "projectionRank": 15, "adpRank": 15, "marketRank": 15, "projectedPoints": 200 },
+      { "playerId": "p16", "sleeperId": "s16", "playerName": "Historical RB 5", "position": "RB", "nflTeam": "ATL", "blackbirdRank": 16, "projectionRank": 16, "adpRank": 16, "marketRank": 16, "projectedPoints": 195 }
+    ]
+  },
+  "projectionSnapshotInput": {
+    "snapshotSeason": 2026,
+    "asOf": "2026-08-01",
+    "source": "template preseason-only snapshot"
+  },
+  "adpInput": {
+    "asOf": "2026-08-01",
+    "source": "template preseason ADP"
+  },
+  "marketRankInput": {
+    "asOf": "2026-08-01",
+    "source": "template preseason market rank"
+  }
+}

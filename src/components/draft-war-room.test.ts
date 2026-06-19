@@ -7,6 +7,8 @@ import { buildPreDraftStrategyUiViewModel, findBannedStrategyUiLanguage } from "
 
 describe("DraftWarRoom H11 strategy UI wiring", () => {
   const source = readFileSync(path.join(process.cwd(), "src", "components", "draft-war-room.tsx"), "utf8");
+  const planAlignmentSource = readFileSync(path.join(process.cwd(), "src", "lib", "draft", "war-room-plan-alignment.ts"), "utf8");
+  const modelSelectionStatusSource = readFileSync(path.join(process.cwd(), "src", "lib", "projections", "model-selection-status.ts"), "utf8");
 
   it("fetches the authenticated pre-draft strategy endpoint", () => {
     expect(source).toContain("/pre-draft-strategy");
@@ -110,18 +112,30 @@ describe("DraftWarRoom H11 strategy UI wiring", () => {
   });
 
   it("renders dev-only scoring foundation status with v8.2 disabled", () => {
+    const statusCombinedSource = `${source}\n${modelSelectionStatusSource}`;
     [
       "Scoring Foundation Status",
       "current path / v7-family",
-      "scaffolded, disabled",
+      "ready_for_controlled_flag_review",
+      "buildProjectionModelSelectionStatus",
       "BLACKBIRD_ENABLE_V8_2_EXPECTED_GAMES",
+      "Feature flag name",
+      "Flag state",
       "Flag default",
+      "Current model selected in War Room",
+      "v8.2 production usage",
+      "Safe subset readiness",
+      "Protected rows enforced",
+      "Missing artifact behavior",
+      "fail closed",
+      "Projection universe",
+      "5635 rows, 1245 blocked legacy/stale, 127 K excluded, hygiene review required",
       "War Room using v8.2",
       "Blackbird Rank using v8.2",
       "Draft Suggestions using v8.2",
       "Supabase production writes using v8.2",
       "SHOW_SCORING_FOUNDATION_STATUS",
-    ].forEach((text) => expect(source).toContain(text));
+    ].forEach((text) => expect(statusCombinedSource).toContain(text));
   });
 
   it("renders deterministic GM Brief preview without AI provider calls", () => {
@@ -271,6 +285,7 @@ describe("DraftWarRoom H11 strategy UI wiring", () => {
   });
 
   it("renders H13.5 roster construction and plan alignment without changing ordering", () => {
+    const planAlignmentCombinedSource = `${source}\n${planAlignmentSource}`;
     [
       "Current roster by position",
       "Next Pick Lens",
@@ -278,7 +293,7 @@ describe("DraftWarRoom H11 strategy UI wiring", () => {
       "No major roster gaps detected yet.",
       "Plan alignment will appear once Draft Suggestions are loaded.",
       "PlanAlignmentChips",
-      "buildPlanAlignmentLabels",
+      "buildWarRoomPlanAlignmentLabels",
       "Plan Fit",
       "Need Fit",
       "Value Fit",
@@ -292,7 +307,7 @@ describe("DraftWarRoom H11 strategy UI wiring", () => {
       "Needs",
       "Avoid forcing",
       "Use value and tier signals; roster construction is not forcing a position.",
-    ].forEach((text) => expect(source).toContain(text));
+    ].forEach((text) => expect(planAlignmentCombinedSource).toContain(text));
 
     const sidebarMarkup = source.slice(source.indexOf("<aside className=\"min-w-0 space-y-5\">"), source.indexOf("</aside>"));
     const sidebarOrder = [
@@ -310,6 +325,7 @@ describe("DraftWarRoom H11 strategy UI wiring", () => {
 
     const orderingSection = source.slice(source.indexOf("const boardRowsForMode"), source.indexOf("const visibleBlackbirdRows"));
     expect(orderingSection).not.toContain("buildPlanAlignmentLabels");
+    expect(orderingSection).not.toContain("buildWarRoomPlanAlignmentLabels");
     expect(orderingSection).not.toContain("buildRosterPlanSummaries");
   });
 

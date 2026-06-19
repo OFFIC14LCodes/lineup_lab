@@ -1,0 +1,236 @@
+{
+  "season": 2026,
+  "leagueSettings": {
+    "leagueType": "dynasty",
+    "teams": 4
+  },
+  "scoringSettings": {},
+  "rosterSettings": {
+    "QB": 1,
+    "RB": 2,
+    "WR": 2,
+    "TE": 1,
+    "FLEX": 1,
+    "BENCH": 5
+  },
+  "teams": [
+    { "teamId": "team-1", "draftSlot": 1, "name": "Team 1" },
+    { "teamId": "team-2", "draftSlot": 2, "name": "My Team" },
+    { "teamId": "team-3", "draftSlot": 3, "name": "Team 3" },
+    { "teamId": "team-4", "draftSlot": 4, "name": "Team 4" }
+  ],
+  "myTeamId": "team-2",
+  "myDraftSlot": 2,
+  "draftRounds": 4,
+  "picks": [
+    {
+      "pickNumber": 1,
+      "round": 1,
+      "draftSlot": 1,
+      "teamId": "team-1",
+      "playerId": "p1",
+      "sleeperId": "s1",
+      "playerName": "Sample QB One",
+      "position": "QB",
+      "nflTeam": "KC",
+      "actualPickMade": true
+    },
+    {
+      "pickNumber": 2,
+      "round": 1,
+      "draftSlot": 2,
+      "teamId": "team-2",
+      "playerId": "p2",
+      "sleeperId": "s2",
+      "playerName": "Sample WR One",
+      "position": "WR",
+      "nflTeam": "DAL",
+      "projectedPoints": 240,
+      "actualPickMade": true,
+      "blackbirdRecommendation": {
+        "topPlayerId": "p2",
+        "topPlayerName": "Sample WR One",
+        "top3PlayerIds": ["p2", "p9", "p10"],
+        "top5PlayerIds": ["p2", "p9", "p10", "p11", "p12"],
+        "reason": "Best value on the board."
+      }
+    },
+    {
+      "pickNumber": 3,
+      "round": 1,
+      "draftSlot": 3,
+      "teamId": "team-3",
+      "playerId": "p3",
+      "sleeperId": "s3",
+      "playerName": "Sample RB One",
+      "position": "RB",
+      "nflTeam": "BUF",
+      "actualPickMade": true
+    },
+    {
+      "pickNumber": 4,
+      "round": 1,
+      "draftSlot": 4,
+      "teamId": "team-4",
+      "playerId": "p4",
+      "sleeperId": "s4",
+      "playerName": "Sample WR Two",
+      "position": "WR",
+      "nflTeam": "PHI",
+      "actualPickMade": true
+    },
+    {
+      "pickNumber": 5,
+      "round": 2,
+      "draftSlot": 4,
+      "teamId": "team-4",
+      "playerId": "p5",
+      "sleeperId": "s5",
+      "playerName": "Sample RB Two",
+      "position": "RB",
+      "nflTeam": "SF",
+      "actualPickMade": true
+    },
+    {
+      "pickNumber": 6,
+      "round": 2,
+      "draftSlot": 3,
+      "teamId": "team-3",
+      "playerId": "p6",
+      "sleeperId": "s6",
+      "playerName": "Sample TE One",
+      "position": "TE",
+      "nflTeam": "DET",
+      "actualPickMade": true
+    },
+    {
+      "pickNumber": 7,
+      "round": 2,
+      "draftSlot": 2,
+      "teamId": "team-2",
+      "playerId": "p7",
+      "sleeperId": "s7",
+      "playerName": "Sample RB Three",
+      "position": "RB",
+      "nflTeam": "MIA",
+      "projectedPoints": 215,
+      "actualPickMade": true
+    },
+    {
+      "pickNumber": 8,
+      "round": 2,
+      "draftSlot": 1,
+      "teamId": "team-1",
+      "playerId": "p8",
+      "sleeperId": "s8",
+      "playerName": "Sample WR Three",
+      "position": "WR",
+      "nflTeam": "BAL",
+      "actualPickMade": true
+    },
+    {
+      "pickNumber": 9,
+      "round": 3,
+      "draftSlot": 1,
+      "teamId": "team-1",
+      "playerId": "p9",
+      "sleeperId": "s9",
+      "playerName": "Sample TE Two",
+      "position": "TE",
+      "nflTeam": "GB",
+      "actualPickMade": true
+    },
+    {
+      "pickNumber": 10,
+      "round": 3,
+      "draftSlot": 2,
+      "teamId": "team-2",
+      "playerId": "p10",
+      "sleeperId": "s10",
+      "playerName": "Sample QB Two",
+      "position": "QB",
+      "nflTeam": "LAC",
+      "projectedPoints": 300,
+      "actualPickMade": true
+    },
+    {
+      "pickNumber": 11,
+      "round": 3,
+      "draftSlot": 3,
+      "teamId": "team-3",
+      "playerId": "p11",
+      "sleeperId": "s11",
+      "playerName": "Sample WR Four",
+      "position": "WR",
+      "nflTeam": "CIN",
+      "actualPickMade": true
+    },
+    {
+      "pickNumber": 12,
+      "round": 3,
+      "draftSlot": 4,
+      "teamId": "team-4",
+      "playerId": "p12",
+      "sleeperId": "s12",
+      "playerName": "Sample QB Three",
+      "position": "QB",
+      "nflTeam": "HOU",
+      "actualPickMade": true
+    },
+    {
+      "pickNumber": 13,
+      "round": 4,
+      "draftSlot": 4,
+      "teamId": "team-4",
+      "playerId": "p13",
+      "sleeperId": "s13",
+      "playerName": "Sample TE Three",
+      "position": "TE",
+      "nflTeam": "CHI",
+      "actualPickMade": true
+    },
+    {
+      "pickNumber": 14,
+      "round": 4,
+      "draftSlot": 3,
+      "teamId": "team-3",
+      "playerId": "p14",
+      "sleeperId": "s14",
+      "playerName": "Sample QB Four",
+      "position": "QB",
+      "nflTeam": "ARI",
+      "actualPickMade": true
+    },
+    {
+      "pickNumber": 15,
+      "round": 4,
+      "draftSlot": 2,
+      "teamId": "team-2",
+      "playerId": "p15",
+      "sleeperId": "s15",
+      "playerName": "Sample TE Four",
+      "position": "TE",
+      "nflTeam": "MIN",
+      "projectedPoints": 155,
+      "actualPickMade": true
+    },
+    {
+      "pickNumber": 16,
+      "round": 4,
+      "draftSlot": 1,
+      "teamId": "team-1",
+      "playerId": "p16",
+      "sleeperId": "s16",
+      "playerName": "Sample RB Four",
+      "position": "RB",
+      "nflTeam": "NYJ",
+      "actualPickMade": true
+    }
+  ],
+  "humanReview": {
+    "looks_good": null,
+    "human_grade": null,
+    "human_notes": "",
+    "issue_tags": []
+  }
+}

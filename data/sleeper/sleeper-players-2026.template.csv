@@ -1,0 +1,2 @@
+sleeper_id,player_name,first_name,last_name,position,team,status,active,injury_status,fantasy_positions,search_rank,years_exp,age,source,source_updated_at,notes
+123456,Example Player,Example,Player,QB,KC,Active,true,,QB,100,2,24,example,2026-01-01,Example only; use npm run sleeper:export for real metadata.

@@ -1,0 +1,19 @@
+{
+  "draftRoomId": "template",
+  "season": 2026,
+  "leagueSettings": {},
+  "scoringSettings": {},
+  "rosterSettings": {},
+  "draftSlot": 5,
+  "picks": [],
+  "myDraftedRoster": [],
+  "allDraftedRosters": [],
+  "recommendationsAtPicks": [],
+  "availableBoardStates": [],
+  "humanReview": {
+    "looks_good": null,
+    "human_grade": null,
+    "human_notes": "",
+    "issue_tags": []
+  }
+}
