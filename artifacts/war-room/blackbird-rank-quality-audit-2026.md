@@ -1,6 +1,6 @@
 # Blackbird Rank Quality Audit
 
-Generated: 2026-06-19T18:27:21.557Z
+Generated: 2026-06-19T19:07:20.998Z
 Projection season: 2026
 League format: SUPERFLEX_NO_K
 Verdict: passed

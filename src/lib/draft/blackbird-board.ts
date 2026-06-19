@@ -5,6 +5,7 @@ import type { ScoredDraftTarget } from "@/lib/draft/scoring";
 import type { WarRoomRecommendationRow } from "@/lib/draft/war-room-recommendations";
 import type { LivePlanFit } from "@/lib/draft/live-plan-status";
 import { buildBlackbirdValueExplanation, type BlackbirdValueExplanation } from "@/lib/draft/blackbird-value-explanations";
+import { applyCalibratedTrust, calibratePlayerTrustConfidence } from "@/lib/draft/player-trust-confidence";
 import { buildProjectionTrust, type ProjectionTrust } from "@/lib/projections/projection-trust";
 
 export type BlackbirdBoardSortKey = "blackbird" | "projection" | "value";
@@ -120,6 +121,18 @@ export type BlackbirdBoardDiagnostics = {
 };
 
 const BANNED_BOARD_TERMS = ["must draft", "guaranteed", "lock", "best pick", "you should draft", "final plan"] as const;
+
+type TrustMetadataSourcePlayer = ScoredDraftTarget & {
+  activePolicyClass?: string | null;
+  active_policy?: string | null;
+  policyGroup?: string | null;
+  confidence?: string | null;
+  confidenceScore?: number | null;
+  marketRank?: number | null;
+  marketMatchType?: string | null;
+  externalMarketMatchConfidence?: string | null;
+  gsisId?: string | null;
+};
 
 export function buildBlackbirdBoard(input: {
   players: ScoredDraftTarget[];
@@ -352,7 +365,8 @@ function buildRow(input: {
   const projectionHigh = input.leagueRank?.projectedFantasyPoints.ceiling ?? input.overlay?.ceilingPoints ?? null;
   const projectionUnit = input.leagueRank?.projectedFantasyPoints.unit ?? (input.player.is_fallback ? "fallback" : projectionPoints === null || projectionPoints === undefined ? "unknown" : "season");
   const projectionSource = input.leagueRank?.projectedFantasyPoints.source ?? (input.overlay?.medianPoints !== null && input.overlay?.medianPoints !== undefined ? "h10_league_projection" : input.player.projected_points !== null && input.player.projected_points !== undefined ? "uploaded_ranking_projection" : "missing");
-  const projectionTrust = buildProjectionTrust({
+  const sourcePlayer = input.player as TrustMetadataSourcePlayer;
+  const baseProjectionTrust = buildProjectionTrust({
     playerId,
     playerName: input.player.player_name ?? input.overlay?.displayName ?? input.recommendation?.displayName ?? "Unknown",
     position: input.player.position ?? input.overlay?.position ?? input.recommendation?.position ?? null,
@@ -369,6 +383,32 @@ function buildRow(input: {
     isFallback: input.player.is_fallback || projectionUnit === "fallback",
     matchStatus: input.player.match_status,
   });
+  const calibratedTrust = calibratePlayerTrustConfidence({
+    playerName: input.player.player_name ?? input.overlay?.displayName ?? input.recommendation?.displayName ?? "Unknown",
+    position: input.player.position ?? input.overlay?.position ?? input.recommendation?.position ?? null,
+    team: input.player.team ?? input.overlay?.team ?? input.recommendation?.team ?? null,
+    currentTrust: baseProjectionTrust,
+    currentConfidence: input.leagueRank?.confidence ?? input.recommendation?.h10.confidenceLabel ?? input.overlay?.confidenceLabel ?? confidenceFromPlayer(input.player),
+    projectionPoints: finiteNumber(projectionPoints),
+    projectionSource,
+    projectionUnit,
+    isFallback: input.player.is_fallback || projectionUnit === "fallback",
+    matchStatus: input.player.match_status,
+    matchConfidence: input.player.match_confidence,
+    inputCompleteness: input.player.inputCompleteness,
+    activePolicyClass: sourcePlayer.activePolicyClass ?? sourcePlayer.active_policy ?? null,
+    policyGroup: sourcePlayer.policyGroup ?? null,
+    sourceConfidence: sourcePlayer.confidence ?? null,
+    sourceConfidenceScore: sourcePlayer.confidenceScore ?? null,
+    marketAdp: input.player.adp,
+    marketRank: sourcePlayer.marketRank ?? input.player.rank,
+    marketMatchType: sourcePlayer.marketMatchType ?? sourcePlayer.externalMarketMatchConfidence ?? null,
+    sleeperId: input.player.sleeper_player_id,
+    playerId,
+    gsisId: sourcePlayer.gsisId ?? null,
+    dataGaps: input.leagueRank?.dataGaps ?? [],
+  });
+  const projectionTrust = applyCalibratedTrust(baseProjectionTrust, calibratedTrust);
   const pointsAboveReplacement = input.leagueRank?.pointsAboveReplacement ?? input.overlay?.pointsAboveReplacement ?? input.recommendation?.h10.pointsAboveReplacement ?? null;
   const blackbirdValueScore = input.leagueRank?.leagueValueScore ?? input.recommendation?.recommendationScore ?? input.player.draftTargetScore ?? input.overlay?.riskAdjustedValue ?? null;
   const drafted = Boolean(
@@ -401,7 +441,7 @@ function buildRow(input: {
     adp: finiteNumber(input.player.adp),
     marketRank: null,
     rankDelta: null,
-    confidence: input.leagueRank?.confidence ?? input.recommendation?.h10.confidenceLabel ?? input.overlay?.confidenceLabel ?? confidenceFromPlayer(input.player),
+    confidence: calibratedTrust.confidence,
     risk: input.leagueRank?.risk ?? input.recommendation?.tierDropRisk ?? input.overlay?.riskLabel ?? riskFromWarnings(input.player.warnings),
     blackbirdTier: input.leagueRank?.blackbirdTier ?? null,
     valueScoreComponents: input.leagueRank?.valueComponents ?? null,

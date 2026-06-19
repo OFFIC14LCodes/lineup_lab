@@ -7,6 +7,7 @@ import {
 import type { WarRoomValueOverlayRow } from "@/lib/draft/h10-war-room-overlay";
 import type { ScoredDraftTarget } from "@/lib/draft/scoring";
 import type { WarRoomRecommendationRow } from "@/lib/draft/war-room-recommendations";
+import { applyCalibratedTrust, calibratePlayerTrustConfidence } from "@/lib/draft/player-trust-confidence";
 import { buildReplacementValueModel, type PlayerPAR } from "@/lib/draft/replacement-value";
 import { classifyPlayerRole, type PlayerRoleClassification } from "@/lib/projections/player-role-classification";
 import { buildProjectionTrust, type ProjectionTrust } from "@/lib/projections/projection-trust";
@@ -73,6 +74,18 @@ export type BuildBlackbirdLeagueRankInput = {
 
 const BANNED_TERMS = ["must draft", "guaranteed", "lock", "best pick", "you should draft", "final plan"] as const;
 
+type TrustMetadataSourcePlayer = ScoredDraftTarget & {
+  activePolicyClass?: string | null;
+  active_policy?: string | null;
+  policyGroup?: string | null;
+  confidence?: string | null;
+  confidenceScore?: number | null;
+  marketRank?: number | null;
+  marketMatchType?: string | null;
+  externalMarketMatchConfidence?: string | null;
+  gsisId?: string | null;
+};
+
 export function buildBlackbirdLeagueRank(input: BuildBlackbirdLeagueRankInput): {
   rows: BlackbirdLeagueRankRow[];
   diagnostics: BlackbirdLeagueRankDiagnostics;
@@ -115,7 +128,8 @@ export function buildBlackbirdLeagueRank(input: BuildBlackbirdLeagueRankInput): 
       if (!contextual) throw new Error(`Missing contextual value for ${playerName}`);
       const unit = projectionUnit(row.player, row.overlay, contextual);
       const version = inferProjectionVersion(row.overlay, contextual);
-      const projectionTrust = buildProjectionTrust({
+      const sourcePlayer = row.player as TrustMetadataSourcePlayer;
+      const baseProjectionTrust = buildProjectionTrust({
         playerId,
         playerName,
         position: row.player.position ?? row.overlay?.position ?? row.recommendation?.position ?? "UNK",
@@ -132,6 +146,32 @@ export function buildBlackbirdLeagueRank(input: BuildBlackbirdLeagueRankInput): 
         isFallback: row.player.is_fallback || unit === "fallback",
         matchStatus: row.player.match_status,
       });
+      const calibratedTrust = calibratePlayerTrustConfidence({
+        playerName,
+        position: row.player.position ?? row.overlay?.position ?? row.recommendation?.position ?? "UNK",
+        team: row.player.team ?? row.overlay?.team ?? row.recommendation?.team ?? null,
+        currentTrust: baseProjectionTrust,
+        currentConfidence: contextual.confidence,
+        projectionPoints: contextual.projectedFantasyPoints.median,
+        projectionSource: contextual.projectedFantasyPoints.source,
+        projectionUnit: unit,
+        isFallback: row.player.is_fallback || unit === "fallback",
+        matchStatus: row.player.match_status,
+        matchConfidence: row.player.match_confidence,
+        inputCompleteness: row.player.inputCompleteness,
+        activePolicyClass: sourcePlayer.activePolicyClass ?? sourcePlayer.active_policy ?? null,
+        policyGroup: sourcePlayer.policyGroup ?? null,
+        sourceConfidence: sourcePlayer.confidence ?? contextual.confidence,
+        sourceConfidenceScore: sourcePlayer.confidenceScore ?? null,
+        marketAdp: row.player.adp,
+        marketRank: sourcePlayer.marketRank ?? row.player.rank,
+        marketMatchType: sourcePlayer.marketMatchType ?? sourcePlayer.externalMarketMatchConfidence ?? null,
+        sleeperId: row.player.sleeper_player_id,
+        playerId,
+        gsisId: sourcePlayer.gsisId ?? null,
+        dataGaps: contextual.dataGaps,
+      });
+      const projectionTrust = applyCalibratedTrust(baseProjectionTrust, calibratedTrust);
       return {
         playerId,
         playerName,
@@ -154,7 +194,7 @@ export function buildBlackbirdLeagueRank(input: BuildBlackbirdLeagueRankInput): 
         replacementValue: emptyReplacementValue(playerId, normalizePosition(row.player.position ?? row.overlay?.position ?? row.recommendation?.position ?? "UNK")),
         pointsAboveReplacement: row.overlay?.pointsAboveReplacement ?? row.recommendation?.h10.pointsAboveReplacement ?? null,
         valueComponents: contextual.valueScoreComponents,
-        confidence: contextual.confidence,
+        confidence: calibratedTrust.confidence,
         risk: contextual.risk,
         reasons: contextual.reasons,
         dataGaps: contextual.dataGaps,
@@ -164,7 +204,7 @@ export function buildBlackbirdLeagueRank(input: BuildBlackbirdLeagueRankInput): 
           h10RecommendationRank: row.recommendation?.recommendationRank ?? null,
           projectionRunId: null,
           projectionVersion: version,
-          fallbackProjection: row.player.is_fallback || contextual.projectedFantasyPoints.source === "uploaded_ranking_projection",
+          fallbackProjection: calibratedTrust.trueFallbackProjection,
         },
       };
     })

@@ -130,6 +130,8 @@
     "projection:depth-chart:resolve": "tsx scripts/projection-depth-chart-resolution.ts",
     "war-room:v1-readiness": "tsx scripts/war-room-v1-readiness.ts",
     "war-room:blackbird-rank:audit": "tsx scripts/blackbird-rank-quality-audit.ts",
+    "war-room:full-board-rank:audit": "tsx scripts/full-board-rank-integrity-audit.ts",
+    "war-room:trust-metadata:audit": "tsx scripts/blackbird-trust-metadata-audit.ts",
     "war-room:e2e-qa": "tsx scripts/war-room-e2e-qa.ts",
     "war-room:manual-qa-report": "tsx scripts/war-room-manual-qa-report.ts",
     "war-room:mock-draft-result-capture": "tsx scripts/mock-draft-result-capture.ts",
